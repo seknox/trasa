@@ -1,0 +1,7 @@
+package consts
+
+const (
+	KEX_EXPORT_DH    = "KEX_EXPORT_DH"
+	KEX_ENROL_DEVICE = "KEX_ENROL_DEVICE"
+	KEX_HTTP_SR      = "KEX_HTTP_SR"
+)

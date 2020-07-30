@@ -1,0 +1,27 @@
+{
+    "files.exclude": {
+        "**/.classpath": true,
+        "**/.project": true,
+        "**/.settings": true,
+        "**/.factorypath": true
+    },
+    "sqltools.connections": [
+        {
+            "database": "trasadb",
+            "driver": "PostgreSQL",
+            "name": "app.trasa.io",
+            "pgOptions": {
+                "ssl": {
+                    "ca": "/etc/trasa/certs/app.trasa.io/ca.crt",
+                    "cert": "/etc/trasa/certs/app.trasa.io/client.trasauser.crt",
+                    "key": "/etc/trasa/certs/app.trasa.io/client.trasauser.key"
+                }
+            },
+            "port": 26257,
+            "previewLimit": 50,
+            "server": "app.trasa.io",
+            "username": "trasauser",
+            "password": ""
+        }
+    ]
+}

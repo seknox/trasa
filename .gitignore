@@ -1,0 +1,5 @@
+# TRASA server binary
+trasa-server
+
+# sql testing file
+app.trasa.io.session.sql

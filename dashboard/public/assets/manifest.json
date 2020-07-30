@@ -1,0 +1,15 @@
+{
+  "short_name": "Trasa.io",
+  "name": "Trusted And Secure Access",
+  "icons": [
+    {
+      "src": "trasa.png",
+      "sizes": "360x360 228x228 192x192 152x152 128x128 96x96 76x76 64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ],
+  "start_url": "./index.html",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
