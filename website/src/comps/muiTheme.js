@@ -1,7 +1,6 @@
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import { createMuiTheme, makeStyles, ThemeProvider } from '@material-ui/core/styles';
 import React from 'react';
-import 'semantic-ui-css/semantic.min.css';
 
 let theme = createMuiTheme({
   typography: {
@@ -9,41 +8,41 @@ let theme = createMuiTheme({
     fontFamily: 'Open Sans, Rajdhani',
     h1: {
       fontWeight: 700,
-      fontSize: 32,
+      fontSize: 46,
       letterSpacing: 0.5,
       padding: 10,
-      color: '#0A2053',
+      color: '#000066',
     },
     h2: {
-      fontWeight: 700,
-      fontSize: 24,
+      fontWeight: 600,
+      fontSize: 36,
       letterSpacing: 0.5,
-      color: '#0A2053',
+      color: '#000080',
       padding: 10,
     },
     h3: {
-      fontWeight: 700,
+      fontWeight: 600,
       padding: 10,
-      fontSize: 18,
+      fontSize: 32,
       letterSpacing: 0.5,
-      color: '#18202c',
+      color: '#404854',
     },
     h4: {
       fontWeight: 600,
-      fontSize: 16,
+      fontSize: 26,
       letterSpacing: 0.5,
       color: '#404854',
       padding: 12,
     },
     h5: {
       fontWeight: 600,
-      fontSize: 14,
+      fontSize: 18,
       letterSpacing: 0.5,
       padding: 13,
     },
     h6: {
       fontWeight: 700,
-      fontSize: 12,
+      fontSize: 14,
       letterSpacing: 0.5,
       padding: 12,
     },
@@ -60,15 +59,12 @@ let theme = createMuiTheme({
     },
   },
   palette: {
-    primary: {
-      light: '#000080',
-      main: '#000066',
-      dark: 'rgba(1,1,35,1)', // '#000080' #1b1b32 #0A2053 #000066}, #0A2053
-      contrastText: '#fff',
-    },
-    secondary: { A400: '#000080' },
+    type: 'light',
+    primary: { 500: 'rgba(1,1,35,1)' },
+    secondary: { A400: '#000066' }, // '#000080' #1b1b32 #0A2053 #000066}, #0A2053
+    // butprim:  { A400: '#000080'},
+    error: { 500: '#9a0036' },
   },
-
   shape: {
     borderRadius: 4,
   },
@@ -82,27 +78,19 @@ theme = {
         backgroundColor: 'white', // '#18202c',
       },
     },
-    MuiAppBar: {
-      root: {
-        backgroundColor: 'rgba(1,1,35,1)',
-      },
-
-      // backgroundColor: 'rgba(1,1,35,1)',
-      // colorDefault: 'rgba(1,1,35,1)',
-    },
 
     MuiButton: {
       contained: {
         color: 'white',
         fontWeight: 600,
-        fontSize: '14px',
+        //  fontSize: '14px',
         boxShadow: 'none',
         '&:active': {
           boxShadow: 'none',
           backgroundColor: '#000080',
         },
         '&:hover, &:focus': {
-          backgroundColor: theme.palette.primary.light,
+          backgroundColor: '#000066',
           boxShadow: '0 0 10px #030417',
         },
         backgroundColor: '#000080',
@@ -127,7 +115,6 @@ theme = {
       //   dark: '#006db3',
       // },
     },
-
     MuiTextField: {
       root: {
         padding: 1,
@@ -135,18 +122,12 @@ theme = {
           marginTop: theme.spacing(3),
         },
         fontSize: 16,
-
         transition: theme.transitions.create(['border-color', 'box-shadow']),
         '&:focus': {
-          border: '#63ccff',
           borderColor: '#80bdff',
           boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
         },
-        borderColor: '#63ccff',
       },
-      // outlined: {
-      //   border: '#63ccff',
-      // },
     },
     MuiDialog: {},
     MuiDialogTitle: {
@@ -166,7 +147,6 @@ theme = {
     MuiTooltip: {
       tooltip: {
         borderRadius: 4,
-        fontSize: 14,
       },
     },
     MuiDivider: {
@@ -208,15 +188,25 @@ theme = {
   },
 };
 
-type DashboardBaseProps = {
-  children?: React.ReactNode;
-};
+// const drawerWidth = 250;
 
-export default function ThemeWrapper(props: DashboardBaseProps) {
+const useStyles = makeStyles((theme) => ({
+  root: {
+    // display: 'flex',
+    // minHeight: '100vh',
+  },
+}));
+
+export default function ThemeBase(props) {
+  const classes = useStyles();
+
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline />
-      {props.children}
+      <div className={classes.root}>
+        <CssBaseline />
+
+        {props.children}
+      </div>
     </ThemeProvider>
   );
 }

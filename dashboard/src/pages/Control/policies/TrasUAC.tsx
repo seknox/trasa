@@ -26,7 +26,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 const useStyles = makeStyles((theme) => ({
   expiry: {
     marginLeft: 10,
-    width: 100
+    width: 100,
   },
   formControl: {
     fontSize: 15,
@@ -35,30 +35,30 @@ const useStyles = makeStyles((theme) => ({
     border: '1px solid #ced4da',
     height: 31,
     marginTop: 5,
-    //padding: '10px 100px',
+    // padding: '10px 100px',
     width: 'calc(100% - 4px)',
     transition: theme.transitions.create(['border-color', 'box-shadow']),
     '&:focus': {
       borderColor: '#80bdff',
-      boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)'
-    }
+      boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
+    },
   },
   timePickerTextField: {
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
-    width: 100
+    width: 100,
   },
 
   timePickerContainer: {
     display: 'flex',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
   },
   button: {
     margin: theme.spacing(1),
-    marginTop: '5%'
+    marginTop: '5%',
   },
   rightIcon: {
-    marginRight: theme.spacing(1)
+    marginRight: theme.spacing(1),
   },
   textFieldInput: {
     borderRadius: 4,
@@ -70,8 +70,8 @@ const useStyles = makeStyles((theme) => ({
     transition: theme.transitions.create(['border-color', 'box-shadow']),
     '&:focus': {
       borderColor: '#80bdff',
-      boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)'
-    }
+      boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
+    },
   },
   textFieldInputBig: {
     borderRadius: 4,
@@ -81,27 +81,27 @@ const useStyles = makeStyles((theme) => ({
     transition: theme.transitions.create(['border-color', 'box-shadow']),
     '&:focus': {
       borderColor: '#80bdff',
-      boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)'
-    }
+      boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
+    },
   },
   textFieldRoot: {
     padding: 1,
     'label + &': {
-      marginTop: theme.spacing(3)
-    }
+      marginTop: theme.spacing(3),
+    },
   },
   textFieldFormLabel: {
-    fontSize: 18
+    fontSize: 18,
   },
   policyName: {
-    marginLeft: '20%'
+    marginLeft: '20%',
   },
   toolTip: {
     padding: 5,
     // maxWidth: 220,
     fontSize: 16,
     // fontFamily: 'Open Sans, Rajdhani',
-    border: '1px solid #dadde9'
+    border: '1px solid #dadde9',
   },
   selectCustom: {
     fontSize: 15,
@@ -116,17 +116,17 @@ const useStyles = makeStyles((theme) => ({
     transition: theme.transitions.create(['border-color', 'box-shadow']),
     '&:focus': {
       borderColor: '#80bdff',
-      boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)'
-    }
+      boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
+    },
   },
   tabRoot: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper,
-    display: 'flex'
-    //height: 224,
+    display: 'flex',
+    // height: 224,
   },
   tabs: {
-    borderRight: `1px solid ${theme.palette.divider}`
+    borderRight: `1px solid ${theme.palette.divider}`,
   },
 }));
 
@@ -135,9 +135,9 @@ const ITEM_PADDING_TOP = 8;
 const MenuProps = {
   PaperProps: {
     style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP
-    }
-  }
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+    },
+  },
 };
 
 const CTooltip = withStyles((theme) => ({
@@ -146,8 +146,8 @@ const CTooltip = withStyles((theme) => ({
     color: 'rgba(0, 0, 0, 0.87)',
     maxWidth: 420,
     fontSize: 16,
-    border: '1px solid #dadde9'
-  }
+    border: '1px solid #dadde9',
+  },
 }))(Tooltip);
 
 export default function TrasaUAC(props: any) {
@@ -172,10 +172,10 @@ export default function TrasaUAC(props: any) {
   }
 
   const updateDays = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setDays(event.target.value  as string[]);
+    setDays(event.target.value as string[]);
   };
 
-  const updateFrom = (event :any) => {
+  const updateFrom = (event: any) => {
     setFromTime(event.target.value);
   };
 
@@ -200,7 +200,7 @@ export default function TrasaUAC(props: any) {
                     // tfaRequired, settfaRequired
                     checked={props.tfaRequired}
                     onChange={props.handle2FAChange}
-                    //value={props.tfaRequired}
+                    // value={props.tfaRequired}
                     color="secondary"
                   />
                 </Grid>
@@ -277,12 +277,12 @@ export default function TrasaUAC(props: any) {
                       disableUnderline: true,
                       classes: {
                         root: classes.textFieldRoot,
-                        input: classes.textFieldInputBig
-                      }
+                        input: classes.textFieldInputBig,
+                      },
                     }}
                     InputLabelProps={{
                       shrink: true,
-                      className: classes.textFieldFormLabel
+                      className: classes.textFieldFormLabel,
                     }}
                   />
                 </Grid>
@@ -344,7 +344,7 @@ export default function TrasaUAC(props: any) {
                         className={classes.toolTip}
                         title={JSON.stringify(value)}
                       >
-                        <Typography variant="h4">{'Permission ' + (index + 1)}</Typography>
+                        <Typography variant="h4">{`Permission ${index + 1}`}</Typography>
                       </CTooltip>
                       <ListItemSecondaryAction>
                         <IconButton
@@ -405,10 +405,10 @@ export default function TrasaUAC(props: any) {
                     onChange={props.handleExpiryChange}
                     label="Auto Expiry"
                     type="date"
-                    //defaultValue={props.Expiry}
+                    // defaultValue={props.Expiry}
                     // className={classes.textField}
                     InputLabelProps={{
-                      shrink: true
+                      shrink: true,
                     }}
                   />
                 </Grid>
@@ -475,7 +475,7 @@ function TabPanel(props: any) {
 function a11yProps(index: any) {
   return {
     id: `vertical-tab-${index}`,
-    'aria-controls': `vertical-tabpanel-${index}`
+    'aria-controls': `vertical-tabpanel-${index}`,
   };
 }
 
@@ -494,14 +494,14 @@ function TimePicker(props: any) {
           label={props.Time}
           value={props.value}
           type="time"
-          //defaultValue="09:00"
+          // defaultValue="09:00"
           className={classes.timePickerTextField}
-          //className={classes.formControl}
+          // className={classes.formControl}
           InputLabelProps={{
-            shrink: true
+            shrink: true,
           }}
           inputProps={{
-            step: 300 // 5 min
+            step: 300, // 5 min
           }}
         />
       </FormControl>
