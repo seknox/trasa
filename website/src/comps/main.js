@@ -16,8 +16,10 @@ const useStyles = makeStyles((theme) => ({
     marginTop: 100,
   },
 
-  pad: {
+  sideImage: {
+    boxShadow: '0 0 20px 0 rgba(0,0,0,0.12)',
     marginTop: theme.spacing(3),
+    padding: theme.spacing(2),
   },
   contained: {
     color: 'white',
@@ -78,7 +80,7 @@ export default function MainCta() {
         </Grid>
 
         <Grid item xs={12} sm={12} md={7}>
-          <div className={classes.pad}>
+          <div className={classes.sideImage}>
             <img src={imgUrl} alt="dashboard" />
           </div>
         </Grid>

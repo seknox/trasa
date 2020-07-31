@@ -2,29 +2,31 @@ import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 import SecurityIcon from '@material-ui/icons/Security';
+import CheckIcon from '@material-ui/icons/CheckCircle';
+import TrustedIcon from '@material-ui/icons/VerifiedUser';
+import axios from 'axios';
 import React, { useState } from 'react';
+import Switch from '@material-ui/core/Switch';
 import AndroidIcon from '../../../assets/devices/android.png';
 import FirefoxIcon from '../../../assets/devices/firefox.png';
 import IphoneIcon from '../../../assets/devices/iphone.svg';
 import LinuxLaptopIcon from '../../../assets/devices/linuxlaptop.png';
 import MacbookIcon from '../../../assets/devices/mac.png';
 import WinLaptopIcon from '../../../assets/devices/winlaptop.png';
+import Constants from '../../../Constants';
 import { DeleteConfirmDialogue } from '../../../utils/Components/Confirms';
 import DialogWrapper from '../../../utils/Components/DialogueWrapComponent';
 import { HeaderFontSize, TitleFontSize } from '../../../utils/Responsive';
-import MoreVertIcon from "@material-ui/icons/MoreVert";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
-import EditIcon from "@material-ui/icons/Edit";
-import Delete from "@material-ui/icons/Delete";
-import Constants from "../../../Constants";
-import axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({
   idpPaper: {
@@ -203,7 +205,6 @@ const getIcon = (device: any) => {
 
 const getDeviceString = (device: any) => {
   if (device && device.deviceType === 'mobile') {
-    // console.log(device.deviceHygiene.deviceInfo)
     if (device.deviceHygiene && device?.deviceHygiene?.deviceInfo) {
       return `${device.deviceHygiene.deviceInfo.manufacturer} ${device.deviceHygiene.deviceInfo.deviceModel}`;
     }
@@ -219,13 +220,11 @@ const getDeviceString = (device: any) => {
   return 'Unknown Device';
 };
 
-export default function DeviceList(props: any) {
+// ////////////////////////////////////
+// DeviceDetail is a card for device.
+// ///////////////////////////////////
+export default function DeviceDetail(props: any) {
   const [open, setOpen] = React.useState(false);
-  // const [deleteDevice, setDeleteDevice] = useState({
-  //   deviceID: '',
-  //   deviceType: '',
-  //   deviceIndex: '',
-  // });
 
   const openDeleteDlg = () => {
     setOpen(!open);
@@ -239,22 +238,33 @@ export default function DeviceList(props: any) {
     });
   }
 
-  const [singleDeviceHygiene, setSingleDeviceHygiene] = useState({});
+  const [singleDeviceDetail, setSingleDeviceDetail] = useState({
+    deviceID: '',
+    trusted: false,
+    deviceHygiene: {},
+  });
+  // const [singleDeviceHygiene, setSingleDeviceHygiene] = useState({});
   const [viewHygieneDlgState, setviewHygieneDlgState] = useState(false);
   const [singleDeviceType, setsingleDeviceType] = useState('');
+  const [selectedDeviceIndex, setselectedDeviceIndex] = useState(0);
 
-  function viewDeviceHygiene(dd: any, dt: any) {
-    setSingleDeviceHygiene(dd);
-    setsingleDeviceType(dt);
+  function viewDeviceHygiene(dd: any, index: number) {
+    // console.log('device:: ', dd);
+    setSingleDeviceDetail(dd);
+    // setSingleDeviceHygiene(dd.deviceHygiene);
+    setsingleDeviceType(props.deviceType);
+    setselectedDeviceIndex(index);
     setviewHygieneDlgState(true);
   }
 
-  function handleTrust(deviceID:string,trusted:boolean) {
-    axios.post(Constants.TRASA_HOSTNAME+"/api/v1/user/devices/trust",{deviceID,trusted}).then(r=>{
-      if(r.data.status=="success"){
-        //TODO
-      }
-    })
+  function handleTrust(deviceID: string, trusted: boolean) {
+    axios
+      .post(`${Constants.TRASA_HOSTNAME}/api/v1/user/devices/trust`, { deviceID, trusted })
+      .then((r) => {
+        if (r.data.status === 'success') {
+          // TODO
+        }
+      });
   }
 
   const classes = useStyles();
@@ -265,36 +275,22 @@ export default function DeviceList(props: any) {
           <Paper className={classes.idpPaper} elevation={1}>
             <Grid container direction="row" alignItems="center" justify="center" spacing={1}>
               <Grid item xs={1}>
-                <Tooltip title="Health of this device is okay." placement="top-end">
-                  <div style={{ marginLeft: '90%', color: 'navy' }}>
-                    {' '}
-                    <SecurityIcon style={{ fontSize: 20 }} />{' '}
-                  </div>
-                </Tooltip>
+                {d.trusted ? (
+                  <Tooltip title="This device is trusted." placement="top-start">
+                    <div>
+                      <TrustedIcon style={{ fontSize: 20, color: 'green' }} />
+                    </div>
+                  </Tooltip>
+                ) : (
+                  <Tooltip title="This device is not trusted." placement="top-start">
+                    <div>
+                      <TrustedIcon style={{ fontSize: 20, color: 'grey' }} />
+                    </div>
+                  </Tooltip>
+                )}
               </Grid>
-              <Grid item xs={8}>
-                <Typography variant="h4" style={{ textDecoration: 'underline' }}>
-                  {getDeviceString(d)}
-                </Typography>
-              </Grid>
-              <Grid item xs={3}>
-                <DeviceMenu
-                    deleteDevice={() => {
-                      openDeleteDlg();
-                      callDeleteFunc(d, i);
-                    }}
-                    trusted={d.trusted}
-                    handleTrustDevice={()=>{handleTrust(d.deviceID,!d.trusted)}}
-                />
-                <IconButton
-                  aria-label="delete"
-                  onClick={() => {
-                    openDeleteDlg();
-                    callDeleteFunc(d, i);
-                  }}
-                >
-                  <DeleteIcon color="error" />
-                </IconButton>
+              <Grid item xs={9}>
+                <Typography variant="h3">{getDeviceString(d)}</Typography>
               </Grid>
               <Divider light />
               <Grid item xs={12}>
@@ -305,7 +301,7 @@ export default function DeviceList(props: any) {
                   size="small"
                   color="secondary"
                   variant="outlined"
-                  onClick={() => viewDeviceHygiene(d.deviceHygiene, props.deviceType)}
+                  onClick={() => viewDeviceHygiene(d, i)}
                 >
                   View Detail
                 </Button>
@@ -328,7 +324,18 @@ export default function DeviceList(props: any) {
         maxWidth="lg"
         fullScreen={false}
       >
-        <DeviceHygiene dh={singleDeviceHygiene} dt={singleDeviceType} />
+        {props.renderFor === 'myRoute' ? null : (
+          <DeviceSettings
+            singleDeviceDetail={singleDeviceDetail}
+            selectedDeviceIndex={selectedDeviceIndex}
+            openDeleteDlg={openDeleteDlg}
+            callDeleteFunc={callDeleteFunc}
+            trusted={singleDeviceDetail.trusted}
+            handleTrustDevice={handleTrust}
+          />
+        )}
+
+        <DeviceHygiene dh={singleDeviceDetail.deviceHygiene} dt={singleDeviceType} />
       </DialogWrapper>
     </Grid>
   );
@@ -371,58 +378,47 @@ function DeviceHygiene(props: any) {
   );
 }
 
+function DeviceSettings(props: any) {
+  const [checked, setChecked] = useState(false);
 
-function DeviceMenu(props: any) {
-  const [anchorEl, setanchorEl] = useState(null);
+  React.useEffect(() => {
+    setChecked(props.singleDeviceDetail.trusted);
+  }, [props.singleDeviceDetail]);
 
-  const handleClick = (event: any) => {
-    setanchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setanchorEl(null);
-  };
+  function handleCheck(e: React.ChangeEvent<HTMLInputElement>) {
+    props.handleTrustDevice(props.singleDeviceDetail.deviceID, e.target.checked);
+    setChecked(e.target.checked);
+  }
 
   return (
-      <div>
+    <Grid container spacing={2} direction="row">
+      <Grid item xs={2}>
+        <Typography variant="h3">Trust this device : </Typography>
+      </Grid>
+      <Grid item xs={1}>
+        <Switch color="secondary" onChange={handleCheck} checked={checked} />
+      </Grid>
+      <Grid item xs={2}>
+        <Typography variant="h3">Delete this device : </Typography>
+      </Grid>
+      <Grid item xs={1}>
         <IconButton
-            aria-label="More"
-            aria-owns={anchorEl ? 'long-menu' : ''}
-            aria-haspopup="true"
-            onClick={handleClick}
+          aria-label="delete"
+          onClick={() => {
+            props.openDeleteDlg();
+            props.callDeleteFunc(props.singleDeviceDetail, props.selectedDeviceIndex);
+          }}
         >
-          <MoreVertIcon />
+          <DeleteIcon color="error" />
         </IconButton>
-        <Menu
-            id="long-menu"
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleClose}
-            PaperProps={{}}
-        >
-          <MenuItem onClick={props.handleTrustDevice}>
-            <Button variant="contained" color="secondary">
-              {props.trusted?"Untrust":"Trust"} <EditIcon />
-            </Button>
-          </MenuItem>
-          <MenuItem onClick={props.deleteDevice}>
-            <Button color="secondary" variant="contained">
-              Delete
-              <Delete />
-            </Button>
-          </MenuItem>
-        </Menu>
-      </div>
+      </Grid>
+    </Grid>
   );
 }
-
-
 
 function DeviceInfo(props: any) {
   const classes = useStyles();
   const { di } = props;
-  const { db } = props;
-  const { dt } = props;
 
   // note all variables names are shorthanded. device info as di, login security as ls,
   // device type as dt, hygiene data as hd etc..
@@ -640,10 +636,6 @@ function EndpointSecurity(props: any) {
 function LoginSecurity(props: any) {
   const classes = useStyles();
 
-  React.useEffect(() => {
-    console.log('data: ', ls)
-  }, [])
-
   const { ls } = props;
   const { dt } = props;
   return (
@@ -722,7 +714,7 @@ function LoginSecurity(props: any) {
 
 function NetworkInfo(props: any) {
   const classes = useStyles();
-  const { dt } = props;
+
   const { ni } = props;
   return (
     <Grid container spacing={2} className={classes.gridPadding}>

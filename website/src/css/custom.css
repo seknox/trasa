@@ -92,7 +92,7 @@
 }
 
 .signup-link {
-  border: 4;
+  border-radius: 7%;
   color: #000080;
   background-color: #ffffff;
 }

@@ -166,6 +166,7 @@ theme = {
     MuiTooltip: {
       tooltip: {
         borderRadius: 4,
+        fontSize: 14,
       },
     },
     MuiDivider: {

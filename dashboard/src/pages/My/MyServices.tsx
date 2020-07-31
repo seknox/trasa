@@ -201,7 +201,12 @@ export default function MyAppsList() {
     setNewconDlgOpen(!newconDlgOpen);
   };
 
-  const handleClickOpen = (lserviceID: string, serviceType: string, hostname: string, userName: string) => {
+  const handleClickOpen = (
+    lserviceID: string,
+    serviceType: string,
+    hostname: string,
+    userName: string,
+  ) => {
     if (serviceType === 'http') {
       // var messenger = document.getElementById("trasextmsngr");
 
@@ -219,11 +224,19 @@ export default function MyAppsList() {
 
       window.open(`https://${hostname}`);
     } else if (serviceType === 'ssh') {
-      window.open(`/my/service/connectssh#username=${encodeURIComponent(userName)}&serviceID=${lserviceID}&hostname=${hostname}`);
+      window.open(
+        `/my/service/connectssh#username=${encodeURIComponent(
+          userName,
+        )}&serviceID=${lserviceID}&hostname=${hostname}`,
+      );
     } else if (serviceType === 'db') {
       // window.open("sql://"+ encodeURIComponent(userName) + "@" + serviceID);setState({ open: false })
     } else {
-      window.open(`/my/service/connectrdp#username=${encodeURIComponent(userName)}&serviceID=${lserviceID}&hostname=${hostname}`);
+      window.open(
+        `/my/service/connectrdp#username=${encodeURIComponent(
+          userName,
+        )}&serviceID=${lserviceID}&hostname=${hostname}`,
+      );
 
       // setState({ open: true , serviceID: serviceID, userName: userName})
     }
@@ -234,39 +247,30 @@ export default function MyAppsList() {
   // };
 
   useEffect(() => {
+    const url = `${Constants.TRASA_HOSTNAME}/api/v1/my/services`;
 
-       let url=`${Constants.TRASA_HOSTNAME}/api/v1/my/services`
+    axios
+      .get(url)
+      .then((response) => {
+        console.log(response.data);
+        setUser(response.data.User);
+        setAssignedApps(response.data?.data?.[0]?.myServices);
+        // setState({ user: response.data.User, apps: response.data.UserApp });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
 
-       axios
-           .get(url)
-           .then((response) => {
-             console.log(response.data);
-             setUser(response.data.User);
-             setAssignedApps(response.data?.data?.[0]?.myServices);
-             // setState({ user: response.data.User, apps: response.data.UserApp });
-           })
-           .catch((error) => {
-             if (error.response) {
-               console.log(error.response.data);
-               //   setState({isLoggedIn: false})
-               // window.location.href = '/login'
-             } else {
-               // Something happened in setting up the request that triggered an Error
-               console.log('Error', error.message);
-             }
-           });
-
-       axios
-           .get(`${Constants.TRASA_HOSTNAME}/api/v1/my/services/adhoc/getadmins`)
-           .then((response) => {
-             setAdmins(response.data?.data?.[0]);
-           })
-           .catch((error) => {
-             console.log(error);
-           });
-
-
-
+    axios
+      .get(`${Constants.TRASA_HOSTNAME}/api/v1/my/services/adhoc/getadmins`)
+      .then((r) => {
+        if (r.data.status === 'success') {
+          setAdmins(r.data?.data?.[0]);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }, []);
 
   const handleRequestDialogueOpen = (lserviceID: string, serviceName: string) => {
@@ -306,7 +310,7 @@ export default function MyAppsList() {
   );
   return (
     <div className={classes.root}>
-       <Button variant="contained" className={classes.button} onClick={handleNewconDlgState}>
+      <Button variant="contained" className={classes.button} onClick={handleNewconDlgState}>
         <CastIcon className={classes.extendedIcon} />
         new connection
       </Button>
@@ -321,18 +325,18 @@ export default function MyAppsList() {
           inputProps={{ 'aria-label': 'Search  service s' }}
         />
 
-         {/*<Divider className={classes.divider} />*/}
-         {/*   <IconButton color="primary" className={classes.iconButton} aria-label="Directions">*/}
-         {/*     <DirectionsIcon />*/}
-         {/*   </IconButton>*/}
+        {/* <Divider className={classes.divider} /> */}
+        {/*   <IconButton color="primary" className={classes.iconButton} aria-label="Directions"> */}
+        {/*     <DirectionsIcon /> */}
+        {/*   </IconButton> */}
       </Paper>
 
-       <NewConnDlg
+      <NewConnDlg
         handleNewconDlgState={handleNewconDlgState}
         open={newconDlgOpen}
         close={handleNewconDlgState}
         apps={apps}
-      //  email={user.email}
+        //  email={user.email}
       />
 
       <br />
@@ -412,42 +416,45 @@ export default function MyAppsList() {
                 )}
               </div>
               <br />
-
-
             </Paper>
           </Grid>
         ))}
 
         <Menu
-            id="connect-privilege-menu"
-            open={Boolean(anchorEl)}
-            keepMounted
-            anchorEl={anchorEl}
-            onClose={() => setAnchorEl(null)}
-            anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'left',
-            }}
+          id="connect-privilege-menu"
+          open={Boolean(anchorEl)}
+          keepMounted
+          anchorEl={anchorEl}
+          onClose={() => setAnchorEl(null)}
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'left',
+          }}
         >
           {/* <MenuList> */}
-          {assignedApps[selectedAppIndex] && assignedApps[selectedAppIndex].usernames.map((v: string) => (
+          {assignedApps[selectedAppIndex] &&
+            assignedApps[selectedAppIndex].usernames.map((v: string) => (
               <MenuItem
-                  id="trasextmsngr"
-                  // name={v}
-                  onClick={() => {
-                    handleClickOpen(assignedApps[selectedAppIndex].serviceID, assignedApps[selectedAppIndex].serviceType, assignedApps[selectedAppIndex].hostname, v);
-                  }}
+                id="trasextmsngr"
+                // name={v}
+                onClick={() => {
+                  handleClickOpen(
+                    assignedApps[selectedAppIndex].serviceID,
+                    assignedApps[selectedAppIndex].serviceType,
+                    assignedApps[selectedAppIndex].hostname,
+                    v,
+                  );
+                }}
               >
                 {v}
               </MenuItem>
-          ))}
+            ))}
           {/* </MenuList> */}
         </Menu>
-
 
         <RequestAccess
           admins={admins}
@@ -490,13 +497,12 @@ const returnAppIcon = (val: any) => {
 //   );
 // }
 
-
-type RequestAccessProps ={
-  serviceID:string,
-  handleRequestDialogueClose:()=>void,
-  reqOpen:boolean,
-  admins:any[],
-}
+type RequestAccessProps = {
+  serviceID: string;
+  handleRequestDialogueClose: () => void;
+  reqOpen: boolean;
+  admins: any[];
+};
 
 function RequestAccess(props: RequestAccessProps) {
   const classes = useStyles();
