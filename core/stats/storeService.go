@@ -71,7 +71,7 @@ func (s StatStore) GetTotalPrivilegesOfService(serviceID, orgID string) (count i
              	SELECT usergroup_accessmaps.privilege FROM usergroup_accessmaps 
              	where servicegroup_id=$2 AND map_type='service' AND org_id=$1
              	)
-        )  ;`, orgID, serviceID).Scan(&count)
+        ) privs  ;`, orgID, serviceID).Scan(&count)
 
 	return count, err
 }
@@ -111,7 +111,7 @@ UNION
 	JOIN user_group_maps ON usergroup_accessmaps.usergroup_id=user_group_maps.group_id 
 	JOIN service_group_maps ON usergroup_accessmaps.servicegroup_id=service_group_maps.group_id where service_group_maps.service_id=$1 AND  service_group_maps.org_id=$2 AND map_type='servicegroup'
 	)
-) 
+) as usserassigned
  `, serviceID, orgID).Scan(&count)
 
 	return count, err
