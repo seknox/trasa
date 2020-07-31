@@ -1,0 +1,17 @@
+---
+id: trasa-open-source
+title: TRASA open source?
+author: Sakshyam Shah
+author_title: TRASA core maintainer
+author_url: https://github.com/sshahcodes
+author_image_url: https://avatars1.githubusercontent.com/u/10177602?v=4
+tags: [trasa open source, open source zero trust, why seknox opensourced trasa]
+---
+
+Open source is eating the world. There is no doubt. Every core piece of today's internet technology is based on open-source toolchain.
+
+<!--truncate-->
+
+## Humble begining
+
+TRASA started out as a closed source project. But open source has been always a core element of our codebase. In fact, open-source toolchain has been always one of the competitive advantages that allowed us fast pace innovation and time to market.
