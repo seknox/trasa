@@ -79,7 +79,9 @@ func (s StatStore) GetAggregatedLoginHours(entityType, entityID, timezone, orgID
 		sb.Where(sb.Equal("user_id", entityID))
 	}
 	sb.Where(sb.Equal(`org_id`, orgID))
-	sb.Select(sb.As(`EXTRACT('hour',timezone(timezone((login_time/1000000000)::int::timestamp,'UTC'),`+sb.Var(timezone)+`))`, `hour `), sb.As(`count(*)`, `c`))
+
+	//TODO check timezone
+	sb.Select(sb.As(`((login_time/3600000000000)%24)::int`, `hour`), sb.As(`count(*)`, `c`))
 	//sb.Select(sb.As(`EXTRACT('hour',(login_time/1000000000)::int::timestamp)`, `hour `), sb.As(`count(*)`, `c`))
 	sb.GroupBy(`hour`)
 	sb.OrderBy(`hour`)

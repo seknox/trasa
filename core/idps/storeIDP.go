@@ -1,7 +1,6 @@
 package idps
 
 import (
-	"github.com/seknox/trasa/core/notif"
 	"github.com/seknox/trasa/models"
 	logger "github.com/sirupsen/logrus"
 )
@@ -20,8 +19,7 @@ func (s IDPStore) GetAllIdps(orgID string) ([]models.IdentityProvider, error) {
 	for rows.Next() {
 		err := rows.Scan(&idp.IdpID, &idp.OrgID, &idp.IdpName, &idp.IdpType, &idp.IdpMeta, &idp.IsEnabled, &idp.RedirectURL, &idp.AudienceURI, &idp.ClientID, &idp.Endpoint, &idp.CreatedBy, &idp.LastUpdated, &idp.SCIMEndpoint)
 		if err != nil {
-			logger.Error(err)
-			notif.SendErrorReport(err, "scan error in IDPStore.GetAllIdps")
+			logger.Errorf("scan error in IDPStore.GetAllIdps: %v", err)
 		}
 		idps = append(idps, idp)
 	}

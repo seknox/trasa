@@ -52,7 +52,7 @@ func (s StatStore) GetPoliciesOfService(serviceID, orgID string) (count int, err
              	SELECT policy_id FROM usergroup_accessmaps 
              	where servicegroup_id=$2 AND map_type='service' AND org_id=$1
              	)
-        ) ;`, orgID, serviceID).Scan(&count)
+        ) as pol ;`, orgID, serviceID).Scan(&count)
 
 	return count, err
 }

@@ -19,7 +19,6 @@ import (
 	"github.com/seknox/trasa/core/auth/tfa"
 	"github.com/seknox/trasa/core/devices"
 	"github.com/seknox/trasa/core/logs"
-	"github.com/seknox/trasa/core/notif"
 	"github.com/seknox/trasa/core/orgs"
 	"github.com/seknox/trasa/core/policies"
 	"github.com/seknox/trasa/core/redis"
@@ -297,7 +296,7 @@ func GetHttpSession(w http.ResponseWriter, r *http.Request) {
 func sessionWriter(sessionID, shots string) {
 	defer func() {
 		if r := recover(); r != nil {
-			notif.SendErrorReport(fmt.Errorf(`%v. stack: %s`, r, string(debug.Stack())), "Panic in sessionWriter")
+			logger.Errorf(` Panic in sessionWriter: %v. stack: %s`, r, string(debug.Stack()))
 		}
 
 	}()
@@ -383,7 +382,7 @@ func gopherPNG(imsgData string) io.Reader {
 func LogoutSequence(sessionID string) {
 	defer func() {
 		if r := recover(); r != nil {
-			notif.SendErrorReport(fmt.Errorf(`%v:%s`, r, string(debug.Stack())), "Panic in LogoutSequence")
+			logger.Errorf(`Panic in LogoutSequence: %v:%s`, r, string(debug.Stack()))
 		}
 
 	}()

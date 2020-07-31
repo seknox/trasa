@@ -96,7 +96,7 @@ UNION
 		join service_group_maps ag on ag.group_id=ag_ug.servicegroup_id
 	WHERE map_type='servicegroup'
 ) 
-		 )WHERE user_id=$1 AND org_id=$2;`, userID, orgID)
+		 ) as assigned_services WHERE user_id=$1 AND org_id=$2;`, userID, orgID)
 
 	if err != nil {
 		return

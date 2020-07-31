@@ -33,6 +33,9 @@ var config Config
 func GetConfig() Config {
 	return config
 }
+func SetOrgID(orgID string) {
+	config.Trasa.OrgId = orgID
+}
 
 type State struct {
 	DB             *sql.DB

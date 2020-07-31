@@ -56,11 +56,11 @@ from policies
          LEFT JOIN (
     SELECT count(policy_id) as count,policy_id from
         (
-            select policy_id FROM user_accessmaps
+            select policy_id FROM user_accessmaps 
 
             UNION ALL
             SELECT policy_id FROM usergroup_accessmaps
-        )
+        ) as p
 
     GROUP BY policy_id
 

@@ -19,7 +19,7 @@ import (
 func CheckAndFireSecurityRule(orgID, constName, entityValue string) {
 	defer func() {
 		if r := recover(); r != nil {
-			SendErrorReport(fmt.Errorf(fmt.Sprintf(`%v:%s`, r, string(debug.Stack()))), "Panic in CheckAndFireSecurityRule")
+			logrus.Error(fmt.Errorf(fmt.Sprintf(`%v:%s`, r, string(debug.Stack()))), "Panic in CheckAndFireSecurityRule")
 		}
 
 	}()

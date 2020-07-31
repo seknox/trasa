@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/seknox/trasa/core/crypt/vault"
-	"github.com/seknox/trasa/core/notif"
 	"github.com/seknox/trasa/models"
 	"github.com/seknox/trasa/utils"
 	"github.com/sirupsen/logrus"
@@ -96,7 +95,7 @@ func ViewCreds(w http.ResponseWriter, r *http.Request) {
 
 	service, err := Store.GetFromID(req.ServiceID)
 	if err != nil {
-		notif.SendErrorReport(err, "invalid service ID in view creds")
+		logrus.Error(err, "invalid service ID in view creds")
 		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "Invalid service", "Could not view password")
 		return
