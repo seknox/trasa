@@ -258,10 +258,12 @@ export default function MyAppsList() {
 
        axios
            .get(`${Constants.TRASA_HOSTNAME}/api/v1/my/services/adhoc/getadmins`)
-           .then((response) => {
-             setAdmins(response.data?.data?.[0]);
+           .then((response:any) => {
+             if(response.data?.status=="success"){
+               setAdmins(response.data?.data?.[0]);
+             }
            })
-           .catch((error) => {
+           .catch((error:any) => {
              console.log(error);
            });
 
