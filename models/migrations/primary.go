@@ -99,18 +99,18 @@ var PrimaryMigration = []string{
 			org_id VARCHAR NULL REFERENCES org  (id) ON DELETE CASCADE ,
 			ext_id VARCHAR NULL,
 			name VARCHAR NULL,
-			description VARCHAR NULL DEFAULT '':::STRING,
+			description VARCHAR NULL DEFAULT ''::varchar,
 			version VARCHAR NULL,
 			maydisable VARCHAR NULL,
 			enabled BOOL NULL,
 			install_type VARCHAR NULL,
 			type VARCHAR NULL,
-			perms VARCHAR[] NULL DEFAULT ARRAY[]:::VARCHAR[],
-			host_perms VARCHAR[] NULL DEFAULT ARRAY[]:::VARCHAR[],
+			perms VARCHAR[] NULL DEFAULT ARRAY[]::VARCHAR[],
+			host_perms VARCHAR[] NULL DEFAULT ARRAY[]::VARCHAR[],
 			isvuln BOOL NULL,
-			vuln_reason VARCHAR NULL DEFAULT '':::STRING,
+			vuln_reason VARCHAR NULL DEFAULT ''::varchar,
 			last_checked INT8 NULL,
-			UNIQUE INDEX unique_userextension (browser_id ASC, org_id ASC, user_id ASC, ext_id ASC)
+			CONSTRAINT unique_userextension UNIQUE(browser_id , org_id , user_id , ext_id )
 		)`,
 	`CREATE TABLE IF NOT EXISTS groups (
 			id varchar PRIMARY KEY NOT NULL,
@@ -140,7 +140,7 @@ var PrimaryMigration = []string{
 			status BOOL,
 			created_at BIGINT,
 			updated_at BIGINT,
-			CONSTRAINT service_group_maps UNIQUE(org_id,group_id,service_id)
+			CONSTRAINT unique_service_group_maps UNIQUE(org_id,group_id,service_id)
 		);`,
 	`CREATE TABLE IF NOT EXISTS policies (
 			id varchar PRIMARY KEY NOT NULL,
@@ -261,7 +261,7 @@ var PrimaryMigration = []string{
 			logout_time BIGINT,
 			org_id varchar ,
 			server_ip varchar,
-			session_duration int,
+			session_duration BIGINT,
 			status boolean,
 			user_agent varchar,
 			user_id varchar,
