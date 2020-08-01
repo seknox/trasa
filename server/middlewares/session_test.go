@@ -4,11 +4,11 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/seknox/trasa/core/auth"
-	"github.com/seknox/trasa/core/orgs"
-	"github.com/seknox/trasa/core/redis"
-	"github.com/seknox/trasa/core/users"
-	"github.com/seknox/trasa/models"
+	"github.com/seknox/trasa/server/api/auth"
+	"github.com/seknox/trasa/server/api/orgs"
+	"github.com/seknox/trasa/server/api/redis"
+	"github.com/seknox/trasa/server/api/users"
+	"github.com/seknox/trasa/server/models"
 )
 
 func Test_getUserContext(t *testing.T) {

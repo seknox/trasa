@@ -3,5 +3,10 @@ trasa-server
 
 trasa
 
+server/server
+
+.vscode/
+.idea/
+
 # sql testing file
 app.trasa.io.session.sql

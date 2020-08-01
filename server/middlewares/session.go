@@ -7,12 +7,12 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/pkg/errors"
-	"github.com/seknox/trasa/core/orgs"
-	"github.com/seknox/trasa/core/redis"
-	"github.com/seknox/trasa/core/users"
-	"github.com/seknox/trasa/global"
-	"github.com/seknox/trasa/models"
-	"github.com/seknox/trasa/utils"
+	"github.com/seknox/trasa/server/api/orgs"
+	"github.com/seknox/trasa/server/api/redis"
+	"github.com/seknox/trasa/server/api/users"
+	"github.com/seknox/trasa/server/global"
+	"github.com/seknox/trasa/server/models"
+	"github.com/seknox/trasa/server/utils"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/nacl/secretbox"
 )

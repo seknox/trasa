@@ -1,4 +1,4 @@
-package server
+package main
 
 import (
 	"context"
@@ -6,9 +6,9 @@ import (
 	"net"
 	"strings"
 
-	"github.com/seknox/trasa/core/auth/serviceauth"
-	"github.com/seknox/trasa/core/services"
-	"github.com/seknox/trasa/global"
+	"github.com/seknox/trasa/server/api/auth/serviceauth"
+	"github.com/seknox/trasa/server/api/services"
+	"github.com/seknox/trasa/server/global"
 	"github.com/sirupsen/logrus"
 	"layeh.com/radius"
 )

@@ -1,0 +1,473 @@
+package sshproxy
+
+import (
+	"database/sql"
+	"encoding/hex"
+	"runtime/debug"
+	"strings"
+
+	"github.com/pkg/errors"
+	"github.com/seknox/trasa/server/api/accessmap"
+
+	"github.com/gorilla/websocket"
+	"github.com/seknox/ssh"
+	"github.com/seknox/trasa/server/api/accesscontrol"
+	"github.com/seknox/trasa/server/api/auth/tfa"
+	"github.com/seknox/trasa/server/api/logs"
+	"github.com/seknox/trasa/server/api/services"
+	"github.com/seknox/trasa/server/consts"
+	"github.com/seknox/trasa/server/models"
+	logrus "github.com/sirupsen/logrus"
+	"github.com/trustelem/zxcvbn"
+)
+
+func JoinSSHSession(params models.ConnectionParams, uc models.UserContext, conn *websocket.Conn) {
+
+	//Do not defer conn.Close() because it will immediately close the websocket connection and the live session will not work.
+	//All the guest joined connections are closed in WrappedTunnel.Close() method
+	conn.WriteMessage(1, []byte("Connecting..."))
+
+	checkAndInitParams(&uc, &params)
+	params.IsSharedSession = true
+	params.ServiceType = "ssh"
+
+	service, err := services.Store.GetFromHostname(params.Hostname, "ssh", "", params.OrgID)
+	if err != nil {
+		logrus.Error(err)
+		conn.WriteMessage(1, []byte("Service not created"))
+		return
+	}
+
+	_, reason, ok := tfa.HandleTfaAndGetDeviceID(nil, params.TfaMethod, params.TotpCode, uc.User.ID, params.UserIP, service.Name, uc.Org.Timezone, uc.Org.OrgName, uc.Org.ID)
+	if !ok {
+		conn.WriteMessage(1, []byte(reason))
+		conn.Close()
+		return
+	}
+
+	guest := GuestClient{
+		UserID: uc.User.ID,
+		Email:  uc.User.Email,
+		Conn:   conn,
+	}
+
+	sessionID := params.ConnID
+
+	newViewer, err := SSHStore.GetGuestChannel(sessionID)
+	if err != nil || newViewer == nil {
+		logrus.Error(err)
+		conn.WriteMessage(1, []byte("No such connection"))
+		//	conn.Write([]byte("No such connection"))
+		conn.Close()
+		return
+	}
+	conn.WriteMessage(1, []byte(`Connected to SSH session.`))
+	newViewer <- guest
+
+	//
+	//if err := conn.WriteMessage(1, <-tshp.Sshchan); err != nil {
+	//	logrus.Debug(err)
+	//	return
+	//}
+
+	//}
+
+}
+
+// ConnectNewSSH handles new ssh connection from dashboard.
+func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *websocket.Conn) {
+
+	defer conn.Close()
+	conn.WriteMessage(1, []byte("Connecting..."))
+
+	params.AccessDeviceID = uc.DeviceID
+	params.BrowserID = uc.BrowserID
+
+	checkAndInitParams(&uc, &params)
+	authlog := logs.NewEmptyLog("ssh")
+	authlog.UpdateUser(&models.UserWithPass{User: *uc.User})
+	authlog.Privilege = params.Privilege
+	authlog.ServerIP = params.Hostname
+	params.SessionID = authlog.SessionID
+
+	authlog.AccessDeviceID = uc.DeviceID
+	authlog.BrowserID = uc.BrowserID
+
+	authlog.UpdateIP(params.UserIP)
+	params.ServiceType = "ssh"
+
+	defer logSession(&authlog)
+
+	service, err := services.Store.GetFromHostname(params.Hostname, "ssh", "", uc.Org.ID)
+	if errors.Is(err, sql.ErrNoRows) {
+		service, err = accessmap.CreateDynamicService(params.Hostname, "ssh", params.UserID, params.TrasaID, params.Privilege, params.OrgID)
+		if err != nil {
+			logrus.Errorf("dynamic access: %v", err)
+			authlog.FailedReason = consts.REASON_DYNAMIC_SERVICE_FAILED
+			conn.WriteMessage(1, []byte("Service not created"))
+			return
+		}
+
+	} else if err != nil {
+		logrus.Errorf("get service from hostname: %v", err)
+		authlog.FailedReason = consts.REASON_INVALID_SERVICE_CREDS
+		conn.WriteMessage(1, []byte("Service does  not created"))
+		return
+	}
+
+	authlog.UpdateService(service)
+	params.ServiceID = service.ID
+	params.ServiceName = service.Name
+
+	creds, err := services.GetUpstreamCreds(params.Privilege, service.ID, "ssh", uc.Org.ID)
+	if err != nil {
+		logrus.Error(err)
+		conn.WriteMessage(1, []byte("\x1bcSomething is wrong\r"))
+		return
+	}
+
+	publicKey, _, _, _, err := ssh.ParseAuthorizedKey([]byte(creds.ClientCert))
+	if err != nil && creds.ClientCert != "" {
+		logrus.Error(err)
+	}
+
+	privateKey, privateKeyParseErr := ssh.ParsePrivateKey([]byte(creds.ClientKey))
+	if privateKeyParseErr != nil && creds.ClientKey != "" {
+		//logrus.Debug(creds.ClientKey)
+		logrus.Error(privateKeyParseErr)
+	}
+
+	var signer ssh.Signer
+	cert, ok := publicKey.(*ssh.Certificate)
+	if !ok {
+		logrus.Debug("Invalid user certificate")
+		if privateKeyParseErr == nil {
+			signer = privateKey
+		}
+
+	} else {
+		signer, err = ssh.NewCertSigner(cert, privateKey)
+		if err != nil {
+			logrus.Debug(err)
+		}
+	}
+
+	//caKey,err:=ssh.ParsePublicKey([]byte(resp.CaCert))
+
+	passwordStreanght := zxcvbn.PasswordStrength(params.Password, nil)
+
+	if creds.EnforceStrongPass && creds.ClientKey == "" {
+		if passwordStreanght.Score < creds.ZxcvbnScore || len(params.Password) < creds.MinimumChar {
+			conn.WriteMessage(1, []byte("\x1bcPassword policy failed, weak password\r"))
+			logrus.Debug("Weak Password")
+			err := logs.Store.LogLogin(&authlog, consts.REASON_PASSWORD_POLICY_FAILED, false)
+			if err != nil {
+				logrus.Error(err)
+			}
+			return
+		}
+	}
+	clientConfig := ssh.ClientConfig{
+		User: params.Privilege,
+		//HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+		BannerCallback: func(message string) error {
+			//forward banner to client through websocket
+			return conn.WriteMessage(1, []byte(message))
+		},
+	}
+
+	if signer != nil {
+		clientConfig.Auth = append(clientConfig.Auth, ssh.PublicKeys(signer))
+	}
+
+	var hostConfirmFunc = func(message string) bool {
+		err := conn.WriteMessage(1, []byte(message+" Press \"y\" to ignore and save it.\n"))
+		if err != nil {
+			logrus.Error(err)
+			return false
+		}
+
+		_, ans, err := conn.ReadMessage()
+		if err != nil {
+			logrus.Error(err)
+			return false
+		}
+		if strings.ToLower(string(ans)) == "y" {
+			conn.WriteMessage(1, []byte("Saving new host key..."))
+			return true
+		}
+		return false
+
+	}
+
+	clientConfig.HostKeyCallback = HandleHostKeyCallback(creds, service.ID, uc.Org.ID, hostConfirmFunc)
+
+	if params.Password == "" || creds.Password != "" {
+		conn.WriteMessage(1, []byte("Using password from vault."))
+		clientConfig.Auth = append(clientConfig.Auth, ssh.Password(creds.Password))
+	} else {
+		clientConfig.Auth = append(clientConfig.Auth, ssh.Password(params.Password))
+	}
+
+	if !strings.Contains(params.Hostname, ":") {
+		params.Hostname = params.Hostname + ":22"
+	}
+
+	conn.WriteMessage(1, []byte("Authenticating..."))
+
+	sshClient, err := ssh.Dial("tcp", params.Hostname, &clientConfig)
+	if err != nil {
+		//logrus.Debug(err)
+		if strings.Contains(err.Error(), "ssh: unable to authenticate") {
+			logrus.Debug(err)
+			conn.WriteMessage(1, []byte("Invalid credentials."))
+			err = logs.Store.LogLogin(&authlog, consts.REASON_INVALID_USER_CREDS, false)
+
+		} else if strings.Contains(err.Error(), "ssh: handshake failed: Could not verify upstream host key") {
+			logrus.Debug(err)
+			conn.WriteMessage(1, []byte("Invalid host key."))
+			err = logs.Store.LogLogin(&authlog, consts.REASON_INVALID_HOST_KEY, false)
+		} else if strings.Contains(err.Error(), ErrVerifyHost.Error()) {
+			logrus.Debug(err)
+			conn.WriteMessage(1, []byte("Invalid host key."))
+			err = logs.Store.LogLogin(&authlog, consts.REASON_INVALID_HOST_KEY, false)
+		} else {
+			logrus.Error(err)
+			conn.WriteMessage(1, []byte(err.Error()))
+			err = logs.Store.LogLogin(&authlog, consts.REASON_UNKNOWN, false)
+		}
+		//TODO add host not reachable message
+		if err != nil {
+			logrus.Error(err)
+		}
+
+		return
+	}
+
+	defer sshClient.Close()
+
+	conn.WriteMessage(1, []byte("Checking policy..."))
+
+	policy, reason, err := SSHStore.checkPolicy(&params)
+	if err != nil {
+		logrus.Debug(err)
+		conn.WriteMessage(1, []byte("Policy check failed. "+reason))
+		logs.Store.LogLogin(&authlog, reason, false)
+		return
+	}
+
+	if policy.TfaRequired {
+		conn.WriteMessage(1, []byte("Authenticating 2nd Factor"))
+		deviceID, reason, ok := tfa.HandleTfaAndGetDeviceID(nil,
+			params.TfaMethod,
+			params.TotpCode,
+			uc.User.ID,
+			params.UserIP,
+			service.Name,
+			uc.Org.Timezone,
+			uc.Org.OrgName,
+			uc.Org.ID)
+		if !ok {
+			conn.WriteMessage(1, []byte("\x1bc2FA failed  "+reason))
+			err = logs.Store.LogLogin(&authlog, reason, false)
+			if err != nil {
+				logrus.Error(err)
+			}
+			return
+		}
+		authlog.TfaDeviceID = deviceID
+	}
+
+	//TODO device policy
+
+	logrus.Trace(params.AccessDeviceID)
+	reason, ok, err = accesscontrol.CheckDevicePolicy(policy.DevicePolicy, params.AccessDeviceID, authlog.TfaDeviceID, uc.Org.ID)
+	if err != nil {
+		logrus.Error(err)
+	}
+
+	if !ok {
+		conn.WriteMessage(1, []byte("\x1bc Device policy failed\r "+reason))
+		err = logs.Store.LogLogin(&authlog, reason, false)
+		if err != nil {
+			logrus.Error(err)
+		}
+		return
+	}
+
+	authlog.SessionRecord = policy.RecordSession
+
+	session, err := sshClient.NewSession()
+	if err != nil {
+		logrus.Error(err)
+		return
+	}
+	defer session.Close()
+
+	stdInPipe, err := session.StdinPipe()
+	if err != nil {
+		logrus.Error(err)
+		return
+	}
+	defer stdInPipe.Close()
+
+	//session.Stdout=conn.UnderlyingConn()
+
+	stdOutPipe, err := session.StdoutPipe()
+	if err != nil {
+		logrus.Error(err)
+		return
+	}
+
+	guestChan := SSHStore.CreateGuestChannel(hex.EncodeToString(sshClient.SessionID()))
+	defer SSHStore.deleteGuestChannel(hex.EncodeToString(sshClient.SessionID()))
+
+	logs.Store.AddNewActiveSession(&authlog, hex.EncodeToString(sshClient.SessionID()), "ssh")
+	defer logs.Store.RemoveActiveSession(hex.EncodeToString(sshClient.SessionID()))
+	//logrus.Trace("SESSION ID is", hex.EncodeToString(sshClient.SessionID()))
+
+	//TODO use generic function to pipe tunnels
+	wrappedChannel, err := NewWrappedTunnel(authlog.SessionID, policy.RecordSession, stdOutPipe, stdInPipe, guestChan)
+	if err != nil {
+		logrus.Error(err)
+		return
+	}
+
+	defer wrappedChannel.Close()
+
+	//
+	//modes := ssh.TerminalModes{
+	//	ssh.ECHO:          1,
+	//	ssh.ECHOCTL:       0,
+	//	ssh.TTY_OP_ISPEED: 14400,
+	//	ssh.TTY_OP_OSPEED: 14400,
+	//}
+
+	// Request pseudo terminal
+	err = session.RequestPty("xterm", int(params.OptHeight), int(params.OptWidth), nil)
+	if err != nil {
+		//if err := session.RequestPty("xterm-256color", 80, 40, modes); err != nil {
+		//if err := session.RequestPty("vt100", 80, 40, modes); err != nil {
+		//if err := session.RequestPty("vt220", 80, 40, modes); err != nil {
+		logrus.Errorf("request for pseudo terminal failed: %s", err)
+		return
+	}
+
+	// Start remote shell
+	if err := session.Shell(); err != nil {
+		logrus.Errorf("failed to start shell: %s", err)
+		return
+	}
+
+	//session.Wait()
+
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				logrus.Error("Recovered in websocketServer.go", r, string(debug.Stack()))
+			}
+		}()
+		for {
+
+			buff := make([]byte, 100)
+			n, err := wrappedChannel.Read(buff)
+			if err != nil {
+				logrus.Debug(err)
+				//session.Close()
+				//wrappedChannel.Close()
+				//	conn.Close()
+				return
+			}
+			if n > 0 {
+				// logrus.Debugln(string(buff))
+				err := conn.WriteMessage(1, buff)
+				if err != nil {
+					logrus.Debug(err)
+					//	session.Close()
+					//	wrappedChannel.Close()
+					//	conn.Close()
+					return
+				}
+			}
+
+		}
+
+	}()
+
+	func() {
+		for {
+			//	logrus.Debugln("-__-")
+			_, msg, err := conn.ReadMessage()
+			if err != nil {
+				logrus.Debug(err)
+				//wrappedChannel.Close()
+				//conn.Close()
+				//	stdInPipe.Close()
+				return
+			}
+
+			n, err := stdInPipe.Write(msg)
+			if err != nil {
+				logrus.Debug(err, n)
+				//	wrappedChannel.Close()
+				//conn.Close()
+				return
+			}
+
+			//if err := conn.WriteMessage(messageType, []byte("ok")); err != nil {
+			//	logrus.Error(err)
+			//	return
+			//}
+		}
+	}()
+
+	//// Accepting commands
+	//for {
+	//	//reader := bufio.NewReader(os.Stdin)
+	//	//str, _ := reader.ReadString('\n')
+	//
+	//
+	//	fmt.Fprint(in, str)
+	//}
+	//
+
+}
+
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+}
+
+func checkAndInitParams(uc *models.UserContext, params *models.ConnectionParams) {
+	//TODO
+	params.OrgID = uc.Org.ID
+	params.UserID = uc.User.ID
+	params.TrasaID = uc.User.Email
+	params.Timezone = uc.Org.Timezone
+	params.ServiceType = "rdp"
+	//params.UserAgent = r.UserAgent()
+
+	if params.RdpProtocol == "" {
+		params.RdpProtocol = "nla"
+	}
+
+}
+
+func logSession(authlog *logs.AuthLog) {
+
+	err := logs.Store.LogLogin(authlog, "", true)
+	if err != nil {
+		logrus.Errorf("failed to log.  trying again: %v", err)
+		logs.Store.LogLogin(authlog, "", true)
+	}
+
+	if !authlog.SessionRecord {
+		return
+	}
+
+	err = SSHStore.uploadSessionLog(authlog)
+	if err != nil {
+		logrus.Error(err)
+	}
+
+}
