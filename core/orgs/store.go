@@ -1,6 +1,8 @@
 package orgs
 
 import (
+	"database/sql"
+	"github.com/pkg/errors"
 	"github.com/seknox/trasa/models"
 	"github.com/sirupsen/logrus"
 )
@@ -14,6 +16,23 @@ func (s OrgStore) RemoveAllManagedAccounts(orgID string) error {
 	}
 
 	return nil
+}
+
+func (s OrgStore) CheckOrgExists() (orgID string, err error) {
+	err = s.DB.QueryRow(`select id from org`).Scan(&orgID)
+	if errors.Is(err, sql.ErrNoRows) {
+		return "", nil
+	}
+	return orgID, err
+
+}
+
+func (s OrgStore) CreateOrg(org *models.Org) error {
+
+	_, err := s.DB.Exec(`INSERT into org (id, org_name, domain, primary_contact,timezone, created_at,phone_number,license)
+						 values($1, $2, $3, $4, $5,$6,$7,$8);`, org.ID, org.OrgName, org.Domain, org.PrimaryContact, org.Timezone, org.CreatedAt, org.PhoneNumber, org.License)
+
+	return err
 }
 
 func (s OrgStore) Get(orgID string) (models.Org, error) {

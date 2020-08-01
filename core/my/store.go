@@ -17,13 +17,13 @@ func (s MyStore) GetUserAppsDetailsWithPolicyFromUserID(userID, orgID string) ([
 	rows, err := s.DB.Query(`SELECT DISTINCT services.name, services.id,gappusersv1.privilege, user_id,
                 policy_id,
                 policy_name,
-                device_policy::bytes ,
+                device_policy::bytea ,
                 record_session,
                 file_transfer,
                 COALESCE(ip_source,''),
                 risk_threshold,
                 gappusersv1.tfa_enabled,
-                day_time::bytes,
+                day_time::bytea,
                 expiry,
                 COALESCE(allowed_countries,''),
                 services.created_at,adhoc,services.type,hostname,
@@ -44,7 +44,7 @@ FROM (
                 day_time::varchar,
                 expiry,
                 allowed_countries,
-                privilege,tfa_enabled from
+                privilege from
              user_accessmaps
                  JOIN policies on user_accessmaps.policy_id=policies.id
          where user_id=$1
@@ -62,7 +62,7 @@ FROM (
                       day_time::varchar,
                       expiry,
                       allowed_countries,
-                      privilege,tfa_enabled FROM
+                      privilege FROM
              (
               usergroup_accessmaps ag_ug
                  join policies p on ag_ug.policy_id=p.id
@@ -83,7 +83,7 @@ FROM (
                          day_time::varchar,
                          expiry,
                          allowed_countries,
-                         ag_ug.privilege,tfa_enabled FROM
+                         ag_ug.privilege FROM
              (
               usergroup_accessmaps ag_ug
                  join policies p on ag_ug.policy_id=p.id

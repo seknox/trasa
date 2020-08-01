@@ -229,8 +229,8 @@ func GetMyServicesDetail(w http.ResponseWriter, r *http.Request) {
 	userApps, err := Store.GetUserAppsDetailsWithPolicyFromUserID(userContext.User.ID, userContext.Org.ID)
 	if err != nil {
 		if !errors.Is(err, sql.ErrNoRows) {
-			logrus.Debug(err)
-			utils.TrasaResponse(w, http.StatusOK, "success", "no services assigned", "GetMyServicesDetail", response)
+			logrus.Error(err)
+			utils.TrasaResponse(w, http.StatusOK, "failed", "no services assigned", "GetMyServicesDetail", response)
 			return
 		}
 		utils.TrasaResponse(w, http.StatusOK, "failed", "could not get apps", "GetMyServicesDetail", response)

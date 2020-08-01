@@ -73,7 +73,7 @@ func UpdatePolicy(w http.ResponseWriter, r *http.Request) {
 
 // Get all policies of a organization
 func GetPolicies(w http.ResponseWriter, r *http.Request) {
-	logrus.Trace("GetPoliciesV2 request received")
+	logrus.Trace("GetPolicies request received")
 	uc := r.Context().Value("user").(models.UserContext)
 
 	policies, err := Store.GetAllPolicies(uc.User.OrgID)

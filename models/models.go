@@ -82,11 +82,6 @@ type ScimContext struct {
 	TimeZone string `json:"timeZone"`
 }
 
-/*
-* Models presented in this source represents database models. Other stuctures
-* which are not related to direct database schema should be stored elsewhere.
- */
-
 type InitSignup struct {
 	OrgID          string `json:"orgID"`
 	UserID         string `json:"userID"`

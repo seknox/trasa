@@ -11,7 +11,6 @@ import (
 
 	"github.com/pkg/errors"
 	uuid "github.com/satori/go.uuid"
-	"github.com/seknox/trasa/core/notif"
 	"github.com/seknox/trasa/core/redis"
 	"github.com/seknox/trasa/global"
 	"github.com/seknox/trasa/models"
@@ -63,7 +62,7 @@ func DeviceDetailPipe(w http.ResponseWriter, r *http.Request) {
 
 		jsonifiedResponse, err := json.Marshal(response)
 		if err != nil {
-			notif.SendErrorReport(err, "Cannot marshall to json")
+			logrus.Error(err, "Cannot marshall to json")
 		}
 
 		//TODO use trasa response??
@@ -134,7 +133,7 @@ func EnrolDeviceFunc(userDetail models.User) EnrolDeviceStruct {
 func GiveMeDeviceDetail(orguser, deviceID, totpSec string) {
 	defer func() {
 		if r := recover(); r != nil {
-			notif.SendErrorReport(errors.New(fmt.Sprintf(`%v:%s`, r, string(debug.Stack()))), "Panic in GiveMeDeviceDetail")
+			logrus.Error(errors.New(fmt.Sprintf(`%v:%s`, r, string(debug.Stack()))), "Panic in GiveMeDeviceDetail")
 		}
 
 	}()

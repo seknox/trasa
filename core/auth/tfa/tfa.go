@@ -71,13 +71,13 @@ func SendU2F(userID, orgID, appName, ip string) (bool, string) {
 	timezone := "UTC"
 	org, err := orgs.Store.Get(orgID)
 	if err != nil || org.Timezone == "" {
-		notif.SendErrorReport(err, "Timezone not defined")
+		logrus.Error(err, "Timezone not defined")
 	} else {
 		timezone = org.Timezone
 	}
 	nep, err := time.LoadLocation(timezone)
 	if err != nil {
-		notif.SendErrorReport(err, "could not load location")
+		logrus.Error(err, "could not load location")
 	}
 	current := time.Now().In(nep)
 	format := current.Format("Mon Jan _2 15:04:05 2006")
@@ -269,7 +269,7 @@ func HandleTfaAndGetDeviceID(signResponse *u2f.SignResponse, tfaMethod, totpCode
 				return "", consts.REASON_DEVICE_NOT_ENROLLED, false
 			} else {
 				logrus.Error(err)
-				notif.SendErrorReport(err, "")
+				logrus.Error(err, "")
 				return "", consts.REASON_UNKNOWN, false
 			}
 		} else if !totpCheck {
@@ -296,7 +296,7 @@ func HandleTfaAndGetDeviceID(signResponse *u2f.SignResponse, tfaMethod, totpCode
 	}
 	nep, err := time.LoadLocation(timezone)
 	if err != nil {
-		notif.SendErrorReport(err, "")
+		logrus.Error(err, "")
 	}
 	current := time.Now().In(nep)
 	format := current.Format("Mon Jan _2 15:04:05 2006")

@@ -4,6 +4,7 @@ import (
 	"github.com/seknox/trasa/models"
 )
 
+//TODO handle error
 func (s AccessMapStore) CheckIfPrivilegeExist(privilege, orgID, serviceID string) bool {
 	var check bool = true
 	s.DB.QueryRow(`

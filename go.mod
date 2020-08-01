@@ -5,9 +5,11 @@ go 1.14
 require (
 	firebase.google.com/go v3.13.0+incompatible
 	github.com/cloudflare/cfssl v1.4.1
-	github.com/denisbrodbeck/machineid v1.0.1
 	github.com/digitalocean/godo v1.42.0
 	github.com/dlclark/regexp2 v1.2.0 // indirect
+	github.com/facebookgo/ensure v0.0.0-20200202191622-63f1cf65ac4c // indirect
+	github.com/facebookgo/stack v0.0.0-20160209184415-751773369052 // indirect
+	github.com/facebookgo/subset v0.0.0-20200203212716-c811ad88dec4 // indirect
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-chi/hostrouter v0.0.0-20180220162504-7bff2694dfd9
 	github.com/go-ini/ini v1.57.0 // indirect

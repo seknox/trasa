@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"github.com/seknox/trasa/initdb"
 	"net/http"
 	"strings"
 
@@ -69,6 +70,8 @@ func StartServr() {
 	stats.InitStore(state)
 	users.InitStore(state)
 	vault.InitStore(state)
+
+	initdb.InitDB()
 
 	logrus.Trace("Starting API Server...")
 	go sshproxy.ListenSSH()
