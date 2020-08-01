@@ -1,0 +1,45 @@
+{
+  "name": "trasa-io",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "docusaurus start",
+    "build": "docusaurus build",
+    "swizzle": "docusaurus swizzle",
+    "deploy": "docusaurus deploy"
+  },
+  "dependencies": {
+    "@docusaurus/core": "^2.0.0-alpha.58",
+    "@docusaurus/preset-classic": "^2.0.0-alpha.58",
+    "@docusaurus/plugin-google-analytics": "^2.0.0-alpha.37",
+    "@docusaurus/plugin-google-gtag": "^2.0.0-alpha.37",
+    "@material-ui/core": "^4.11.0",
+    "@material-ui/icons": "^4.9.1",
+    "clsx": "^1.1.1",
+    "react": "^16.8.4",
+    "react-dom": "^16.8.4"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.4.0",
+    "eslint-config-airbnb": "^18.2.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-jsx-a11y": "^6.3.1",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-react": "^7.20.3",
+    "prettier": "^2.0.5"
+  }
+}

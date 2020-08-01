@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function UserAccessStats(props: any) {
+export default function Device(props: any) {
   const [deviceDeleteState, setDeviceDeleteState] = useState(false);
   // const [deviceInfoDialogueOpen, setdeviceInfoDialogueOpen] = useState(false);
   const [deleteDevice, setDeleteDevice] = useState({
@@ -145,6 +145,7 @@ export default function UserAccessStats(props: any) {
           deleteFunc={removeUserDevice}
           deleteDevice={setDeleteDeviceFunc}
           showDeviceDetail={showDeviceDetail}
+          renderFor={props.renderFor}
         />
       </Grid>
 
