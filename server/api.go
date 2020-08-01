@@ -1,34 +1,34 @@
-package server
+package main
 
 import (
 	"fmt"
 	"net/http"
 
-	"github.com/seknox/trasa/core/auth/serviceauth"
+	"github.com/seknox/trasa/server/api/auth/serviceauth"
 
-	"github.com/seknox/trasa/accessproxy/rdpproxy"
-	"github.com/seknox/trasa/accessproxy/sshproxy"
+	"github.com/seknox/trasa/server/accessproxy/rdpproxy"
+	"github.com/seknox/trasa/server/accessproxy/sshproxy"
 
-	"github.com/seknox/trasa/core/crypt"
+	"github.com/seknox/trasa/server/api/crypt"
 
 	"github.com/seknox/trasa/server/middlewares"
 
 	"github.com/go-chi/chi"
-	"github.com/seknox/trasa/core/accessmap"
-	"github.com/seknox/trasa/core/auth"
-	"github.com/seknox/trasa/core/auth/tfa"
-	"github.com/seknox/trasa/core/devices"
-	"github.com/seknox/trasa/core/groups"
-	"github.com/seknox/trasa/core/idps"
-	"github.com/seknox/trasa/core/logs"
-	"github.com/seknox/trasa/core/my"
-	"github.com/seknox/trasa/core/notif"
-	"github.com/seknox/trasa/core/policies"
-	"github.com/seknox/trasa/core/services"
-	"github.com/seknox/trasa/core/stats"
-	"github.com/seknox/trasa/core/system"
-	"github.com/seknox/trasa/core/users"
-	"github.com/seknox/trasa/core/users/passwordpolicy"
+	"github.com/seknox/trasa/server/api/accessmap"
+	"github.com/seknox/trasa/server/api/auth"
+	"github.com/seknox/trasa/server/api/auth/tfa"
+	"github.com/seknox/trasa/server/api/devices"
+	"github.com/seknox/trasa/server/api/groups"
+	"github.com/seknox/trasa/server/api/idps"
+	"github.com/seknox/trasa/server/api/logs"
+	"github.com/seknox/trasa/server/api/my"
+	"github.com/seknox/trasa/server/api/notif"
+	"github.com/seknox/trasa/server/api/policies"
+	"github.com/seknox/trasa/server/api/services"
+	"github.com/seknox/trasa/server/api/stats"
+	"github.com/seknox/trasa/server/api/system"
+	"github.com/seknox/trasa/server/api/users"
+	"github.com/seknox/trasa/server/api/users/passwordpolicy"
 	"github.com/sirupsen/logrus"
 )
 

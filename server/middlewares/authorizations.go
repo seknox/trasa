@@ -7,12 +7,12 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/seknox/trasa/global"
-	"github.com/seknox/trasa/models"
+	"github.com/seknox/trasa/server/global"
+	"github.com/seknox/trasa/server/models"
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/seknox/trasa/utils"
+	"github.com/seknox/trasa/server/utils"
 )
 
 type roleSwitch struct {

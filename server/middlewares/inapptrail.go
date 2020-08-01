@@ -3,8 +3,8 @@ package middlewares
 import (
 	"net/http"
 
-	"github.com/seknox/trasa/core/logs"
-	"github.com/seknox/trasa/models"
+	"github.com/seknox/trasa/server/api/logs"
+	"github.com/seknox/trasa/server/models"
 )
 
 //This middleware should be placed on outermost/topmost place
