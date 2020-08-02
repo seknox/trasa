@@ -63,9 +63,16 @@ func GetLoginEventsByPage(w http.ResponseWriter, r *http.Request) {
 	dateFromTime, err3 := time.Parse("2006-01-02", chi.URLParam(r, "dateFrom"))
 	dateToTime, err4 := time.Parse("2006-01-02", chi.URLParam(r, "dateTo"))
 
-	if err1 != nil || err2 != nil || err3 != nil || err4 != nil {
-		utils.TrasaResponse(w, http.StatusBadRequest, "failed", "invalid size or page", "get org logs by page", nil)
+	if err1 != nil || err2 != nil {
+		logrus.Debug(err3, err4)
+		utils.TrasaResponse(w, 200, "failed", "invalid size or page", "get org logs by page", nil)
 		return
+	}
+
+	//If date is blank or invalid, set default range (full)
+	if err3 != nil || err4 != nil {
+		dateFromTime = time.Unix(0, 0)
+		dateToTime = time.Now()
 	}
 
 	dateFrom := dateFromTime.In(loc).UnixNano()

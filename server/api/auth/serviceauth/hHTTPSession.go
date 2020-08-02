@@ -53,36 +53,25 @@ type http2faCache struct {
 
 // var http2faCacheStore = make(map[string]bool)
 
-// sessionStoreWithExtokenDomain is like http2faCacheStore but holds auth cachce for entire user session and is initiated after successful authorization.
-//var sessionStoreWithExtokenDomain = make(map[string]bool)
-
 // AuthHTTPAccessProxy initiates http access proxy session. Intent should be 'AUTH_HTTP_ACCESS_PROXY'
 func AuthHTTPAccessProxy(w http.ResponseWriter, r *http.Request) {
 	logger.Trace("AuthHTTPAccessProxy request")
 	var req newSession
 
+	authlog := logs.NewLog(r, "http")
+
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logger.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "invalid request", "AuthHTTPAccessProxy", nil)
+		logs.Store.LogLogin(&authlog, consts.REASON_MALFORMED_REQUEST_RECEIVED, false)
 		return
 	}
-
-	authlog := logs.NewLog(r, "http")
-
-	//initReqID := fmt.Sprintf("%s:%s", extToken, hostName)
-
-	// cache := http2faCacheStore[initReqID]
-	// if cache == true {
-	// 	return fmt.Errorf("2fa already in progress")
-	// } else {
-	// 	logger.Trace(fmt.Sprintf("Setting inithttp cache %s", initReqID))
-	// 	http2faCacheStore[initReqID] = true
-	// }
 
 	orgID, deviceID, userID, err := devices.Store.GetDeviceAndOrgIDFromExtID(req.ExtToken)
 	if err != nil {
 		logger.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "invalid extension id", "AuthHTTPAccessProxy", nil)
+		logs.Store.LogLogin(&authlog, consts.REASON_DEVICE_NOT_ENROLLED, false)
 		return
 	}
 
@@ -92,6 +81,7 @@ func AuthHTTPAccessProxy(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logger.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "could not fetch service detail", "AuthHTTPAccessProxy", nil)
+		logs.Store.LogLogin(&authlog, consts.REASON_INVALID_SERVICE_HOSTNAME, false)
 		return
 	}
 
@@ -101,6 +91,7 @@ func AuthHTTPAccessProxy(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logger.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "could not fetch user details", "AuthHTTPAccessProxy", nil)
+		logs.Store.LogLogin(&authlog, consts.REASON_USER_NOT_FOUND, false)
 		return
 	}
 
@@ -110,6 +101,7 @@ func AuthHTTPAccessProxy(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logger.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "could not fetch user details", "AuthHTTPAccessProxy", nil)
+		logs.Store.LogLogin(&authlog, consts.REASON_USER_NOT_FOUND, false)
 		return
 	}
 
@@ -267,7 +259,6 @@ func DestroyHttpSession(w http.ResponseWriter, r *http.Request) {
 
 	sessionID := r.Form.Get("sid")
 
-	logger.Trace("reveived session destroy for  ", sessionID)
 	LogoutSequence(sessionID)
 	logger.Trace("session destroyed ", sessionID)
 	utils.TrasaResponse(w, http.StatusOK, "success", "session destroyed", "Destroy session", nil)
@@ -310,8 +301,8 @@ func sessionWriter(sessionID, shots string) {
 	for _, v := range dataURIWithCounter {
 		logStruct, ok := sessionStore[sessionID]
 		if !ok {
-			//TODO @sshah return here??
-			logger.Error("session store not found for sessionID: ", sessionID)
+			logger.Debug("session store not found for sessionID: ", sessionID)
+			return
 		}
 
 		//logger.Tracef("shot length: %v", len(v))
@@ -396,21 +387,9 @@ func LogoutSequence(sessionID string) {
 		return
 	}
 
-	directory := fmt.Sprintf("/var/trasa/thg/logs/%s", sessionID)
-
-	//	directory := fmt.Sprintf("../trasahttpgateway/logs/%s", sessionID)
-	videoFileName := fmt.Sprintf("%s.mp4", sessionID)
-	rawFileName := fmt.Sprintf("%s.http-raw", sessionID)
-
-	_, err := os.Stat(directory)
-	if os.IsNotExist(err) {
-		logger.Trace(err)
-		return
-	}
-
 	// 1) log to elasticsearch
 
-	err = logs.Store.LogLogin(&logStruct, "", true) //dbstore.Connect.LogSession(logStruct)
+	err := logs.Store.LogLogin(&logStruct, "", true) //dbstore.Connect.LogSession(logStruct)
 	if err != nil {
 		logger.Error(err)
 	}
@@ -429,12 +408,26 @@ func LogoutSequence(sessionID string) {
 
 	// 3) create video file from image file
 
-	deleteDirectory := true
-	SessionRecord := logStruct.SessionRecord //strings.Split(logStruct.AppID, ":")
+	deleteDirectory := false
+	directory := fmt.Sprintf("/var/trasa/thg/logs/%s", sessionID)
+
+	SessionRecord := logStruct.SessionRecord
 	if SessionRecord == true {
+
+		//	directory := fmt.Sprintf("../trasahttpgateway/logs/%s", sessionID)
+		videoFileName := fmt.Sprintf("%s.mp4", sessionID)
+		rawFileName := fmt.Sprintf("%s.http-raw", sessionID)
+
+		_, err := os.Stat(directory)
+
+		// if directory does not exist, it probably means session record was disabled.
+		if os.IsNotExist(err) {
+			logger.Trace(err)
+			return
+		}
+
 		err = createVideo(directory, sessionID)
 		if err != nil {
-			deleteDirectory = false
 			logger.Error(err)
 		}
 		videoSource := fmt.Sprintf("%s/%s", directory, videoFileName)
@@ -453,15 +446,17 @@ func LogoutSequence(sessionID string) {
 			logger.Error(err)
 		}
 
+		deleteDirectory = true
+
 	}
 
 	// 6) delete directory
 	if deleteDirectory == true {
 
-		// err = os.RemoveAll(directory)
-		// if err != nil {
-		// 	logger.Error(err)
-		// }
+		err = os.RemoveAll(directory)
+		if err != nil {
+			logger.Error(err)
+		}
 	} else {
 		logger.Tracef("Not deleting directory %s as video failed.\n", sessionID)
 	}

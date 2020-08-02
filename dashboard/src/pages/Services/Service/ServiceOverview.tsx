@@ -184,7 +184,12 @@ export default function ServiceOverview(props: any) {
     adhoc: false,
     passthru: false,
     nativeLog: false,
-    proxyConfig: { routeRule: '', passHostHeader: false, upstreamServer: '' },
+    proxyConfig: {
+      routeRule: '',
+      passHostHeader: false,
+      upstreamServer: '',
+      strictTLSValidation: false,
+    },
   });
   const [proxyDetail, setProxyDetail] = useState({});
 
@@ -683,10 +688,10 @@ function ProxyStatus(props: any) {
 
           <Grid item xs={12}>
             <Grid container spacing={2}>
-              <Grid item xs={5}>
-                <div className={classes.settingHeader}> Domain Name </div>
+              <Grid item xs={6}>
+                <div className={classes.settingHeader}> Domain Name :</div>
               </Grid>
-              <Grid item xs={7}>
+              <Grid item xs={6}>
                 <div className={classes.proxyVals}> {props.hostname} </div>
               </Grid>
             </Grid>
@@ -694,10 +699,10 @@ function ProxyStatus(props: any) {
 
           <Grid item xs={12}>
             <Grid container spacing={2}>
-              <Grid item xs={5}>
-                <div className={classes.settingHeader}> Route Rule </div>
+              <Grid item xs={6}>
+                <div className={classes.settingHeader}> Route Rule :</div>
               </Grid>
-              <Grid item xs={7}>
+              <Grid item xs={6}>
                 <div className={classes.proxyVals}> matching host header </div>
               </Grid>
             </Grid>
@@ -705,13 +710,13 @@ function ProxyStatus(props: any) {
 
           <Grid item xs={12}>
             <Grid container spacing={2}>
-              <Grid item xs={5}>
-                <div className={classes.settingHeader}> Pass host header </div>
+              <Grid item xs={6}>
+                <div className={classes.settingHeader}> Pass host header : </div>
               </Grid>
-              <Grid item xs={7}>
+              <Grid item xs={6}>
                 <div className={classes.proxyVals}>
                   {' '}
-                  {props.proxy.passHostHeader ? 'yes' : 'not forwarding'}{' '}
+                  {props.proxy.passHostHeader ? 'forwarding' : 'not forwarding'}{' '}
                 </div>
               </Grid>
             </Grid>
@@ -719,10 +724,24 @@ function ProxyStatus(props: any) {
 
           <Grid item xs={12}>
             <Grid container spacing={2}>
-              <Grid item xs={5}>
-                <div className={classes.settingHeader}> Upstream Server </div>
+              <Grid item xs={6}>
+                <div className={classes.settingHeader}> Strict TLS validation :</div>
               </Grid>
-              <Grid item xs={7}>
+              <Grid item xs={6}>
+                <div className={classes.proxyVals}>
+                  {' '}
+                  {props.proxy.strictTLSValidation ? 'enabled' : 'disabled'}{' '}
+                </div>
+              </Grid>
+            </Grid>
+          </Grid>
+
+          <Grid item xs={12}>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <div className={classes.settingHeader}> Upstream Server :</div>
+              </Grid>
+              <Grid item xs={6}>
                 <div className={classes.proxyVals}> {props.proxy.upstreamServer} </div>
               </Grid>
             </Grid>
