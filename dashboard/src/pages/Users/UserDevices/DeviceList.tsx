@@ -324,16 +324,15 @@ export default function DeviceDetail(props: any) {
         maxWidth="lg"
         fullScreen={false}
       >
-        {props.renderFor === 'myRoute' ? null : (
-          <DeviceSettings
-            singleDeviceDetail={singleDeviceDetail}
-            selectedDeviceIndex={selectedDeviceIndex}
-            openDeleteDlg={openDeleteDlg}
-            callDeleteFunc={callDeleteFunc}
-            trusted={singleDeviceDetail.trusted}
-            handleTrustDevice={handleTrust}
-          />
-        )}
+        <DeviceSettings
+          singleDeviceDetail={singleDeviceDetail}
+          selectedDeviceIndex={selectedDeviceIndex}
+          openDeleteDlg={openDeleteDlg}
+          callDeleteFunc={callDeleteFunc}
+          trusted={singleDeviceDetail.trusted}
+          handleTrustDevice={handleTrust}
+          renderFor={props.renderFor}
+        />
 
         <DeviceHygiene dh={singleDeviceDetail.deviceHygiene} dt={singleDeviceType} />
       </DialogWrapper>
@@ -392,12 +391,20 @@ function DeviceSettings(props: any) {
 
   return (
     <Grid container spacing={2} direction="row">
-      <Grid item xs={2}>
-        <Typography variant="h3">Trust this device : </Typography>
-      </Grid>
-      <Grid item xs={1}>
-        <Switch color="secondary" onChange={handleCheck} checked={checked} />
-      </Grid>
+      {props.renderFor === 'myRoute' ? (
+        ''
+      ) : (
+        <Grid item xs={3}>
+          <Grid container spacing={2}>
+            <Grid item xs={8}>
+              <Typography variant="h3">Trust this device : </Typography>
+            </Grid>
+            <Grid item xs={4}>
+              <Switch color="secondary" onChange={handleCheck} checked={checked} />
+            </Grid>
+          </Grid>
+        </Grid>
+      )}
       <Grid item xs={2}>
         <Typography variant="h3">Delete this device : </Typography>
       </Grid>

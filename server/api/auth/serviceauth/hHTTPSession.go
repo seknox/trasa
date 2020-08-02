@@ -240,7 +240,7 @@ func AuthHTTPAccessProxy(w http.ResponseWriter, r *http.Request) {
 
 	// we need user detail and app detail to store in user sessionStore.
 	// This value can be fetched based on exToken received and fetching user detial based on exToken.
-	// App detials can be fetched from hostname (which will be unique per http app) of http endpoint.
+	// App details can be fetched from hostname (which will be unique per http app) of http endpoint.
 	//sessionStore[encodedSession] =
 
 	utils.TrasaResponse(w, 200, "success", "successfully created session", "InitHttpsSession", sessionIdentifiers)
@@ -298,7 +298,7 @@ func sessionWriter(sessionID, shots string) {
 
 	//logger.Tracef("session writer req received: %s", sessionID)
 
-	// seperate multiple screenshot with counter		logrus.Trace(allow,reason)
+	// separate multiple screenshot with counter		logrus.Trace(allow,reason)
 	dataURIWithCounter := strings.Split(shots, "::")
 
 	// loop over dataURIWithCounter
@@ -317,7 +317,7 @@ func sessionWriter(sessionID, shots string) {
 
 			//logger.Tracef("counterAndImage length: %v", len(counterAndImage))
 
-			// the lenght shouold exactly be 2
+			// the length shouold exactly be 2
 			if len(counterAndImage) == 2 {
 				videoRecord := logStruct.SessionRecord //strings.Split(logStruct.AppID, ":")
 				//home, _ := hdir.Dir()

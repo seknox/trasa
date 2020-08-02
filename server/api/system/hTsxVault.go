@@ -54,7 +54,7 @@ func StoreKey(w http.ResponseWriter, r *http.Request) {
 	utils.TrasaResponse(w, 200, "success", "keys stored", "StoreKey", req.KeyTag)
 }
 
-// Getkey retreives key or token from database. should fetch and return key tag rather than key value.
+// Getkey retrieves key or token from database. should fetch and return key tag rather than key value.
 func Getkey(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
 
@@ -119,7 +119,7 @@ func TsxvaultInit(w http.ResponseWriter, r *http.Request) {
 	encKeyShards, err := initTsxvault(uc.User.OrgID)
 	if err != nil {
 		logger.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "failed to init vault", "failed to retreive key", nil)
+		utils.TrasaResponse(w, 200, "failed", "failed to init vault", "failed to retrieve key", nil)
 		return
 	}
 
@@ -235,7 +235,7 @@ func Status(w http.ResponseWriter, r *http.Request) {
 	_, status := vault.Store.GetTsxVaultKey()
 	if status == false {
 		resp.TokenStatus = hashicorpVault.SealStatusResponse{Sealed: true}
-		utils.TrasaResponse(w, 200, "failed", "This key is not retreived", "Vault not decrypted", resp)
+		utils.TrasaResponse(w, 200, "failed", "This key is not retrieved", "Vault not decrypted", resp)
 		return
 	}
 
@@ -252,7 +252,7 @@ type unseal struct {
 	Key string `json:"key"`
 }
 
-// DecryptKey retreives token from vaultDecrypt function and
+// DecryptKey retrieves token from vaultDecrypt function and
 // store it in vaultEncryption Token. This is only available option for tsxvault.
 // TODO @sshahcodes compose this handler to smaller functions
 func DecryptKey(w http.ResponseWriter, r *http.Request) {
@@ -335,6 +335,6 @@ func DecryptKey(w http.ResponseWriter, r *http.Request) {
 	resp.Sealed = false
 	resp.Progress = len(HoldDecryptShard)
 
-	utils.TrasaResponse(w, 200, "success", "token retreived", "Vault decrypted", resp)
+	utils.TrasaResponse(w, 200, "success", "token retrieved", "Vault decrypted", resp)
 
 }

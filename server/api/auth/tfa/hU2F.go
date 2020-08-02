@@ -11,7 +11,7 @@ type U2f struct {
 	serviceID  string `json:"serviceID"`
 	AppName    string `json:"appSecret"`
 	Answer     string `json:"answer"`
-	Challange  string `json:"challenge"`
+	Challenge  string `json:"challenge"`
 	DeviceID   string `json:"deviceId"`
 	Signature  string `json:"signature"`
 	DeviceInfo string `json:"deviceInfo"`
@@ -26,7 +26,7 @@ func U2fHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c, ok := u2fChanMap[u2fRequest.Challange]
+	c, ok := u2fChanMap[u2fRequest.Challenge]
 	if !ok {
 		utils.TrasaResponse(w, 200, "failed", "invalid request", "", nil)
 		return

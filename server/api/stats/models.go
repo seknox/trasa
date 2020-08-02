@@ -76,16 +76,16 @@ type todayHexa struct {
 }
 
 type totalEventsAuthEvents struct {
-	TotalLogins      int64 `json:"totalLogins"`
-	SuccessfulLogins int64 `json:"successfulLogins"`
-	FailedLogins     int64 `json:"failedLogins"`
+	TotalLogins     int64 `json:"totalLogins"`
+	successfulogins int64 `json:"successfulogins"`
+	FailedLogins    int64 `json:"failedLogins"`
 }
 
 type totalEventsByDate struct {
-	Date             string `json:"date"`
-	TotalLogins      int64  `json:"totalLogins"`
-	SuccessfulLogins int64  `json:"successfulLogins"`
-	FailedLogins     int64  `json:"failedLogins"`
+	Date            string `json:"date"`
+	TotalLogins     int64  `json:"totalLogins"`
+	successfulogins int64  `json:"successfulogins"`
+	FailedLogins    int64  `json:"failedLogins"`
 }
 
 type aggIps struct {

@@ -68,7 +68,7 @@ func CheckAndFireSecurityRule(orgID, constName, entityValue string) {
 	for _, v := range getAdmins {
 		notif.NotificationID = utils.GetRandomID(10)
 		notif.UserID = v.ID
-		// we call notification store to store notificaiton for this event in user id who is to be notified.
+		// we call notification store to store notification for this event in user id who is to be notified.
 		err = Store.StoreNotif(notif)
 		if err != nil {
 			logrus.Error(err)

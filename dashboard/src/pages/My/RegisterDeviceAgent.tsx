@@ -16,7 +16,7 @@ export default function (props: any) {
           .post(`${Constants.TRASA_HOSTNAME}/idp/login/deviceAgent/verify`, data)
           .then((resp) => {
             if (resp.data.status === 'success') {
-              setMsg('Successfully registered device');
+              setMsg('successfully registered device');
             }
           });
       }

@@ -16,7 +16,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// GetAllIdps retreives all idps configured for organization
+// GetAllIdps retrieves all idps configured for organization
 func GetAllIdps(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
 

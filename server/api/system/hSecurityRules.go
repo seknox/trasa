@@ -8,7 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// SecurityRules retreives orgWide security rules
+// SecurityRules retrieves orgWide security rules
 func SecurityRules(w http.ResponseWriter, r *http.Request) {
 	logrus.Trace("SecurityRules request received")
 	uc := r.Context().Value("user").(models.UserContext)

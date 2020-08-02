@@ -1,6 +1,6 @@
 import React from 'react';
 import AccessStats from '../../Overview/AccessStats';
-// import {LogTableV2}  from '../../../monitor/session/LogTableV2';
+import { LogTableV2 } from '../../Monitor/Session/LogTableV2';
 
 export default function ServiceAccessStats(props: any) {
   return (
@@ -12,7 +12,7 @@ export default function ServiceAccessStats(props: any) {
         timeFilter="Today"
       />
       <br />
-      {/* <LogTableV2 entityType={props.entityType} entityID={props.entityID} /> */}
+      <LogTableV2 entityType={props.entityType} entityID={props.entityID} />
     </div>
   );
 }

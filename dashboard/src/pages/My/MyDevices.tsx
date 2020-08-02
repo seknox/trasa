@@ -301,6 +301,7 @@ function EnrolDeviceManu(props: any) {
         variant="contained"
         color="secondary"
         onClick={handleClick}
+        size="small"
       >
         Enrol 2FA Device
       </Button>
