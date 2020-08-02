@@ -114,7 +114,7 @@ func StartServr() {
 	// 	return
 	// }
 
-	// TODO @bhrg3se commenting out your gracefull shutdown code coz for some reason, setting up server this way is causing ssl error (SSL_ERROR_RX_RECORD_TOO_LONG).
+	// TODO @bhrg3se commenting out your graceful shutdown code coz for some reason, setting up server this way is causing ssl error (SSL_ERROR_RX_RECORD_TOO_LONG).
 	// Feel free to change this if you can figure out the solution.
 
 	// trasaTLSServer := http.Server{

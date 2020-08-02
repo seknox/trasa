@@ -163,7 +163,7 @@ func (s ServiceStore) GetAllByType(serviceType, orgID string) (services []models
 // 	if err != nil {
 // 		return
 // 	}
-// 	//TODO @sshah do we need to unmarshal it seperately?
+// 	//TODO @sshah do we need to unmarshal it separately?
 // 	err = json.Unmarshal([]byte(proxyMeta), &httpProxy.ProxyMeta)
 
 // 	return httpProxy, nil

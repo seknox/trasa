@@ -66,7 +66,7 @@ export default function Device(props: any) {
       });
   }, [props.renderFor, props.userID]);
 
-  // removeUserDevice sends delete device request to trasacore and removes deleted device from local deivce state after successfull response
+  // removeUserDevice sends delete device request to trasacore and removes deleted device from local deivce state after successful response
   const removeUserDevice = () => {
     axios
       .post(`${Constants.TRASA_HOSTNAME}/api/v1/user/devices/delete/${deleteDevice.deviceID}`)

@@ -228,7 +228,7 @@ func GetMapPlotData(w http.ResponseWriter, r *http.Request) {
 	geoPlotData, err := Store.SortLoginByCity(entityType, entityID, uc.Org.ID, uc.Org.Timezone, timeFilter, statusFilter)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "failed to gretreive geo data", "GetUserMapPlotData", nil)
+		utils.TrasaResponse(w, 200, "failed", "failed to gretrieve geo data", "GetUserMapPlotData", nil)
 
 	}
 
@@ -242,7 +242,7 @@ func GetPoliciesStats(w http.ResponseWriter, r *http.Request) {
 	policyStats, err := Store.GetPoliciesStats(uc.Org.ID)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "failed to gretreive policy stat", "GetPolicyStat")
+		utils.TrasaResponse(w, 200, "failed", "failed to gretrieve policy stat", "GetPolicyStat")
 
 	}
 
@@ -336,7 +336,7 @@ func HexaEvents(w http.ResponseWriter, r *http.Request) {
 	utils.TrasaResponse(w, 200, "success", "HexaEvents", "", events)
 }
 
-// GetSuccessAndFailedEvents returns total number of logins, total failed logins and total successfull logins aggregated stats
+// GetSuccessAndFailedEvents returns total number of logins, total failed logins and total successful logins aggregated stats
 func GetSuccessAndFailedEvents(w http.ResponseWriter, r *http.Request) {
 	userContext := r.Context().Value("user").(models.UserContext)
 	entityType := chi.URLParam(r, "entitytype")
@@ -400,8 +400,8 @@ func GetTotalLoginsByDate(w http.ResponseWriter, r *http.Request) {
 	events, err := Store.GetTotalLoginsByDate(entityType, entityID, userContext.Org.ID, userContext.Org.Timezone)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "failed to gretreive policy stat", "GetPolicyStat")
+		utils.TrasaResponse(w, 200, "failed", "failed to gretrieve policy stat", "GetPolicyStat")
 		return
 	}
-	utils.TrasaResponse(w, 200, "failed", "failed to gretreive policy stat", "GetPolicyStat", events)
+	utils.TrasaResponse(w, 200, "failed", "failed to gretrieve policy stat", "GetPolicyStat", events)
 }

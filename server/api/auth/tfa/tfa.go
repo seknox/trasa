@@ -109,7 +109,7 @@ func SendU2F(userID, orgID, appName, ip string) (bool, string) {
 		// if err != nil {
 		// 	return false, string(consts.REASON_DEVICE_NOT_ENROLLED)
 		// }
-		// ok, err := rsaVerify(tfaResp.Signature, tfaResp.Challange, deviceDetail.PublicKey)
+		// ok, err := rsaVerify(tfaResp.Signature, tfaResp.Challenge, deviceDetail.PublicKey)
 		// if err != nil || !ok {
 		// 	logrus.Debug(err)
 		// 	return false, string(consts.REASON_U2F_FAILED)
@@ -360,7 +360,7 @@ func HandleTfaAndGetDeviceID(signResponse *u2f.SignResponse, tfaMethod, totpCode
 		logrus.Errorf("device not found: %v", err)
 		return deviceID, consts.REASON_DEVICE_NOT_ENROLLED, false
 	}
-	ok, err = rsaVerify(tfaResp.Signature, tfaResp.Challange, deviceDetail.PublicKey)
+	ok, err = rsaVerify(tfaResp.Signature, tfaResp.Challenge, deviceDetail.PublicKey)
 	if err != nil || !ok {
 		logrus.Debug(err)
 		return deviceID, consts.REASON_U2F_FAILED, false

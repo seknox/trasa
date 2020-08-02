@@ -319,6 +319,6 @@ func (s LogStore) UploadHTTPLogToMinio(file *os.File, login AuthLog) error {
 		return err
 	}
 
-	logrus.Tracef("Successfully uploaded %s of size %d to minio \n", objectName, n)
+	logrus.Tracef("successfully uploaded %s of size %d to minio \n", objectName, n)
 	return nil
 }

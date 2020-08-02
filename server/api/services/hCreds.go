@@ -21,7 +21,7 @@ type creds struct {
 
 // StoreServiceCredentials takes username password from client (trasa-dashboard for now) and stores it in vault.
 // It will also store the event in trasadb. This will come handy for in-app audit logs.
-// storing it seperate will also decouples our core dependency in vault
+// storing it separate will also decouples our core dependency in vault
 func StoreServiceCredentials(w http.ResponseWriter, r *http.Request) {
 	userContext := r.Context().Value("user").(models.UserContext)
 	var req creds

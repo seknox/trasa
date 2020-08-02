@@ -44,7 +44,7 @@ func TrasaResponseWithDataString(w http.ResponseWriter, httpRespCode int, status
 }
 
 // TrasaResponse is generic response function for http api
-//  Use TrasaResponseWithTrail if in apptrail is needed. TrasaResponseWithTrail has seperate trailDecription for inapp trail description
+//  Use TrasaResponseWithTrail if in apptrail is needed. TrasaResponseWithTrail has separate trailDecription for inapp trail description
 func TrasaResponse(w http.ResponseWriter, httpRespCode int, status, reason string, intent string, data ...interface{}) {
 	var resp models.TrasaResponseStruct
 	w.Header().Set("Content-Type", "application/json")

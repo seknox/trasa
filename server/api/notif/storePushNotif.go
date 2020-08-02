@@ -2,6 +2,7 @@ package notif
 
 import (
 	"context"
+
 	"firebase.google.com/go/messaging"
 )
 
@@ -42,6 +43,6 @@ func (s NotifStore) SendPushNotification(fcmToken, orgName, appName, ipAddr, tim
 	return err
 
 	// Response is a message ID string.
-	//logger.Trace("Successfully sent message:", response)
+	//logger.Trace("successfully sent message:", response)
 
 }

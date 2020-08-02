@@ -5,7 +5,7 @@ import (
 	logger "github.com/sirupsen/logrus"
 )
 
-// GetAllIdps retreives all idps configured for organization
+// GetAllIdps retrieves all idps configured for organization
 func (s IDPStore) GetAllIdps(orgID string) ([]models.IdentityProvider, error) {
 	var idps []models.IdentityProvider = make([]models.IdentityProvider, 0)
 	var idp models.IdentityProvider
@@ -27,7 +27,7 @@ func (s IDPStore) GetAllIdps(orgID string) ([]models.IdentityProvider, error) {
 	return idps, err
 }
 
-// GetByID retreives IDP detail based on ID
+// GetByID retrieves IDP detail based on ID
 func (s IDPStore) GetByID(orgID, idpID string) (models.IdentityProvider, error) {
 	var idp models.IdentityProvider
 	err := s.DB.QueryRow("SELECT id, org_id, name,type, meta, is_enabled, redirect_url, audience_uri, client_id, endpoint, created_by , last_updated FROM idp WHERE org_id = $1 AND id=$2",

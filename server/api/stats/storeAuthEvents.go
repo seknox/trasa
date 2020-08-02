@@ -300,7 +300,7 @@ func (s StatStore) GetLoginsByType(entityType, entityID, orgID, timezone, timeFi
 		return logins, err
 	}
 
-	//TODO seperate function
+	//TODO separate function
 	for rows.Next() {
 		var reason nameValue
 		err = rows.Scan(&reason.Value, &reason.Name)
@@ -396,7 +396,7 @@ func (s StatStore) GetAllAuthEventsByEntityType(entityType, entityID, timeFilter
 	var events totalEventsAuthEvents
 
 	// events.TotalLogins = &new(int64)
-	// events.SuccessfulLogins = new(int64)
+	// events.successfulogins = new(int64)
 	// events.FailedLogins = new(int64)
 
 	loc, err := time.LoadLocation(timezone)
@@ -437,13 +437,13 @@ func (s StatStore) GetAllAuthEventsByEntityType(entityType, entityID, timeFilter
 			return events, err
 		}
 		if status {
-			events.SuccessfulLogins = count
+			events.successfulogins = count
 		} else if !status {
 			events.FailedLogins = count
 		}
 	}
 
-	events.TotalLogins = events.SuccessfulLogins + events.FailedLogins
+	events.TotalLogins = events.successfulogins + events.FailedLogins
 
 	return events, err
 }
@@ -553,14 +553,14 @@ GROUP BY login_day  ORDER BY login_day DESC LIMIT 45;`, limitTime.UnixNano(), or
 	for rows.Next() {
 		var event totalEventsByDate
 		var day int64
-		err = rows.Scan(&event.TotalLogins, &day, &event.SuccessfulLogins, &event.FailedLogins)
+		err = rows.Scan(&event.TotalLogins, &day, &event.successfulogins, &event.FailedLogins)
 		if err != nil {
 			return events, err
 		}
 
 		//TODO move this logic to different testable function
 		event.Date = time.Unix(0, day*86400000000000).Format(time.RFC3339)
-		event.TotalLogins = event.SuccessfulLogins + event.FailedLogins
+		event.TotalLogins = event.successfulogins + event.FailedLogins
 
 		//Filling Missing days
 
@@ -570,10 +570,10 @@ GROUP BY login_day  ORDER BY login_day DESC LIMIT 45;`, limitTime.UnixNano(), or
 			//		logger.Trace(gap)
 			for i := gap; i > 0; i-- {
 				events = append(events, totalEventsByDate{
-					Date:             time.Unix(0, (day+i)*86400000000000).Format(time.RFC3339),
-					TotalLogins:      0,
-					SuccessfulLogins: 0,
-					FailedLogins:     0,
+					Date:            time.Unix(0, (day+i)*86400000000000).Format(time.RFC3339),
+					TotalLogins:     0,
+					successfulogins: 0,
+					FailedLogins:    0,
 				})
 			}
 		}

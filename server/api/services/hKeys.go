@@ -77,7 +77,7 @@ func UpdateHostCerts(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.TrasaResponse(w, 200, "success", "Successfully updated host key", "UpdateAppCerts")
+	utils.TrasaResponse(w, 200, "success", "successfully updated host key", "UpdateAppCerts")
 	return
 
 }

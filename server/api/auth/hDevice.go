@@ -79,7 +79,7 @@ func RegisterUserDevice(w http.ResponseWriter, r *http.Request) {
 	// We will decrypt device hygiene and then store details in database.
 	// Note: Do not forget to delete secret key before returning from this handler.
 
-	//  Retreive secret key for this request.
+	//  retrieve secret key for this request.
 	secretKeyFromKex, ok := global.ECDHKexDerivedKey[req.TrasaID]
 	if !ok {
 		logrus.Trace("key not found in Kex store")

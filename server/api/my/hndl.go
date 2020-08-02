@@ -214,8 +214,8 @@ type getMyAppDetail struct {
 	MyServices []models.MyServiceDetails `json:"myServices"`
 }
 
-// GetSingleUser retreives users detail based on email address, gets apps where users is assigned to
-// and maybe retreive analytics events for this particular user in future.
+// GetSingleUser retrieves users detail based on email address, gets apps where users is assigned to
+// and maybe retrieve analytics events for this particular user in future.
 // well passing user email in url as url id may not be best rest design, but it helps on client to get clear
 // url when viewing single user detail rather than gussing user based on uuid.
 func GetMyServicesDetail(w http.ResponseWriter, r *http.Request) {

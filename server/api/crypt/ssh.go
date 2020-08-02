@@ -86,8 +86,8 @@ func GenerateTempSSHCert(username, orgID string) (string, string, error) {
 	}
 	serial := binary.LittleEndian.Uint64(buf)
 
-	extentions := make(map[string]string)
-	extentions = map[string]string{
+	extensions := make(map[string]string)
+	extensions = map[string]string{
 		"permit-X11-forwarding":   "",
 		"permit-agent-forwarding": "",
 		"permit-port-forwarding":  "",
@@ -106,7 +106,7 @@ func GenerateTempSSHCert(username, orgID string) (string, string, error) {
 		ValidAfter:      uint64(time.Now().Unix()),
 		ValidBefore:     uint64(time.Now().Add(time.Minute * 5).Unix()),
 		Permissions: ssh.Permissions{
-			Extensions: extentions,
+			Extensions: extensions,
 		},
 	}
 
