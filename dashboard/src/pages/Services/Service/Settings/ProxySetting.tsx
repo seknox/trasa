@@ -206,6 +206,7 @@ type ProxyConfigProps = {
   routeRule: string;
   passHostHeader: boolean;
   upstreamServer: string;
+  strictTLSValidation: boolean;
 };
 
 export default function ProxySetting(props: ProxySettingProps) {
@@ -215,7 +216,7 @@ export default function ProxySetting(props: ProxySettingProps) {
 
   const handleChange = (name: any) => (event: any) => {
     let val = event.target.value;
-    if (name === 'passHostHeader') {
+    if (name === 'passHostHeader' || name === 'strictTLSValidation') {
       val = event.target.checked;
     }
 
@@ -234,6 +235,7 @@ export default function ProxySetting(props: ProxySettingProps) {
         // routeRule: proxy.routeRule,
         passHostHeader: proxy.passHostHeader,
         upstreamServer: proxy.upstreamServer,
+        strictTLSValidation: proxy.strictTLSValidation,
       },
     };
 
@@ -336,6 +338,37 @@ export default function ProxySetting(props: ProxySettingProps) {
                   }
                   label={
                     proxy.passHostHeader ? (
+                      <div className={classes.settingSHeader}>true </div>
+                    ) : (
+                      <div className={classes.settingSHeader}>false </div>
+                    )
+                  }
+                />
+              </FormGroup>
+            </FormControl>
+          </Grid>
+        </Grid>
+
+        <Grid container spacing={2}>
+          <Grid item xs={5} sm={5} md={5}>
+            <div className={classes.settingHeader}>Strict TLS validation :</div>
+          </Grid>
+          <Grid item xs={7} sm={7} md={7}>
+            <FormControl fullWidth>
+              <FormGroup>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={proxy.strictTLSValidation}
+                      onChange={handleChange('strictTLSValidation')}
+                      name="strictTLSValidation"
+                      value={proxy.strictTLSValidation}
+                      // defaultValue={proxy.passHostHeader}
+                      color="primary"
+                    />
+                  }
+                  label={
+                    proxy.strictTLSValidation ? (
                       <div className={classes.settingSHeader}>true </div>
                     ) : (
                       <div className={classes.settingSHeader}>false </div>

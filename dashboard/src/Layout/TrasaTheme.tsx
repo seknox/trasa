@@ -63,7 +63,7 @@ let theme = createMuiTheme({
     primary: {
       light: '#000080',
       main: '#000066',
-      dark: 'rgba(1,1,35,1)', // '#000080' #1b1b32 #0A2053 #000066}, #0A2053
+      dark: '#03052b', // 'rgba(1,1,35,1)', // '#000080' #1b1b32 #0A2053 #000066}, #0A2053
       contrastText: '#fff',
     },
     secondary: { A400: '#000080' },
@@ -84,11 +84,8 @@ theme = {
     },
     MuiAppBar: {
       root: {
-        backgroundColor: 'rgba(1,1,35,1)',
+        backgroundColor: '#03052b',
       },
-
-      // backgroundColor: 'rgba(1,1,35,1)',
-      // colorDefault: 'rgba(1,1,35,1)',
     },
 
     MuiButton: {

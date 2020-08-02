@@ -1,6 +1,7 @@
 package http
 
 import (
+	"crypto/tls"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -16,7 +17,8 @@ import (
 var proxyConfig = make(map[string]models.ReverseProxy)
 var trasaListenAddr = ""
 
-// PrepareProxyConfig initializes available http proxy configs
+// PrepareProxyConfig initializes available http proxy configs.
+// This should ideally be self-reloading function based on config subscription (like how traefik reloads configs)
 func PrepareProxyConfig() {
 	trasaListenAddr = global.GetConfig().Trasa.ListenAddr
 	allservices, err := services.Store.GetAllByType("http", global.GetConfig().Trasa.OrgId)
@@ -39,11 +41,6 @@ func Proxy() http.HandlerFunc {
 
 	redirect := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		// Forwards incoming requests to whatever location URL points to, adds proper forwarding headers
-		fwd, _ := forward.New(
-			forward.PassHostHeader(proxyConfig[r.Host].PassHostheader),
-		)
-
 		if r.Host == trasaListenAddr {
 			logrus.Trace("reached 404 inside proxy")
 			w.WriteHeader(404)
@@ -54,6 +51,7 @@ func Proxy() http.HandlerFunc {
 		if err != nil {
 			logrus.Debug(err)
 			http.Redirect(w, r, fmt.Sprintf("https://%s/login#httphost=%s", trasaListenAddr, r.Host), 302)
+			PrepareProxyConfig()
 		}
 
 		var upHost = utils.NormalizeString(proxyConfig[r.Host].UpstreamServer)
@@ -70,6 +68,25 @@ func Proxy() http.HandlerFunc {
 			return
 		}
 		r.URL = url
+
+		insecureSkipVerify := false
+		if proxyConfig[r.Host].StrictTLSValidation == false {
+			insecureSkipVerify = true
+		}
+
+		transport := &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: insecureSkipVerify},
+		}
+
+		// Forwards incoming requests to whatever location URL points to, adds proper forwarding headers
+		fwd, err := forward.New(
+			forward.PassHostHeader(proxyConfig[r.Host].PassHostheader),
+			forward.RoundTripper(transport),
+		)
+
+		if err != nil {
+			logrus.Error(err)
+		}
 		fwd.ServeHTTP(w, r)
 	})
 
