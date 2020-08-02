@@ -45,7 +45,7 @@ func CreatePolicy(w http.ResponseWriter, r *http.Request) {
 
 // Update policy of a organization
 func UpdatePolicy(w http.ResponseWriter, r *http.Request) {
-	logrus.Trace("CreatePolicy request received")
+	logrus.Trace("UpdatePolicy request received")
 	uc := r.Context().Value("user").(models.UserContext)
 
 	var req models.Policy
