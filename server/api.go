@@ -248,6 +248,7 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 
 		//Logs
 		r.Get("/logs/auth/{entitytype}/{entityid}", logs.GetLoginEvents)
+		r.Get("/logs/auth/{entitytype}/{entityid}/{page}/{size}", logs.GetLoginEventsByPage)
 		r.Get("/logs/auth/{entitytype}/{entityid}/{page}/{size}/{dateFrom}/{dateTo}", logs.GetLoginEventsByPage)
 		r.Get("/logs/inapptrails/org", logs.GetAllInAppTrails)
 		r.Get("/logs/inapptrails/org/{page}/{size}/{dateFrom}/{dateTo}", logs.GetAllInAppTrails)
