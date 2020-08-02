@@ -54,9 +54,10 @@ func NewEmptyServiceStruct() Service {
 		NativeLog:   false,
 		RdpProtocol: "",
 		ProxyConfig: ReverseProxy{
-			RouteRule:      "",
-			PassHostheader: false,
-			UpstreamServer: "",
+			RouteRule:           "",
+			PassHostheader:      false,
+			UpstreamServer:      "",
+			StrictTLSValidation: true,
 		},
 		PublicKey:             "",
 		ExternalProviderName:  "",
@@ -75,10 +76,12 @@ func NewEmptyServiceStruct() Service {
 	}
 }
 
+// ReverseProxy defines proxy config for http access proxy
 type ReverseProxy struct {
-	RouteRule      string `json:"routeRule"`
-	PassHostheader bool   `json:"passHostHeader"`
-	UpstreamServer string `json:"upstreamServer"`
+	RouteRule           string `json:"routeRule"`
+	PassHostheader      bool   `json:"passHostHeader"`
+	UpstreamServer      string `json:"upstreamServer"`
+	StrictTLSValidation bool   `json:"strictTLSValidation"`
 }
 
 func (r ReverseProxy) Value() (driver.Value, error) {
