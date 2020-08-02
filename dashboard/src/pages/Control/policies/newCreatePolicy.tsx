@@ -28,7 +28,7 @@ import Constants from '../../../Constants';
 import ProgressBar from '../../../utils/Components/Progressbar';
 import DevicePolicy from './DevicePolicy/DevicePolicy';
 import TrasaUAC from './TrasUAC';
-import { DevicePolicyProps } from './index'
+import { DevicePolicyProps } from './index';
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
@@ -301,15 +301,7 @@ export default function CreatePolicy(props: createPolicyProps) {
       setIPSource('0.0.0.0/0');
       setExpiry('2021-03-01');
     };
-  }, [
-    props.updateData.policyName,
-    props.updateData.dayAndTime,
-    props.updateData.tfaRequired,
-    props.updateData.recordSession,
-    props.updateData.fileTransfer,
-    props.updateData.ipSource,
-    props.updateData.expiry,
-  ]);
+  }, [props.update]);
 
   function closer() {
     setDayAndTime([{ days: [], fromTime: '', toTime: '' }]);
@@ -352,92 +344,28 @@ export default function CreatePolicy(props: createPolicyProps) {
   /// /////////////////////////////
   /// /////   DevicePolicy
   /// /////////////////////////////
-  const [blockAutologinEnabled, setBlockAutologinEnabled] = useState<boolean>(
-    props.update ? props.updateData.devicePolicy.blockAutologinEnabled : false,
-  );
-  const [blockTfaNotConfigured, setBlockTfaNotConfigured] = useState<boolean>(
-    props.update ? props.updateData.devicePolicy.blockTfaNotConfigured : false,
-  );
-  const [blockIdleScreenLockDisabled, setBlockIdleScreenLockDisabled] = useState<boolean>(
-    props.update ? props.updateData.devicePolicy.blockIdleScreenLockDisabled : false,
-  );
-  const [blockRemoteLoginEnabled, setBlockRemoteLoginEnabled] = useState<boolean>(
-    props.update ? props.updateData.devicePolicy.blockRemoteLoginEnabled : false,
-  );
-  const [blockJailBroken, setBlockJailBroken] = useState<boolean>(
-    props.update ? props.updateData.devicePolicy.blockJailBroken : false,
-  );
-  const [blockDebuggingEnabled, setBlockDebuggingEnabled] = useState<boolean>(
-    props.update ? props.updateData.devicePolicy.blockDebuggingEnabled : false,
-  );
-  const [blockEmulated, setBlockEmulated] = useState<boolean>(
-    props.update ? props.updateData.devicePolicy.blockEmulated : false,
-  );
-  const [blockEncryptionNotSet, setBlockEncryptionNotSet] = useState<boolean>(
-    props.update ? props.updateData.devicePolicy.blockEncryptionNotSet : false,
-  );
-  const [blockOpenWifiConn, setBlockOpenWifiConn] = useState<boolean>(
-    props.update ? props.updateData.devicePolicy.blockOpenWifiConn : false,
-  );
-  const [blockUntrustedDevices, setBlockUntrustedDevices] = useState<boolean>(
-      props.update ? props.updateData.devicePolicy.blockUntrustedDevices : false,
-    );
+  const [dhBlocking, setDHBlocking] = useState({
+    blockAutologinEnabled: false,
+    blockTfaNotConfigured: false,
+    blockIdleScreenLockDisabled: false,
+    blockRemoteLoginEnabled: false,
+    blockJailBroken: false,
+    blockDebuggingEnabled: false,
+    blockEmulated: false,
+    blockEncryptionNotSet: false,
+    blockOpenWifiConn: false,
+    blockUntrustedDevices: false,
+    blockAntivirusDisabled: false,
+    blockFirewallDisabled: false,
+  });
 
-  function changeBlockAutologinEnabled() {
-    setBlockAutologinEnabled(!blockAutologinEnabled);
-  }
+  const handleDHBlockingChange = (name: any) => (event: any) => {
+    setDHBlocking({ ...dhBlocking, [name]: event.target.checked });
+  };
 
-  function changeBlockTfaNotConfigured() {
-    setBlockTfaNotConfigured(!blockTfaNotConfigured);
-  }
-
-  function changeBlockIdleScreenLockDisabled() {
-    setBlockIdleScreenLockDisabled(!blockIdleScreenLockDisabled);
-  }
-
-  function changeBlockRemoteLoginEnabled() {
-    setBlockRemoteLoginEnabled(!blockRemoteLoginEnabled);
-  }
-
-  function changeBlockJailBroken() {
-    setBlockJailBroken(!blockJailBroken);
-  }
-
-  function changeBlockDebuggingEnabled() {
-    setBlockDebuggingEnabled(!blockDebuggingEnabled);
-  }
-
-  function changeBlockEmulated() {
-    setBlockEmulated(!blockEmulated);
-  }
-
-  function changeBlockEncryptionNotSet() {
-    setBlockEncryptionNotSet(!blockEncryptionNotSet);
-  }
-
-  function changeBlockOpenWifiConn() {
-    setBlockOpenWifiConn(!blockOpenWifiConn);
-  }
-  function changeBlockUntrustedDevices() {
-      setBlockUntrustedDevices(!blockUntrustedDevices);
-    }
-
-  const [blockFirewallDisabled, setblockFirewallDisabled] = useState<boolean>(
-    props.update ? props.updateData.devicePolicy.blockFirewallDisabled : false,
-  );
-
-  function changesetblockFirewallDisabled() {
-    setblockFirewallDisabled(!blockFirewallDisabled);
-  }
-
-  const [blockAntivirusDisabled, setblockAntivirusDisabled] = useState<boolean>(
-    props.update ? props.updateData.devicePolicy.blockAntivirusDisabled : false,
-  );
-
-  function changeblockAntivirusDisabled() {
-    setblockAntivirusDisabled(!blockAntivirusDisabled);
-  }
-
+  useEffect(() => {
+    setDHBlocking(props.updateData.devicePolicy);
+  }, [props.update]);
 
   /// /////////////////////////////////////////
   /// ////// Stepper component functions
@@ -464,25 +392,10 @@ export default function CreatePolicy(props: createPolicyProps) {
     setActiveStep(0);
   };
 
-  // TODO @sshah. add device policy in "view policy" dialog
-  // Also when editing a policy fill the dialog with status quo
   const SubmitPolicy = () => {
     mixpanel.track('control-policies-createpolicy');
     setLoading(true);
-    const devicePolicy = {
-      blockAutologinEnabled,
-      blockTfaNotConfigured,
-      blockIdleScreenLockDisabled,
-      blockRemoteLoginEnabled,
-      blockJailBroken,
-      blockDebuggingEnabled,
-      blockEmulated,
-      blockEncryptionNotSet,
-      blockOpenWifiConn,
-      blockFirewallDisabled,
-      blockAntivirusDisabled,
-      blockUntrustedDevices,
-    };
+    const devicePolicy = { ...dhBlocking };
     const basicPolicy = {
       policyID: props.update ? props.updateData.policyID : '',
       policyName,
@@ -494,10 +407,6 @@ export default function CreatePolicy(props: createPolicyProps) {
       devicePolicy,
       expiry,
     };
-
-    //  console.log('policy ::: ', basicPolicy)
-    // console.log('device ::: ', devicePolicy )
-    // return
 
     const url = props.update
       ? `${Constants.TRASA_HOSTNAME}/api/v1/groups/policy/update`
@@ -542,31 +451,8 @@ export default function CreatePolicy(props: createPolicyProps) {
             expiry={expiry}
             handleExpiryChange={handleExpiryChange}
             /// ///////////////////////////////
-            changeBlockAutologinEnabled={changeBlockAutologinEnabled}
-            blockAutologinEnabled={blockAutologinEnabled}
-            changeBlockTfaNotConfigured={changeBlockTfaNotConfigured}
-            blockTfaNotConfigured={blockTfaNotConfigured}
-            changeBlockIdleScreenLockDisabled={changeBlockIdleScreenLockDisabled}
-            blockIdleScreenLockDisabled={blockIdleScreenLockDisabled}
-            changeBlockRemoteLoginEnabled={changeBlockRemoteLoginEnabled}
-            blockRemoteLoginEnabled={blockRemoteLoginEnabled}
-            changeBlockJailBroken={changeBlockJailBroken}
-            blockJailBroken={blockJailBroken}
-            changeBlockDebuggingEnabled={changeBlockDebuggingEnabled}
-            blockDebuggingEnabled={blockDebuggingEnabled}
-            changeBlockEmulated={changeBlockEmulated}
-            blockEmulated={blockEmulated}
-            changeBlockEncryptionNotSet={changeBlockEncryptionNotSet}
-            blockEncryptionNotSet={blockEncryptionNotSet}
-            changeBlockOpenWifiConn={changeBlockOpenWifiConn}
-            blockOpenWifiConn={blockOpenWifiConn}
-            blockFirewallDisabled={blockFirewallDisabled}
-            changeBlockFirewallDisabled={changesetblockFirewallDisabled}
-            blockAntivirusDisabled={blockAntivirusDisabled}
-            changeBlockAntivirusDisabled={changeblockAntivirusDisabled}
-            blockUntrustedDevices={blockUntrustedDevices}
-            changeBlockUntrustedDevices={changeBlockUntrustedDevices}
-
+            dhBlocking={dhBlocking}
+            handleDHBlockingChange={handleDHBlockingChange}
           />
         );
       default:
@@ -580,34 +466,8 @@ export default function CreatePolicy(props: createPolicyProps) {
               fileTransfer={fileTransfer}
               ipSource={ipSource}
               expiry={expiry}
-
               // Device hygiene below
-              devicePolicy={
-                {
-                  blockUntrustedDevices:blockUntrustedDevices,
-                  blockAutologinEnabled: blockAutologinEnabled,
-                  blockTfaNotConfigured: blockTfaNotConfigured,
-                  blockIdleScreenLockDisabled: blockIdleScreenLockDisabled,
-                  blockRemoteLoginEnabled: blockRemoteLoginEnabled,
-                  blockJailBroken: blockJailBroken,
-                  blockDebuggingEnabled: blockDebuggingEnabled,
-                  blockEmulated: blockEmulated,
-                  blockEncryptionNotSet: blockEncryptionNotSet,
-                  blockOpenWifiConn: blockOpenWifiConn ,
-                  blockFirewallDisabled: blockFirewallDisabled,
-                  blockAntivirusDisabled: blockAntivirusDisabled
-                }}
-
-                        // blockAutologinEnabled={blockAutologinEnabled}
-            // blockTfaNotConfigured={blockTfaNotConfigured}
-            // blockIdleScreenLockDisabled={blockIdleScreenLockDisabled}
-            // blockRemoteLoginEnabled={blockRemoteLoginEnabled}
-            // blockJailBroken={blockJailBroken}
-            // blockDebuggingEnabled={blockDebuggingEnabled}
-            // blockEmulated={blockEmulated}
-            // blockEncryptionNotSet={blockEncryptionNotSet}
-            // blockOpenWifiConn={blockOpenWifiConn}
-
+              devicePolicy={dhBlocking}
             />
             <Button
               className={classes.button}
@@ -789,31 +649,8 @@ function PolicyTab(props: any) {
       </TabPanel>
       <TabPanel value={tabValue} index={1}>
         <DevicePolicy
-          changeBlockAutologinEnabled={props.changeBlockAutologinEnabled}
-          blockAutologinEnabled={props.blockAutologinEnabled}
-          changeBlockTfaNotConfigured={props.changeBlockTfaNotConfigured}
-          blockTfaNotConfigured={props.blockTfaNotConfigured}
-          changeBlockIdleScreenLockDisabled={props.changeBlockIdleScreenLockDisabled}
-          blockIdleScreenLockDisabled={props.blockIdleScreenLockDisabled}
-          changeBlockRemoteLoginEnabled={props.changeBlockRemoteLoginEnabled}
-          blockRemoteLoginEnabled={props.blockRemoteLoginEnabled}
-          changeBlockJailBroken={props.changeBlockJailBroken}
-          blockJailBroken={props.blockJailBroken}
-          changeBlockDebuggingEnabled={props.changeBlockDebuggingEnabled}
-          blockDebuggingEnabled={props.blockDebuggingEnabled}
-          changeBlockEmulated={props.changeBlockEmulated}
-          blockEmulated={props.blockEmulated}
-          changeBlockEncryptionNotSet={props.changeBlockEncryptionNotSet}
-          blockEncryptionNotSet={props.blockEncryptionNotSet}
-          changeBlockOpenWifiConn={props.changeBlockOpenWifiConn}
-          blockOpenWifiConn={props.blockOpenWifiConn}
-          blockFirewallDisabled={props.blockFirewallDisabled}
-          changeBlockFirewallDisabled={props.changeBlockFirewallDisabled}
-          blockAntivirusDisabled={props.blockAntivirusDisabled}
-          changeBlockAntivirusDisabled={props.changeBlockAntivirusDisabled}
-          blockUntrustedDevices={props.blockUntrustedDevices}
-          changeBlockUntrustedDevices={props.changeBlockUntrustedDevices}
-
+          dhBlocking={props.dhBlocking}
+          handleDHBlockingChange={props.handleDHBlockingChange}
         />
       </TabPanel>
     </div>
@@ -885,19 +722,6 @@ type reviewAccessProps = {
   ipSource: string;
   expiry: string;
   devicePolicy: DevicePolicyProps;
-  // blockAutologinEnabled: boolean
-  // blockTfaNotConfigured: boolean
-  // blockIdleScreenLockDisabled: boolean
-  // blockRemoteLoginEnabled: boolean
-  // blockJailBroken: boolean
-  // blockDebuggingEnabled: boolean
-  // blockEmulated: boolean
-  // blockEncryptionNotSet: boolean
-  // blockOpenWifiConn: boolean
-  // blockFirewallDisabled: boolean;
-  // blockAntivirusDisabled: boolean;
-
-
 };
 /// //////////////////////////////////////////////////////////////////////////////////////////////
 /// //////////////////////////////////////////////////////////////////////////////////////////////
@@ -909,275 +733,272 @@ export function ReviewAccess(props: reviewAccessProps) {
     setTabValue(newValue);
   };
 
+  useEffect(() => {
+    console.log('device Policy: ', props.devicePolicy);
+  }, [props]);
+
   return (
     <div>
-    <StyledTabs
-      value={tabValue}
-      onChange={handleChange}
-      centered
-      aria-label="styled tabs example"
-    >
-      <StyledTab label="Basic Policy" />
-      <StyledTab label="Device Hygiene" />
-    </StyledTabs>
-    {/* Basic Policy */}
-    <TabPanel value={tabValue} index={0}>
-    <Grid container spacing={2}>
-      <Grid item xs={12}>
+      <StyledTabs
+        value={tabValue}
+        onChange={handleChange}
+        centered
+        aria-label="styled tabs example"
+      >
+        <StyledTab label="Basic Policy" />
+        <StyledTab label="Device Hygiene" />
+      </StyledTabs>
+      {/* Basic Policy */}
+      <TabPanel value={tabValue} index={0}>
         <Grid container spacing={2}>
-          <Grid item xs={2}>
-            <Typography variant="h3">Policy Name:</Typography>
+          <Grid item xs={12}>
+            <Grid container spacing={2}>
+              <Grid item xs={2}>
+                <Typography variant="h3">Policy Name:</Typography>
+              </Grid>
+              <Grid item xs={10}>
+                <Typography className={classes.textFieldInputBig} variant="h4">
+                  {props.policyName}
+                </Typography>
+              </Grid>
+            </Grid>
           </Grid>
-          <Grid item xs={10}>
-            <Typography className={classes.textFieldInputBig} variant="h4">
-              {props.policyName}
-            </Typography>
+
+          <Grid item xs={12}>
+            <Grid container spacing={2}>
+              <Grid item xs={2}>
+                <Typography variant="h3">2FA: </Typography>
+              </Grid>
+              <Grid item xs={10}>
+                <Typography variant="h4" className={classes.textFieldInputBig}>
+                  {props.tfaRequired ? 'enabled' : 'disabled'}
+                </Typography>
+              </Grid>
+            </Grid>
+          </Grid>
+
+          <Grid item xs={12}>
+            <Grid container spacing={2}>
+              <Grid item xs={2}>
+                <Typography variant="h3">Session Recording: </Typography>
+              </Grid>
+              <Grid item xs={10}>
+                <Typography variant="h4" className={classes.textFieldInputBig}>
+                  {props.recordSession ? 'enabled' : 'disabled'}
+                </Typography>
+              </Grid>
+            </Grid>
+          </Grid>
+
+          <Grid item xs={12}>
+            <Grid container spacing={2}>
+              <Grid item xs={2}>
+                <Typography variant="h3">File Transfers: </Typography>
+              </Grid>
+              <Grid item xs={10}>
+                <Typography variant="h4" className={classes.textFieldInputBig}>
+                  {props.fileTransfer ? 'enabled' : 'disabled'}
+                </Typography>
+              </Grid>
+            </Grid>
+          </Grid>
+
+          <Grid item xs={12}>
+            <Grid container spacing={2}>
+              <Grid item xs={2}>
+                <Typography variant="h3">IP Source: </Typography>
+              </Grid>
+              <Grid item xs={10}>
+                <Typography variant="h4" className={classes.textFieldInputBig}>
+                  {props.ipSource}
+                </Typography>
+              </Grid>
+            </Grid>
+          </Grid>
+
+          <Grid item xs={12}>
+            <Grid container spacing={2}>
+              <Grid item xs={2}>
+                {/* {JSON.stringify(props.dayAndTime)}  */}
+                <Typography variant="h3">dayAndTime:</Typography>
+              </Grid>
+              <Grid item xs={10}>
+                <Table className={classes.table}>
+                  <TableHead>
+                    <TableRow>
+                      <StyledTableCell>SN</StyledTableCell>
+                      <StyledTableCell>Days</StyledTableCell>
+                      <StyledTableCell>From Time</StyledTableCell>
+                      <StyledTableCell>To Time</StyledTableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {props.dayAndTime.map((perm: any, index: number) => (
+                      <TableRow key={index}>
+                        <StyledTableCell>{index}</StyledTableCell>
+                        <StyledTableCell component="th" scope="row">
+                          {`${perm.days} , `}
+                        </StyledTableCell>
+                        <StyledTableCell>{perm.fromTime}</StyledTableCell>
+                        <StyledTableCell>{perm.toTime}</StyledTableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+
+                <br />
+              </Grid>
+            </Grid>
+          </Grid>
+
+          <Grid item xs={12}>
+            <Grid container spacing={2}>
+              <Grid item xs={2}>
+                <Typography variant="h3">Policy Expiry: </Typography>
+              </Grid>
+              <Grid item xs={10}>
+                <Typography variant="h4" className={classes.textFieldInputBig}>
+                  {props.expiry}
+                </Typography>
+              </Grid>
+            </Grid>
           </Grid>
         </Grid>
-      </Grid>
+      </TabPanel>
 
-      <Grid item xs={12}>
+      {/* Device Hygiene */}
+      <TabPanel value={tabValue} index={1}>
         <Grid container spacing={2}>
-          <Grid item xs={2}>
-            <Typography variant="h3">2FA: </Typography>
+          <Typography variant="h4">All policies are blocking*</Typography>
+          <Grid item xs={12}>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <Typography variant="h3">Untrusted devices:</Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography className={classes.textFieldInputBig} variant="h4">
+                  {props.devicePolicy.blockUntrustedDevices ? 'enabled' : 'disabled'}
+                </Typography>
+              </Grid>
+            </Grid>
+
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <Typography variant="h3">Autologin Enabled:</Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography className={classes.textFieldInputBig} variant="h4">
+                  {props.devicePolicy.blockAutologinEnabled ? 'enabled' : 'disabled'}
+                </Typography>
+              </Grid>
+            </Grid>
           </Grid>
-          <Grid item xs={10}>
-            <Typography variant="h4" className={classes.textFieldInputBig}>
-              {props.tfaRequired ? 'enabled' : 'disabled'}
-            </Typography>
+
+          <Grid item xs={12}>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <Typography variant="h3">Idle screen lock disabled: </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography variant="h4" className={classes.textFieldInputBig}>
+                  {props.devicePolicy.blockIdleScreenLockDisabled ? 'enabled' : 'disabled'}
+                </Typography>
+              </Grid>
+            </Grid>
+          </Grid>
+
+          <Grid item xs={12}>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <Typography variant="h3">Remote login Enabled: </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography variant="h4" className={classes.textFieldInputBig}>
+                  {props.devicePolicy.blockRemoteLoginEnabled ? 'enabled' : 'disabled'}
+                </Typography>
+              </Grid>
+            </Grid>
+          </Grid>
+
+          <Grid item xs={12}>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <Typography variant="h3">Jailbroken device (Mobile device): </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography variant="h4" className={classes.textFieldInputBig}>
+                  {props.devicePolicy.blockJailBroken ? 'enabled' : 'disabled'}
+                </Typography>
+              </Grid>
+            </Grid>
+          </Grid>
+
+          <Grid item xs={12}>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <Typography variant="h3">Debugging enabled (Mobile device):</Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography variant="h4" className={classes.textFieldInputBig}>
+                  {props.devicePolicy.blockDebuggingEnabled ? 'enabled' : 'disabled'}
+                </Typography>
+              </Grid>
+            </Grid>
+          </Grid>
+
+          <Grid item xs={12}>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <Typography variant="h3">Emulated device (Mobile device):</Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography variant="h4" className={classes.textFieldInputBig}>
+                  {props.devicePolicy.blockEmulated ? 'enabled' : 'disabled'}
+                </Typography>
+              </Grid>
+            </Grid>
+          </Grid>
+
+          <Grid item xs={12}>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <Typography variant="h3">Disk not encrypted (Workstation): </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography variant="h4" className={classes.textFieldInputBig}>
+                  {props.devicePolicy.blockEncryptionNotSet ? 'enabled' : 'disabled'}
+                </Typography>
+              </Grid>
+            </Grid>
+          </Grid>
+
+          <Grid item xs={12}>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <Typography variant="h3">Firewall disabled: </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography variant="h4" className={classes.textFieldInputBig}>
+                  {props.devicePolicy.blockFirewallDisabled ? 'enabled' : 'disabled'}
+                </Typography>
+              </Grid>
+            </Grid>
+          </Grid>
+
+          <Grid item xs={12}>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <Typography variant="h3">Antivirus disabled (windows only) </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography variant="h4" className={classes.textFieldInputBig}>
+                  {props.devicePolicy.blockAntivirusDisabled ? 'enabled' : 'disabled'}
+                </Typography>
+              </Grid>
+            </Grid>
           </Grid>
         </Grid>
-      </Grid>
-
-      <Grid item xs={12}>
-        <Grid container spacing={2}>
-          <Grid item xs={2}>
-            <Typography variant="h3">Session Recording: </Typography>
-          </Grid>
-          <Grid item xs={10}>
-            <Typography variant="h4" className={classes.textFieldInputBig}>
-              {props.recordSession ? 'enabled' : 'disabled'}
-            </Typography>
-          </Grid>
-        </Grid>
-      </Grid>
-
-      <Grid item xs={12}>
-        <Grid container spacing={2}>
-          <Grid item xs={2}>
-            <Typography variant="h3">File Transfers: </Typography>
-          </Grid>
-          <Grid item xs={10}>
-            <Typography variant="h4" className={classes.textFieldInputBig}>
-              {props.fileTransfer ? 'enabled' : 'disabled'}
-            </Typography>
-          </Grid>
-        </Grid>
-      </Grid>
-
-      <Grid item xs={12}>
-        <Grid container spacing={2}>
-          <Grid item xs={2}>
-            <Typography variant="h3">IP Source: </Typography>
-          </Grid>
-          <Grid item xs={10}>
-            <Typography variant="h4" className={classes.textFieldInputBig}>
-              {props.ipSource}
-            </Typography>
-          </Grid>
-        </Grid>
-      </Grid>
-
-      <Grid item xs={12}>
-        <Grid container spacing={2}>
-          <Grid item xs={2}>
-            {/* {JSON.stringify(props.dayAndTime)}  */}
-            <Typography variant="h3">dayAndTime:</Typography>
-          </Grid>
-          <Grid item xs={10}>
-            <Table className={classes.table}>
-              <TableHead>
-                <TableRow>
-                  <StyledTableCell>SN</StyledTableCell>
-                  <StyledTableCell>Days</StyledTableCell>
-                  <StyledTableCell>From Time</StyledTableCell>
-                  <StyledTableCell>To Time</StyledTableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {props.dayAndTime.map((perm: any, index: number) => (
-                  <TableRow key={index}>
-                    <StyledTableCell>{index}</StyledTableCell>
-                    <StyledTableCell component="th" scope="row">
-                      {`${perm.days} , `}
-                    </StyledTableCell>
-                    <StyledTableCell>{perm.fromTime}</StyledTableCell>
-                    <StyledTableCell>{perm.toTime}</StyledTableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-
-            <br />
-          </Grid>
-        </Grid>
-      </Grid>
-
-      <Grid item xs={12}>
-        <Grid container spacing={2}>
-          <Grid item xs={2}>
-            <Typography variant="h3">Policy Expiry: </Typography>
-          </Grid>
-          <Grid item xs={10}>
-            <Typography variant="h4" className={classes.textFieldInputBig}>
-              {props.expiry}
-            </Typography>
-          </Grid>
-        </Grid>
-      </Grid>
-    </Grid>
-    </TabPanel>
-
-{/* Device Hygiene */}
-    <TabPanel value={tabValue} index={1}>
-     <Grid container spacing={2}>
-     <Typography variant="h4">All policies are blocking*</Typography>
-     <Grid item xs={12}>
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
-            <Typography variant="h3">Untrusted devices:</Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography className={classes.textFieldInputBig} variant="h4">
-              {props.devicePolicy.blockUntrustedDevices ? 'enabled' : 'disabled'}
-            </Typography>
-          </Grid>
-        </Grid>
-
-<Grid container spacing={2}>
-          <Grid item xs={6}>
-            <Typography variant="h3">Autologin Enabled:</Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography className={classes.textFieldInputBig} variant="h4">
-              {props.devicePolicy.blockAutologinEnabled ? 'enabled' : 'disabled'}
-            </Typography>
-          </Grid>
-        </Grid>
-      </Grid>
-
-      <Grid item xs={12}>
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
-            <Typography variant="h3">Idle screen lock disabled: </Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="h4" className={classes.textFieldInputBig}>
-              {props.devicePolicy.blockIdleScreenLockDisabled ? 'enabled' : 'disabled'}
-            </Typography>
-          </Grid>
-        </Grid>
-      </Grid>
-
-      <Grid item xs={12}>
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
-            <Typography variant="h3">Remote login Enabled: </Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="h4" className={classes.textFieldInputBig}>
-              {props.devicePolicy.blockRemoteLoginEnabled ? 'enabled' : 'disabled'}
-            </Typography>
-          </Grid>
-        </Grid>
-      </Grid>
-
-      <Grid item xs={12}>
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
-            <Typography variant="h3">Jailbroken device (Mobile device): </Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="h4" className={classes.textFieldInputBig}>
-              {props.devicePolicy.blockJailBroken ? 'enabled' : 'disabled'}
-            </Typography>
-          </Grid>
-        </Grid>
-      </Grid>
-
-      <Grid item xs={12}>
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
-            <Typography variant="h3">Debugging enabled (Mobile device):</Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="h4" className={classes.textFieldInputBig}>
-            {props.devicePolicy.blockDebuggingEnabled ? 'enabled' : 'disabled'}
-            </Typography>
-          </Grid>
-        </Grid>
-      </Grid>
-
-      <Grid item xs={12}>
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
-            <Typography variant="h3">Emulated device (Mobile device):</Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="h4" className={classes.textFieldInputBig}>
-            {props.devicePolicy.blockEmulated ? 'enabled' : 'disabled'}
-            </Typography>
-          </Grid>
-        </Grid>
-      </Grid>
-
-
-
-
-      <Grid item xs={12}>
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
-            <Typography variant="h3">Disk not encrypted (Workstation): </Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="h4" className={classes.textFieldInputBig}>
-            {props.devicePolicy.blockEncryptionNotSet ? 'enabled' : 'disabled'}
-            </Typography>
-          </Grid>
-        </Grid>
-      </Grid>
-
-      <Grid item xs={12}>
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
-            <Typography variant="h3">Firewall disabled: </Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="h4" className={classes.textFieldInputBig}>
-            {props.devicePolicy.blockFirewallDisabled ? 'enabled' : 'disabled'}
-            </Typography>
-          </Grid>
-        </Grid>
-      </Grid>
-
-      <Grid item xs={12}>
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
-            <Typography variant="h3">Antivirus disabled (windows only) </Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="h4" className={classes.textFieldInputBig}>
-            {props.devicePolicy.blockAntivirusDisabled ? 'enabled' : 'disabled'}
-            </Typography>
-          </Grid>
-        </Grid>
-      </Grid>
-
-
-    </Grid>
-    </TabPanel>
-  </div>
-
-
+      </TabPanel>
+    </div>
   );
 }
