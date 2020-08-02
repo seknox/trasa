@@ -32,4 +32,5 @@ type DeviceAdapter interface {
 
 	GetDeviceAndOrgIDFromExtID(extID string) (orgID, deviceID, userID string, err error)
 	CheckIfExtIsRegistered(extID string) (string, error)
+	GetDeviceIDFromExtID(machineID string) (string, error)
 }
