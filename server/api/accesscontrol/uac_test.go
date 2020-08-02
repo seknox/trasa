@@ -251,3 +251,106 @@ func TestCheckTrasaUAC(t *testing.T) {
 		})
 	}
 }
+
+func Test_checkVersion(t *testing.T) {
+	type args struct {
+		policy string
+		ver    string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    bool
+		wantErr bool
+	}{
+		{
+			"blank version should return error",
+			args{"11.1.1.1", ""},
+			false,
+			true,
+		},
+
+		{
+			"blank policy should return error",
+			args{"", "1.1.1"},
+			false,
+			true,
+		},
+
+		{
+			"policy should not be more specific than version ",
+			args{"11.1.1.1", "11.1"},
+			false,
+			true,
+		},
+
+		{
+			"",
+			args{"11.1.1.1", "10.3"},
+			false,
+			false,
+		},
+
+		{
+			"",
+			args{"11.1.1.1", "12.3"},
+			true,
+			false,
+		},
+
+		{
+			"exact match",
+			args{"11.1.1.1", "11.1.1.1"},
+			true,
+			false,
+		},
+
+		{
+			"generic policy",
+			args{"11.1", "11.1.1.4"},
+			true,
+			false,
+		},
+		{
+			"generic policy",
+			args{"11.1", "12.1.1.4"},
+			true,
+			false,
+		},
+
+		{
+			"generic policy",
+			args{"11.1", "11.0.1.0"},
+			false,
+			false,
+		},
+
+		{
+			"specific policy",
+			args{"19.2.4.1004.", "19.2.4.1003"},
+			false,
+			false,
+		},
+
+		{
+			"specific policy",
+			args{"19.2.4.1004.", "19.2.4.1005"},
+			true,
+			false,
+		},
+
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := checkVersion(tt.args.policy, tt.args.ver)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("checkVersion() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("checkVersion() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
