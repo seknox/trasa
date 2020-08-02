@@ -113,33 +113,42 @@ func RegisterUserDevice(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// begin store process
-	// Create new workstation and store dh.
-	var rd models.UserDevice
-	rd.DeviceID = utils.GetUUID()
-	rd.UserID = userDetailFromDB.ID
-	rd.OrgID = userDetailFromDB.OrgID
-	rd.DeviceType = "workstation"
-	rd.FcmToken = ""
-	rd.PublicKey = ""
-	rd.DeviceFinger = "{}"
 
-	dh.DeviceHygiene.NetworkInfo.IPAddress = utils.GetIp(r)
-	rd.DeviceHygiene = dh.DeviceHygiene
+	//register device if its not already registered
+	deviceID, err := devices.Store.GetDeviceIDFromExtID(dh.DeviceHygiene.DeviceInfo.MachineID)
+	if err != nil || deviceID == "" {
+		logrus.Debug(err)
+		deviceID = utils.GetUUID()
+		// Create new workstation and store dh.
+		var rd models.UserDevice
+		rd.DeviceID = deviceID
+		rd.UserID = userDetailFromDB.ID
+		rd.OrgID = userDetailFromDB.OrgID
+		rd.MachineID = dh.DeviceHygiene.DeviceInfo.MachineID
+		rd.DeviceType = "workstation"
+		rd.FcmToken = ""
+		rd.PublicKey = ""
+		rd.DeviceFinger = "{}"
 
-	rd.AddedAt = time.Now().Unix()
+		dh.DeviceHygiene.NetworkInfo.IPAddress = utils.GetIp(r)
+		rd.DeviceHygiene = dh.DeviceHygiene
 
-	err = devices.Store.Register(rd)
-	if err != nil {
-		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "Could not register device", "ExtLogin", nil)
-		return
+		rd.AddedAt = time.Now().Unix()
+
+		err = devices.Store.Register(rd)
+		if err != nil {
+			logrus.Error(err)
+			utils.TrasaResponse(w, 200, "failed", "Could not register device", "ExtLogin", nil)
+			return
+		}
+
 	}
 
 	// Store Browser reference device_id of rd.DeviceID
 	var brsr models.DeviceBrowser
 	brsr.ID = utils.GetUUID()
 	brsr.OrgID = userDetailFromDB.OrgID
-	brsr.DeviceID = rd.DeviceID
+	brsr.DeviceID = deviceID
 	brsr.Version = dh.DeviceBrowser.Version
 	brsr.Name = dh.DeviceBrowser.Name
 	brsr.Build = dh.DeviceBrowser.Build
@@ -148,7 +157,7 @@ func RegisterUserDevice(w http.ResponseWriter, r *http.Request) {
 	brsr.IsBot = false
 	brsr.Extensions = dh.BrowserExtensions
 
-	logrus.Debug("IDD: ", rd.DeviceID, brsr.DeviceID)
+	logrus.Debug("IDD: ", deviceID, brsr.DeviceID)
 
 	err = devices.Store.RegisterBrowser(brsr)
 	if err != nil {

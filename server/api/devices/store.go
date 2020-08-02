@@ -182,3 +182,8 @@ func (s DeviceStore) GetDeviceAndOrgIDFromExtID(extID string) (orgID, deviceID, 
 
 	return
 }
+
+func (s DeviceStore) GetDeviceIDFromExtID(machineID string) (deviceID string, err error) {
+	err = s.DB.QueryRow(`SELECT id from devices where machine_id=$1`, machineID).Scan(&deviceID)
+	return
+}
