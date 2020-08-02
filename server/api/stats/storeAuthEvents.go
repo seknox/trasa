@@ -2,6 +2,7 @@ package stats
 
 import (
 	"database/sql"
+	"fmt"
 	"net"
 	"strconv"
 	"strings"
@@ -69,6 +70,9 @@ func (s StatStore) GetAggregatedLoginHours(entityType, entityID, timezone, orgID
 		return logins, err
 	}
 	now := time.Now().In(loc)
+	_, tzOffset := now.Zone()
+
+	tzOffset = tzOffset + 3600
 
 	sb := sqlbuilder.NewSelectBuilder()
 
@@ -80,8 +84,7 @@ func (s StatStore) GetAggregatedLoginHours(entityType, entityID, timezone, orgID
 	}
 	sb.Where(sb.Equal(`org_id`, orgID))
 
-	//TODO check timezone
-	sb.Select(sb.As(`((login_time/3600000000000)%24)::int`, `hour`), sb.As(`count(*)`, `c`))
+	sb.Select(sb.As(fmt.Sprintf(`((login_time/3600000000000)%%24)::int + %d`, tzOffset/3600), `hour`), sb.As(`count(*)`, `c`))
 	//sb.Select(sb.As(`EXTRACT('hour',(login_time/1000000000)::int::timestamp)`, `hour `), sb.As(`count(*)`, `c`))
 	sb.GroupBy(`hour`)
 	sb.OrderBy(`hour`)

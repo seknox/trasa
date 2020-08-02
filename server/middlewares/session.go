@@ -17,8 +17,6 @@ import (
 	"golang.org/x/crypto/nacl/secretbox"
 )
 
-//TODO use getUserContext
-
 // SessionValidator is a middleware that checks for csrf tokens and session cookies
 func SessionValidator(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
