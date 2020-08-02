@@ -53,9 +53,6 @@ type http2faCache struct {
 
 // var http2faCacheStore = make(map[string]bool)
 
-// sessionStoreWithExtokenDomain is like http2faCacheStore but holds auth cachce for entire user session and is initiated after successful authorization.
-//var sessionStoreWithExtokenDomain = make(map[string]bool)
-
 // AuthHTTPAccessProxy initiates http access proxy session. Intent should be 'AUTH_HTTP_ACCESS_PROXY'
 func AuthHTTPAccessProxy(w http.ResponseWriter, r *http.Request) {
 	logger.Trace("AuthHTTPAccessProxy request")
