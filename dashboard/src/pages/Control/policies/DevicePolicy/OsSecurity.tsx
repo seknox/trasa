@@ -7,23 +7,15 @@ import React from 'react';
 
 const useStyles = makeStyles((theme) => ({
   divider: {
-    maxWidth: 400
-  }
+    maxWidth: 400,
+  },
 }));
 
 type osSecurityProps = {
-  blockJailBroken: boolean;
-  changeBlockJailBroken: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
-  blockDebuggingEnabled: boolean;
-  changeBlockDebuggingEnabled: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
-  blockEmulated: boolean
-  changeBlockEmulated : (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
-
-  blockCriticalAutoUpdateDisabled: boolean
-  changeBlockCriticalAutoUpdateDisabled : (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
-
-
-}
+  // TODO @types
+  dhBlocking: any;
+  handleDHBlockingChange: any;
+};
 
 export default function OsSecurity(props: osSecurityProps) {
   const classes = useStyles();
@@ -44,9 +36,11 @@ export default function OsSecurity(props: osSecurityProps) {
           </Grid>
           <Grid item xs={12} sm={6} md={2} lg={2}>
             <Switch
-              checked={props.blockJailBroken}
-              onChange={props.changeBlockJailBroken}
+              checked={props.dhBlocking.blockJailBroken}
+              onChange={props.handleDHBlockingChange('blockJailBroken')}
+              name="blockJailBroken"
               color="secondary"
+              value={props.dhBlocking.blockJailBroken}
             />
           </Grid>
         </Grid>
@@ -59,9 +53,11 @@ export default function OsSecurity(props: osSecurityProps) {
           </Grid>
           <Grid item xs={12} sm={6} md={2} lg={2}>
             <Switch
-              checked={props.blockDebuggingEnabled}
-              onChange={props.changeBlockDebuggingEnabled}
+              checked={props.dhBlocking.blockDebuggingEnabled}
+              onChange={props.handleDHBlockingChange('blockDebuggingEnabled')}
+              name="blockDebuggingEnabled"
               color="secondary"
+              value={props.dhBlocking.blockDebuggingEnabled}
             />
           </Grid>
         </Grid>
@@ -74,9 +70,11 @@ export default function OsSecurity(props: osSecurityProps) {
           </Grid>
           <Grid item xs={12} sm={6} md={2} lg={2}>
             <Switch
-              checked={props.blockEmulated}
-              onChange={props.changeBlockEmulated}
+              checked={props.dhBlocking.blockEmulated}
+              onChange={props.handleDHBlockingChange('blockEmulated')}
+              name="blockEmulated"
               color="secondary"
+              value={props.dhBlocking.blockEmulated}
             />
           </Grid>
         </Grid>
@@ -104,9 +102,6 @@ export default function OsSecurity(props: osSecurityProps) {
           </Grid>
         </Grid>
       </Grid> */}
-
-
-
     </Grid>
   );
 }

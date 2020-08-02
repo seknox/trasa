@@ -19,80 +19,55 @@ type singlePolicytype = {
   ipSource: string;
   expiry: string;
   devicePolicy: DevicePolicyProps;
-
-
 };
 
-
 export type DevicePolicyProps = {
-  blockUntrustedDevices:boolean
-  blockAutologinEnabled: boolean
-  blockTfaNotConfigured: boolean
-  blockIdleScreenLockDisabled: boolean
-  blockRemoteLoginEnabled: boolean
-  blockJailBroken: boolean
-  blockDebuggingEnabled: boolean
-  blockEmulated: boolean
-  blockEncryptionNotSet: boolean
-  blockOpenWifiConn: boolean
+  blockUntrustedDevices: boolean;
+  blockAutologinEnabled: boolean;
+  blockTfaNotConfigured: boolean;
+  blockIdleScreenLockDisabled: boolean;
+  blockRemoteLoginEnabled: boolean;
+  blockJailBroken: boolean;
+  blockDebuggingEnabled: boolean;
+  blockEmulated: boolean;
+  blockEncryptionNotSet: boolean;
+  blockOpenWifiConn: boolean;
   blockFirewallDisabled: boolean;
   blockAntivirusDisabled: boolean;
-}
+};
+
+const policyObj = {
+  policyID: '',
+  policyName: '',
+  dayAndTime: {},
+  tfaRequired: false,
+  recordSession: false,
+  fileTransfer: false,
+  ipSource: '',
+  expiry: '',
+  devicePolicy: {
+    blockAutologinEnabled: false,
+    blockUntrustedDevices: false,
+    blockTfaNotConfigured: false,
+    blockIdleScreenLockDisabled: false,
+    blockRemoteLoginEnabled: false,
+    blockJailBroken: false,
+    blockDebuggingEnabled: false,
+    blockEmulated: false,
+    blockEncryptionNotSet: false,
+    blockOpenWifiConn: false,
+    blockFirewallDisabled: false,
+    blockAntivirusDisabled: false,
+  },
+};
 
 export default function Policies() {
   const [policyArr, setPolicyArr] = useState([]); // useState<Array<object[]>>([]);
-  const [policyObject, setpolicyObject] = useState([
-    {
-      policyID: '',
-      policyName: '',
-      dayAndTime: {},
-      tfaRequired: false,
-      recordSession: false,
-      fileTransfer: false,
-      ipSource: '',
-      expiry: '',
-      devicePolicy: {
-        blockAutologinEnabled: false,
-        blockUntrustedDevices:false,
-  blockTfaNotConfigured: false,
-  blockIdleScreenLockDisabled: false,
-  blockRemoteLoginEnabled: false,
-  blockJailBroken: false,
-  blockDebuggingEnabled: false,
-  blockEmulated: false,
-  blockEncryptionNotSet: false,
-  blockOpenWifiConn: false,
-  blockFirewallDisabled: false,
-  blockAntivirusDisabled: false,
-      }
-    },
-  ]); // useState<object[]>([{}]);
+  const [policyObject, setpolicyObject] = useState([policyObj]); // useState<object[]>([{}]);
   const [viewDlg, openViewDlg] = useState(false);
   const [createPolicyDlgState, changeCreatePolicyDlgState] = useState(false);
   const [update, setUpdate] = useState(false);
-  const [singlePolicy, setSinglePolicy] = useState({
-    policyID: '',
-    policyName: '',
-    dayAndTime: {},
-    tfaRequired: false,
-    recordSession: false,
-    fileTransfer: false,
-    ipSource: '',
-    expiry: '',
-    devicePolicy: {
-      blockUntrustedDevices:false,
-      blockAutologinEnabled: false,
-      blockTfaNotConfigured: false,
-      blockIdleScreenLockDisabled: false,
-      blockRemoteLoginEnabled: false,
-      blockJailBroken: false,
-      blockDebuggingEnabled: false,
-      blockEmulated: false,
-      blockEncryptionNotSet: false,
-      blockOpenWifiConn: false,
-      blockFirewallDisabled: false,
-      blockAntivirusDisabled: false,},
-  });
+  const [singlePolicy, setSinglePolicy] = useState(policyObj);
 
   const changeViewDlgState = (rowIndex: number) => {
     openViewDlg(!viewDlg);
@@ -102,6 +77,7 @@ export default function Policies() {
     openViewDlg(false);
   };
   const openCreatePolicyDlg = () => {
+    setSinglePolicy(policyObj);
     changeCreatePolicyDlgState(true);
     setUpdate(false);
   };
@@ -109,44 +85,13 @@ export default function Policies() {
   const handleClose = () => {
     changeCreatePolicyDlgState(false);
     setUpdate(false);
-    setSinglePolicy({
-      policyID: '',
-      policyName: '',
-      dayAndTime: {},
-      tfaRequired: false,
-      recordSession: false,
-      fileTransfer: false,
-      ipSource: '',
-      expiry: '',
-
-      devicePolicy: {
-        blockUntrustedDevices:false,
-        blockAutologinEnabled: false,
-        blockTfaNotConfigured: false,
-        blockIdleScreenLockDisabled: false,
-        blockRemoteLoginEnabled: false,
-        blockJailBroken: false,
-        blockDebuggingEnabled: false,
-        blockEmulated: false,
-        blockEncryptionNotSet: false,
-        blockOpenWifiConn: false,
-        blockFirewallDisabled: false,
-        blockAntivirusDisabled: false,},
-    });
   };
 
-  // const updatePoliciesArr = (obj:any, arr:any) => {
-  //   let newPolicyObj = policyObject.unshift(obj);
-  //   let newPolicyArr = policyArr.unshift(arr);
-  //   setpolicyObject(newPolicyObj);
-  //   setPolicyArr(newPolicyArr);
   // };
   const changeUpdatePolicyState = (rowIndex: number) => {
-    mixpanel.track('control-policies-updatepolicy');
     setUpdate(true);
     changeCreatePolicyDlgState(true);
     setSinglePolicy(policyObject[rowIndex]);
-    // console.log('policy: ', policyObject[rowIndex])
   };
 
   const handleDeletePermission = (rowsDeleted: any) => {
@@ -236,20 +181,7 @@ export default function Policies() {
             fileTransfer={singlePolicy.fileTransfer}
             ipSource={singlePolicy.ipSource}
             expiry={singlePolicy.expiry}
-
             devicePolicy={singlePolicy.devicePolicy}
-
-            // blockAutologinEnabled={singlePolicy.blockAutologinEnabled}
-            // blockTfaNotConfigured={singlePolicy.blockTfaNotConfigured}
-            // blockIdleScreenLockDisabled={singlePolicy.blockIdleScreenLockDisabled}
-            // blockRemoteLoginEnabled={singlePolicy.blockRemoteLoginEnabled}
-            // blockJailBroken={singlePolicy.blockJailBroken}
-            // blockDebuggingEnabled={singlePolicy.blockDebuggingEnabled}
-            // blockEmulated={singlePolicy.blockEmulated}
-            // blockEncryptionNotSet={singlePolicy.blockEncryptionNotSet}
-            // blockOpenWifiConn={singlePolicy.blockOpenWifiConn}
-            // blockFirewallDisabled={singlePolicy.blockFirewallDisabled}
-            // blockAntivirusDisabled={singlePolicy.blockAntivirusDisabled}
           />
         </DialogueWrapper>
       </Grid>

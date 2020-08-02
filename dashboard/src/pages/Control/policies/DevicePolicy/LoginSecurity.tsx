@@ -4,25 +4,13 @@ import Switch from '@material-ui/core/Switch';
 import Typography from '@material-ui/core/Typography';
 import React from 'react';
 
-
 type loginSecurityProps = {
-  blockTfaNotConfigured: boolean;
-  changeBlockTfaNotConfigured: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
-  blockIdleScreenLockDisabled: boolean;
-  changeBlockIdleScreenLockDisabled: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
-
-
-
-
-  blockAutologinEnabled: boolean;
-  changeBlockAutologinEnabled: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
-  blockRemoteLoginEnabled: boolean;
-  changeBlockRemoteLoginEnabled: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
-
-}
+  // TODO @types
+  dhBlocking: any;
+  handleDHBlockingChange: any;
+};
 
 export default function LoginSecurity(props: loginSecurityProps) {
-
   return (
     <Grid container spacing={2}>
       <Grid item xs={12} sm={12} md={12}>
@@ -32,28 +20,30 @@ export default function LoginSecurity(props: loginSecurityProps) {
           </Grid>
           <Grid item xs={12} sm={6} md={2} lg={2}>
             <Switch
-              checked={props.blockAutologinEnabled}
-              onChange={props.changeBlockAutologinEnabled}
+              checked={props.dhBlocking.blockAutologinEnabled}
+              onChange={props.handleDHBlockingChange('blockAutologinEnabled')}
+              name="blockAutologinEnabled"
               color="secondary"
+              value={props.dhBlocking.blockAutologinEnabled}
             />
           </Grid>
         </Grid>
       </Grid>
 
-      {/*<Grid item xs={12} sm={12} md={12}>*/}
-      {/*  <Grid container spacing={2}>*/}
-      {/*    <Grid item xs={12} sm={12} md={5}>*/}
-      {/*      <Typography variant="h4">Block device if 2fa is not configured: </Typography>*/}
-      {/*    </Grid>*/}
-      {/*    <Grid item xs={12} sm={6} md={2} lg={2}>*/}
-      {/*      <Switch*/}
-      {/*        checked={props.blockTfaNotConfigured}*/}
-      {/*        onChange={props.changeBlockTfaNotConfigured}*/}
-      {/*        color="secondary"*/}
-      {/*      />*/}
-      {/*    </Grid>*/}
-      {/*  </Grid>*/}
-      {/*</Grid>*/}
+      {/* <Grid item xs={12} sm={12} md={12}> */}
+      {/*  <Grid container spacing={2}> */}
+      {/*    <Grid item xs={12} sm={12} md={5}> */}
+      {/*      <Typography variant="h4">Block device if 2fa is not configured: </Typography> */}
+      {/*    </Grid> */}
+      {/*    <Grid item xs={12} sm={6} md={2} lg={2}> */}
+      {/*      <Switch */}
+      {/*        checked={props.blockTfaNotConfigured} */}
+      {/*        onChange={props.changeBlockTfaNotConfigured} */}
+      {/*        color="secondary" */}
+      {/*      /> */}
+      {/*    </Grid> */}
+      {/*  </Grid> */}
+      {/* </Grid> */}
 
       <Grid item xs={12} sm={12} md={12}>
         <Grid container spacing={2}>
@@ -62,9 +52,11 @@ export default function LoginSecurity(props: loginSecurityProps) {
           </Grid>
           <Grid item xs={12} sm={6} md={2} lg={2}>
             <Switch
-              checked={props.blockIdleScreenLockDisabled}
-              onChange={props.changeBlockIdleScreenLockDisabled}
+              checked={props.dhBlocking.blockIdleScreenLockDisabled}
+              onChange={props.handleDHBlockingChange('blockIdleScreenLockDisabled')}
+              name="blockIdleScreenLockDisabled"
               color="secondary"
+              value={props.dhBlocking.blockIdleScreenLockDisabled}
             />
           </Grid>
         </Grid>
@@ -77,9 +69,11 @@ export default function LoginSecurity(props: loginSecurityProps) {
           </Grid>
           <Grid item xs={12} sm={6} md={2} lg={2}>
             <Switch
-              checked={props.blockRemoteLoginEnabled}
-              onChange={props.changeBlockRemoteLoginEnabled}
+              checked={props.dhBlocking.blockRemoteLoginEnabled}
+              onChange={props.handleDHBlockingChange('blockRemoteLoginEnabled')}
+              name="blockRemoteLoginEnabled"
               color="secondary"
+              value={props.dhBlocking.blockRemoteLoginEnabled}
             />
           </Grid>
         </Grid>
