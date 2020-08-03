@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"github.com/seknox/trasa/server/api/logs"
 	"net/http"
 	"net/url"
 	"time"
@@ -91,6 +92,7 @@ func RegisterUserDevice(w http.ResponseWriter, r *http.Request) {
 	dhBytes, err := hex.DecodeString(req.DeviceHygiene)
 	if err != nil {
 		logrus.Debug("cannot decode hex string", err)
+		logs.Store.LogLogin(&authlog, consts.REASON_SPOOFED_LOGIN, false)
 		utils.TrasaResponse(w, 200, "failed", "failed to decrypt data", "Device registration", nil)
 		return
 	}
@@ -99,6 +101,7 @@ func RegisterUserDevice(w http.ResponseWriter, r *http.Request) {
 	decryptedBytes, err := utils.AESDecrypt(secretKeyFromKex.Secretkey[:], dhBytes)
 	if err != nil {
 		logrus.Debug(err)
+		logs.Store.LogLogin(&authlog, consts.REASON_SPOOFED_LOGIN, false)
 		utils.TrasaResponse(w, 200, "failed", "failed to decrypt data", "Device registration", nil)
 		return
 	}
@@ -110,6 +113,7 @@ func RegisterUserDevice(w http.ResponseWriter, r *http.Request) {
 	var dh deviceDetail
 	err = json.Unmarshal(decryptedBytes, &dh)
 	if err != nil {
+		//TODO return error here??
 		logrus.Debug("cannot unmarshall decrypted Device Hygiene", err)
 	}
 
@@ -180,6 +184,7 @@ func RegisterUserDevice(w http.ResponseWriter, r *http.Request) {
 
 	// }
 
+	logs.Store.LogLogin(&authlog, "", true)
 	logrus.Trace("RegisterUserDevice- Sending Response")
 	// Respond with success
 	regDeviceRes(w, userDetailFromDB.OrgID, brsr.ID)
