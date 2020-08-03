@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"sync"
 
 	"github.com/seknox/trasa/server/api/services"
 	"github.com/seknox/trasa/server/global"
@@ -15,6 +16,7 @@ import (
 )
 
 var proxyConfig = make(map[string]models.ReverseProxy)
+var proxyConfigMutex sync.Mutex
 var trasaListenAddr = ""
 
 // PrepareProxyConfig initializes available http proxy configs.
@@ -27,9 +29,11 @@ func PrepareProxyConfig() {
 		panic(err)
 	}
 
+	proxyConfigMutex.Lock()
 	for _, v := range allservices {
 		proxyConfig[v.Hostname] = v.ProxyConfig
 	}
+	proxyConfigMutex.Unlock()
 
 	return
 

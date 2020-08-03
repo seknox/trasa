@@ -337,3 +337,31 @@ func CheckDevicePolicy(policy models.DevicePolicy, accessDeviceID, tfaDeviceID, 
 
 	return "", true, nil
 }
+
+func checkVersion(policy string, ver string) (bool, error) {
+	splittedPolicy := strings.Split(policy, ".")
+	splittedVersion := strings.Split(ver, ".")
+
+	for i, v := range splittedPolicy {
+		polInt, err := strconv.Atoi(v)
+		if err != nil {
+			return false, errors.New("invalid policy: not a number")
+		}
+		if len(splittedVersion) < i+1 {
+			return false, errors.Errorf("length mismatch: %d %d", len(splittedVersion), i+1)
+		}
+
+		verInt, err := strconv.Atoi(splittedVersion[i])
+		if err != nil {
+			return false, errors.New("invalid version: not a number")
+		}
+		if polInt > verInt {
+			return false, nil
+		} else if polInt < verInt {
+			return true, nil
+		}
+
+	}
+
+	return true, nil
+}

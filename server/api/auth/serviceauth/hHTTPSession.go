@@ -11,6 +11,7 @@ import (
 	"os/exec"
 	"runtime/debug"
 	"strings"
+	"sync"
 
 	"github.com/seknox/trasa/server/api/services"
 
@@ -39,6 +40,7 @@ type newSession struct {
 // sessionStore stores session data (logSession Modal) in memory until client logs out.
 // during logout sequence, the caller must add logout time and upload it to elasticsearch
 var sessionStore = make(map[string]logs.AuthLog)
+var sessionStoreMutex sync.Mutex
 
 // a cache session store that tells if 2fa attempt has already been queued for this authentication attempt.
 // if inithttprequest has not return but the trasa extension already sends another inithttp request,
@@ -115,7 +117,7 @@ func AuthHTTPAccessProxy(w http.ResponseWriter, r *http.Request) {
 
 	// TODO @sshahcodes, check if we can assign user's username here
 	authlog.Privilege = privilege
-	authlog.Privilege = userDetailFromDB.UserName
+	//authlog.Privilege = userDetailFromDB.UserName
 	authlog.SessionRecord = policy.RecordSession
 
 	ok, reason := accesscontrol.ACStore.CheckPolicyFunc(&models.ConnectionParams{
@@ -170,7 +172,9 @@ func AuthHTTPAccessProxy(w http.ResponseWriter, r *http.Request) {
 	// Insert user session values in database
 	orgusr := fmt.Sprintf("%s:%s", orgID, userID)
 
+	sessionStoreMutex.Lock()
 	sessionStore[encodedSession] = authlog
+	sessionStoreMutex.Unlock()
 
 	logger.Trace(authlog.SessionID)
 	logger.Trace(encodedSession)
@@ -236,7 +240,7 @@ func AuthHTTPAccessProxy(w http.ResponseWriter, r *http.Request) {
 
 	// we need user detail and app detail to store in user sessionStore.
 	// This value can be fetched based on exToken received and fetching user detial based on exToken.
-	// App detials can be fetched from hostname (which will be unique per http app) of http endpoint.
+	// App details can be fetched from hostname (which will be unique per http app) of http endpoint.
 	//sessionStore[encodedSession] =
 
 	utils.TrasaResponse(w, 200, "success", "successfully created session", "InitHttpsSession", sessionIdentifiers)
@@ -294,7 +298,7 @@ func sessionWriter(sessionID, shots string) {
 
 	//logger.Tracef("session writer req received: %s", sessionID)
 
-	// seperate multiple screenshot with counter		logrus.Trace(allow,reason)
+	// separate multiple screenshot with counter		logrus.Trace(allow,reason)
 	dataURIWithCounter := strings.Split(shots, "::")
 
 	// loop over dataURIWithCounter
@@ -313,7 +317,7 @@ func sessionWriter(sessionID, shots string) {
 
 			//logger.Tracef("counterAndImage length: %v", len(counterAndImage))
 
-			// the lenght shouold exactly be 2
+			// the length shouold exactly be 2
 			if len(counterAndImage) == 2 {
 				videoRecord := logStruct.SessionRecord //strings.Split(logStruct.AppID, ":")
 				//home, _ := hdir.Dir()
@@ -345,7 +349,10 @@ func sessionWriter(sessionID, shots string) {
 
 					// Encode takes a writer interface and an image interface
 					// We pass it the File and the RGBA
-					png.Encode(outputFile, img)
+					err = png.Encode(outputFile, img)
+					if err != nil {
+						logger.Debugf("png encode: %v", err)
+					}
 
 					// Don't forget to close files
 					outputFile.Close()
@@ -463,7 +470,9 @@ func LogoutSequence(sessionID string) {
 
 	// we delete sessionvalur from sessionStore
 	//delete(sessionStoreWithExtokenDomain, sessionCacheKey)
+	sessionStoreMutex.Lock()
 	delete(sessionStore, sessionID)
+	sessionStoreMutex.Unlock()
 
 }
 

@@ -15,7 +15,7 @@ import (
 	logger "github.com/sirupsen/logrus"
 )
 
-// GetSyncDetail retreives key or token from database. should fetch and return key tag rather than key value.
+// GetSyncDetail retrieves key or token from database. should fetch and return key tag rather than key value.
 func GetSyncDetail(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
 
@@ -24,7 +24,7 @@ func GetSyncDetail(w http.ResponseWriter, r *http.Request) {
 	key, err := Store.GetCloudSyncState(uc.User.OrgID, vendorID)
 	if err != nil {
 		logger.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "failed to retreive sync data.", "GetSyncDetail-GetCloudSyncState", nil)
+		utils.TrasaResponse(w, 200, "failed", "failed to retrieve sync data.", "GetSyncDetail-GetCloudSyncState", nil)
 		return
 	}
 

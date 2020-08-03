@@ -39,7 +39,7 @@ type loginRequest struct {
 }
 
 // LoginHandler authenticates user for configured identity provider.
-// Successfull authentication should respond with tfarequired intent. If user has not enrolled any 2fa device,
+// successful authentication should respond with tfarequired intent. If user has not enrolled any 2fa device,
 // this handler should respond with enroll device intent.
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	var loginRequest loginRequest
@@ -123,7 +123,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Now we will generate a unique token attached to this user. and send this token in response.
 	// this token will be used to validate tfa request and retrieve userID for this user.
-	// this userID will be used to retrieve user detail and send in response to successfull authentication.
+	// this userID will be used to retrieve user detail and send in response to successful authentication.
 	// @sshahcodes 18 dec, 2019. changing second parameter from hardcoded device-id to login. This will ensure that subsequent tfa requests are tied to this login authentication event.
 	// token := utils.GetRandomID(15) // using public key for token
 

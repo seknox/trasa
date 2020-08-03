@@ -85,6 +85,10 @@ func (s LogStore) LogLogin(log *AuthLog, reason consts.FailedReason, status bool
 		log.FailedReason = consts.REASON_UNKNOWN
 	}
 
+	if !status {
+		log.SessionRecord = false
+	}
+
 	_, err := s.DB.Exec(fmt.Sprintf(`INSERT INTO auth_logs (%s) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22)`, logparams),
 		log.EventID,
 		log.SessionID,
@@ -315,6 +319,6 @@ func (s LogStore) UploadHTTPLogToMinio(file *os.File, login AuthLog) error {
 		return err
 	}
 
-	logrus.Tracef("Successfully uploaded %s of size %d to minio \n", objectName, n)
+	logrus.Tracef("successfully uploaded %s of size %d to minio \n", objectName, n)
 	return nil
 }

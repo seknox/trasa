@@ -48,7 +48,7 @@ func ForgotPassword(w http.ResponseWriter, r *http.Request) {
 
 	// if we are here, it means username password validation succeeded. we will generate a unique token attached to this user.
 	// and send this token in response. this token will be used to validate tfa request and retrieve userID for this user.
-	// this userID will be used to retrieve user detail and send in response to successfull authentication.
+	// this userID will be used to retrieve user detail and send in response to successful authentication.
 	token := utils.GetRandomID(15)
 	//TODO @sshah is the intent corrent here?
 	err = redis.Store.Set(token, time.Second*400, "orgUser", orgUser, "intent", "AUTH_REQ_FORGOT_PASS")

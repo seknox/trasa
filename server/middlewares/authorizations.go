@@ -153,7 +153,7 @@ func Authorization(next http.HandlerFunc) http.HandlerFunc {
 }
 
 // urlParser parses incoming request URL and extracts api endpoint, which is
-// 3 element from slice returned from url.Path seperated by "/".
+// 3 element from slice returned from url.Path separated by "/".
 func urlParser(urlPath *url.URL) string {
 	path := strings.Split(urlPath.Path, "/")
 	return path[3]

@@ -232,7 +232,7 @@ func authenticateTRASA(conn ssh.ConnMetadata, challengeUser ssh.KeyboardInteract
 }
 
 //This function takes username, valid applist and keyboardInteractive callback function to  get user to choose authapp/hostname
-//It returns instance of chosen appuser (app with username) and  isDynamicApp boolean if choosen app is not yet created or assgned
+//It returns instance of chosen appuser (app with username) and  isDynamicApp boolean if chosen app is not yet created or assgned
 func chooseService(privilege, userID, userEmail string, challengeUser ssh.KeyboardInteractiveChallenge) (*models.Service, error) {
 
 	var isHostDown bool = true
@@ -374,6 +374,7 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 		return nil, err
 	}
 	sessionMeta.params.Policy = *policy
+	sessionMeta.log.SessionRecord = policy.RecordSession
 
 	totp := ""
 
