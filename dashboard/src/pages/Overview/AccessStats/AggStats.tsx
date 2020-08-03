@@ -92,7 +92,7 @@ const useStyles = makeStyles((theme) => ({
 function AppAggregatedData(props: AccessStatsFilterProps) {
   const [filter, setFilter] = useState('Today');
   const [successAndFailed, setSuccessAndFailed] = useState({
-    successfulogins: 0,
+    successfulLogins: 0,
     failedLogins: 0,
     totalLogins: 0,
   });
@@ -276,7 +276,7 @@ function AppAggregatedData(props: AccessStatsFilterProps) {
               <b>
                 {' '}
                 {kFormatter(
-                  successAndFailed.successfulogins + successAndFailed.failedLogins,
+                  successAndFailed.successfulLogins + successAndFailed.failedLogins,
                 )}{' '}
               </b>{' '}
             </div>
@@ -291,7 +291,7 @@ function AppAggregatedData(props: AccessStatsFilterProps) {
             </div>
             <div className={classes.aggHeadersBig}>
               {' '}
-              <b> {kFormatter(successAndFailed.successfulogins)} </b>{' '}
+              <b> {kFormatter(successAndFailed.successfulLogins)} </b>{' '}
             </div>
           </Paper>
         </Grid>
