@@ -437,13 +437,13 @@ func (s StatStore) GetAllAuthEventsByEntityType(entityType, entityID, timeFilter
 			return events, err
 		}
 		if status {
-			events.successfulogins = count
+			events.SuccessfulLogins = count
 		} else if !status {
 			events.FailedLogins = count
 		}
 	}
 
-	events.TotalLogins = events.successfulogins + events.FailedLogins
+	events.TotalLogins = events.SuccessfulLogins + events.FailedLogins
 
 	return events, err
 }
@@ -553,14 +553,14 @@ GROUP BY login_day  ORDER BY login_day DESC LIMIT 45;`, limitTime.UnixNano(), or
 	for rows.Next() {
 		var event totalEventsByDate
 		var day int64
-		err = rows.Scan(&event.TotalLogins, &day, &event.successfulogins, &event.FailedLogins)
+		err = rows.Scan(&event.TotalLogins, &day, &event.SuccessfulLogins, &event.FailedLogins)
 		if err != nil {
 			return events, err
 		}
 
 		//TODO move this logic to different testable function
 		event.Date = time.Unix(0, day*86400000000000).Format(time.RFC3339)
-		event.TotalLogins = event.successfulogins + event.FailedLogins
+		event.TotalLogins = event.SuccessfulLogins + event.FailedLogins
 
 		//Filling Missing days
 
@@ -570,10 +570,10 @@ GROUP BY login_day  ORDER BY login_day DESC LIMIT 45;`, limitTime.UnixNano(), or
 			//		logger.Trace(gap)
 			for i := gap; i > 0; i-- {
 				events = append(events, totalEventsByDate{
-					Date:            time.Unix(0, (day+i)*86400000000000).Format(time.RFC3339),
-					TotalLogins:     0,
-					successfulogins: 0,
-					FailedLogins:    0,
+					Date:             time.Unix(0, (day+i)*86400000000000).Format(time.RFC3339),
+					TotalLogins:      0,
+					SuccessfulLogins: 0,
+					FailedLogins:     0,
 				})
 			}
 		}
