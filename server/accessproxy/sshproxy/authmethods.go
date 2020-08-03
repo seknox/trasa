@@ -374,6 +374,7 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 		return nil, err
 	}
 	sessionMeta.params.Policy = *policy
+	sessionMeta.log.SessionRecord = policy.RecordSession
 
 	totp := ""
 

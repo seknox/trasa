@@ -48,6 +48,8 @@ func RegisterUserDevice(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	authlog := logs.NewLog(r, "regDevice")
+
 	// get user info from database
 	userDetailFromDB, err := Store.GetLoginDetails(req.TrasaID, req.OrgID)
 	if err != nil {
@@ -55,21 +57,20 @@ func RegisterUserDevice(w http.ResponseWriter, r *http.Request) {
 		utils.TrasaResponse(w, 200, "failed", "User not found", "Ext login", nil)
 		return
 	}
+	authlog.UpdateUser(userDetailFromDB)
 
 	switch req.TfaMethod {
 	case "totp":
 		check, _, err := tfa.VerifyTotpCode(req.TotpCode, userDetailFromDB.ID, userDetailFromDB.OrgID)
 		if err != nil || !check {
-			// TODO @bhrg3se auth log?
-			//err := logs.Store.LogLogin(authlog, consts.REASON_INVALID_TOTP, false)
+			logs.Store.LogLogin(&authlog, consts.REASON_INVALID_TOTP, false)
 			utils.TrasaResponse(w, 200, "failed", "totp failed", "Device registration", nil)
 			return
 		}
 	default:
 		status, msg := tfa.SendU2F(userDetailFromDB.ID, userDetailFromDB.OrgID, fmt.Sprintf("Device registration: %s", req.DeviceName), utils.GetIp(r))
 		if !status {
-			// TODO @bhrg3se auth log?
-			//err := logs.Store.LogLogin(authlog, consts.REASON_U2F_FAILED, false)
+			logs.Store.LogLogin(&authlog, consts.REASON_U2F_FAILED, false)
 			utils.TrasaResponse(w, 200, "failed", msg, "Device registration", nil)
 			return
 		}
@@ -130,7 +131,7 @@ func RegisterUserDevice(w http.ResponseWriter, r *http.Request) {
 		rd.PublicKey = ""
 		rd.DeviceFinger = "{}"
 
-		dh.DeviceHygiene.NetworkInfo.IPAddress = utils.GetIp(r)
+		//dh.DeviceHygiene.NetworkInfo.IPAddress = utils.GetIp(r)
 		rd.DeviceHygiene = dh.DeviceHygiene
 
 		rd.AddedAt = time.Now().Unix()
@@ -302,6 +303,7 @@ type enrolExt struct {
 	OSVersion      string `json:"osVersion"`
 }
 
+//Deprecated
 // EnrolBrowserExtension is used to enrol web browser (via web extension)
 func EnrolBrowserExtension(w http.ResponseWriter, r *http.Request) {
 

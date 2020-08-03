@@ -132,7 +132,6 @@ func start(conn net.Conn, serverConf *ssh.ServerConfig) error {
 		logrus.Error("session not found")
 		return err
 	}
-	defer SSHStore.closeSession(conn.RemoteAddr())
 
 	logs.Store.AddNewActiveSession(session.log, session.ID, "ssh")
 	defer logs.Store.RemoveActiveSession(session.ID)
@@ -158,6 +157,7 @@ func start(conn net.Conn, serverConf *ssh.ServerConfig) error {
 	}
 
 	defer clientConn.Close()
+	defer SSHStore.closeSession(conn.RemoteAddr())
 
 	go ssh.DiscardRequests(frontEndReqs)
 	//_ = reqs

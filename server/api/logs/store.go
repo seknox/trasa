@@ -113,6 +113,9 @@ func (s LogStore) LogLogin(log *AuthLog, reason consts.FailedReason, status bool
 		pq.Array(log.Guests),
 		log.SessionRecord,
 	)
+	if err != nil {
+		logrus.Errorf("log login: %v", err)
+	}
 	return err
 }
 
