@@ -507,10 +507,10 @@ function OSInfo(props: any) {
 
       <Grid item xs={12}>
         <Grid container spacing={2}>
-          <Grid item xs={5}>
+          <Grid item xs={6}>
             <div className={classes.settingHeader}> OS Name </div>
           </Grid>
-          <Grid item xs={7}>
+          <Grid item xs={6}>
             <div className={classes.proxyVals}> {oi.osName} </div>
           </Grid>
         </Grid>
@@ -518,10 +518,10 @@ function OSInfo(props: any) {
 
       <Grid item xs={12}>
         <Grid container spacing={2}>
-          <Grid item xs={5}>
+          <Grid item xs={6}>
             <div className={classes.settingHeader}> OS Version </div>
           </Grid>
-          <Grid item xs={7}>
+          <Grid item xs={6}>
             <div className={classes.proxyVals}> {oi.osVersion} </div>
           </Grid>
         </Grid>
@@ -529,10 +529,10 @@ function OSInfo(props: any) {
 
       <Grid item xs={12}>
         <Grid container spacing={2}>
-          <Grid item xs={5}>
+          <Grid item xs={6}>
             <div className={classes.settingHeader}> OS Autoupdate </div>
           </Grid>
-          <Grid item xs={7}>
+          <Grid item xs={6}>
             <div className={classes.proxyVals}>{oi.autoUpdate ? 'enabled' : 'disabled'}</div>
           </Grid>
         </Grid>
@@ -540,10 +540,10 @@ function OSInfo(props: any) {
 
       <Grid item xs={12}>
         <Grid container spacing={2}>
-          <Grid item xs={5}>
+          <Grid item xs={6}>
             <div className={classes.settingHeader}> Debug Mode Enabled </div>
           </Grid>
-          <Grid item xs={7}>
+          <Grid item xs={6}>
             <div className={classes.proxyVals}>
               {dt.deviceType === 'mobile' ? (oi.debugModeEnabled ? 'enabled' : 'disabled') : 'n.a'}
             </div>
@@ -670,7 +670,7 @@ function LoginSecurity(props: any) {
       <Grid item xs={12}>
         <Grid container spacing={2}>
           <Grid item xs={6}>
-            <div className={classes.settingHeader}> Device Login Method </div>
+            <div className={classes.settingHeader}> Login Method </div>
           </Grid>
           <Grid item xs={6}>
             <div className={classes.proxyVals}> n.a </div>
@@ -681,7 +681,7 @@ function LoginSecurity(props: any) {
       <Grid item xs={12}>
         <Grid container spacing={2}>
           <Grid item xs={6}>
-            <div className={classes.settingHeader}> Device Screen Lock </div>
+            <div className={classes.settingHeader}> Screen Lock </div>
           </Grid>
           <Grid item xs={6}>
             <div className={classes.proxyVals}>
@@ -695,7 +695,7 @@ function LoginSecurity(props: any) {
       <Grid item xs={12}>
         <Grid container spacing={2}>
           <Grid item xs={6}>
-            <div className={classes.settingHeader}> Idle-screen lockout Time </div>
+            <div className={classes.settingHeader}> Idle-screen lockout </div>
           </Grid>
           <Grid item xs={6}>
             <div className={classes.proxyVals}> {`${ls.idleDeviceScreenLockTime}(seconds)`} </div>
@@ -706,7 +706,7 @@ function LoginSecurity(props: any) {
       <Grid item xs={12}>
         <Grid container spacing={2}>
           <Grid item xs={6}>
-            <div className={classes.settingHeader}> Password Last Updated </div>
+            <div className={classes.settingHeader}> Password Updated </div>
           </Grid>
           <Grid item xs={6}>
             <div className={classes.proxyVals}>
@@ -721,6 +721,8 @@ function LoginSecurity(props: any) {
 
 function NetworkInfo(props: any) {
   const classes = useStyles();
+
+  function pIfc(d: any) {}
 
   const { ni } = props;
   return (
