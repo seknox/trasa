@@ -172,9 +172,9 @@ func AuthHTTPAccessProxy(w http.ResponseWriter, r *http.Request) {
 	// Insert user session values in database
 	orgusr := fmt.Sprintf("%s:%s", orgID, userID)
 
-	sessionStoreMutex.Lock()
+	// sessionStoreMutex.Lock()
 	sessionStore[encodedSession] = authlog
-	sessionStoreMutex.Unlock()
+	// sessionStoreMutex.Unlock()
 
 	logger.Trace(authlog.SessionID)
 	logger.Trace(encodedSession)
@@ -470,9 +470,9 @@ func LogoutSequence(sessionID string) {
 
 	// we delete sessionvalur from sessionStore
 	//delete(sessionStoreWithExtokenDomain, sessionCacheKey)
-	sessionStoreMutex.Lock()
+	// sessionStoreMutex.Lock()
 	delete(sessionStore, sessionID)
-	sessionStoreMutex.Unlock()
+	// sessionStoreMutex.Unlock()
 
 }
 
