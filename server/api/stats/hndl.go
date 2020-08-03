@@ -229,7 +229,7 @@ func GetMapPlotData(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "failed to retrieve geo data", "GetUserMapPlotData", nil)
-
+		return
 	}
 
 	utils.TrasaResponse(w, 200, "success", "", "GetIPAggs", geoPlotData)
@@ -243,7 +243,7 @@ func GetPoliciesStats(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "failed to retrieve policy stat", "GetPolicyStat")
-
+		return
 	}
 
 	utils.TrasaResponse(w, 200, "success", "", "GetIPAggs", policyStats)
@@ -331,6 +331,7 @@ func HexaEvents(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "failed to get logs", "HexaEvents: GetTodayHexaLoginEvents")
+		return
 	}
 
 	utils.TrasaResponse(w, 200, "success", "HexaEvents", "", events)
