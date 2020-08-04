@@ -697,7 +697,7 @@ Greetings from trasa. Trasa is a modern approach to trusted access and session a
                     <tbody>
                         <tr>
                             <td class="mcnButtonContent" style="font-family: Arial; font-size: 16px; padding: 15px;" valign="middle" align="center">
-                                <a class="mcnButton " title="verify my account " href="https://api.trasa.seknox.com/path" target="_blank" style="font-weight: bold;letter-spacing: normal;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;">verify my account </a>
+                                <a class="mcnButton " title="verify my account " href= {{ .verifyToken }} target="_blank" style="font-weight: bold;letter-spacing: normal;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;">verify my account </a>
                             </td>
                         </tr>
                     </tbody>
