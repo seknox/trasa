@@ -3,7 +3,7 @@
 
 // EchartElementHeight returns height for echartElement
 export function EchartElementHeight() {
- // console.log('height: ', window.innerHeight, ' width: ', window.innerWidth)
+  // console.log('height: ', window.innerHeight, ' width: ', window.innerWidth)
   const h = window.innerHeight;
   switch (true) {
     case h < 750:
@@ -24,7 +24,7 @@ export function EchartDivHeight() {
     case h < 750:
       return { height: 220 };
     case h > 750 && h < 820:
-      return { height: 200 };
+      return { height: 250 };
     case h > 820 && h < 970:
       return { height: 270 };
     default:
@@ -116,10 +116,9 @@ export function AGTitleFontSize() {
   }
 }
 
-
 export function Spacing() {
   const h = window.innerHeight;
-  
+
   switch (true) {
     case h < 750:
       return 2;
@@ -129,7 +128,6 @@ export function Spacing() {
       return 2;
     default:
       return 4;
-
   }
 }
 
