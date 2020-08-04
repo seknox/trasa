@@ -245,6 +245,10 @@ func CheckDevicePolicy(policy models.DevicePolicy, accessDeviceID, tfaDeviceID, 
 			logrus.Trace("!Trusted")
 			return "Device policy failed: device not trusted by admin", false, nil
 		}
+		if !tfaDevice.Trusted {
+			logrus.Trace("!Trusted")
+			return "Device policy failed: device not trusted by admin", false, nil
+		}
 	}
 
 	if policy.BlockRemoteLoginEnabled {
