@@ -1,10 +1,10 @@
 package logs
 
 import (
+	"io"
 	"os"
 
 	"github.com/gorilla/websocket"
-	"github.com/minio/minio-go"
 	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/models"
 	"github.com/stretchr/testify/mock"
@@ -66,7 +66,7 @@ func (l LogsMock) GetOrgInAppTrails(orgID string, page int, size int, dateFrom, 
 	panic("implement me")
 }
 
-func (l LogsMock) GetFromMinio(path, bucketName string) (*minio.Object, error) {
+func (l LogsMock) GetFromMinio(path, bucketName string) (io.ReadSeeker, error) {
 	panic("implement me")
 }
 

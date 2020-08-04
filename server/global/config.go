@@ -59,6 +59,7 @@ type Config struct {
 		SendErrReport string `toml:"sendErrReport"`
 	} `toml:"logging"`
 	Minio struct {
+		Status bool   `toml:"status"`
 		Key    string `toml:"key"`
 		Secret string `toml:"secret"`
 		Server string `toml:"server"`
