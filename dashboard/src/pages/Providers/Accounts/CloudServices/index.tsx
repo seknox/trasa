@@ -479,7 +479,7 @@ function DOConnectAndSync() {
               <Grid item xs={7}>
                 <TextField
                   fullWidth
-                  // label="App Name"
+                  // label="Service name"
                   onChange={handleChange('keyVal')}
                   name="keyVal"
                   // variant = 'outlined'

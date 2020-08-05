@@ -15,10 +15,10 @@ function AllServices() {
     <div>
       <Layout>
         <Headers
-          pageName={[{ name: 'Services', route: '/services/groups' }]}
-          tabHeaders={['Service Groups (clusters)', 'All services', 'Settings']}
+          pageName={[{ name: 'Services', route: '/services' }]}
+          tabHeaders={['All services', 'Service Groups (clusters)', 'Settings']}
           // 'TODO revamp service global setting'
-          Components={[<ServiceGroups />, <ServicesList />, <GlobalServieSetting />]}
+          Components={[<ServicesList />, <ServiceGroups />, <GlobalServieSetting />]}
         />
       </Layout>
     </div>
@@ -28,7 +28,7 @@ function AllServices() {
 const ServiceView = () => {
   return (
     <Switch>
-      <Route exact path="/services/groups" component={AllServices} />
+      <Route exact path="/services" component={AllServices} />
       <Route path="/services/groups/group/:ID" component={GroupPage} />
       <Route path="/services/service/:ID" component={ServicePage} />
     </Switch>
