@@ -288,7 +288,7 @@ export default function UserOverview(props: UserOverviewProps) {
       .then((response) => {
         handleDeleteDialogueClose();
         if (response.data.status === 'success') {
-          window.location.href = '/users/groups';
+          window.location.href = '/users';
         }
       })
       .catch((error) => {

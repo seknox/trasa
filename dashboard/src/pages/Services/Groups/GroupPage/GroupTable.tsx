@@ -22,7 +22,7 @@ export default function AuthServicegroupTable(props: any) {
 
   const columns = [
     {
-      name: 'App name',
+      name: 'Service name',
       options: {
         filter: true,
         customBodyRender: (value: any) => {

@@ -71,10 +71,10 @@ function AppPageIndex(props: any) {
     <Layout>
       <Headers
         pageName={[
-          { name: 'Services', route: '/services/groups#All%20services' },
+          { name: 'Services', route: '/services' },
           {
             name: serviceName,
-            route: getRoute('/services/service#serviceID=', props.ID),
+            route: getRoute('/services/service/', props.ID),
           },
         ]}
         tabHeaders={['Overview', 'Access Stats', 'Access Maps', 'Manage Credentials']}

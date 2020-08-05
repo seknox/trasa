@@ -118,7 +118,7 @@ export default function TlsConfig(props: any) {
                 <Grid item xs={9}>
                   <TextField
                     fullWidth
-                    // label="App Name"
+                    // label="Service name"
                     rows="10"
                     multiline
                     onChange={handleCertFile}
@@ -137,7 +137,7 @@ export default function TlsConfig(props: any) {
                 <Grid item xs={9}>
                   <TextField
                     fullWidth
-                    // label="App Name"
+                    // label="Service name"
                     rows="10"
                     multiline
                     onChange={handleKeyFile}
@@ -156,7 +156,7 @@ export default function TlsConfig(props: any) {
                 <Grid item xs={9}>
                   <TextField
                     fullWidth
-                    // label="App Name"
+                    // label="Service name"
                     rows="10"
                     multiline
                     onChange={handleCsrFile}

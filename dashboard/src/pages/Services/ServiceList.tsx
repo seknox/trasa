@@ -14,11 +14,13 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 // import {Link } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import Drawer from '@material-ui/core/Drawer';
 import Service from '../../assets/services.png';
 import DatabaseIcon from '../../assets/database.png';
 import RdpIcon from '../../assets/rdp.png';
 import SshIcon from '../../assets/ssh.png';
 import Constants from '../../Constants';
+import Servicesetting from './Service/Settings/ServiceSetting';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -34,6 +36,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.secondary,
     // minWidth: 100,
   },
+
   card: {
     marginLeft: 20,
     height: 200,
@@ -168,7 +171,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function AppList() {
+type Anchor = 'top' | 'left' | 'bottom' | 'right';
+
+export default function ServiceList() {
   const classes = useStyles();
   const [https, sethttps] = useState([]);
   const [rdp, setrdp] = useState([]);
@@ -206,8 +211,47 @@ export default function AppList() {
     setquery(e.target.value);
   };
 
+  const [configDrawerState, setConfigDrawerState] = useState({ right: false });
+
+  const toggleConfigDrawer = (side: Anchor, open: boolean) => (
+    event: React.KeyboardEvent | React.MouseEvent,
+  ) => {
+    if (
+      event.type === 'keydown' &&
+      ((event as React.KeyboardEvent).key === 'Tab' ||
+        (event as React.KeyboardEvent).key === 'Shift')
+    ) {
+      return;
+    }
+    setConfigDrawerState({ ...configDrawerState, [side]: open });
+  };
+
+  const serviceDetail = {
+    ID: '',
+    serviceName: '',
+    serviceType: 'db',
+    rdpProtocol: '',
+    remoteserviceName: '',
+    passthru: false,
+    hostname: '',
+    nativeLog: false,
+    adhoc: false,
+  };
+
   return (
     <div className={classes.root}>
+      <Button variant="contained" size="small" onClick={toggleConfigDrawer('right', true)}>
+        Create new Service
+      </Button>
+      <Drawer
+        anchor="right"
+        open={configDrawerState.right}
+        onClose={toggleConfigDrawer('right', false)}
+      >
+        <Paper className={classes.paper}>
+          <Servicesetting newApp serviceDetail={serviceDetail} />
+        </Paper>
+      </Drawer>
       <Paper className={classes.searchRoot}>
         <IconButton className={classes.iconButton} aria-label="Search">
           <SearchIcon />
@@ -346,7 +390,7 @@ function Renderservices(props: any) {
               component={Link}
               to={`/services/service/${value.ID}`}
             >
-              App Setting
+              Service Setting
             </Button>
           </Paper>
         </Grid>

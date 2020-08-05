@@ -231,12 +231,12 @@ export default function Servicesetting(props: ServicesettingProps) {
 
         <Grid container spacing={2}>
           <Grid item xs={5} sm={5} md={5}>
-            <div className={classes.settingHeader}>App Name :</div>
+            <div className={classes.settingHeader}>Service name :</div>
           </Grid>
           <Grid item xs={7} sm={7} md={7}>
             <TextField
               fullWidth
-              // label="App Name"
+              // label="Service name"
               onChange={handleChange('serviceName')}
               name="serviceName"
               value={serviceDetail.serviceName}
@@ -320,7 +320,7 @@ export default function Servicesetting(props: ServicesettingProps) {
             </Grid>
 
             <Grid item xs={5} sm={5} md={5}>
-              <div className={classes.settingHeader}>Remote App Name : </div>
+              <div className={classes.settingHeader}>Remote Service name : </div>
             </Grid>
             <Grid item xs={7} sm={7} md={7}>
               <TextField

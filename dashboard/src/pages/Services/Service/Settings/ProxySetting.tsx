@@ -269,7 +269,7 @@ export default function ProxySetting(props: ProxySettingProps) {
           <Grid item xs={7} sm={7} md={7}>
             <TextField
               fullWidth
-              // label="App Name"
+              // label="Service name"
               onChange={handleChange('routeRule')}
               name="routeRule"
               value={proxy.routeRule}

@@ -69,7 +69,8 @@ export default function AssignedUserGroup(props: any) {
         groupMeta={props.groupMeta}
         policies={policiesToAdd}
         renderFor="assignUsergroupToServicegroup"
-        serviceName="///// TODO  /////"
+        /// // TODO serviceName /////
+        serviceName=""
         assignuser={false}
         ID={props.groupID}
       />
