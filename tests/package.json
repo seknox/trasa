@@ -7,7 +7,8 @@
     "jest-puppeteer": "^4.4.0"
   },
   "scripts": {
-    "test": "jest --watchAll"
+    "test": "jest --watchAll",
+    "spinNtest": "./pretest.sh"
   },
   "dependencies": {
     "jest-environment-puppeteer": "^4.4.0",
