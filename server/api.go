@@ -35,7 +35,7 @@ import (
 // CoreAPIRoutes holds api route declarations for trasa-server
 func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 
-	//r.Use(middlewares.Dumper{}.Handler)
+	r.Use(middlewares.Dumper{}.Handler)
 
 	r.NotFound(func(w http.ResponseWriter, req *http.Request) {
 		logrus.Debug("NOT FOUND URL in core api: ", req.URL)

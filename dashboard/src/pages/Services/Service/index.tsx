@@ -77,7 +77,7 @@ function AppPageIndex(props: any) {
             route: getRoute('/services/service/', props.ID),
           },
         ]}
-        tabHeaders={['Overview', 'Access Stats', 'Access Maps', 'Manage Credentials']}
+        tabHeaders={['Overview', 'Access Maps', 'Manage Credentials', 'Access Stats']}
         Components={[
           <ServiceOverview
             entityType="service"
@@ -87,8 +87,6 @@ function AppPageIndex(props: any) {
             UpdateserviceName={UpdateserviceName}
             serviceName={serviceName}
           />,
-
-          <AccessStats entityType="service" entityID={props.ID} />,
 
           <AccessMaps
             entityType="service"
@@ -104,6 +102,8 @@ function AppPageIndex(props: any) {
             allUsers={allUsers}
             UpdateserviceName={UpdateserviceName}
           />,
+
+          <AccessStats entityType="service" entityID={props.ID} />,
         ]}
       />
     </Layout>
