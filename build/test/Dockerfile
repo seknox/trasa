@@ -27,15 +27,14 @@ COPY dashboard ./
 
 RUN yarn run build
 
-FROM ubuntu:latest
+FROM ubuntu:xenial-20200706
 
 WORKDIR /trasa
-RUN apt-get -q update
+RUN apt-get update
 RUN apt-get install -y --no-install-recommends ca-certificates
 RUN update-ca-certificates
 COPY --from=gobuilder /go/src/seknox/trasa/server/server .
 COPY --from=dashbuilder /trasa/build /etc/trasa/build
 COPY build/etc/trasa /etc/trasa
 COPY build/test/wait-for-it.sh .
-RUN apt-get -qy install netcat
 CMD ["/trasa/wait-for-it.sh","db:5432", "--","/trasa/server"]
