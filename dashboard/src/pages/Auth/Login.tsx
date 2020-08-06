@@ -108,6 +108,7 @@ export default function LoginPage(props: LoginProps): ReactElement {
               onChange={handleLoginDataChange}
               autoFocus
               id="email"
+              name="email"
               value={loginData.email}
               variant="outlined"
               size="small"
@@ -123,6 +124,7 @@ export default function LoginPage(props: LoginProps): ReactElement {
             // defaultValue={loginData.password}
             onChange={handleLoginDataChange}
             id="password"
+            name="password"
             type="password"
             value={loginData.password}
             variant="outlined"

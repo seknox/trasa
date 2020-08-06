@@ -14,10 +14,9 @@ function delay(time) {
   });
 }
 
+
+
 export const logintests = () => {
-  beforeAll(async () => {
-    await page.goto('http://localhost:3000')
-  })
 
   it('should display "Dashboard Login" text on page', async () => {
     await expect(page).toMatch('Dashboard Login')
@@ -29,20 +28,13 @@ export const logintests = () => {
     //   password: loginData.password,
     // })
  
-    await page.waitForSelector('#email');
-    await page.type('#email', loginData.email)//);
-   // await page.waitFor(1000)
+  
+   await page.type('#email', loginData.email)
     await page.type('#password', loginData.password);
-    await page.keyboard.press('Enter');
-
-    // await page.focus("#email")
-    // await page.keyboard.type('test')
-    // await page.focus("#password")
-    // await page.keyboard.type('jeskl')
 
  
     await page.click('#submit')
-    await page.waitFor(4000)
+    await page.waitFor(2000)
 
     await page.screenshot({path: 'screenshot.png'});
   })
