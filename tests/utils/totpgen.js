@@ -1,6 +1,6 @@
 const JsSHA = require('jssha');
 
-function getToken(key) {
+function getTotp(key) {
     try{
         let epoch, time, shaObj, hmac, offset, otp;
         key = base32tohex(key);
@@ -53,4 +53,4 @@ function leftpad(str, len, pad) {
     return str;
 }
 
-module.exports=getToken
+module.exports=getTotp
