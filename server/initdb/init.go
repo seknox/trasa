@@ -83,7 +83,7 @@ func initOrg() {
 		panic(err)
 		return
 	}
-	global.SetOrgID(orgID)
+	global.SetOrgID(org.ID)
 
 	hashedpass, err := bcrypt.GenerateFromPassword([]byte(consts.DEFAULT_ROOT_PASSWORD), bcrypt.DefaultCost)
 	if err != nil {

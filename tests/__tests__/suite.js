@@ -10,4 +10,4 @@ beforeAll(async () => {
   })
 
 describe('Login', logintests)
-describe("SSH",sshtest)
+// describe("SSH",sshtest)

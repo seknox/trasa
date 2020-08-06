@@ -2,7 +2,6 @@
 
 cd ../build/test && \
 docker-compose build && \
-docker-compose up & \
-
-../build/test/wait-for-it.sh 127.0.0.1:443 -- echo "server is up" && \
-jest
+docker-compose up --force-recreate & \
+../build/test/wait-for-it.sh 127.0.0.1:443 -- jest
+cd ../build/test && docker-compose down
