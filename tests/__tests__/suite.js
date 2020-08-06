@@ -1,7 +1,7 @@
 require('expect-puppeteer')
 
 import { logintests } from '../src/login'
-//import {sshtest} from "../src/ssh";
+import {sshtest} from "../src/ssh";
 
 jest.setTimeout(30000)
 beforeAll(async () => {
@@ -9,5 +9,5 @@ beforeAll(async () => {
     await page.goto('http://localhost:3000')
   })
 
-describe('Login', logintests)
-// describe("SSH",sshtest)
+//describe('Login', logintests)
+describe("SSH",sshtest)
