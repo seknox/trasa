@@ -4,6 +4,8 @@ require('expect-puppeteer')
 
 const TRASA_HOSTNAME="https://app.trasa"
 const TOTP_SEC="AV2COXZHVG4OAFSF"
+const SSH_USERNAME="bhrg3se"
+const SSH_PASSWORD="testpass"
 
 export const sshtest= () => {
 
@@ -21,7 +23,7 @@ export const sshtest= () => {
 
         await page.waitForSelector('[name=email]');
         await page.type("[name=email]","root")
-        await page.type("[name=password]","Anyth1n&123")
+        await page.type("[name=password]","")
 
         console.info(1)
         await page.waitForSelector('[type=submit]');
@@ -35,32 +37,117 @@ export const sshtest= () => {
             return response.url() === TRASA_HOSTNAME + '/idp/login'
         });//
 
+
+
+
+            expect(resp.status()).toBe(200)
+
+            resp.json().then(data=>{
+                expect(data.status).toBe("success")
+
+            })
+
+
         console.info(2)
-
-
-        it('should return success when logged in',async function () {
-            assert.equal(resp.status(), 200, "statusCode is not 200")
-            let data=await resp.json()
-            assert.equal(data.status, "success", "status in trasa response is not success")
-
-
-        });
-
         await page.click("[id=totpButton]")
         await page.waitForSelector("[name=totpVal]")
-
+        console.info(3)
         await page.type("[name=totpVal]",getToken(TOTP_SEC))
         await page.keyboard.press("Enter")
         resp=await page.waitForResponse(resp=> resp.url()===TRASA_HOSTNAME+"/idp/login/tfa")
+        console.info(4)
 
-        await page.screenshot({path: '/Users/bhrg3se/seknox/code/trasa/trasa-oss/tests/'+process.pid+'.png'});
+      //  await page.screenshot({path: '/Users/bhrg3se/seknox/code/trasa/trasa-oss/tests/'+process.pid+'.png'});
 
-        assert.equal(resp.status(), 200, "statusCode is not 200")
+        expect(resp.status()).toBe(200)
         let data=await resp.json()
-        assert.equal(data.status, "success", "status in trasa response is not success")
+        expect(data.status).toBe( "success")
 
 
         await page.waitForRequest(TRASA_HOSTNAME+'/api/v1/my');
+
+
+
+
+        //Go to my page
+        await page.goto(TRASA_HOSTNAME+"/my",{waitUntil: 'load'})
+
+
+        //Search for auth app.
+        await page.type("[placeholder=\"Search Authapps by name or hostname\"]","aws")
+
+
+        //select element based on inner text
+        //
+        // await page.evaluate(() => {
+        //     let btns = [...document.querySelectorAll("button")];
+        //     btns.forEach(function (btn) {
+        //         if (btn.toString().includes("Connect") )
+        //             btn.click();
+        //     });
+        // });
+        // await page.click("button.MuiButton-root:nth-child(2)")
+
+        //click on username
+        await page.waitForSelector("[name='127.0.0.1']")
+        await page.click("[name='127.0.0.1']")
+
+
+        console.log("app selected")
+        await page.waitForSelector("[name='"+SSH_USERNAME+"']")
+
+
+        //This promise will wait for new popup
+        const newPagePromise = new Promise(x => browser.once('targetcreated', target => x(target.page())));
+        await page.click("[name='"+SSH_USERNAME+"']")
+
+        const popup = await newPagePromise;
+
+        console.log("pop up opened")
+        //wait for password field to appear
+        await popup.waitForSelector("[type=password]")
+        await popup.type("[type=password]",SSH_PASSWORD)
+        await popup.keyboard.press("Enter")
+
+        await popup.waitForSelector("#totpButton")
+        await popup.click("#totpButton")
+
+        await popup.waitForSelector("[name=totpVal]")
+        // await popup.type("[name=totpVal]",getToken(TOTP_SEC))
+        await popup.type("[name=totpVal]",totp(TOTP_SEC))
+
+
+        await popup.keyboard.press("Enter")
+
+        console.log("totp entered in console")
+
+        await delay(10000)
+
+        console.log("after delay")
+
+        // await popup.click("button.MuiButtonBase-root:nth-child(1)")
+        // await delay(10000)
+
+//    await popup.screenshot({path: '/home/bhrg3se/IdeaProjects/trasa_test/after.png'});
+        // await popup.waitForSelector(".xterm-helper-textarea")
+        // await popup.waitForRequest("wss://app.trasa.io/trasagw/ssh/ws/new")
+
+        await popup.type(".xterm-helper-textarea","ls")
+
+        //  await popup.screenshot({path: '/home/bhrg3se/IdeaProjects/trasa_test/type.png'});
+
+        // await popup.keyboard.type("ls")
+        await popup.keyboard.press("Enter")
+
+
+
+        for (let i=0;i<10;i++){
+            console.log("typing ls")
+            await popup.keyboard.type("ls")
+            await popup.keyboard.press("Enter")
+            await delay(1000)
+        }
+
 
         await page.screenshot({path: '/Users/bhrg3se/seknox/code/trasa/trasa-oss/tests/'+process.pid+'.png'});
 
