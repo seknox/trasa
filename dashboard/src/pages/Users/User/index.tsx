@@ -60,8 +60,8 @@ function UserPage(props: Userpageindexprops) {
     <Layout>
       <Headers
         pageName={[
-          { name: 'Users', route: '/users/groups' },
-          { name: 'All Users', route: '/users/groups#All%20Users' },
+          { name: 'Users', route: '/users' },
+          // { name: 'All Users', route: '/users' },
           { name: UsernameForPage, route: getRoute('/users/user/', props.userID) },
         ]}
         tabHeaders={['Account Overview', 'User Devices', 'Groups & Services', 'Access Stats']}

@@ -189,7 +189,7 @@ export default function Servicegroup() {
                 </Button>
               </Grid>
 
-              <Grid item xs={2}>
+              {/* <Grid item xs={2}>
                 <Button
                   variant="contained"
                   size="small"
@@ -197,7 +197,7 @@ export default function Servicegroup() {
                 >
                   Create new Service
                 </Button>
-              </Grid>
+              </Grid> */}
             </Grid>
           </Toolbar>
         </AppBar>

@@ -327,7 +327,7 @@ function AddPrivilege(props: any) {
   return (
     <TextField
       fullWidth
-      // label="App Name"
+      // label="Service name"
       onChange={props.changePrivilege}
       name="privilege"
       value={props.privilege}

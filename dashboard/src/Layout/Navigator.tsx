@@ -28,7 +28,7 @@ const categories = () => {
     children: [],
   });
 
-    ar.push({
+  ar.push({
     id: 'Providers',
     path: 'providers',
     icon: <ManageIcon />,
@@ -41,14 +41,14 @@ const categories = () => {
 
   ar.push({
     id: 'Users',
-    path: 'users/groups',
+    path: 'users',
     icon: <Account />,
     children: [],
   });
 
   ar.push({
     id: 'Services',
-    path: 'services/groups',
+    path: 'services',
     icon: <ServiceIcon />,
     children: [],
   });
@@ -66,8 +66,6 @@ const categories = () => {
     icon: <SessionsIcon />,
     children: [],
   });
-
-
 
   ar.push({
     id: 'System',
@@ -214,7 +212,7 @@ export default function Navigator(props: any) {
                 ))}
                 {/* <Divider className={classes.divider} /> */}
               </React.Fragment>
-            ))
+          ))
           : categories().map(({ id, children, path, icon }) => (
               <React.Fragment key={id}>
                 <ListItem
@@ -259,7 +257,7 @@ export default function Navigator(props: any) {
                 ))}
                 {/* <Divider light /> */}
               </React.Fragment>
-            ))}
+          ))}
       </List>
     </Drawer>
   );

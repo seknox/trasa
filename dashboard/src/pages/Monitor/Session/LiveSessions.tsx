@@ -78,15 +78,14 @@ export default function LiveSessionTable() {
   const [loader, setLoader] = useState(false);
 
   const connect = () => {
-
-    let data={
+    const data = {
       session: localStorage.getItem('X-SESSION'),
       csrf: localStorage.getItem('X-CSRF'),
-    }
+    };
 
     const wskt = new WebSocket(
       `${Constants.TRASA_HOSTNAME_WEBSOCKET}/api/v1/logs/livesessions`,
-      "livesessions",
+      'livesessions',
     );
 
     wskt.onclose = (e: any) => {
@@ -102,7 +101,7 @@ export default function LiveSessionTable() {
     };
 
     wskt.onopen = () => {
-      wskt.send(JSON.stringify(data))
+      wskt.send(JSON.stringify(data));
       setInterval(() => {
         wskt.send('pong');
       }, 5000);
@@ -173,7 +172,7 @@ export default function LiveSessionTable() {
       },
     },
     {
-      name: 'App Name',
+      name: 'Service name',
       options: {
         filter: true,
         customBodyRender: (value: any) => {
@@ -239,16 +238,24 @@ export default function LiveSessionTable() {
                     if (tableMeta.rowData[3] === 'ssh') {
                       // serviceID/:username/:email/:connID/:hostname/:totp
                       window.open(
-                        `/monitor/sessions/joinxterm#serviceID=${tableMeta.rowData[8]}&username=${encodeURIComponent(
+                        `/monitor/sessions/joinxterm#serviceID=${
+                          tableMeta.rowData[8]
+                        }&username=${encodeURIComponent(
                           encodeURIComponent(tableMeta.rowData[1]),
-                        )}&email=${userData.User.email}&connID=${value}&hostname=${tableMeta.rowData[5]}`,
+                        )}&email=${userData.User.email}&connID=${value}&hostname=${
+                          tableMeta.rowData[5]
+                        }`,
                       );
                     } else {
                       // join/:serviceID/:username/:email/:connID/:hostname
                       window.open(
-                        `/monitor/sessions/join#serviceID=${tableMeta.rowData[8]}&username=${encodeURIComponent(
+                        `/monitor/sessions/join#serviceID=${
+                          tableMeta.rowData[8]
+                        }&username=${encodeURIComponent(
                           encodeURIComponent(tableMeta.rowData[1]),
-                        )}&email=${userData.User.email}&connID=${value}&hostname=${tableMeta.rowData[5]}`,
+                        )}&email=${userData.User.email}&connID=${value}&hostname=${
+                          tableMeta.rowData[5]
+                        }`,
                       );
                     }
                   }}

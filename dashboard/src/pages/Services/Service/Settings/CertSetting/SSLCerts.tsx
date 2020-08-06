@@ -94,7 +94,7 @@ export default function SSLCerts(props: any) {
       <Grid item xs={9}>
         <TextField
           fullWidth
-          // label="App Name"
+          // label="Service name"
           rows="10"
           multiline
           onChange={handleChange('sslCert')}
@@ -118,7 +118,7 @@ export default function SSLCerts(props: any) {
       <Grid item xs={9}>
         <TextField
           fullWidth
-          // label="App Name"
+          // label="Service name"
           rows="10"
           multiline
           onChange={handleChange('sslKey')}
@@ -143,7 +143,7 @@ export default function SSLCerts(props: any) {
       <Grid item xs={9}>
         <TextField
           fullWidth
-          // label="App Name"
+          // label="Service name"
           multiline
           rows="10"
           id="standard-multiline-static"
