@@ -12,7 +12,7 @@ const loginData = {
   idpName: '',
 };
 
-const TRASA_HOSTNAME="http://localhost:3000"
+const TRASA_HOSTNAME="https://app.trasa"
 const TOTP_SSC="ZJAEXMC2YTJFQIO7"
 
 
