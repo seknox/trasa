@@ -439,7 +439,7 @@ export default function MyAppsList() {
           {assignedApps[selectedAppIndex] &&
             assignedApps[selectedAppIndex].usernames.map((v: string) => (
               <MenuItem
-                id="trasextmsngr"
+                id={v}
                 // name={v}
                 onClick={() => {
                   handleClickOpen(
