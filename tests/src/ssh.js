@@ -1,57 +1,78 @@
 const getToken = require("../utils/totpgen");
-const puppeteer = require('puppeteer');
-const assert = require('assert')
- // let mocha = require('mocha');
-// let describe = jest.describe;
+require('expect-puppeteer')
 
 
-// var totp = require('totp-generator');
+const TRASA_HOSTNAME="https://app.trasa"
+const TOTP_SEC="AV2COXZHVG4OAFSF"
 
-let browser
-let page
+export const sshtest= () => {
 
+    beforeAll(async () => {
+         // browser = await puppeteer.launch();
+         // page = await browser.newPage();
+        await page.goto('http://localhost:3000')
 
-
-describe("Login into dashboard using totp",async () => {
-
-    console.log(getToken(process.env.TOTP_SEC))
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-    await page.goto(process.env.TRASA_HOSTNAME);
+    })
 
 
-    await page.type("[name=email]",process.env.TRASA_ID)
-    await page.type("[name=password]",process.env.TRASA_PASSWORD)
+    //console.log(getToken(process.env.TOTP_SEC))
 
-    await page.click("[name=submit]")
-    let resp=await page.waitForResponse(response => response.url() === process.env.TRASA_HOSTNAME+'/idp/login');//
+    it('should connect ssh successfully', async function () {
+
+        await page.waitForSelector('[name=email]');
+        await page.type("[name=email]","root")
+        await page.type("[name=password]","Anyth1n&123")
+
+        console.info(1)
+        await page.waitForSelector('[type=submit]');
+
+         await page.click("[type=submit]")
+       // await page.keyboard.press('Enter');
 
 
+        let resp=await page.waitForResponse(response => {
+           // console.log(response)
+            return response.url() === TRASA_HOSTNAME + '/idp/login'
+        });//
 
-    it('should return success when logged in',async function () {
+        console.info(2)
+
+
+        it('should return success when logged in',async function () {
+            assert.equal(resp.status(), 200, "statusCode is not 200")
+            let data=await resp.json()
+            assert.equal(data.status, "success", "status in trasa response is not success")
+
+
+        });
+
+        await page.click("[id=totpButton]")
+        await page.waitForSelector("[name=totpVal]")
+
+        await page.type("[name=totpVal]",getToken(TOTP_SEC))
+        await page.keyboard.press("Enter")
+        resp=await page.waitForResponse(resp=> resp.url()===TRASA_HOSTNAME+"/idp/login/tfa")
+
+        await page.screenshot({path: '/Users/bhrg3se/seknox/code/trasa/trasa-oss/tests/'+process.pid+'.png'});
+
         assert.equal(resp.status(), 200, "statusCode is not 200")
         let data=await resp.json()
         assert.equal(data.status, "success", "status in trasa response is not success")
 
 
+        await page.waitForRequest(TRASA_HOSTNAME+'/api/v1/my');
+
+        await page.screenshot({path: '/Users/bhrg3se/seknox/code/trasa/trasa-oss/tests/'+process.pid+'.png'});
+
+
     });
 
-    await page.click("[type=button]")
-    await page.waitForSelector("[name=totpVal]")
 
-    await page.type("[name=totpVal]",getToken(process.env.TOTP_SEC))
-    await page.keyboard.press("Enter")
-    resp=await page.waitForResponse(resp=> resp.url()===process.env.TRASA_HOSTNAME+"/idp/login/tfa")
+    afterAll(() => {
+        return  browser.close();
+    });
 
-    assert.equal(resp.status(), 200, "statusCode is not 200")
-    data=await resp.json()
-    assert.equal(data.status, "success", "status in trasa response is not success")
-
-
-    await page.waitForRequest(process.env.TRASA_HOSTNAME+'/api/v1/my');
-
-    await browser.close();
-});
+};
 
 
 
