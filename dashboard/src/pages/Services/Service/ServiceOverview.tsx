@@ -466,7 +466,7 @@ function ServiceDetail(props: any) {
             </Grid>
 
             <Grid item xs={5}>
-              <div className={classes.settingHeader}>Remote App Name : </div>
+              <div className={classes.settingHeader}>Remote Service name : </div>
             </Grid>
             <Grid item xs={7}>
               <Typography component="h4" className={classes.proxyVals}>
@@ -834,7 +834,7 @@ const DeleteServiceDlg = (props: any) => {
       .then((response) => {
         setLoader(false);
         if (response.data.status === 'success') {
-          window.location.href = '/services/groups';
+          window.location.href = '/services';
         }
         props.closeDlg();
       })

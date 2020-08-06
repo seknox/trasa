@@ -88,7 +88,7 @@ function GroupPageIndex(props: any) {
     axios
       .post(`${Constants.TRASA_HOSTNAME}/api/v1/groups/delete/${props.Servicegroupid}`)
       .then(() => {
-        window.location.href = '/services/groups';
+        window.location.href = '/services#Service%20Groups%20(clusters)';
       })
       .catch((error) => {
         console.log(error);
@@ -103,7 +103,7 @@ function GroupPageIndex(props: any) {
     <Layout>
       <Headers
         pageName={[
-          { name: 'Service Group', route: '/services/groups' },
+          { name: 'Service Group', route: '/services#Service%20Groups%20(clusters)' },
           {
             name: groupMeta.groupName,
             route: getRoute('/services/groups/group/', props.Servicegroupid),
