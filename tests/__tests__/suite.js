@@ -9,5 +9,5 @@ beforeAll(async () => {
     await page.goto('http://localhost:3000')
   })
 
-//describe('Login', logintests)
+describe('Login', logintests)
 describe("SSH",sshtest)
