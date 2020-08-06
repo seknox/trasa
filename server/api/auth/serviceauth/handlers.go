@@ -77,7 +77,7 @@ func AgentLogin(w http.ResponseWriter, r *http.Request) {
 
 	logLoginFunc := func(authlog *logs.AuthLog, reason consts.FailedReason, status bool) error {
 		if nativeLogEnabled {
-			return logs.Store.LogLogin(authlog, consts.REASON_INVALID_SERVICE_CREDS, false)
+			return logs.Store.LogLogin(authlog, reason, status)
 		}
 		return nil
 	}
