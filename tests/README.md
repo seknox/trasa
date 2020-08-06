@@ -31,6 +31,56 @@ TRASA server running on `https://app.trasa`
 
 # Test Spec
 
-## Initial Login Flow
-- [x]root user login
-- []create new user
+## 1. Initial login flow
+
+- [ ] root user initial device enrol
+- [ ] root user complete login
+
+## 2. Verify all intents login and tfa handlers support
+
+- [ ] dashlogin
+- [ ] access-proxy
+- [ ] forget password
+- [ ] change password
+- [ ] enrol device
+
+## 3. User CRUD
+
+- [ ] create user
+- [ ] update user
+- [ ] delete user
+- [ ] create user group
+- [ ] update user group
+- [ ] add users to group
+- [ ] remove user from group
+- [ ] delete group
+
+## 4. Service CRUD
+
+- [ ] create service
+- [ ] update service
+- [ ] delete service
+- [ ] create service group
+- [ ] update service group
+- [ ] add service to group
+- [ ] remove service from group
+- [ ] delete group
+
+## 5. Policy CRUD
+
+- [ ] create policy
+- [ ] update policy
+- [ ] delete policy
+
+
+## 6. Access MAP
+
+- [ ] assign user to service
+- [ ] edit privilege
+- [ ] remove user from service
+- [ ] assign usergroup to service
+- [ ] edit privilege
+- [ ] remove usergroup from service
+- [ ] assign usergroup to servicegroup
+- [ ] edit privilege
+- [ ] remove usergroup from servicegroup
