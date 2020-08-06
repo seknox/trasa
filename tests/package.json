@@ -7,7 +7,7 @@
     "jest-puppeteer": "^4.4.0"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest --watchAll" 
   },
   "dependencies": {
     "jest-environment-puppeteer": "^4.4.0",
