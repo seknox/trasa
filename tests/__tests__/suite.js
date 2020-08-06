@@ -6,7 +6,7 @@ import {sshtest} from "../src/ssh";
 jest.setTimeout(30000)
 beforeAll(async () => {
     //const page = await browser.newPage()
-    await page.goto('http://localhost:3000')
+    await page.goto('https://app.trasa')
   })
 
 describe('Login', logintests)
