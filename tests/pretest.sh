@@ -6,3 +6,5 @@ cd ../build/test && docker-compose build && docker-compose up &
 
 #cd ../test
 jest
+
+cd ../build/test && docker-compose down
