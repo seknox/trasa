@@ -94,7 +94,12 @@ export default function LoginPage(props: LoginProps): ReactElement {
           <Typography variant="h3"> {title} </Typography>
         </div>
         <br />
-        <form onSubmit={(e) => sendLoginRequest(e, '', 'trasa', '')} noValidate autoComplete="off">
+        <form
+          onSubmit={(e) => sendLoginRequest(e, '', 'trasa', '')}
+          noValidate
+          autoComplete="off"
+          name="loginform"
+        >
           {autofillEmail ? null : (
             <TextField
               fullWidth
@@ -102,9 +107,7 @@ export default function LoginPage(props: LoginProps): ReactElement {
               // defaultValue={loginData.email}
               onChange={handleLoginDataChange}
               autoFocus
-              // placeholder="Enter your email address"
-              name="email"
-              // id="email"
+              id="email"
               value={loginData.email}
               variant="outlined"
               size="small"
@@ -119,7 +122,7 @@ export default function LoginPage(props: LoginProps): ReactElement {
             label="  Password"
             // defaultValue={loginData.password}
             onChange={handleLoginDataChange}
-            name="password"
+            id="password"
             type="password"
             value={loginData.password}
             variant="outlined"
@@ -134,6 +137,7 @@ export default function LoginPage(props: LoginProps): ReactElement {
               <Button
                 variant="contained"
                 name="submit"
+                id="submit"
                 type="submit"
                 onClick={(e) => sendLoginRequest(e, '', 'trasa', '')}
               >
@@ -168,10 +172,7 @@ export default function LoginPage(props: LoginProps): ReactElement {
       </CardContent>
 
       <div className={classes.padMiddle}>
-        <div className={classes.cprightText}>
-          {' '}
-          Trasa Dashboard v20.6.1 by Seknox{' '}
-        </div>{' '}
+        <div className={classes.cprightText}> Trasa Dashboard v20.6.1 by Seknox </div>{' '}
       </div>
 
       {/* <OrgSelect orgs={orgs} submitLoginRequest={sendLoginRequest} /> */}

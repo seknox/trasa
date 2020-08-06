@@ -113,7 +113,7 @@ export default class APP extends Component<AppProps, Tstate> {
 
     if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
       Constants.TRASA_HOSTNAME = 'https://app.trasa';
-      // Constants.TRASA_HOSTNAME = 'https://rc.trasa.io';
+      // Constants.TRASA_HOSTNAME = 'https://app.trasa.io';
       // Constants.TRASA_GUAC_HOSTNAME_WEBSOCKET = 'wss://rc.trasa.io';
       Constants.TRASA_GUAC_HOSTNAME_WEBSOCKET = 'wss://app.trasa';
     } else {
