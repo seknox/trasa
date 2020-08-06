@@ -1,5 +1,7 @@
 require('expect-puppeteer')
 
+import { getTotp } from '../utils/totpgen'
+
 const loginData = {
   email: 'tree',
   password: 'changemenever1#',
@@ -37,7 +39,10 @@ export const logintests = () => {
     await page.waitFor(2000)
 
     await page.screenshot({path: 'screenshot.png'});
+    await expect(page).toMatch('Choose second step verification method')
   })
+
+
 
  
 }
