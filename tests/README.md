@@ -27,3 +27,10 @@ TRASA server running on `https://app.trasa`
 
 - Auto spin TRASA server.
 - Setup with CI server.
+
+
+# Test Spec
+
+## Initial Login Flow
+- [x]root user login
+- []create new user

@@ -25,7 +25,7 @@ export const sshtest= () => {
         await page.type("[name=email]","root")
         await page.type("[name=password]","")
 
-        console.info(1)
+
         await page.waitForSelector('[type=submit]');
 
          await page.click("[type=submit]")
@@ -48,16 +48,12 @@ export const sshtest= () => {
             })
 
 
-        console.info(2)
         await page.click("[id=totpButton]")
         await page.waitForSelector("[name=totpVal]")
         console.info(3)
         await page.type("[name=totpVal]",getToken(TOTP_SEC))
         await page.keyboard.press("Enter")
         resp=await page.waitForResponse(resp=> resp.url()===TRASA_HOSTNAME+"/idp/login/tfa")
-        console.info(4)
-
-      //  await page.screenshot({path: '/Users/bhrg3se/seknox/code/trasa/trasa-oss/tests/'+process.pid+'.png'});
 
         expect(resp.status()).toBe(200)
         let data=await resp.json()
@@ -77,16 +73,6 @@ export const sshtest= () => {
         await page.type("[placeholder=\"Search Authapps by name or hostname\"]","aws")
 
 
-        //select element based on inner text
-        //
-        // await page.evaluate(() => {
-        //     let btns = [...document.querySelectorAll("button")];
-        //     btns.forEach(function (btn) {
-        //         if (btn.toString().includes("Connect") )
-        //             btn.click();
-        //     });
-        // });
-        // await page.click("button.MuiButton-root:nth-child(2)")
 
         //click on username
         await page.waitForSelector("[name='127.0.0.1']")
@@ -125,16 +111,9 @@ export const sshtest= () => {
 
         console.log("after delay")
 
-        // await popup.click("button.MuiButtonBase-root:nth-child(1)")
-        // await delay(10000)
-
-//    await popup.screenshot({path: '/home/bhrg3se/IdeaProjects/trasa_test/after.png'});
-        // await popup.waitForSelector(".xterm-helper-textarea")
-        // await popup.waitForRequest("wss://app.trasa.io/trasagw/ssh/ws/new")
 
         await popup.type(".xterm-helper-textarea","ls")
 
-        //  await popup.screenshot({path: '/home/bhrg3se/IdeaProjects/trasa_test/type.png'});
 
         // await popup.keyboard.type("ls")
         await popup.keyboard.press("Enter")
