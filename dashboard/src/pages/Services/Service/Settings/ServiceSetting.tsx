@@ -238,7 +238,7 @@ export default function Servicesetting(props: ServicesettingProps) {
               fullWidth
               // label="Service name"
               onChange={handleChange('serviceName')}
-              name="serviceName"
+              id="serviceName"
               value={serviceDetail.serviceName}
               // defaultValue={props.serviceDetail.serviceName}
               variant="outlined"
@@ -266,13 +266,13 @@ export default function Servicesetting(props: ServicesettingProps) {
                   // },
                 }}
               >
-                <MenuItem value="ssh">
+                <MenuItem value="ssh" id="ssh">
                   <div className={classes.settingSHeader}>SSH </div>
                 </MenuItem>
                 <MenuItem value="http">
                   <div className={classes.settingSHeader}>HTTP </div>
                 </MenuItem>
-                
+
                 <MenuItem value="rdp">
                   <div className={classes.settingSHeader}>RDP </div>
                 </MenuItem>
@@ -282,7 +282,6 @@ export default function Servicesetting(props: ServicesettingProps) {
                 <MenuItem value="db">
                   <div className={classes.settingSHeader}>Database </div>
                 </MenuItem>
-               
               </Select>
             </FormControl>
           </Grid>
@@ -463,7 +462,12 @@ export default function Servicesetting(props: ServicesettingProps) {
 
       <Grid container alignItems="flex-start" justify="flex-end" direction="row">
         <Grid item xs={12}>
-          <Button variant="contained" onClick={handleSubmit} className={classes.submitButton}>
+          <Button
+            name="submit"
+            variant="contained"
+            onClick={handleSubmit}
+            className={classes.submitButton}
+          >
             Submit
           </Button>
         </Grid>

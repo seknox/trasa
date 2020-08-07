@@ -240,7 +240,13 @@ export default function ServiceList() {
 
   return (
     <div className={classes.root}>
-      <Button variant="contained" size="small" onClick={toggleConfigDrawer('right', true)}>
+      <Button
+        variant="contained"
+        size="small"
+        name="create-new-service-button"
+        id="create-new-service-button"
+        onClick={toggleConfigDrawer('right', true)}
+      >
         Create new Service
       </Button>
       <Drawer

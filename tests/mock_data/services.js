@@ -1,5 +1,5 @@
 
-export var services = [
+export var ServicesMock = [
     {
         ID: '',
         orgID: '',
