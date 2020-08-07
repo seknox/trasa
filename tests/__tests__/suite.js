@@ -1,7 +1,10 @@
 require('expect-puppeteer')
 const isReachable = require('is-reachable');
 
-import { logintests } from '../src/login'
+import Constants from '../Constants'
+
+import { InitialUserLoginAndDeviceEnrol, LoginTfa } from '../src/login'
+import { CreateService } from '../src/service/create'
 // import {sshtest} from "../src/ssh";
 
  jest.setTimeout(30000)
@@ -12,10 +15,12 @@ beforeAll(async () => {
   await isReachable('app.trasa:443').then(u => up = u)
   }
 
-     await page.goto('https://app.trasa')
+     await page.goto(Constants.TRASA_DASHBOARD)
   })
 
 
 
-describe('Login', logintests)
+// describe('InitialLoginAndEnroDevice', InitialUserLoginAndDeviceEnrol)
+describe('Login', LoginTfa)
+describe('Service CRUD', CreateService)
 // describe("SSH",sshtest)

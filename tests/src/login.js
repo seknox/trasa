@@ -14,12 +14,12 @@ const loginData = {
 };
 
 const TRASA_HOSTNAME="https://app.trasa"
-let TOTP_SSC=""
+let TOTP_SSC="VOLNFSACRDMUPQX7"
 
 
 
 
-export const logintests = () => {
+export const InitialUserLoginAndDeviceEnrol = () => {
 
   it('should display "Dashboard Login" text on page', async () => {
     await expect(page).toMatch('Dashboard Login')
@@ -44,7 +44,7 @@ export const logintests = () => {
       const deviceData = await loginResp.json()
       TOTP_SSC=deviceData.data[0].totpSSC
 
-      expect page.waitFor(500)
+      page.waitFor(500)
       await axios({
           method: 'post',
           url: deviceData.data[0].cloudProxyURL + '/api/v1/passmydevicedetail',
@@ -99,4 +99,45 @@ export const logintests = () => {
 })
 }
 
-// getTotp(TOTP_SSC)
+
+
+export const LoginTfa = () => {
+
+  it('should display "Dashboard Login" text on page', async () => {
+    await expect(page).toMatch('Dashboard Login')
+  })
+
+  it('should fill form', async () => {
+
+   await page.type('#email', loginData.email)
+    await page.type('#password', loginData.password);
+
+
+    await page.click('#submit')
+    // await page.screenshot({path: 'shot.png'});
+
+    let loginResp = await page.waitForResponse(TRASA_HOSTNAME+'/idp/login');
+
+    expect(loginResp.status()).toBe(200)
+
+    await expect(page).toMatch('Choose second step verification method')
+
+    loginResp.json().then(data=>{
+        expect(data.status).toBe("success")
+    })
+
+
+  await page.click("[id=totpButton]")
+
+
+  await page.type("[name=totpVal]",getTotp(TOTP_SSC))
+  await page.keyboard.press("Enter")
+
+  let tfaResp = await page.waitForResponse(TRASA_HOSTNAME+'/idp/login/tfa');
+
+
+  expect(tfaResp.status()).toBe(200)
+
+
+})
+}
