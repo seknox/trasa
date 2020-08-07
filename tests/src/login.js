@@ -44,7 +44,7 @@ export const logintests = () => {
       const deviceData = await loginResp.json()
       TOTP_SSC=deviceData.data[0].totpSSC
 
-      expect page.waitFor(500)
+      page.waitFor(5000)
       await axios({
           method: 'post',
           url: deviceData.data[0].cloudProxyURL + '/api/v1/passmydevicedetail',

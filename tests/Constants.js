@@ -1,1 +1,1 @@
-const TRASA_HOSTNAME="https://app.trasa"
+export  const TRASA_HOSTNAME="https://app.trasa"
