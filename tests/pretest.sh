@@ -6,7 +6,10 @@ cd ../build/test && docker-compose build && docker-compose up &
 # wait $BACK_PID
 
 #../build/test/wait-for-it.sh 127.0.0.1:443 -- echo "=========================== SERVER IS UP ===================================="
-# echo "=========================== SERVER IS UP ===================================="
+
+
+
+
 jest 
 
 cd ../build/test && docker-compose down

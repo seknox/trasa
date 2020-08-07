@@ -22,21 +22,22 @@ We render full dashboard inside puppeteer and run test suites which will
 ## Prerequisite:
 
 TRASA server running on `https://app.trasa`
+- Run test on already running trasa instance with `yarn test`
+- Create fresh test infrastructure and test with `yarn run spinNTest`
 
 ## TODO
 
-- Auto spin TRASA server.
-- Setup with CI server.
+- Setup with CI server (Github action? ).
 
 
-# Test Spec
+## Test Spec
 
-## 1. Initial login flow
+### 1. Initial login flow
 
-- [ ] root user initial device enrol
-- [ ] root user complete login
+- [x] root user initial device enrol
+- [x] root user complete login
 
-## 2. Verify all intents login and tfa handlers support
+### 2. Verify all intents login and tfa handlers support
 
 - [ ] dashlogin
 - [ ] access-proxy
@@ -44,7 +45,7 @@ TRASA server running on `https://app.trasa`
 - [ ] change password
 - [ ] enrol device
 
-## 3. User CRUD
+### 3. User CRUD
 
 - [ ] create user
 - [ ] update user
@@ -55,7 +56,7 @@ TRASA server running on `https://app.trasa`
 - [ ] remove user from group
 - [ ] delete group
 
-## 4. Service CRUD
+### 4. Service CRUD
 
 - [ ] create service
 - [ ] update service
@@ -66,14 +67,23 @@ TRASA server running on `https://app.trasa`
 - [ ] remove service from group
 - [ ] delete group
 
-## 5. Policy CRUD
+### 5. Device CRUD
+
+- [ ] enrol mobile device
+- [ ] update mobile device hygiene
+- [ ] remove mobile device
+- [ ] enrol workstation 
+- [ ] update workstation hygiene
+- [ ] remove workstation
+
+### 6. Policy CRUD
 
 - [ ] create policy
 - [ ] update policy
 - [ ] delete policy
 
 
-## 6. Access MAP
+### 7. Access MAP
 
 - [ ] assign user to service
 - [ ] edit privilege
