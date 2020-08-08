@@ -316,6 +316,8 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 
 		r.Post("/idp/external/ldap/importusers", idps.ImportLdapUsers)
 		r.Post("/idp/external/activateordisable", idps.ActivateOrDisableIdp)
+		r.Get("/user/idp/{idpname}", idps.GetAllUsersForIdp)
+		r.Post("/user/idp/transfer", idps.TransferUserToGivenIdp)
 
 		//// we are using http session validator in this case
 		//r.Post("/gateway/getpass", mdlwr.HttpSessionValidator(gateway.ValidateUserAndGetPass))

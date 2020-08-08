@@ -3,6 +3,7 @@ package users
 import (
 	"database/sql"
 	"fmt"
+	"github.com/sirupsen/logrus"
 
 	"github.com/lib/pq"
 	"github.com/pkg/errors"
@@ -265,4 +266,38 @@ func (s UserStore) EnforcePolicy(policy models.PolicyEnforcer) error {
 	_, err := s.DB.Exec(`INSERT into policy_enforcer (id, user_id, org_id, type, pending, assigned_by, assigned_on, resolved_on) values($1, $2, $3, $4, $5, $6, $7, $8);`,
 		policy.EnforceID, policy.UserID, policy.OrgID, policy.EnforceType, policy.Pending, policy.AssignedBy, policy.AssignedOn, policy.ResolvedOn)
 	return err
+}
+
+func (s UserStore) GetAllByIdp(orgID, idpName string) ([]models.User, error) {
+	var usr []models.User = make([]models.User, 0)
+	var user models.User
+
+	rows, err := s.DB.Query(`SELECT id, first_name,
+		last_name, email, idp_name FROM users WHERE org_id = $1 AND idp_name=$2`, orgID, idpName)
+	if err != nil {
+		return usr, errors.Errorf("query idp users: %v", err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		err := rows.Scan(&user.ID,
+			&user.FirstName, &user.LastName, &user.Email, &user.IdpName)
+		if err != nil {
+			logrus.Errorf("scan idp users: %v", err)
+		}
+		usr = append(usr, user)
+	}
+
+	return usr, nil
+
+}
+
+// TransferUser transfers user(based on email) to another provided idp
+func (s UserStore) TransferUser(orgID, email, idpName string) error {
+	_, err := s.DB.Exec(`UPDATE users SET idp_name = $1 WHERE org_id=$2 AND email = $3;`,
+		idpName, orgID, email)
+
+	if err != nil {
+		return err
+	}
+	return nil
 }
