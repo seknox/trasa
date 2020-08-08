@@ -24,8 +24,9 @@ beforeAll(async () => {
 
 
 
-describe("user crud",usercrud)
 // describe('InitialLoginAndEnroDevice', InitialUserLoginAndDeviceEnrol)
 describe('Login', LoginTfa)
 describe('Service CRUD', CreateService)
+// describe("user crud",usercrud)
+
 // describe("SSH",sshtest)

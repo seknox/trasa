@@ -1,5 +1,4 @@
-import {TRASA_HOSTNAME} from "../../Constants";
-
+import Constants from '../../Constants'
 require('expect-puppeteer')
 const usersData=require('../../mock_data/users')
 
@@ -7,10 +6,10 @@ const usersData=require('../../mock_data/users')
 //create user
 export default async ()=>{
     const testUser=usersData.users[0]
-    await page.goto(TRASA_HOSTNAME+"/users",{waitUntil:"load"})
+    await page.goto(Constants.TRASA_DASHBOARD+"/users",{waitUntil:"load"})
 
     await page.waitFor(3000)
-    await page.screenshot({path: 'screen.png'});
+    await page.screenshot({path: 'src/user/users1.png'});
 
 
     await expect(page).toMatch("Users")
@@ -39,7 +38,7 @@ export default async ()=>{
 
 
     const resp=await page.waitForResponse(resp=> {
-        if (resp.url() === TRASA_API + "/api/v1/user/create"){
+        if (resp.url() === Constants.TRASA_HOSTNAME + "/api/v1/user/create"){
             // //console.log(resp)
             return true
         }

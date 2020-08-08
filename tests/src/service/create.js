@@ -13,8 +13,9 @@ export const CreateService = () => {
   })
 
   it('Should create a new service', async () => {
-    
-    await page.click('#create-new-service-button')
+    await page.goto(Constants.TRASA_DASHBOARD+'/services');
+   await page.waitForSelector('[name=create-new-service-button]')
+    await page.click('[name=create-new-service-button]')
     await expect(page).toMatch('Integrate New Service')
 
     await page.type('#serviceName', ServicesMock[0].name)
@@ -22,7 +23,7 @@ export const CreateService = () => {
      await page.click('#ssh')
 
     await page.screenshot({path: 'src/service/create.png'})
-    
+
   })
 
 
