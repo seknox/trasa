@@ -229,7 +229,7 @@ func GetAllUsersForIdp(w http.ResponseWriter, r *http.Request) {
 		utils.TrasaResponse(w, 200, "failed", "users not fetched", "GetUsersAll", nil)
 		return
 	}
-	utils.TrasaResponse(w, 200, "success", "users fetched", "GetAllUsersForIdp", nil, val)
+	utils.TrasaResponse(w, 200, "success", "users fetched", "GetAllUsersForIdp", val)
 }
 
 type transferReq struct {
@@ -244,7 +244,7 @@ func TransferUserToGivenIdp(w http.ResponseWriter, r *http.Request) {
 	var req transferReq
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "invalid request", "TransferUserToGivenIdp", nil)
+		utils.TrasaResponse(w, 200, "failed", "invalid request", "TransferUserToGivenIdp")
 		return
 	}
 
@@ -255,5 +255,5 @@ func TransferUserToGivenIdp(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	utils.TrasaResponse(w, 200, "success", "user(s) updated", "GetAllUsersForIdp", nil, nil)
+	utils.TrasaResponse(w, 200, "success", "user(s) updated", "GetAllUsersForIdp")
 }

@@ -959,7 +959,7 @@ function MigrateUsers(props: any) {
 
   useEffect(() => {
     axios
-      .get(`${Constants.TRASA_HOSTNAME}/api/v1/user/idp/trasa`)
+      .get(`${Constants.TRASA_HOSTNAME}/api/v1/idp/users/all/trasa`)
 
       .then((response) => {
         if (response.data.status === 'success') {
@@ -972,7 +972,7 @@ function MigrateUsers(props: any) {
       });
 
     axios
-      .get(`${Constants.TRASA_HOSTNAME}/api/v1/user/idp/${props.idp.idpName}`)
+      .get(`${Constants.TRASA_HOSTNAME}/api/v1/idp/users/all/${props.idp.idpName}`)
 
       .then((response) => {
         if (response.data.status === 'success') {
@@ -1002,7 +1002,7 @@ function MigrateUsers(props: any) {
         'X-CSRF': localStorage.getItem('X-CSRF'),
       },
     };
-    axios.post(`${Constants.TRASA_HOSTNAME}/api/v1/user/idp/transfer`, req, config).then(() => {
+    axios.post(`${Constants.TRASA_HOSTNAME}/api/v1/idp/users/transfer`, req, config).then(() => {
       updateActionStatus({ ...actionStatus, loader: false });
     });
   };
