@@ -72,6 +72,9 @@ function RecordedSession(props: any) {
   },[props.sessionType])
 
   useEffect(() => {
+    if(!props.sessionID){
+      return
+    }
     axios
       .get(
         `${Constants.TRASA_HOSTNAME}/api/v1/logs/sessionlog?sessionID=${props.sessionID}&type=${props.sessionType}&day=${props.day}&month=${props.month}&year=${props.year}`,

@@ -35,7 +35,7 @@ import (
 // CoreAPIRoutes holds api route declarations for trasa-server
 func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 
-	//r.Use(middlewares.Dumper{}.Handler)
+	r.Use(middlewares.Dumper{}.Handler)
 
 	r.NotFound(func(w http.ResponseWriter, req *http.Request) {
 		logrus.Debug("NOT FOUND URL in core api: ", req.URL)
@@ -316,6 +316,8 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 
 		r.Post("/idp/external/ldap/importusers", idps.ImportLdapUsers)
 		r.Post("/idp/external/activateordisable", idps.ActivateOrDisableIdp)
+		r.Get("/idp/users/all/{idpname}", idps.GetAllUsersForIdp)
+		r.Post("/idp/users/transfer", idps.TransferUserToGivenIdp)
 
 		//// we are using http session validator in this case
 		//r.Post("/gateway/getpass", mdlwr.HttpSessionValidator(gateway.ValidateUserAndGetPass))

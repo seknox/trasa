@@ -7,7 +7,7 @@
   dbname = "trasadb"
   dbuser = "trasauser"
   port = "5432"
-  server = "localhost"
+  server = "db"
   sslenabled = false
   usercert = "/etc/trasa/certs/client.trasauser.crt"
   userkey = "/etc/trasa/certs/client.trasauser.key"
@@ -26,7 +26,7 @@
   base = "private"
 
 [redis]
-  server = "localhost:6379"
+  server = "redis:6379"
 
 [timezone]
   location = "Asia/Kathmandu"

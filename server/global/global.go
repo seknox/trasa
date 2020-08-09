@@ -130,57 +130,12 @@ func InitDBSTORE() *State {
 		panic(err)
 	}
 
-	minioClient, err := getMinioClient(config)
-
-	if err != nil {
-		panic(err)
-
-	}
-
-	//Check connection and if bucket exists
-	bucketExists, err := minioClient.BucketExists("trasa-ssh-logs")
-	if err != nil {
-		panic(err)
-	}
-	if !bucketExists {
-		err = minioClient.MakeBucket("trasa-ssh-logs", "")
+	var minioClient *minio.Client
+	if config.Minio.Status {
+		minioClient, err = getMinioClient(config)
 		if err != nil {
 			panic(err)
 		}
-
-	}
-	bucketExists, err = minioClient.BucketExists("trasa-guac-logs")
-	if err != nil {
-		panic(err)
-	}
-	if !bucketExists {
-		err = minioClient.MakeBucket("trasa-guac-logs", "")
-		if err != nil {
-			panic(err)
-		}
-
-	}
-	bucketExists, err = minioClient.BucketExists("trasa-https-logs")
-	if err != nil {
-		panic(err)
-	}
-	if !bucketExists {
-		err = minioClient.MakeBucket("trasa-https-logs", "")
-		if err != nil {
-			panic(err)
-		}
-
-	}
-	bucketExists, err = minioClient.BucketExists("trasa-db-logs")
-	if err != nil {
-		panic(err)
-	}
-	if !bucketExists {
-		err = minioClient.MakeBucket("trasa-db-logs", "")
-		if err != nil {
-			panic(err)
-		}
-
 	}
 
 	// DbEnv = &DBConn{
@@ -278,6 +233,52 @@ func getMinioClient(config Config) (*minio.Client, error) {
 	}
 
 	minioClient.SetCustomTransport(&t)
+
+	//Check connection and if bucket exists
+	bucketExists, err := minioClient.BucketExists("trasa-ssh-logs")
+	if err != nil {
+		panic(err)
+	}
+	if !bucketExists {
+		err = minioClient.MakeBucket("trasa-ssh-logs", "")
+		if err != nil {
+			panic(err)
+		}
+
+	}
+	bucketExists, err = minioClient.BucketExists("trasa-guac-logs")
+	if err != nil {
+		panic(err)
+	}
+	if !bucketExists {
+		err = minioClient.MakeBucket("trasa-guac-logs", "")
+		if err != nil {
+			panic(err)
+		}
+
+	}
+	bucketExists, err = minioClient.BucketExists("trasa-https-logs")
+	if err != nil {
+		panic(err)
+	}
+	if !bucketExists {
+		err = minioClient.MakeBucket("trasa-https-logs", "")
+		if err != nil {
+			panic(err)
+		}
+
+	}
+	bucketExists, err = minioClient.BucketExists("trasa-db-logs")
+	if err != nil {
+		panic(err)
+	}
+	if !bucketExists {
+		err = minioClient.MakeBucket("trasa-db-logs", "")
+		if err != nil {
+			panic(err)
+		}
+
+	}
 
 	return minioClient, nil
 

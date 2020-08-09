@@ -31,8 +31,10 @@ type UserAdapter interface {
 	//CRUD
 	GetFromID(userID, orgID string) (*models.User, error)
 	GetAll(orgID string) ([]models.User, error)
+	GetAllByIdp(orgID, idpName string) ([]models.User, error)
 	GetAdminEmails(orgID string) ([]string, error)
 	//GetTotalForOrg(orgID string) (int64, error)
+	TransferUser(orgID, email, idpName string) error
 	Create(user *models.UserWithPass) error
 	Delete(userID, orgID string) (string, string, error)
 	Update(user models.User) error

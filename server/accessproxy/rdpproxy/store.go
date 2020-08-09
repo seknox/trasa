@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/minio/minio-go"
 	"github.com/pkg/errors"
 	"github.com/seknox/trasa/server/api/logs"
 	"github.com/seknox/trasa/server/consts"
@@ -62,10 +61,10 @@ func (s GWStore) uploadSessionLog(authlog *logs.AuthLog) error {
 	filePath := fmt.Sprintf("%s/%s.mp4", tempFileDir, sessionID)
 
 	// Upload log file to minio
-	_, uploadErr := s.MinioClient.FPutObject(bucketName, objectName, filePath, minio.PutObjectOptions{})
+	uploadErr := logs.Store.PutIntoMinio(objectName, filePath, bucketName)
 	if uploadErr != nil {
 		logrus.Errorf("could not upload to minio, trying again: %v", uploadErr)
-		_, uploadErr = s.MinioClient.FPutObject(bucketName, objectName, filePath, minio.PutObjectOptions{})
+		uploadErr = logs.Store.PutIntoMinio(objectName, filePath, bucketName)
 	}
 
 	if uploadErr == nil {

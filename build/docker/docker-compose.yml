@@ -4,37 +4,22 @@ services:
     build:
       context: ../..
       dockerfile: build/docker/Dockerfile
-
     ports:
       - "80:80"
       - "443:443"
       - "8022:8022"
     links:
       - redis
-      - postgres
-      - guacd
-      - minio
+      - db
+    depends_on:
+      - redis
+      - db
   redis:
     image: redis
-  postgres:
+  db:
     image: postgres
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-  minio:
-    image: minio/minio
 
-  guacd:
-    image: guacamole/guacd
-    networks:
-      trasa_network:
-        - ipv4_address: 192.168.100.1
-
-networks:
-  trasa_network:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: 192.168.100.0/24

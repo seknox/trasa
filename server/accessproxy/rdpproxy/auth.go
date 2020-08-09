@@ -2,6 +2,7 @@ package rdpproxy
 
 import (
 	"io"
+	"strings"
 
 	"github.com/seknox/trasa/server/api/accesscontrol"
 	"github.com/seknox/trasa/server/api/auth/tfa"
@@ -28,7 +29,13 @@ func makeConfig(params *models.ConnectionParams, creds *models.UpstreamCreds) (*
 	config.Parameters = make(map[string]string)
 	config.Parameters["hostname"] = params.Hostname
 	config.Parameters["port"] = "3389"
-	config.Parameters["username"] = params.Privilege
+	splitted := strings.Split(params.Privilege, `\`)
+	if strings.Contains(params.Privilege, `\`) && len(splitted) == 2 {
+		config.Parameters["username"] = splitted[1]
+		config.Parameters["domain"] = splitted[0]
+	} else {
+		config.Parameters["username"] = params.Privilege
+	}
 
 	config.Parameters["password"] = creds.Password
 

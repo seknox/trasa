@@ -9,6 +9,14 @@ type UserStoreMock struct {
 	mock.Mock
 }
 
+func (us UserStoreMock) GetAllByIdp(orgID, idpName string) ([]models.User, error) {
+	panic("implement me")
+}
+
+func (us UserStoreMock) TransferUser(orgID, email, idpName string) error {
+	panic("implement me")
+}
+
 func (us UserStoreMock) GetFromID(userID, orgID string) (*models.User, error) {
 	args := us.Called(userID, orgID)
 

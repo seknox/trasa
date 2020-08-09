@@ -25,7 +25,7 @@ require (
 	github.com/mssola/user_agent v0.5.2
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/oschwald/geoip2-golang v1.4.0
-	github.com/phuslu/geoip v1.0.20200715
+	github.com/phuslu/iploc v1.0.20200808
 	github.com/pkg/errors v0.9.1
 	github.com/rs/cors v1.7.0
 	github.com/satori/go.uuid v1.2.1-0.20181028125025-b2ce2384e17b

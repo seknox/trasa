@@ -3,6 +3,7 @@ package idps
 import (
 	"crypto/tls"
 	"fmt"
+	"github.com/go-chi/chi"
 	"net/http"
 	"strings"
 	"time"
@@ -213,4 +214,46 @@ func bindSearchImportLdapUsers(uc models.UserContext, uname, pass, domain, searc
 	//timezone, _ := time.LoadLocation(uc.Org.Timezone)
 
 	return lus, nil
+}
+
+// GetUsersAll returns json array of user list.
+func GetAllUsersForIdp(w http.ResponseWriter, r *http.Request) {
+	userContext := r.Context().Value("user").(models.UserContext)
+
+	idpName := chi.URLParam(r, "idpname")
+
+	val, err := users.Store.GetAllByIdp(userContext.Org.ID, idpName)
+
+	if err != nil {
+		logrus.Debug(err)
+		utils.TrasaResponse(w, 200, "failed", "users not fetched", "GetUsersAll", nil)
+		return
+	}
+	utils.TrasaResponse(w, 200, "success", "users fetched", "GetAllUsersForIdp", val)
+}
+
+type transferReq struct {
+	IdpName  string     `json:"idpName"`
+	Userlist [][]string `json:"userList"`
+}
+
+// GetUsersAll returns json array of user list.
+func TransferUserToGivenIdp(w http.ResponseWriter, r *http.Request) {
+	uc := r.Context().Value("user").(models.UserContext)
+
+	var req transferReq
+	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "invalid request", "TransferUserToGivenIdp")
+		return
+	}
+
+	for _, v := range req.Userlist {
+		err := users.Store.TransferUser(uc.Org.ID, v[2], req.IdpName)
+		if err != nil {
+			logrus.Debug(err)
+		}
+	}
+
+	utils.TrasaResponse(w, 200, "success", "user(s) updated", "GetAllUsersForIdp")
 }

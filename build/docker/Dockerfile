@@ -7,7 +7,9 @@ COPY go.sum .
 
 RUN go mod download
 
-COPY . .
+COPY server server
+WORKDIR /go/src/seknox/trasa/server
+
 RUN go build
 
 
@@ -23,7 +25,6 @@ RUN yarn install --silent
 
 COPY dashboard ./
 
-RUN ls -hal
 
 RUN yarn run build
 
@@ -31,9 +32,8 @@ FROM ubuntu:latest
 
 WORKDIR /trasa
 
-COPY --from=gobuilder /go/src/seknox/trasa/trasa .
+COPY --from=gobuilder /go/src/seknox/trasa/server/server .
 COPY --from=dashbuilder /trasa/build /etc/trasa/build
 COPY build/etc/trasa /etc/trasa
 
-RUN cd /etc/trasa && ls -hal
-ENTRYPOINT ["/trasa/trasa"]
+ENTRYPOINT ["/trasa/server"]

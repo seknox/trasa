@@ -3,6 +3,8 @@ package logs
 import (
 	"database/sql"
 	"fmt"
+	"github.com/seknox/trasa/server/global"
+	"io"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -288,18 +290,28 @@ func (s LogStore) LogInAppTrail(ip, userAgent, description string, user *models.
 	return err
 }
 
-func (s LogStore) GetFromMinio(path, bucketName string) (*minio.Object, error) {
+func (s LogStore) GetFromMinio(path, bucketName string) (object io.ReadSeeker, err error) {
 	// Download log file to minio
-	object, err := s.MinioClient.GetObject(bucketName, path, minio.GetObjectOptions{})
-
-	return object, err
-
+	if global.GetConfig().Minio.Status {
+		return s.MinioClient.GetObject(bucketName, path, minio.GetObjectOptions{})
+	}
+	filename := fmt.Sprintf(`/var/trasa/minio/%s/%s`, bucketName, path)
+	return os.OpenFile(filename, os.O_RDONLY, os.ModePerm)
 }
 
-func (s LogStore) PutIntoMinio(path, filepath, bucketName string) error {
+func (s LogStore) PutIntoMinio(objectName, logfilepath, bucketName string) error {
 	// Download log file to minio
-	_, err := s.MinioClient.FPutObject(bucketName, path, filepath, minio.PutObjectOptions{})
-	return err
+	if global.GetConfig().Minio.Status {
+		_, err := s.MinioClient.FPutObject(bucketName, objectName, logfilepath, minio.PutObjectOptions{})
+		return err
+	}
+	newpath := fmt.Sprintf(`/var/trasa/minio/%s/%s`, bucketName, objectName)
+	dir, _ := filepath.Split(newpath)
+	err := os.MkdirAll(dir, os.ModePerm)
+	if err != nil {
+		return err
+	}
+	return os.Rename(logfilepath, newpath)
 
 }
 
@@ -313,15 +325,13 @@ func (s LogStore) UploadHTTPLogToMinio(file *os.File, login AuthLog) error {
 
 	objectName := objectNamePrefix + filepath.Base(file.Name())
 
-	contentType := "text/plain"
-
 	// Upload log file to minio
-	n, err := s.MinioClient.FPutObject(bucketName, objectName, filePath, minio.PutObjectOptions{ContentType: contentType})
+	err := s.PutIntoMinio(objectName, filePath, bucketName)
 	if err != nil {
 		logrus.Debug(err)
 		return err
 	}
 
-	logrus.Tracef("successfully uploaded %s of size %d to minio \n", objectName, n)
+	logrus.Tracef("successfully uploaded %s to minio ", objectName)
 	return nil
 }
