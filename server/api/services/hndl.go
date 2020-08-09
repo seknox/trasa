@@ -27,11 +27,12 @@ func GetServiceDetail(w http.ResponseWriter, r *http.Request) {
 }
 
 type allServicesByType struct {
-	SSH   []models.Service `json:"ssh"`
-	RDP   []models.Service `json:"rdp"`
-	HTTP  []models.Service `json:"http"`
-	DB    []models.Service `json:"db"`
-	Other []models.Service `json:"other"`
+	SSH    []models.Service `json:"ssh"`
+	RDP    []models.Service `json:"rdp"`
+	HTTP   []models.Service `json:"http"`
+	DB     []models.Service `json:"db"`
+	Radius []models.Service `json:"radius"`
+	Other  []models.Service `json:"other"`
 }
 
 func GetAllServices(w http.ResponseWriter, r *http.Request) {
@@ -63,6 +64,13 @@ func GetAllServices(w http.ResponseWriter, r *http.Request) {
 		utils.TrasaResponse(w, 200, "failed", "could not get http services", "GetAllServices", resp)
 		return
 	}
+	resp.Radius, err = Store.GetAllByType("radius", uc.Org.ID)
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "could not get radius services", "GetAllServices", resp)
+		return
+	}
+
 	resp.Other, err = Store.GetAllByType("other", uc.Org.ID)
 	if err != nil {
 		logrus.Error(err)
