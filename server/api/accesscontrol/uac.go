@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/now"
-	"github.com/phuslu/geoip"
+	"github.com/phuslu/iploc"
 	"github.com/seknox/trasa/server/api/system"
 	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/models"
@@ -99,7 +99,7 @@ func CheckTrasaUAC(timezone, clientip string, policy *models.Policy) (bool, cons
 	}
 
 	//len(allowedCountries)==1 means blank allowed countries
-	if !utils.ArrayContainsString(allowedCountries, string(geoip.Country(net.ParseIP(clientip)))) && policy.AllowedCountries != "" {
+	if !utils.ArrayContainsString(allowedCountries, string(iploc.Country(net.ParseIP(clientip)))) && policy.AllowedCountries != "" {
 		return false, consts.REASON_COUNTRY_POLICY_FAILED
 	}
 	return allow, reason
