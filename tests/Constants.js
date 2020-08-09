@@ -1,4 +1,3 @@
-const TRASA_HOSTNAME="https://app.trasa"
 
 class Constants {
     static TRASA_HOSTNAME = "https://app.trasa";

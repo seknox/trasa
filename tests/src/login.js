@@ -1,4 +1,5 @@
 require('expect-puppeteer')
+import Constants from '../Constants' 
 const axios=require('axios')
 // import { getTotp } from '../utils/totpgen'
 const getTotp = require("../utils/totpgen");
@@ -22,6 +23,7 @@ let TOTP_SSC="VOLNFSACRDMUPQX7"
 export const InitialUserLoginAndDeviceEnrol = () => {
 
   it('should display "Dashboard Login" text on page', async () => {
+    await page.goto(Constants.TRASA_DASHBOARD)
     await expect(page).toMatch('Dashboard Login')
   })
 
@@ -103,7 +105,12 @@ export const InitialUserLoginAndDeviceEnrol = () => {
 
 export const LoginTfa = () => {
 
+  beforeAll(async () => {
+    await page.goto(Constants.TRASA_DASHBOARD)
+    })
+
   it('should display "Dashboard Login" text on page', async () => {
+    
     await expect(page).toMatch('Dashboard Login')
   })
 

@@ -8,8 +8,12 @@ import { ServicesMock } from '../../mock_data/services'
 // CreateService
 export const CreateService = () => {
 
+  beforeAll(async () => {
+    await page.goto(Constants.TRASA_DASHBOARD+'/services')
+    })
+
   it('Should Create a new service '+Constants.TRASA_DASHBOARD+'/services', async () => {
-    await page.goto(Constants.TRASA_DASHBOARD+'/services');
+    //await page.goto(Constants.TRASA_DASHBOARD+'/services', {timeout: 0});
     // await page.waitForNavigation({waitUntil: 'domcontentloaded'})
     await expect(page).toMatch('HTTPs applications')
 
