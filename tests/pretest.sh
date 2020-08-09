@@ -10,6 +10,6 @@ cd ../build/test && docker-compose build && docker-compose up &
 
 
 
-jest --runInBand
+jest
 
 cd ../build/test && docker-compose down
