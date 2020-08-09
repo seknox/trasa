@@ -107,7 +107,7 @@ func AuthHTTPAccessProxy(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	policy, privilege, adhoc, err := policies.Store.GetAccessPolicy(userDetailFromDB.ID, serviceDetailFromDB.ID, orgDetailFromDB.ID)
+	policy, adhoc, err := policies.Store.GetAccessPolicy(userDetailFromDB.ID, serviceDetailFromDB.ID, "", orgDetailFromDB.ID)
 	if err != nil {
 		logger.Debug(err)
 		utils.TrasaResponse(w, 200, "failed", "no policy assigned", "AuthHTTPAccessProxy", nil)
@@ -116,7 +116,7 @@ func AuthHTTPAccessProxy(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// TODO @sshahcodes, check if we can assign user's username here
-	authlog.Privilege = privilege
+	//authlog.Privilege = privilege
 	//authlog.Privilege = userDetailFromDB.UserName
 	authlog.SessionRecord = policy.RecordSession
 

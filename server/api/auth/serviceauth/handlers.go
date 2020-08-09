@@ -2,7 +2,6 @@ package serviceauth
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -151,7 +150,7 @@ func AgentLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	policy, privilege, adhoc, err := policies.Store.GetAccessPolicy(userDetails.ID, service.ID, orgDetail.ID)
+	policy, adhoc, err := policies.Store.GetAccessPolicy(userDetails.ID, service.ID, utils.NormalizeString(remoteLogin.User), orgDetail.ID)
 	if err != nil {
 		logrus.Debug(err)
 		err = logLoginFunc(&authlog, consts.REASON_NO_POLICY_ASSIGNED, false)
@@ -162,17 +161,17 @@ func AgentLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	normalizedPrivilege := utils.NormalizeString(privilege)
-	normalizedRemoteUsername := utils.NormalizeString(remoteLogin.User)
-
-	if normalizedPrivilege != normalizedRemoteUsername {
-		err = logLoginFunc(&authlog, consts.REASON_INVALID_PRIVILEGE, false)
-		if err != nil {
-			logrus.Error(err)
-		}
-		utils.TrasaResponse(w, 200, "failed", fmt.Sprintf("privilege assigned is (%s) but received %s ", normalizedPrivilege, normalizedRemoteUsername), "agent-login", nil)
-		return
-	}
+	//normalizedPrivilege := utils.NormalizeString(privilege)
+	//normalizedRemoteUsername := utils.NormalizeString(remoteLogin.User)
+	//
+	//if normalizedPrivilege != normalizedRemoteUsername {
+	//	err = logLoginFunc(&authlog, consts.REASON_INVALID_PRIVILEGE, false)
+	//	if err != nil {
+	//		logrus.Error(err)
+	//	}
+	//	utils.TrasaResponse(w, 200, "failed", fmt.Sprintf("privilege assigned is (%s) but received %s ", normalizedPrivilege, normalizedRemoteUsername), "agent-login", nil)
+	//	return
+	//}
 
 	ok, reason := Store.CheckPolicy(service.ID, userDetails.ID, orgDetail.ID, remoteLogin.UserIP, orgDetail.Timezone, policy, adhoc)
 	if !ok {

@@ -65,8 +65,8 @@ func NewSession(params *models.ConnectionParams, authlog *logs.AuthLog) (*Sessio
 
 	if session.isOwner {
 
-		policy, privilege, _, err := policies.Store.GetAccessPolicy(params.UserID, service.ID, params.OrgID)
-		if errors.Is(err, sql.ErrNoRows) || privilege != params.Privilege {
+		policy, _, err := policies.Store.GetAccessPolicy(params.UserID, service.ID, params.Privilege, params.OrgID)
+		if errors.Is(err, sql.ErrNoRows) {
 			//if service is not assigned to user, create one (only if dynamic access is enabled)
 			policy, err = accessmap.CreateDynamicAccessMap(params.SessionID, params.UserID, params.TrasaID, params.Privilege, params.OrgID)
 			if err != nil {

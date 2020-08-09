@@ -22,5 +22,5 @@ type PolicyAdapter interface {
 	UpdatePolicy(policy models.Policy) error
 	DeletePolicy(policyID, orgID string) error
 
-	GetAccessPolicy(userID, serviceID, orgID string) (policy *models.Policy, privilege string, adhoc bool, err error)
+	GetAccessPolicy(userID, serviceID, privilege, orgID string) (policy *models.Policy, adhoc bool, err error)
 }

@@ -90,14 +90,11 @@ func handlePass(params *models.ConnectionParams) (*models.UpstreamCreds, error) 
 }
 
 func handlePolicy(params *models.ConnectionParams, serviceID string) (ok bool, reason consts.FailedReason) {
-	policy, privilege, adhoc, err := policies.Store.GetAccessPolicy(params.UserID, serviceID, params.OrgID)
+	policy, adhoc, err := policies.Store.GetAccessPolicy(params.UserID, serviceID, params.Privilege, params.OrgID)
 	if err != nil {
 		logrus.Error(err)
 		//Dynamic  service
 		return false, consts.REASON_NO_POLICY_ASSIGNED
-	}
-	if privilege != params.Privilege {
-		return false, consts.REASON_INVALID_PRIVILEGE
 	}
 
 	params.CanTransferFile = policy.FileTransfer

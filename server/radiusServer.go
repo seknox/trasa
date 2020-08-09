@@ -15,7 +15,7 @@ import (
 
 func startRadiusServer() {
 	server := radius.PacketServer{
-		Handler:      radius.HandlerFunc(serviceauth.HandleRadiusReq),
+		Handler:      radius.HandlerFunc(serviceauth.RadiusLogin),
 		SecretSource: DynamicSecretSource(),
 	}
 

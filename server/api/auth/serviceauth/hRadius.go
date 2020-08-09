@@ -25,7 +25,10 @@ func RadiusLogin(w radius.ResponseWriter, r *radius.Request) {
 	logrus.Trace("RadiusLogin login request received")
 
 	remoteUser := rfc2865.UserName_GetString(r.Packet)
+	logrus.Info(remoteUser)
 	usernameWithTfaMethod := strings.Split(remoteUser, ":")
+
+	logrus.Info(usernameWithTfaMethod)
 	trasaID := usernameWithTfaMethod[0]
 	password := rfc2865.UserPassword_GetString(r.Packet)
 
@@ -100,7 +103,7 @@ func RadiusLogin(w radius.ResponseWriter, r *radius.Request) {
 		return
 	}
 
-	policy, privilege, adhoc, err := policies.Store.GetAccessPolicy(userDetails.ID, service.ID, orgDetail.ID)
+	policy, adhoc, err := policies.Store.GetAccessPolicy(userDetails.ID, service.ID, "", orgDetail.ID)
 	if err != nil {
 		logrus.Debug(err)
 		err = logLoginFunc(&authlog, consts.REASON_NO_POLICY_ASSIGNED, false)
@@ -111,14 +114,15 @@ func RadiusLogin(w radius.ResponseWriter, r *radius.Request) {
 		return
 	}
 
-	if privilege != trasaID {
-		err = logLoginFunc(&authlog, consts.REASON_INVALID_PRIVILEGE, false)
-		if err != nil {
-			logrus.Error(err)
-		}
-		w.Write(r.Response(radius.CodeAccessReject))
-		return
-	}
+	//TODO @sshahcodes check
+	//if privilege != trasaID {
+	//	err = logLoginFunc(&authlog, consts.REASON_INVALID_PRIVILEGE, false)
+	//	if err != nil {
+	//		logrus.Error(err)
+	//	}
+	//	w.Write(r.Response(radius.CodeAccessReject))
+	//	return
+	//}
 
 	ok, reason := Store.CheckPolicy(service.ID, userDetails.ID, orgDetail.ID, ipAddr[0], orgDetail.Timezone, policy, adhoc)
 	if !ok {
