@@ -7,7 +7,7 @@ import { InitialUserLoginAndDeviceEnrol, LoginTfa } from '../src/login'
 import { CreateService } from '../src/service/create'
 // import {sshtest} from "../src/ssh";
 
- jest.setTimeout(30000)
+ jest.setTimeout(60000)
 
 beforeAll(async () => {
   let up = false 

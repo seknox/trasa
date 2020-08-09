@@ -2,7 +2,7 @@ import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import PolicyIcon from '@material-ui/icons/Assignment';
 import axios from 'axios';
-import mixpanel from 'mixpanel-browser';
+// import mixpanel from 'mixpanel-browser';
 import React, { useEffect, useState } from 'react';
 import DialogueWrapper from '../../../utils/Components/DialogueWrapComponent';
 import Constants from '../../../Constants';
@@ -137,7 +137,7 @@ export default function Policies() {
   };
 
   useEffect(() => {
-    mixpanel.track('control-policies');
+    // mixpanel.track('control-policies');
     getAllPolicies();
   }, []);
 

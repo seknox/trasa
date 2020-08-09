@@ -22,7 +22,7 @@ import Typography from '@material-ui/core/Typography';
 import Send from '@material-ui/icons/Send';
 // import TextField from '@material-ui/core/TextField';
 import axios from 'axios';
-import mixpanel from 'mixpanel-browser';
+// import mixpanel from 'mixpanel-browser';
 import React, { useEffect, useState } from 'react';
 import Constants from '../../../Constants';
 import ProgressBar from '../../../utils/Components/Progressbar';
@@ -393,7 +393,7 @@ export default function CreatePolicy(props: createPolicyProps) {
   };
 
   const SubmitPolicy = () => {
-    mixpanel.track('control-policies-createpolicy');
+    // mixpanel.track('control-policies-createpolicy');
     setLoading(true);
     const devicePolicy = { ...dhBlocking };
     const basicPolicy = {

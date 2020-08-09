@@ -11,7 +11,7 @@ import AccessStats from '../AccessStats';
 import ManageCreds from './ManageCredentials';
 import ServiceOverview from './ServiceOverview';
 
-function AppPageIndex(props: any) {
+function ServicePageIndex(props: any) {
   const [serviceName, setserviceName] = useState('');
   const [appData, setAppData] = useState({});
   const [allUsers, setallUsers] = useState([]);
@@ -112,12 +112,12 @@ function AppPageIndex(props: any) {
 
 type TParams = { ID: string };
 
-const AppPage = ({ match }: RouteComponentProps<TParams>) => {
+const ServicePage = ({ match }: RouteComponentProps<TParams>) => {
   return (
     <div>
-      <AppPageIndex ID={match.params.ID} />
+      <ServicePageIndex ID={match.params.ID} />
     </div>
   );
 };
 
-export default AppPage;
+export default ServicePage;

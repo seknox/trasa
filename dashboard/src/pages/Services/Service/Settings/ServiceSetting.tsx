@@ -238,6 +238,7 @@ export default function Servicesetting(props: ServicesettingProps) {
               fullWidth
               // label="Service name"
               onChange={handleChange('serviceName')}
+              name="serviceName"
               id="serviceName"
               value={serviceDetail.serviceName}
               // defaultValue={props.serviceDetail.serviceName}
@@ -347,6 +348,7 @@ export default function Servicesetting(props: ServicesettingProps) {
               fullWidth
               onChange={handleChange('hostname')}
               name="hostname"
+              id="hostname"
               value={serviceDetail.hostname}
               // defaultValue={props.serviceDetail.hostname}
               // validators={['required']}
@@ -464,6 +466,7 @@ export default function Servicesetting(props: ServicesettingProps) {
         <Grid item xs={12}>
           <Button
             name="submit"
+            id="submit"
             variant="contained"
             onClick={handleSubmit}
             className={classes.submitButton}
