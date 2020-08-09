@@ -384,7 +384,8 @@ export default function UserCrud(props: UsercrudProps) {
             {/* <InputLabel>{!data.userRole && 'User Role'}</InputLabel> */}
             <Select
               // className={classes.selectCustom}
-
+              name="userRole"
+              id="userRole"
               value={data.userRole}
               onChange={handleChange}
               // defaultValue={'selfUser'}
@@ -393,8 +394,12 @@ export default function UserCrud(props: UsercrudProps) {
                 id: 'userRole',
               }}
             >
-              <MenuItem value="orgAdmin">Org Admin</MenuItem>
-              <MenuItem value="selfUser">Normal User</MenuItem>
+              <MenuItem value="orgAdmin" id="orgAdmin">
+                Org Admin
+              </MenuItem>
+              <MenuItem value="selfUser" id="selfUser">
+                Normal User
+              </MenuItem>
             </Select>
             {/* <FormHelperText>{!data.userRole && 'Default option is Normal User'}</FormHelperText> */}
           </FormControl>
@@ -427,11 +432,24 @@ export default function UserCrud(props: UsercrudProps) {
             <div className={classes.root}>
               <div>
                 {loader ? (
-                  <Button name={"createUserSubmitBtn"} variant="contained" disabled color="secondary" type="submit">
+                  <Button
+                    name="submit"
+                    variant="contained"
+                    id="submit"
+                    disabled
+                    color="secondary"
+                    type="submit"
+                  >
                     Submit
                   </Button>
                 ) : (
-                  <Button name={"createUserSubmitBtn"} variant="contained" color="secondary" type="submit">
+                  <Button
+                    name="submit"
+                    id="submit"
+                    variant="contained"
+                    color="secondary"
+                    type="submit"
+                  >
                     Submit
                   </Button>
                 )}

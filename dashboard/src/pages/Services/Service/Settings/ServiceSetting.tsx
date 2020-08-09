@@ -238,6 +238,7 @@ export default function Servicesetting(props: ServicesettingProps) {
               fullWidth
               // label="Service name"
               onChange={handleChange('serviceName')}
+              name="serviceName"
               id="serviceName"
               value={serviceDetail.serviceName}
               // defaultValue={props.serviceDetail.serviceName}
@@ -269,17 +270,17 @@ export default function Servicesetting(props: ServicesettingProps) {
                 <MenuItem value="ssh" id="ssh">
                   <div className={classes.settingSHeader}>SSH </div>
                 </MenuItem>
-                <MenuItem value="http">
+                <MenuItem value="http" id="http">
                   <div className={classes.settingSHeader}>HTTP </div>
                 </MenuItem>
 
-                <MenuItem value="rdp">
+                <MenuItem value="rdp" id="rdp">
                   <div className={classes.settingSHeader}>RDP </div>
                 </MenuItem>
-                <MenuItem value="radius">
+                <MenuItem value="radius" id="radius">
                   <div className={classes.settingSHeader}>Radius </div>
                 </MenuItem>
-                <MenuItem value="db">
+                <MenuItem value="db" id="db">
                   <div className={classes.settingSHeader}>Database </div>
                 </MenuItem>
               </Select>
@@ -347,6 +348,7 @@ export default function Servicesetting(props: ServicesettingProps) {
               fullWidth
               onChange={handleChange('hostname')}
               name="hostname"
+              id="hostname"
               value={serviceDetail.hostname}
               // defaultValue={props.serviceDetail.hostname}
               // validators={['required']}
@@ -464,6 +466,7 @@ export default function Servicesetting(props: ServicesettingProps) {
         <Grid item xs={12}>
           <Button
             name="submit"
+            id="submit"
             variant="contained"
             onClick={handleSubmit}
             className={classes.submitButton}

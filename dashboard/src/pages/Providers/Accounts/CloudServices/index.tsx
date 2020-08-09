@@ -12,7 +12,7 @@ import Typography from '@material-ui/core/Typography';
 // import CircularProgress from "@material-ui/core/CircularProgress";
 // import classNames from "classnames";
 import axios from 'axios';
-import mixpanel from 'mixpanel-browser';
+// import mixpanel from 'mixpanel-browser';
 import React, { useEffect, useState } from 'react';
 import AWS from '../../../../assets/cloudiaas/aws.png';
 import DO from '../../../../assets/cloudiaas/do.svg';
@@ -374,7 +374,7 @@ function DOConnectAndSync() {
 
   const storeApiKey = () => {
     updateActionStatus({ ...actionStatus, respStatus: false, statusMsg: '', loader: true });
-    mixpanel.track('manage-accounts-dointegration');
+    // mixpanel.track('manage-accounts-dointegration');
     axios
       .post(`${Constants.TRASA_HOSTNAME}/api/v1/crypto/store/key`, storedKey)
       .then((r) => {
@@ -407,7 +407,7 @@ function DOConnectAndSync() {
 
   const syncNow = () => {
     updateActionStatus({ ...actionStatus, respStatus: false, statusMsg: '', loader: true });
-    mixpanel.track('manage-accounts-dointegration');
+    // mixpanel.track('manage-accounts-dointegration');
     const config = {
       headers: {
         'X-SESSION': localStorage.getItem('X-SESSION'),

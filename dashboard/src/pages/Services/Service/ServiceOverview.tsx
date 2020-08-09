@@ -870,8 +870,8 @@ const DeleteServiceDlg = (props: any) => {
             No
           </Button>
           <br />
-          {loader ? <ProgressHOC /> : null}
         </DialogActions>
+        {loader ? <ProgressHOC /> : null}
       </Dialog>
     </div>
   );
