@@ -1,5 +1,5 @@
 require('expect-puppeteer')
-import Constants from '../Constants' 
+import Constants from '../Constants'
 const axios=require('axios')
 // import { getTotp } from '../utils/totpgen'
 const getTotp = require("../utils/totpgen");
@@ -15,7 +15,7 @@ const loginData = {
 };
 
 const TRASA_HOSTNAME="https://app.trasa"
-let TOTP_SSC="VOLNFSACRDMUPQX7"
+let TOTP_SSC="YRIDIRSUPAPY77BU"
 
 
 
@@ -110,7 +110,7 @@ export const LoginTfa = () => {
     })
 
   it('should display "Dashboard Login" text on page', async () => {
-    
+
     await expect(page).toMatch('Dashboard Login')
   })
 
