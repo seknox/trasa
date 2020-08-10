@@ -6,7 +6,7 @@ const policyData=require('../../mock_data/policies')
 
 
 //create user
-export const CreatePolicy = () => {
+export const UpdatePolicy = () => {
     beforeAll(async () => {
         await page.goto(Constants.TRASA_DASHBOARD+'/control',{waitUntil:'load'})
     })
@@ -18,10 +18,13 @@ export const CreatePolicy = () => {
 
         await expect(page).toMatch('Policies')
 
-        await page.click('#createPolicyBtn')
-        await expect(page).toMatch('Create New Policy')
+        await page.waitForSelector('[id="'+testPolicy.name+'"]',{timeout:5000})
+        await page.click('[id="'+testPolicy.name+'"]')
 
-        await page.type("[name=policyName]",testPolicy.name)
+        // await expect(page).toMatch('Create New Policy')
+
+        await page.click("[name=policyName]",{clickCount:3})
+        await page.type("[name=policyName]",'new policy')
 
         await page.click('#nextBtn')
 
@@ -45,8 +48,6 @@ export const CreatePolicy = () => {
         await page.click('[data-value=Sunday]')
         await page.click('[data-value=Monday]')
         await page.click('[data-value=Tuesday]')
-        await page.click('[data-value=Wednesday]')
-        await page.click('[data-value=Thursday]')
         await page.click('[data-value=Friday]')
         await page.click('[data-value=Saturday]')
 
@@ -54,7 +55,7 @@ export const CreatePolicy = () => {
 
         await page.focus('#FROM')
         await page.type('#FROM','0100am')
-await page.focus('#TO')
+        await page.focus('#TO')
         await page.type('#TO','1159pm')
 
 
@@ -73,14 +74,16 @@ await page.focus('#TO')
         await page.click("#submitBtn")
 
 
-        let resp = await page.waitForResponse(r=>r.url().includes('policy/create'))
+        let resp = await page.waitForResponse(r=>r.url().includes('policy/update'))
 
         await expect(resp.status()).toBe(200)
 
         await page.waitForNavigation({ waitUntil: 'load' })
+        await page.waitForSelector('[id="new policy"]',{timeout:5000})
 
-        await page.waitForSelector('[id="'+testPolicy.name+'"]',{timeout:5000})
-        await expect(page).toMatch(testPolicy.name)
+
+
+        await expect(page).toMatch('new policy')
 
 
         // await page.waitFor(20000)

@@ -470,7 +470,7 @@ export default function CreatePolicy(props: createPolicyProps) {
               devicePolicy={dhBlocking}
             />
             <Button
-              id='submitBtn'
+              id="submitBtn"
               className={classes.button}
               variant="contained"
               color="secondary"

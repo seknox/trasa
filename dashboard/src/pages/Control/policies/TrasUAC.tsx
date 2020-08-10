@@ -372,7 +372,7 @@ export default function TrasaUAC(props: any) {
                       size="small"
                       onClick={addDayAndTime}
                     >
-                      <AddIcon className={classes.rightIcon} />
+                      <AddIcon id='addBtn' className={classes.rightIcon} />
                       {props.dayAndTime.length > 0 ? 'Add Another' : 'Add'}
                     </Button>
                   </Grid>

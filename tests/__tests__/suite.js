@@ -1,3 +1,4 @@
+import {UpdatePolicy} from "../src/policy/update";
 
 require('expect-puppeteer')
 const isReachable = require('is-reachable');
@@ -33,6 +34,7 @@ describe('Login', LoginTfa)
 // describe("user delete",DeleteUser)
 // describe("user group create",CreateUserGroup)
 describe("policy create",CreatePolicy)
+describe("policy create",UpdatePolicy)
 // describe('InitialLoginAndEnroDevice', InitialUserLoginAndDeviceEnrol)
 
  // describe('Service CRUD', CreateService)
