@@ -48,12 +48,12 @@ TRASA server running on `https://app.trasa`
 ### 3. User CRUD
 
 - [ ] create user  
-     -[ ] normal operation 
+     -[x] normal operation 
      -[ ] duplicate email
      -[ ] duplicate username
-- [ ] update user
-- [ ] delete user
-- [ ] create user group
+- [x] update user
+- [x] delete user
+- [x] create user group
 - [ ] update user group
 - [ ] add users to group
 - [ ] remove user from group

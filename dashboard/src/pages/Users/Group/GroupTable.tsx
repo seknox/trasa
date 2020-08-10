@@ -166,7 +166,7 @@ export default function UserGroupTable(props: any) {
             <Grid container spacing={3} alignItems="center">
               <Grid item />
               <Grid item xs>
-                <Button variant="contained" onClick={handleCreateGroupDlgState}>
+                <Button variant="contained" onClick={handleCreateGroupDlgState} id='createGroupBtn'>
                   <GroupIcon className={classes.buttonIcons} />
                   Create group
                 </Button>
