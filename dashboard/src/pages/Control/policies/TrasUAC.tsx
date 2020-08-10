@@ -214,7 +214,7 @@ export default function TrasaUAC(props: any) {
                                        onChange={props.handle2FAChange}
                                        //value={props.tfaRequired}
                                        color="secondary"
-                                       />           
+                                       />
                                  </Grid> */}
               </Grid>
             </Grid>
@@ -301,7 +301,8 @@ export default function TrasaUAC(props: any) {
                   <Select
                     fullWidth
                     multiple
-                    id="select-multiple-checkbox"
+                    id="daysPolicyDropDown"
+
                     value={days}
                     onChange={updateDays}
                     input={<Input />}
@@ -438,12 +439,12 @@ export default function TrasaUAC(props: any) {
               {...a11yProps(0)}
             />
             <Tab
-              label={<Typography variant="h4">Session Recording</Typography>}
+              label={<Typography variant="h4" id={'sessionRecordingTab'}>Session Recording</Typography>}
               {...a11yProps(1)}
             />
             <Tab label={<Typography variant="h4">File Transfers</Typography>} {...a11yProps(2)} />
             <Tab label={<Typography variant="h4">IP Source</Typography>} {...a11yProps(3)} />
-            <Tab label={<Typography variant="h4">Day and Time</Typography>} {...a11yProps(4)} />
+            <Tab label={<Typography variant="h4" id='dayTimePolicyTab'>Day and Time</Typography>} {...a11yProps(4)} />
             <Tab label={<Typography variant="h4">Expiry</Typography>} {...a11yProps(5)} />
           </Tabs>
         </Grid>

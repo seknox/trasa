@@ -153,7 +153,12 @@ export default function Policies() {
             // updatePoliciesArr={updatePoliciesArr}
           />
           <br />
-          <Button variant="contained" size="small" onClick={openCreatePolicyDlg}>
+          <Button
+            variant="contained"
+            size="small"
+            onClick={openCreatePolicyDlg}
+            id="createPolicyBtn"
+          >
             <PolicyIcon />
             Create New Policy
           </Button>

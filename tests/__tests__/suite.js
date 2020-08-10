@@ -11,6 +11,7 @@ import {CreateUser} from "../src/user/create";
 import {UpdateUser} from "../src/user/update";
 import {DeleteUser} from "../src/user/delete";
 import {CreateUserGroup} from "../src/user/creategroup";
+import {CreatePolicy} from "../src/policy/create";
 
 // import {sshtest} from "../src/ssh";
 
@@ -27,11 +28,12 @@ beforeAll(async () => {
 
 
 describe('Login', LoginTfa)
-describe("user create",CreateUser)
-describe("user update",UpdateUser)
-describe("user delete",DeleteUser)
-describe("user group create",CreateUserGroup)
+// describe("user create",CreateUser)
+// describe("user update",UpdateUser)
+// describe("user delete",DeleteUser)
+// describe("user group create",CreateUserGroup)
+describe("policy create",CreatePolicy)
 // describe('InitialLoginAndEnroDevice', InitialUserLoginAndDeviceEnrol)
 
- describe('Service CRUD', CreateService)
+ // describe('Service CRUD', CreateService)
 // describe("SSH",sshtest)
