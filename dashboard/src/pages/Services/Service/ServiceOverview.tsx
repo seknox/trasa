@@ -381,7 +381,7 @@ function ServiceDetail(props: any) {
         </Grid>
         <Grid item xs={3}>
           <Tooltip title="edit" placement="top">
-            <IconButton style={{ color: 'navy' }} onClick={props.toggleConfigDrawer('right', true)}>
+            <IconButton id='configEditBtn' style={{ color: 'navy' }} onClick={props.toggleConfigDrawer('right', true)}>
               <EditIcon />
             </IconButton>
           </Tooltip>

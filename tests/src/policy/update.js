@@ -11,7 +11,7 @@ export const UpdatePolicy = () => {
         await page.goto(Constants.TRASA_DASHBOARD+'/control',{waitUntil:'load'})
     })
 
-    it('Should Create a new policy '+Constants.TRASA_DASHBOARD+'/control', async () => {
+    it('Should update a policy '+Constants.TRASA_DASHBOARD+'/control', async () => {
         const testPolicy=policyData.policies[0]
         // await page.goto(Constants.TRASA_DASHBOARD+"/users")
 
