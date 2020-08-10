@@ -15,7 +15,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import Tooltip from '@material-ui/core/Tooltip';
 import GroupIcon from '@material-ui/icons/GroupAddSharp';
-import MUIDataTable, { MUIDataTableOptions } from 'mui-datatables';
+import MUIDataTable, { MUIDataTableMeta, MUIDataTableOptions } from 'mui-datatables';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MuiDataTableTheme } from '../../../utils/styles/themes';
@@ -122,10 +122,11 @@ export default function UserGroupTable(props: any) {
       name: 'View Details',
       options: {
         filter: false,
-        customBodyRender: (value: any) => {
+        customBodyRender: (value: any, tableMeta: MUIDataTableMeta) => {
           return (
             <div>
               <Button
+                id={tableMeta.rowData[0]}
                 component={Link}
                 to={`/users/groups/group/${value}`}
                 variant="outlined"
