@@ -14,6 +14,7 @@ import {DeleteUser} from "../src/user/delete";
 import {CreateUserGroup} from "../src/user/creategroup";
 import {CreatePolicy} from "../src/policy/create";
 import {UpdateService} from "../src/service/update";
+import {DeleteService} from "../src/service/delete";
 
 // import {sshtest} from "../src/ssh";
 
@@ -38,6 +39,7 @@ describe('Login', LoginTfa)
 // describe("policy create",UpdatePolicy)
 // describe('InitialLoginAndEnroDevice', InitialUserLoginAndDeviceEnrol)
 
- describe('Service CRUD', CreateService)
- describe('Service CRUD', UpdateService)
+ describe('Service create', CreateService)
+ describe('Service update', UpdateService)
+ describe('Service delete', DeleteService)
 // describe("SSH",sshtest)
