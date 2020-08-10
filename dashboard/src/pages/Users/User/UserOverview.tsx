@@ -347,7 +347,7 @@ export default function UserOverview(props: UserOverviewProps) {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={deleteSingleUser} className={classes.warningButton}>
+            <Button onClick={deleteSingleUser} className={classes.warningButton} id='confirmDeleteBtn'>
               Yes, Delete
             </Button>
             <Button

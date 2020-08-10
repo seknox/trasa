@@ -9,6 +9,7 @@ import { CreateService } from '../src/service/create'
 import { logintests } from '../src/login'
 import {CreateUser} from "../src/user/create";
 import {UpdateUser} from "../src/user/update";
+import {DeleteUser} from "../src/user/delete";
 // import {sshtest} from "../src/ssh";
 
  jest.setTimeout(60000)
@@ -26,6 +27,7 @@ beforeAll(async () => {
 describe('Login', LoginTfa)
 describe("user crud",CreateUser)
 describe("user crud",UpdateUser)
+describe("user crud",DeleteUser)
 // describe('InitialLoginAndEnroDevice', InitialUserLoginAndDeviceEnrol)
 
  describe('Service CRUD', CreateService)
