@@ -12,8 +12,8 @@ export const AddUserToGroup = () => {
         await page.goto(Constants.TRASA_DASHBOARD+'/users#User Groups')
     })
 
-    it('Should Create a new user group '+Constants.TRASA_DASHBOARD+'/users#User Groups', async () => {
-        const tesGroup=groupData.groups[0]
+    it('Should add user to a group '+Constants.TRASA_DASHBOARD+'/users#User Groups', async () => {
+        const tesGroup=groupData.usergroups[0]
         // await page.goto(Constants.TRASA_DASHBOARD+"/users")
         await expect(page).toMatch('Users')
 
@@ -37,9 +37,10 @@ export const AddUserToGroup = () => {
         await page.click('#addSelectedUsersBtn')
 
 
-        await page.waitForNavigation();
+        await page.waitForNavigation()
+        await page.waitForResponse(r=>r.url().includes('/api/v1/groups/user'));
 
-          await expect(page).toMatch("auser")
+        await expect(page).toMatch("auser")
 
     })
 

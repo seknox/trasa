@@ -8,7 +8,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import AuthServicegroupIcon from '@material-ui/icons/DeviceHubSharp';
 import axios from 'axios';
-import MUIDataTable, { MUIDataTableOptions } from 'mui-datatables';
+import MUIDataTable, { MUIDataTableMeta, MUIDataTableOptions } from 'mui-datatables';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Constants from '../../../Constants';
@@ -132,9 +132,10 @@ export default function Servicegroup() {
       name: ' View Details',
       options: {
         filter: false,
-        customBodyRender: (value: any) => {
+        customBodyRender: (value: any, tableMeta: MUIDataTableMeta) => {
           return (
             <Button
+              id={tableMeta.rowData[0]}
               component={Link}
               to={`/services/groups/group/${value}`}
               variant="outlined"
@@ -183,7 +184,7 @@ export default function Servicegroup() {
           <Toolbar>
             <Grid container spacing={2}>
               <Grid item xs={2}>
-                <Button variant="contained" size="small" onClick={handleCreateGroupDlgState}>
+                <Button id='assignUserGroupBtn' variant="contained" size="small" onClick={handleCreateGroupDlgState}>
                   <AuthServicegroupIcon fontSize="small" />
                   Create group
                 </Button>

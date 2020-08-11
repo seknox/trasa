@@ -20,6 +20,8 @@ import {AddUserToGroup} from "../src/user/add_user_to_group";
 import {Jpt} from "../src/usercrud";
 import {UserGroupAccessMap} from "../src/accessmap/usergroup_accessmap";
 import {CreateServiceGroup} from "../src/service/create_group";
+import {AddServiceToGroup} from "../src/service/add_service_to_group";
+import {UserGroupServiceGroupAccessMap} from "../src/accessmap/usergroup_appgroup_map";
 
 // import {sshtest} from "../src/ssh";
 
@@ -28,31 +30,35 @@ import {CreateServiceGroup} from "../src/service/create_group";
 beforeAll(async () => {
   let up = false
   while (up !== true) {
-  await isReachable('app.trasa:443').then(u => up = u)
-  }
+  let u=await isReachable('app.trasa:443')
+      up=u
+   }
 
     // await page.goto(Constants.TRASA_DASHBOARD)
   })
-
-describe('Login', LoginTfa)
-// describe("user create",CreateUser)
-// describe("user group create",CreateUserGroup)
-describe("service group create",CreateServiceGroup)
-// describe("assign user to group",AddUserToGroup)
-
-
-// describe('Service create', CreateService)
-// describe('Acccess map',UserAccessMap)
-// describe('Acccess map',UserGroupAccessMap)
-
-// describe("user update",UpdateUser)
-// describe("user delete",DeleteUser)
-// describe("user group create",CreateUserGroup)
-// describe("policy create",CreatePolicy)
-// describe("policy create",UpdatePolicy)
 // describe('InitialLoginAndEnroDevice', InitialUserLoginAndDeviceEnrol)
 
- // describe('Service update', UpdateService)
- // describe('Service delete', DeleteService)
+describe('Login', LoginTfa)
+describe("policy create",CreatePolicy)
+
+describe("user create",CreateUser)
+describe("user group create",CreateUserGroup)
+describe("add user to group",AddUserToGroup)
+
+//
+describe('Service create', CreateService)
+describe("service group create",CreateServiceGroup)
+describe("add service to group",AddServiceToGroup)
+
+describe('User access map',UserAccessMap)
+describe('User group access map',UserGroupAccessMap)
+describe('User group service group access map',UserGroupServiceGroupAccessMap)
+
+describe("user update",UpdateUser)
+describe("user delete",DeleteUser)
+describe("policy update",UpdatePolicy)
+// //
+ describe('Service update', UpdateService)
+ describe('Service delete', DeleteService)
 
 // describe("SSH",sshtest)

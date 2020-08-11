@@ -12,7 +12,7 @@ export const CreateUserGroup = () => {
     })
 
     it('Should Create a new user group '+Constants.TRASA_DASHBOARD+'/users#User Groups', async () => {
-        const tesGroup=groupData.groups[0]
+        const tesGroup=groupData.usergroups[0]
         // await page.goto(Constants.TRASA_DASHBOARD+"/users")
         await expect(page).toMatch('Users')
 

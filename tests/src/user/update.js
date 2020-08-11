@@ -3,7 +3,7 @@ require('expect-puppeteer')
 const usersData=require('../../mock_data/users')
 
 
-export const UpdateUser=async ()=>{
+export const UpdateUser= ()=>{
     beforeAll(async () => {
         await page.goto(Constants.TRASA_DASHBOARD+'/users')
     })
@@ -56,13 +56,11 @@ export const UpdateUser=async ()=>{
 
        await expect(resp.status()).toBe(200)
 
-        const respData=await  resp.json()
+        // const respData=await  resp.json()
+        //
+        // await expect(respData.status).toBe("success")
 
-        await expect(respData.status).toBe("success")
-        // await page.waitFor(20000)
-        //  await page.waitFor(10000)
-       // await expect(page).toMatch('Verification Link')
-        await page.screenshot({path: 'src/user/update.png'})
+        // await page.screenshot({path: 'src/user/update.png'})
 
 
     })

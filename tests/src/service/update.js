@@ -17,12 +17,15 @@ export const UpdateService = () => {
         // await page.waitForNavigation({waitUntil: 'domcontentloaded'})
         await expect(page).toMatch('HTTPs applications')
 
+
         await page.waitForSelector('#'+ServicesMock[0].name)
 
         await page.click('#'+ServicesMock[0].name)
       //  await page.waitForNavigation({timeout:5000})
 
         await expect(page).toMatch("Configurations")
+        await page.waitForResponse(r=>r.url().includes('/api/v1/service'))
+
 
         await page.click('#configEditBtn')
 

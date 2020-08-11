@@ -14,7 +14,7 @@ export const UserGroupAccessMap = () => {
 
     })
 
-    it('Should update a service '+Constants.TRASA_DASHBOARD+'/services', async () => {
+    it('Should add a user group access map '+Constants.TRASA_DASHBOARD+'/services', async () => {
         //await page.goto(Constants.TRASA_DASHBOARD+'/services', {timeout: 0});
         // await page.waitForNavigation({waitUntil: 'domcontentloaded'})
         await expect(page).toMatch('HTTPs applications')
@@ -51,12 +51,12 @@ export const UserGroupAccessMap = () => {
         await clickWithText(page,"Select...",'span')
         await page.waitFor(1000)
 
-        await clickWithText(page,"somegroup",'span')
+        await clickWithText(page,"someusergroup",'span')
         await clickWithText(page,"Select...",'span')
 
         await page.waitFor(1000)
 
-        await clickWithText(page,"full",'span')
+        await clickWithText(page,"full-policy",'span')
 
         await page.click('[name=privilege]')
         await page.type('[name=privilege]','admin')
