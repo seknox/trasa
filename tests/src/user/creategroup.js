@@ -16,7 +16,7 @@ export const CreateUserGroup = () => {
         // await page.goto(Constants.TRASA_DASHBOARD+"/users")
         await expect(page).toMatch('Users')
 
-        await page.click('[#createGroupBtn]')
+        await page.click('#createGroupBtn')
         await expect(page).toMatch('Create User Group')
 
         await page.type("[name=groupName]",tesGroup.name)

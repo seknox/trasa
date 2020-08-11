@@ -1,3 +1,3 @@
 export const groups =[{
-    name:"someGroup",
+    name:"somegroup",
 }]

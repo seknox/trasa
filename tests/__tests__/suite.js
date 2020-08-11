@@ -16,7 +16,9 @@ import {CreatePolicy} from "../src/policy/create";
 import {UpdateService} from "../src/service/update";
 import {DeleteService} from "../src/service/delete";
 import {UserAccessMap} from "../src/accessmap/useraccessmap";
+import {AddUserToGroup} from "../src/user/add_user_to_group";
 import {Jpt} from "../src/usercrud";
+import {UserGroupAccessMap} from "../src/accessmap/usergroup_accessmap";
 
 // import {sshtest} from "../src/ssh";
 
@@ -32,9 +34,14 @@ beforeAll(async () => {
   })
 
 describe('Login', LoginTfa)
-describe("user create",CreateUser)
+// describe("user create",CreateUser)
+describe("user group create",CreateUserGroup)
+// describe("assign user to group",AddUserToGroup)
+
+
 describe('Service create', CreateService)
-describe('Acccess map',UserAccessMap)
+// describe('Acccess map',UserAccessMap)
+describe('Acccess map',UserGroupAccessMap)
 
 // describe("user update",UpdateUser)
 // describe("user delete",DeleteUser)
