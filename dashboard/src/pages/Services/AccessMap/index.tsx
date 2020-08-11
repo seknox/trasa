@@ -205,7 +205,7 @@ export default function Appuser(props: any) {
 
       <Grid container>
         <Grid item xs={2}>
-          <Button variant="contained" size="small" onClick={changeAssignuserDlgState}>
+          <Button id='assignUserBtn' variant="contained" size="small" onClick={changeAssignuserDlgState}>
             <Save />
             Assign User
           </Button>

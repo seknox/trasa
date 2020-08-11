@@ -17,9 +17,12 @@ export const CreateService = () => {
     // await page.waitForNavigation({waitUntil: 'domcontentloaded'})
     await expect(page).toMatch('HTTPs applications')
 
+      await page.waitForResponse(r=>r.url().includes('/api/v1/services/all'))
+
     await page.click('#create-new-service-button')
     await expect(page).toMatch('Integrate New Service')
 
+    await page.waitForSelector('#serviceName')
     await page.type('#serviceName', ServicesMock[0].name)
      await page.click('#serviceType');
      await page.click('#ssh')

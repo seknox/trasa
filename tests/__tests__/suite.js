@@ -15,6 +15,8 @@ import {CreateUserGroup} from "../src/user/creategroup";
 import {CreatePolicy} from "../src/policy/create";
 import {UpdateService} from "../src/service/update";
 import {DeleteService} from "../src/service/delete";
+import {UserAccessMap} from "../src/accessmap/useraccessmap";
+import {Jpt} from "../src/usercrud";
 
 // import {sshtest} from "../src/ssh";
 
@@ -29,9 +31,11 @@ beforeAll(async () => {
     // await page.goto(Constants.TRASA_DASHBOARD)
   })
 
-
 describe('Login', LoginTfa)
-// describe("user create",CreateUser)
+describe("user create",CreateUser)
+describe('Service create', CreateService)
+describe('Acccess map',UserAccessMap)
+
 // describe("user update",UpdateUser)
 // describe("user delete",DeleteUser)
 // describe("user group create",CreateUserGroup)
@@ -39,7 +43,7 @@ describe('Login', LoginTfa)
 // describe("policy create",UpdatePolicy)
 // describe('InitialLoginAndEnroDevice', InitialUserLoginAndDeviceEnrol)
 
- describe('Service create', CreateService)
- describe('Service update', UpdateService)
- describe('Service delete', DeleteService)
+ // describe('Service update', UpdateService)
+ // describe('Service delete', DeleteService)
+
 // describe("SSH",sshtest)
