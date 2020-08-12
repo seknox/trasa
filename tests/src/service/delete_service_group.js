@@ -26,8 +26,8 @@ export const DeleteServiceGroup = () => {
 
         await expect(page).toMatch("Service Group")
 
-        await page.waitForSelector('#someservicegroup1')
-        await page.click('#someservicegroup1')
+        await page.waitForSelector('#somegroup1')
+        await page.click('#somegroup1')
 
 
 

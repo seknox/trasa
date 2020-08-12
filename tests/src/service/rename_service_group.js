@@ -32,6 +32,7 @@ export const RenameServiceGroup = () => {
         await page.click('#editGroupBtn')
 
         await page.waitForSelector('[name=groupName]')
+        await page.click('[name=groupName]',{clickCount:3})
         await page.type('[name=groupName]','somegroup1')
 
         const navigationPromise=page.waitForNavigation()

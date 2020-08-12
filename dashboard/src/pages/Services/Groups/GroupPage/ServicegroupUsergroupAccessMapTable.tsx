@@ -273,13 +273,14 @@ export default function ServicegroupUsergroupMapTable(props: any) {
             <div>
               {updateRow && updateRowIndex === tableMeta.rowIndex ? (
                 <div>
-                  <IconButton color="primary" onClick={udpateAppusername}>
+                  <IconButton id='savePrivilegeBtn' color="primary" onClick={udpateAppusername}>
                     {loader && <CircularProgress size={48} className={classes.fabProgress} />}
                     {loader ? <CheckIcon /> : <SaveIcon />}
                   </IconButton>
                 </div>
               ) : (
                 <IconButton
+                  id='editGroupPrivilegeBtn'
                   color="primary"
                   onClick={() => {
                     updateEditRowState(tableMeta);

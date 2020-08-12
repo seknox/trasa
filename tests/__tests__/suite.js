@@ -24,6 +24,7 @@ import {AddServiceToGroup} from "../src/service/add_service_to_group";
 import {UserGroupServiceGroupAccessMap} from "../src/accessmap/usergroup_appgroup_map";
 import {RenameServiceGroup} from "../src/service/rename_service_group";
 import {DeleteServiceGroup} from "../src/service/delete_service_group";
+import {RenameAccessMap} from "../src/accessmap/rename_accessmap_privilege";
 
 // import {sshtest} from "../src/ssh";
 
@@ -42,20 +43,22 @@ beforeAll(async () => {
 describe('InitialLoginAndEnroDevice', InitialUserLoginAndDeviceEnrol)
 
 // describe('Login', LoginTfa)
-// describe("policy create",CreatePolicy)
+describe("policy create",CreatePolicy)
 
-// describe("user create",CreateUser)
-// describe("user group create",CreateUserGroup)
-// describe("add user to group",AddUserToGroup)
+describe("user create",CreateUser)
+describe("user group create",CreateUserGroup)
+describe("add user to group",AddUserToGroup)
 
 //
-// describe('Service create', CreateService)
+describe('Service create', CreateService)
 describe("service group create",CreateServiceGroup)
 // describe("add service to group",AddServiceToGroup)
 
-// describe('User access map',UserAccessMap)
-// describe('User group access map',UserGroupAccessMap)
+describe('User access map',UserAccessMap)
+describe('User group access map',UserGroupAccessMap)
 // describe('User group service group access map',UserGroupServiceGroupAccessMap)
+
+describe('rename access map privilege',RenameAccessMap)
 
 
 
