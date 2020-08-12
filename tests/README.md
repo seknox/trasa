@@ -64,7 +64,7 @@ TRASA server running on `https://app.trasa`
 - [x] create service group
 - [x] update service group
 - [x] add service to group
-- [ ] remove service from group
+- [x] remove service from group
 - [x] delete group
 
 ### 5. Device CRUD
@@ -86,10 +86,10 @@ TRASA server running on `https://app.trasa`
 ### 7. Access MAP
 
 - [x] assign user to service
-- [ ] edit privilege
+- [x] edit privilege
 - [ ] remove user from service
 - [x] assign usergroup to service
-- [ ] edit privilege
+- [x] edit privilege
 - [ ] remove usergroup from service
 - [x] assign usergroup to servicegroup
 - [ ] edit privilege
