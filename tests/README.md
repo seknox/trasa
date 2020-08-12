@@ -62,10 +62,10 @@ TRASA server running on `https://app.trasa`
 - [x] update service
 - [x] delete service
 - [x] create service group
-- [ ] update service group
+- [x] update service group
 - [x] add service to group
 - [ ] remove service from group
-- [ ] delete group
+- [x] delete group
 
 ### 5. Device CRUD
 

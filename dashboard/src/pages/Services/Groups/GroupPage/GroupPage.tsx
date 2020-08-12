@@ -175,6 +175,7 @@ export default function GroupPage(props: any) {
             <Grid item xs={1}>
               <Tooltip title="edit">
                 <Button
+                  id="editGroupBtn"
                   variant="contained"
                   color="secondary"
                   size="small"
