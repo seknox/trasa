@@ -25,17 +25,17 @@ export const DeleteService = () => {
         await expect(page).toMatch("Configurations")
 
         await page.click('#deleteBtn')
+        const respPromise=page.waitForResponse(Constants.TRASA_HOSTNAME+'/api/v1/services/delete');
+        const navPromise=page.waitForNavigation({waitUntil: "networkidle2"})
         await page.click('#deleteConfirmBtn')
 
 
-
-
-        let resp = await page.waitForResponse(Constants.TRASA_HOSTNAME+'/api/v1/services/delete');
+        let resp = await respPromise
 
         expect(resp.status()).toBe(200)
 
         //page.waitFor(30000)
-        await page.waitForNavigation({waitUntil: "networkidle2"})
+        await navPromise
 
 
 
@@ -55,7 +55,7 @@ export const DeleteService = () => {
 
         // await expect(page).toMatch(ServicesMock[0].name)
 
-        await page.screenshot({path: 'src/service/create.png'})
+      //  await page.screenshot({path: 'src/service/create.png'})
 
     })
 

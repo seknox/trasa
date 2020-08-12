@@ -23,8 +23,9 @@ export const AddServiceToGroup = () => {
 
         await page.waitForSelector('#someservicegroup')
 
+        let respPromise= page.waitForResponse(r=>r.url().includes('/api/v1/groups/service'))
         await page.click('#someservicegroup')
-        await page.waitForResponse(r=>r.url().includes('/api/v1/groups/service'))
+        await respPromise
 
         await page.click('#addServiceToGroupBtn')
 
@@ -35,13 +36,16 @@ export const AddServiceToGroup = () => {
 
         await clickWithText(page,ServicesMock[0].name,'span')
         await clickWithText(page,'Add Services','span')
+        respPromise=page.waitForResponse(r=>r.url().includes('groups/service/update'))
+        const navPromise=page.waitForNavigation()
 
         await page.click('#addSelectedServicesBtn')
 
-        const resp=await page.waitForResponse(r=>r.url().includes('groups/service/update'))
+
+        const resp=await respPromise
         await expect(resp.status()).toBe(200)
 
-        await page.waitForNavigation()
+        await navPromise
 
 
 

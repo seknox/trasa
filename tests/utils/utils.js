@@ -39,12 +39,12 @@ export const clickWithText = async function(page, text, element) {
         for(let i in elements) {
             let e = elements[i];
 
-            await e.click();
-            return;
-            // if(await e.isIntersectingViewport()) {
-            //     await e.click();
-            //     return;
-            // }
+            // await e.click();
+            // return;
+            if(await e.isIntersectingViewport()) {
+                await e.click();
+                return;
+            }
         }
     }
     else {

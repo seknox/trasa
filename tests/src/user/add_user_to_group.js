@@ -34,11 +34,12 @@ export const AddUserToGroup = () => {
         await clickWithText(page,"auser",'span')
         await clickWithText(page,"Add users to this group",'div')
 
+        const navpromise =page.waitForNavigation()
         await page.click('#addSelectedUsersBtn')
 
-
-        await page.waitForNavigation()
-        await page.waitForResponse(r=>r.url().includes('/api/v1/groups/user'));
+        const respPromise=page.waitForResponse(r=>r.url().includes('/api/v1/groups/user'));
+        await navpromise
+        await respPromise
 
         await expect(page).toMatch("auser")
 

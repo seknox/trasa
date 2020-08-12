@@ -8,7 +8,7 @@ export const DeleteUser= ()=>{
         await page.goto(Constants.TRASA_DASHBOARD+'/users')
     })
 
-    it('Should update user '+Constants.TRASA_DASHBOARD+'/users', async () => {
+    it('Should delete user '+Constants.TRASA_DASHBOARD+'/users', async () => {
         const testUser=usersData.users[1]
         // await page.goto(Constants.TRASA_DASHBOARD+"/users")
         await expect(page).toMatch('Users')
@@ -16,8 +16,8 @@ export const DeleteUser= ()=>{
 
         //matches href=/users/user/*
 
-        await page.waitForSelector('[id="'+usersData.users[0].email+'"]')
-        await page.click('[id="'+usersData.users[0].email+'"]')
+        await page.waitForSelector('[id="'+usersData.users[1].email+'"]')
+        await page.click('[id="'+usersData.users[1].email+'"]')
         await expect(page).toMatch('Account Overview')
 
 
@@ -28,13 +28,15 @@ export const DeleteUser= ()=>{
 
 
         await page.waitForSelector('#confirmDeleteBtn')
+
+        const respPromise=page.waitForResponse(resp=>{
+            return (resp.url().includes('/api/v1/user/delete') )
+        });
         await page.click('#confirmDeleteBtn')
 
 
 
-        let resp = await page.waitForResponse(resp=>{
-            return (resp.url().includes('/api/v1/user/delete') )
-        });
+        let resp = await respPromise
 
         await expect(resp.status()).toBe(200)
 

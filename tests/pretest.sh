@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-cd ../build/test && docker-compose build && docker-compose up &
+cd ../build/test && docker-compose build && docker-compose up -d
 
 # BACK_PID=$!
 # wait $BACK_PID
@@ -10,6 +10,6 @@ cd ../build/test && docker-compose build && docker-compose up &
 
 
 
-jest
+cd ../../tests && jest
 
 cd ../build/test && docker-compose down

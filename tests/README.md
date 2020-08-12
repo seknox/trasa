@@ -39,34 +39,31 @@ TRASA server running on `https://app.trasa`
 
 ### 2. Verify all intents login and tfa handlers support
 
-- [ ] dashlogin
+- [x] dashlogin
 - [ ] access-proxy
 - [ ] forget password
 - [ ] change password
-- [ ] enrol device
+- [x] enrol device
 
 ### 3. User CRUD
 
-- [ ] create user  
-     -[x] normal operation 
-     -[ ] duplicate email
-     -[ ] duplicate username
+- [x] create user  
 - [x] update user
 - [x] delete user
 - [x] create user group
-- [ ] update user group
-- [ ] add users to group
+- [x] update user group
+- [x] add users to group
 - [ ] remove user from group
 - [ ] delete group
 
 ### 4. Service CRUD
 
-- [ ] create service
-- [ ] update service
-- [ ] delete service
-- [ ] create service group
+- [x] create service
+- [x] update service
+- [x] delete service
+- [x] create service group
 - [ ] update service group
-- [ ] add service to group
+- [x] add service to group
 - [ ] remove service from group
 - [ ] delete group
 
@@ -81,19 +78,19 @@ TRASA server running on `https://app.trasa`
 
 ### 6. Policy CRUD
 
-- [ ] create policy
-- [ ] update policy
-- [ ] delete policy
+- [x] create policy
+- [x] update policy
+- [x] delete policy
 
 
 ### 7. Access MAP
 
-- [ ] assign user to service
+- [x] assign user to service
 - [ ] edit privilege
 - [ ] remove user from service
-- [ ] assign usergroup to service
+- [x] assign usergroup to service
 - [ ] edit privilege
 - [ ] remove usergroup from service
-- [ ] assign usergroup to servicegroup
+- [x] assign usergroup to servicegroup
 - [ ] edit privilege
 - [ ] remove usergroup from servicegroup

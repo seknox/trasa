@@ -24,10 +24,12 @@ export const CreateUserGroup = () => {
 
         // await page.waitFor(5000)
 
+        const respPromise =page.waitForResponse(Constants.TRASA_HOSTNAME+'/api/v1/groups/create');
+
         await page.click("#createGroupSubmitBtn")
 
 
-        let resp = await page.waitForResponse(Constants.TRASA_HOSTNAME+'/api/v1/groups/create');
+        let resp = await respPromise
 
 
          expect(resp.status()).toBe(200)

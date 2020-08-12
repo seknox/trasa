@@ -70,15 +70,17 @@ export const UpdatePolicy = () => {
 
 
 
+        const respPromise=page.waitForResponse(r=>r.url().includes('policy/update'))
+        const navPromise=page.waitForNavigation({ waitUntil: 'load' })
 
         await page.click("#submitBtn")
 
 
-        let resp = await page.waitForResponse(r=>r.url().includes('policy/update'))
+        let resp = await respPromise
 
         await expect(resp.status()).toBe(200)
 
-        await page.waitForNavigation({ waitUntil: 'load' })
+        await navPromise
         await page.waitForSelector('[id="new policy"]',{timeout:5000})
 
 

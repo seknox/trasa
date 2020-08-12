@@ -28,6 +28,7 @@ import {UserGroupServiceGroupAccessMap} from "../src/accessmap/usergroup_appgrou
  jest.setTimeout(60000)
 
 beforeAll(async () => {
+    await page.setDefaultTimeout(10000);
   let up = false
   while (up !== true) {
   let u=await isReachable('app.trasa:443')
@@ -36,9 +37,9 @@ beforeAll(async () => {
 
     // await page.goto(Constants.TRASA_DASHBOARD)
   })
-// describe('InitialLoginAndEnroDevice', InitialUserLoginAndDeviceEnrol)
+describe('InitialLoginAndEnroDevice', InitialUserLoginAndDeviceEnrol)
 
-describe('Login', LoginTfa)
+// describe('Login', LoginTfa)
 describe("policy create",CreatePolicy)
 
 describe("user create",CreateUser)

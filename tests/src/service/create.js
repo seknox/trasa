@@ -7,8 +7,9 @@ import { ServicesMock } from '../../mock_data/services'
 
 // CreateService
 export const CreateService = () => {
-
+    let getAllServicesPromise
   beforeAll(async () => {
+      getAllServicesPromise=page.waitForResponse(r=>r.url().includes('/api/v1/services/all'))
     await page.goto(Constants.TRASA_DASHBOARD+'/services')
     })
 
@@ -17,7 +18,7 @@ export const CreateService = () => {
     // await page.waitForNavigation({waitUntil: 'domcontentloaded'})
     await expect(page).toMatch('HTTPs applications')
 
-      await page.waitForResponse(r=>r.url().includes('/api/v1/services/all'))
+      await getAllServicesPromise
 
     await page.click('#create-new-service-button')
     await expect(page).toMatch('Integrate New Service')
@@ -28,14 +29,17 @@ export const CreateService = () => {
      await page.click('#ssh')
      await page.type('#hostname', ServicesMock[0].hostname)
 
+
+      const respPromise=page.waitForResponse(Constants.TRASA_HOSTNAME+'/api/v1/services/create');
+     const navPromise=page.waitForNavigation()
      await page.click('#submit')
 
-     let resp = await page.waitForResponse(Constants.TRASA_HOSTNAME+'/api/v1/services/create');
+     let resp = await respPromise;
 
     expect(resp.status()).toBe(200)
 
     //page.waitFor(30000)
-    await page.waitForNavigation({waitUntil: "networkidle2"})
+    await navPromise
 
     //let serviceID = ''
 

@@ -61,17 +61,19 @@ export const UserAccessMap = () => {
         await page.click('[name=privilege]')
         await page.type('[name=privilege]','admin')
 
+
+        const navigationPromise = page.waitForNavigation()
         await page.click('#submitAccessMapBtn')
 
 
 
 
         //page.waitFor(30000)
-        await page.waitForNavigation()
+        await navigationPromise
 
       //  await page.waitForSelector()
 
-        await page.screenshot({path: 'src/service/create.png'})
+       // await page.screenshot({path: 'src/service/create.png'})
 
     })
 

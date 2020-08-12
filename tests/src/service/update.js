@@ -20,12 +20,13 @@ export const UpdateService = () => {
 
         await page.waitForSelector('#'+ServicesMock[0].name)
 
+        let respPromise=page.waitForResponse(r=>r.url().includes('/api/v1/service'))
+
         await page.click('#'+ServicesMock[0].name)
       //  await page.waitForNavigation({timeout:5000})
 
         await expect(page).toMatch("Configurations")
-        await page.waitForResponse(r=>r.url().includes('/api/v1/service'))
-
+        await respPromise
 
         await page.click('#configEditBtn')
 
@@ -37,14 +38,15 @@ export const UpdateService = () => {
         await page.click('#hostname',{clickCount:3})
         await page.type('#hostname', ServicesMock[1].hostname)
 
+         respPromise =page.waitForResponse(Constants.TRASA_HOSTNAME+'/api/v1/services/update');
+        const navPromise = page.waitForNavigation()
         await page.click('#submit')
 
-        let resp = await page.waitForResponse(Constants.TRASA_HOSTNAME+'/api/v1/services/update');
-
+        let resp = await respPromise
         expect(resp.status()).toBe(200)
 
         //page.waitFor(30000)
-        await page.waitForNavigation({waitUntil: "networkidle2"})
+        await navPromise
 
 
 
@@ -64,7 +66,7 @@ export const UpdateService = () => {
 
         // await expect(page).toMatch(ServicesMock[0].name)
 
-        await page.screenshot({path: 'src/service/create.png'})
+        //await page.screenshot({path: 'src/service/create.png'})
 
     })
 

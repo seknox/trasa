@@ -70,16 +70,19 @@ await page.focus('#TO')
 
 
 
+        const navPromise=page.waitForResponse(r=>r.url().includes('policy/create'))
         await page.click("#submitBtn")
 
 
-        let resp = await page.waitForResponse(r=>r.url().includes('policy/create'))
+        let resp = await navPromise
 
         await expect(resp.status()).toBe(200)
 
-        await page.waitForNavigation({ waitUntil: 'load' })
+       // await page.waitForNavigation({ waitUntil: 'load' })
 
         await page.waitForSelector('[id="'+testPolicy.name+'"]',{timeout:5000})
+
+
         await expect(page).toMatch(testPolicy.name)
 
 

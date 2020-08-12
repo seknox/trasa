@@ -62,13 +62,11 @@ export const UserGroupServiceGroupAccessMap = () => {
         await page.click('[name=privilege]')
         await page.type('[name=privilege]','admin')
 
+        const navigationPromise=page.waitForNavigation()
         await page.click('#submitAccessMapBtn')
 
 
-
-
-        //page.waitFor(30000)
-        await page.waitForNavigation()
+        await navigationPromise
 
         //  await page.waitForSelector()
 

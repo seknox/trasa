@@ -14,7 +14,6 @@ const loginData = {
   idpName: '',
 };
 
-const TRASA_HOSTNAME="https://app.trasa"
 let TOTP_SSC="YRIDIRSUPAPY77BU"
 
 
@@ -22,8 +21,12 @@ let TOTP_SSC="YRIDIRSUPAPY77BU"
 
 export const InitialUserLoginAndDeviceEnrol = () => {
 
-  it('should display "Dashboard Login" text on page', async () => {
-    await page.goto(Constants.TRASA_DASHBOARD)
+    beforeAll(async () => {
+        await page.goto(Constants.TRASA_DASHBOARD)
+    })
+
+
+    it('should display "Dashboard Login" text on page', async () => {
     await expect(page).toMatch('Dashboard Login')
   })
 
@@ -32,11 +35,12 @@ export const InitialUserLoginAndDeviceEnrol = () => {
    await page.type('#email', loginData.email)
     await page.type('#password', loginData.password);
 
+      const loginResppromise=page.waitForResponse(r=>r.url().includes('/idp/login'));
 
     await page.click('#submit')
     // await page.screenshot({path: 'shot.png'});
 
-    let loginResp = await page.waitForResponse(TRASA_HOSTNAME+'/idp/login');
+    let loginResp = await loginResppromise
 
     expect(loginResp.status()).toBe(200)
 
@@ -46,7 +50,8 @@ export const InitialUserLoginAndDeviceEnrol = () => {
       const deviceData = await loginResp.json()
       TOTP_SSC=deviceData.data[0].totpSSC
 
-      page.waitFor(500)
+      await page.waitFor(2000)
+
       await axios({
           method: 'post',
           url: deviceData.data[0].cloudProxyURL + '/api/v1/passmydevicedetail',
@@ -78,9 +83,11 @@ export const InitialUserLoginAndDeviceEnrol = () => {
   // await page.waitForSelector("[name=totpVal]")
 
   await page.type("[name=totpVal]",getTotp(TOTP_SSC))
+
+      const resppromise=page.waitForResponse(Constants.TRASA_HOSTNAME+'/idp/login/tfa');
   await page.keyboard.press("Enter")
 
-  let tfaResp = await page.waitForResponse(TRASA_HOSTNAME+'/idp/login/tfa');
+  let tfaResp = await resppromise
 
 
   expect(tfaResp.status()).toBe(200)
@@ -93,7 +100,7 @@ export const InitialUserLoginAndDeviceEnrol = () => {
   // })
 
 
-  //await page.screenshot({path: 'screen.png'});
+  await page.screenshot({path: 'screen.png'});
 
 
 

@@ -29,18 +29,20 @@ export const CreateUser = () => {
 
     await page.click("#orgAdmin")
 
-   // await page.waitFor(5000)
+    const respPromise= page.waitForResponse(Constants.TRASA_HOSTNAME+'/api/v1/user/create');
+
+    await page.focus("#submit")
 
     await page.click("#submit")
 
 
-     let resp = await page.waitForResponse(Constants.TRASA_HOSTNAME+'/api/v1/user/create');
+     let resp = await respPromise
 
      expect(resp.status()).toBe(200)
     // await page.waitFor(20000)
   //  await page.waitFor(10000)
     await expect(page).toMatch('Verification Link')
-    await page.screenshot({path: 'src/user/create.png'})
+  //  await page.screenshot({path: 'src/user/create.png'})
 
 
     })

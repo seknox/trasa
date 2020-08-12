@@ -49,10 +49,12 @@ export const UpdateUser= ()=>{
 
         // await page.waitFor(5000)
 
+        await page.waitForSelector("#submit")
+        const respPromise= page.waitForResponse(Constants.TRASA_HOSTNAME+'/api/v1/user/update');
         await page.click("#submit")
 
 
-        let resp = await page.waitForResponse(Constants.TRASA_HOSTNAME+'/api/v1/user/update');
+        let resp = await respPromise
 
        await expect(resp.status()).toBe(200)
 
