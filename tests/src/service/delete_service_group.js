@@ -29,8 +29,8 @@ export const DeleteServiceGroup = () => {
         await page.waitForSelector('#somegroup1')
         await page.click('#somegroup1')
 
-        await page.waitForSelector('#deleteConfirmBtn')
-        await page.click('#deleteConfirmBtn')
+
+        await page.click('#deleteGroupBtn')
 
 
 
@@ -38,7 +38,8 @@ export const DeleteServiceGroup = () => {
         const navigationPromise=page.waitForNavigation()
         const respPromise = page.waitForResponse(r=>r.url().includes('api/v1/groups/delete'))
 
-        await page.click('button[title=delete]')
+        await page.waitForSelector('#deleteConfirmBtn')
+        await page.click('#deleteConfirmBtn')
 
         const resp= await respPromise
         await expect(resp.status()).toBe(200)

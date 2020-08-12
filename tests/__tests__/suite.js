@@ -52,11 +52,11 @@ describe("add user to group",AddUserToGroup)
 //
 describe('Service create', CreateService)
 describe("service group create",CreateServiceGroup)
-// describe("add service to group",AddServiceToGroup)
+describe("add service to group",AddServiceToGroup)
 
 describe('User access map',UserAccessMap)
 describe('User group access map',UserGroupAccessMap)
-// describe('User group service group access map',UserGroupServiceGroupAccessMap)
+describe('User group service group access map',UserGroupServiceGroupAccessMap)
 
 describe('rename access map privilege',RenameAccessMap)
 
@@ -66,11 +66,11 @@ describe('Rename service group',RenameServiceGroup)
 describe('Delete service group',DeleteServiceGroup)
 
 
-// describe("user update",UpdateUser)
-// describe("user delete",DeleteUser)
-// describe("policy update",UpdatePolicy)
-//
-//  describe('Service update', UpdateService)
-//  describe('Service delete', DeleteService)
+describe("user update",UpdateUser)
+describe("user delete",DeleteUser)
+describe("policy update",UpdatePolicy)
+
+ describe('Service update', UpdateService)
+ describe('Service delete', DeleteService)
 
 // describe("SSH",sshtest)

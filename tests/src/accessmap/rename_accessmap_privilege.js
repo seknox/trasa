@@ -47,7 +47,7 @@ export const RenameAccessMap = () => {
         await page.waitForSelector('#username')
         await page.type('#username','admin2')
         let saved =page.waitForResponse(r=>r.url().includes('accessmap/service/user/update'))
-        await page.type('#savePrivilegeBtn')
+        await page.click('#savePrivilegeBtn')
 
         let resp= await saved
         await expect(resp.status()).toBe(200)
@@ -59,7 +59,7 @@ export const RenameAccessMap = () => {
         await page.type('#username','admin2')
 
         saved =page.waitForResponse(r=>r.url().includes('servicegroup/usergroup/update'))
-        await page.type('#savePrivilegeBtn')
+        await page.click('#savePrivilegeBtn')
 
         resp= await saved
         await expect(resp.status()).toBe(200)

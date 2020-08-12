@@ -195,6 +195,7 @@ export default function GroupPage(props: any) {
             <Grid item xs={2}>
               <Tooltip title="delete">
                 <Button
+                  id="deleteGroupBtn"
                   variant="contained"
                   color="secondary"
                   size="small"
