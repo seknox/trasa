@@ -29,6 +29,9 @@ export const DeleteServiceGroup = () => {
         await page.waitForSelector('#somegroup1')
         await page.click('#somegroup1')
 
+        await page.waitForSelector('#deleteConfirmBtn')
+        await page.click('#deleteConfirmBtn')
+
 
 
 
