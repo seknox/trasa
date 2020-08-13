@@ -11,8 +11,8 @@ func InitStore(state *global.State) {
 }
 
 //InitStoreMock will init mock state of this package
-func InitStoreMock() *AuthMock {
-	lmock := new(AuthMock)
+func InitStoreMock() *authMock {
+	lmock := new(authMock)
 	Store = lmock
 	return lmock
 }

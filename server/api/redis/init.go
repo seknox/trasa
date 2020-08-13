@@ -13,8 +13,8 @@ func InitStore(state *global.State) {
 }
 
 //InitStoreMock will init mock state of this package
-func InitStoreMock() *RedisMock {
-	m := new(RedisMock)
+func InitStoreMock() *redisMock {
+	m := new(redisMock)
 	Store = m
 	return m
 }

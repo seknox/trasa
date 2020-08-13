@@ -11,8 +11,8 @@ func InitStore(state *global.State) {
 	Store = miscStore{State: state}
 }
 
-func InitMock() *MiscMock {
-	m := new(MiscMock)
+func InitMock() *miscMock {
+	m := new(miscMock)
 	Store = m
 	return m
 }

@@ -12,8 +12,8 @@ func InitStore(state *global.State) {
 }
 
 //InitStoreMock will init mock state of this package
-func InitStoreMock() *NotifMock {
-	m := new(NotifMock)
+func InitStoreMock() *notifMock {
+	m := new(notifMock)
 	Store = m
 	return m
 }
