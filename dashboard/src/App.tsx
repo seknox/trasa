@@ -1,5 +1,5 @@
 import axios from 'axios';
-import mixpanel from 'mixpanel-browser';
+// import mixpanel from 'mixpanel-browser';
 import React, { Component, Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import TrasaTheme from './Layout/TrasaTheme';
@@ -15,7 +15,7 @@ import Snack from './utils/Components/Snackbar';
 
 import ProgressBar from './utils/Components/Progressbar';
 // var mixpanel = require('mixpanel-browser');
-mixpanel.init('5dcb2f677ad4963e7e6eae978d97b378');
+// mixpanel.init('5dcb2f677ad4963e7e6eae978d97b378');
 // add this     "semantic-ui-css": "^2.3.1"
 
 type AppProps = {};

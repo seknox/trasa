@@ -1,41 +1,77 @@
 require('expect-puppeteer')
-
+import Constants from '../Constants'
+const axios=require('axios')
 // import { getTotp } from '../utils/totpgen'
 const getTotp = require("../utils/totpgen");
 
+const rootUserTfaDevice = require("../mock_data/devices")
 
 const loginData = {
-  email: 'tree',
-  password: 'changemenever1#',
+  email: 'root',
+  password: 'changeme',
   orgID: '',
   intent: '',
   idpName: '',
 };
 
-const TRASA_HOSTNAME="http://localhost:3000"
-const TOTP_SSC="ZJAEXMC2YTJFQIO7"
+let TOTP_SSC="YRIDIRSUPAPY77BU"
 
 
 
 
-export const logintests = () => {
+export const InitialUserLoginAndDeviceEnrol = () => {
 
-  it('should display "Dashboard Login" text on page', async () => {
+    beforeAll(async () => {
+        await page.goto(Constants.TRASA_DASHBOARD)
+    })
+
+
+    it('should display "Dashboard Login" text on page', async () => {
     await expect(page).toMatch('Dashboard Login')
   })
 
   it('should fill form', async () => {
-  
+
    await page.type('#email', loginData.email)
     await page.type('#password', loginData.password);
 
- 
-    await page.click('#submit')
-    await page.screenshot({path: 'shot.png'});
+      const loginResppromise=page.waitForResponse(r=>r.url().includes('/idp/login'));
 
-    let loginResp = await page.waitForResponse('https://app.trasa/idp/login');
+    await page.click('#submit')
+    // await page.screenshot({path: 'shot.png'});
+
+    let loginResp = await loginResppromise
 
     expect(loginResp.status()).toBe(200)
+
+      await expect(page).toMatch('Get TRASA app for your mobile device.')
+
+
+      const deviceData = await loginResp.json()
+      TOTP_SSC=deviceData.data[0].totpSSC
+
+      await page.waitFor(2000)
+
+      await axios({
+          method: 'post',
+          url: deviceData.data[0].cloudProxyURL + '/api/v1/passmydevicedetail',
+          data: {
+              deviceId: deviceData.data[0].deviceID,
+              fcmToken: 'askdnsanduasdosuajasdguyagsdygsac7sacsyaubchjasb',
+              publicKey: '',
+              deviceFinger: JSON.stringify(rootUserTfaDevice),
+          },
+      }).then(r=>{
+          expect(r.data.status).toBe("success")
+      })
+      await page.goto("https://app.trasa/login",{waitUntil:"load"})
+
+      await page.type('#email', loginData.email)
+      await page.type('#password', loginData.password);
+
+
+      await page.click('#submit')
+
     await expect(page).toMatch('Choose second step verification method')
 
     loginResp.json().then(data=>{
@@ -47,9 +83,11 @@ export const logintests = () => {
   // await page.waitForSelector("[name=totpVal]")
 
   await page.type("[name=totpVal]",getTotp(TOTP_SSC))
+
+      const resppromise=page.waitForResponse(Constants.TRASA_HOSTNAME+'/idp/login/tfa');
   await page.keyboard.press("Enter")
 
-  let tfaResp = await page.waitForResponse('https://app.trasa/idp/login/tfa');
+  let tfaResp = await resppromise
 
 
   expect(tfaResp.status()).toBe(200)
@@ -61,13 +99,59 @@ export const logintests = () => {
   //     //expect(data.status).toBe("success")
   // })
 
-  
+
   await page.screenshot({path: 'screen.png'});
 
 
 
- 
+
 })
 }
 
-// getTotp(TOTP_SSC)
+
+
+export const LoginTfa = () => {
+
+  beforeAll(async () => {
+    await page.goto(Constants.TRASA_DASHBOARD)
+    })
+
+  it('should display "Dashboard Login" text on page', async () => {
+
+    await expect(page).toMatch('Dashboard Login')
+  })
+
+  it('should fill form', async () => {
+
+   await page.type('#email', loginData.email)
+    await page.type('#password', loginData.password);
+
+
+    await page.click('#submit')
+    // await page.screenshot({path: 'shot.png'});
+
+    let loginResp = await page.waitForResponse(TRASA_HOSTNAME+'/idp/login');
+
+    expect(loginResp.status()).toBe(200)
+
+    await expect(page).toMatch('Choose second step verification method')
+
+    loginResp.json().then(data=>{
+        expect(data.status).toBe("success")
+    })
+
+
+  await page.click("[id=totpButton]")
+
+
+  await page.type("[name=totpVal]",getTotp(TOTP_SSC))
+  await page.keyboard.press("Enter")
+
+  let tfaResp = await page.waitForResponse(TRASA_HOSTNAME+'/idp/login/tfa');
+
+
+  expect(tfaResp.status()).toBe(200)
+
+
+})
+}

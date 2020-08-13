@@ -293,7 +293,7 @@ function GroupUsersTableWrapper(props: any) {
           <Grid container>
             <Grid item xs={9}>
               <Tooltip title="Add users">
-                <Button variant="contained" onClick={changeAddUserDlgState}>
+                <Button id='addUsersToGrpBtn' variant="contained" onClick={changeAddUserDlgState}>
                   <AddIcon />
                   Add Users
                 </Button>

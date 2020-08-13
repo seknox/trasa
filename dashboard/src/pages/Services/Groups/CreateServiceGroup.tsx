@@ -135,7 +135,7 @@ export default function CreateServicegroup(props: any) {
           </Grid>
 
           <br />
-          <Button variant="contained" color="secondary" onClick={submitCreateGroup}>
+          <Button id='createGroupSubmitBtn' variant="contained" color="secondary" onClick={submitCreateGroup}>
             Submit
           </Button>
 

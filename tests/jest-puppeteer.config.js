@@ -1,10 +1,16 @@
 module.exports = {
     launch: {
-       //dumpio: true,
+      // dumpio: true,
       ignoreHTTPSErrors: true,
-      // slowMo: 150,
-     // headless: false,
+       slowMo: 50,
+      headless: false,
+     // devtools: true,
+      defaultViewport: {
+        width: 1300,
+        height: 800,
+      }
     },
      browser: 'chromium',
     browserContext: 'incognito',
+
   }

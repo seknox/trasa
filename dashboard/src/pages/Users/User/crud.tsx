@@ -298,7 +298,7 @@ export default function UserCrud(props: UsercrudProps) {
                       onChange={this.handlePasswordOptionChange("selfPassSetup")}
                       value="selfPassSetup"
                       color="primary"
-                    
+
                      />
                     }
                     label="Let user self setup their password"
@@ -310,27 +310,27 @@ export default function UserCrud(props: UsercrudProps) {
                       onChange={this.handlePasswordOptionChange("autoGenPass")}
                       value="autoGenPass"
                       color="primary"
-                    
+
                      />
                     }
                     label="Auto generate strong password for user."
                   />
-           
+
 
          </Grid>
 
-     
+
       {(this.state.passMethod === "selfPassSetup" || this.state.passMethod === "autoGenPass") ? '': <div>  <Grid container spaceing={24}> <Grid item xs={6} >
-         <TextValidator 
+         <TextValidator
          //fullWidth
-                label="Password" 
+                label="Password"
                 onChange={this.handleChange}
                 name="password"
                // disabled = {!this.props.update}
                 type="password"
                 value={data.password}
                 validators=  {[ 'minStringLength: 8']} // {!this.props.update && [ 'minStringLength: 8']}
-                errorMessages={[ 'Weak Password']} 
+                errorMessages={[ 'Weak Password']}
                 InputProps={{
                   disableUnderline: true,
                   classes: {
@@ -342,17 +342,17 @@ export default function UserCrud(props: UsercrudProps) {
                   shrink: true,
                   className: classes.textFieldFormLabel,
                 }}
- 
+
           />
 
-         </Grid>         
-     
+         </Grid>
 
-  
+
+
          <Grid item xs={6} >
          <TextValidator
                // fullWidth
-                label="Confirm Password" 
+                label="Confirm Password"
                 onChange={this.handleChange}
                 name="cpassword"
                 type="password"
@@ -371,10 +371,10 @@ export default function UserCrud(props: UsercrudProps) {
                   shrink: true,
                   className: classes.textFieldFormLabel,
                 }}
- 
+
           />
 
-        
+
         </Grid> </Grid>    </div>} */}
 
         <Grid item xs={10}>
@@ -384,7 +384,8 @@ export default function UserCrud(props: UsercrudProps) {
             {/* <InputLabel>{!data.userRole && 'User Role'}</InputLabel> */}
             <Select
               // className={classes.selectCustom}
-
+              name="userRole"
+              id="userRole"
               value={data.userRole}
               onChange={handleChange}
               // defaultValue={'selfUser'}
@@ -393,8 +394,12 @@ export default function UserCrud(props: UsercrudProps) {
                 id: 'userRole',
               }}
             >
-              <MenuItem value="orgAdmin">Org Admin</MenuItem>
-              <MenuItem value="selfUser">Normal User</MenuItem>
+              <MenuItem value="orgAdmin" id="orgAdmin">
+                Org Admin
+              </MenuItem>
+              <MenuItem value="selfUser" id="selfUser">
+                Normal User
+              </MenuItem>
             </Select>
             {/* <FormHelperText>{!data.userRole && 'Default option is Normal User'}</FormHelperText> */}
           </FormControl>
@@ -427,11 +432,24 @@ export default function UserCrud(props: UsercrudProps) {
             <div className={classes.root}>
               <div>
                 {loader ? (
-                  <Button variant="contained" disabled color="secondary" type="submit">
+                  <Button
+                    name="submit"
+                    variant="contained"
+                    id="submit"
+                    disabled
+                    color="secondary"
+                    type="submit"
+                  >
                     Submit
                   </Button>
                 ) : (
-                  <Button variant="contained" color="secondary" type="submit">
+                  <Button
+                    name="submit"
+                    id="submit"
+                    variant="contained"
+                    color="secondary"
+                    type="submit"
+                  >
                     Submit
                   </Button>
                 )}

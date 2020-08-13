@@ -20,7 +20,6 @@ ENV PATH /trasa/node_modules/.bin:$PATH
 
 # install app dependencies
 COPY dashboard/package.json ./
-COPY dashboard/package-lock.json ./
 RUN yarn install --silent
 
 COPY dashboard ./

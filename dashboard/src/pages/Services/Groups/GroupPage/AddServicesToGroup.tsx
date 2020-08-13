@@ -87,7 +87,7 @@ const AddService = (props: any) => {
 
   useEffect(() => {
     const vals = props.ServicesThatCanBeAdded.map((v: any) => {
-      return { label: `[${v.serviceType}] ${v.serviceName} `, value: v.ID };
+      return { label: `${v.serviceName} `, value: v.ID };
     });
 
     setListVals(vals);
@@ -123,7 +123,7 @@ const AddService = (props: any) => {
         <br />
         <Grid container spacing={2} direction="column" alignItems="center" justify="center">
           <Grid item xs={12}>
-            <Button variant="contained" color="secondary" onClick={submitAddServiceRequest}>
+            <Button id='addSelectedServicesBtn' variant="contained" color="secondary" onClick={submitAddServiceRequest}>
               Add Selected Services
             </Button>
             <br />

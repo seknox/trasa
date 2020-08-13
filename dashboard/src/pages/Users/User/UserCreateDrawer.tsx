@@ -105,7 +105,12 @@ export default function UserCreateUpdateDrawer(props: UserCreateUpdateDrawerProp
 
   return (
     <div>
-      <Button variant="contained" size="small" onClick={openDrawer('right', true)}>
+      <Button
+        name="createUserBtn"
+        variant="contained"
+        size="small"
+        onClick={openDrawer('right', true)}
+      >
         <Save />
         Create User
       </Button>

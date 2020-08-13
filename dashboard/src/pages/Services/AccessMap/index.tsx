@@ -205,13 +205,13 @@ export default function Appuser(props: any) {
 
       <Grid container>
         <Grid item xs={2}>
-          <Button variant="contained" size="small" onClick={changeAssignuserDlgState}>
+          <Button id='assignUserBtn' variant="contained" size="small" onClick={changeAssignuserDlgState}>
             <Save />
             Assign User
           </Button>
         </Grid>
         <Grid item xs={2}>
-          <Button variant="contained" size="small" onClick={changeAssignGroupDlgState}>
+          <Button id='assignUserGroupBtn' variant="contained" size="small" onClick={changeAssignGroupDlgState}>
             <Save />
             Assign User Groups
           </Button>
