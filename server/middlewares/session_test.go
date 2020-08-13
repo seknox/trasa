@@ -66,7 +66,7 @@ func Test_getUserContext(t *testing.T) {
 		{
 			name:    "with valid userID orgID",
 			args:    args{"someOrgID", "someUserID"},
-			want:    models.UserContext{&mockUser, mockOrg},
+			want:    models.UserContext{&mockUser, mockOrg, "", ""},
 			wantErr: false,
 		},
 		// TODO: Add test cases.
@@ -74,7 +74,7 @@ func Test_getUserContext(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			setSession, setCsrf, err := auth.SetSession(tt.args.userID, tt.args.orgID)
+			setSession, setCsrf, err := auth.SetSession(tt.args.userID, tt.args.orgID, "", "")
 			if err != nil {
 				t.Errorf("failed setting session: %v", err)
 			}

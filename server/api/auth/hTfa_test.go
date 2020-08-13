@@ -126,7 +126,7 @@ func Test_handleIntentResponse(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotStatus, gotReason, gotIntent, gotResp := handleIntentResponse(tt.args.req, tt.args.user)
+			gotStatus, gotReason, gotIntent, gotResp := handleIntentResponse(tt.args.req, tt.args.user, "", "")
 			if gotStatus != tt.wantStatus {
 				t.Errorf("handleIntentResponse() gotStatus = %v, want %v", gotStatus, tt.wantStatus)
 			}
