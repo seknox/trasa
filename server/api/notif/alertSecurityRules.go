@@ -13,7 +13,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// CheckAndFireSecurityRule, when called based on constName queries database to see if there is a rule
+// CheckAndFireSecurityRule  when called based on constName queries database to see if there is a rule
 // that has been enabled and matches situation. If true, it should also perform actions according to rule.
 // Currently only hardcoded and email and dashboard notifications are supported.
 func CheckAndFireSecurityRule(orgID, constName, entityValue string) {

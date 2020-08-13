@@ -78,7 +78,7 @@ func Getkey(w http.ResponseWriter, r *http.Request) {
 	utils.TrasaResponse(w, 200, "success", "key fetched", "Getkey", resp)
 }
 
-// StoreKeyOrToken is helper function which encrypts key or token and store it in database.
+//EncryptAndStoreKeyOrToken is helper function which encrypts key or token and store it in database.
 func EncryptAndStoreKeyOrToken(req models.KeysHolder) ([]byte, error) {
 
 	ct, err := vault.Store.AesEncrypt([]byte(req.KeyVal))

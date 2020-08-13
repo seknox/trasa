@@ -20,7 +20,7 @@ type GlobalSettings struct {
 	UpdatedOn int64  `json:"updatedOn"`
 }
 
-//GlobalDynamicAccessSettings
+//GlobalDynamicAccessSettings is dynamic access setting struct
 type GlobalDynamicAccessSettings struct {
 	Status     bool     `json:"status"`
 	PolicyID   string   `json:"policyID"`

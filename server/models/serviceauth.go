@@ -21,6 +21,8 @@ type UpstreamCreds struct {
 
 //TODO remove useless fields
 // also omit unnecessary fields in json
+
+//ConnectionParams contains all details related to login.
 type ConnectionParams struct {
 	ServiceID       string           `json:"serviceID"`
 	ServiceName     string           `json:"-"`

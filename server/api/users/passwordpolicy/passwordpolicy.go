@@ -16,6 +16,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+//EnforcePasswordPolicyNow will enforce password policy immediately
 func EnforcePasswordPolicyNow(w http.ResponseWriter, r *http.Request) {
 	logrus.Trace("request received")
 	userContext := r.Context().Value("user").(models.UserContext)
@@ -136,6 +137,7 @@ func checkisExpired(thenTime int64, timeZone, days string) bool {
 	return false
 }
 
+// EnforceChangePassword will enforce users to change password
 func EnforceChangePassword(userID, orgID string) error {
 	var policy models.PolicyEnforcer
 

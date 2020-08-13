@@ -63,53 +63,65 @@ func (us UserStoreMock) UpdatePassword(userID, password string) error {
 	panic("implement me")
 }
 
+//GetEnforcedPolicy mock
 func (us UserStoreMock) GetEnforcedPolicy(userID, orgID, enforceType string) (policy models.PolicyEnforcer, err error) {
 	return models.PolicyEnforcer{}, nil
 	panic("implement me")
 }
 
+//DeleteActivePolicy mock
 func (us UserStoreMock) DeleteActivePolicy(userID, orgID, enforceType string) error {
 	panic("implement me")
 }
 
+//GetPasswordState mock
 func (us UserStoreMock) GetPasswordState(userID, orgID string) (models.PasswordState, error) {
 	args := us.Called(userID, orgID)
 
 	return args.Get(0).(models.PasswordState), args.Error(0)
 }
 
+//UpdatePasswordState mock
 func (us UserStoreMock) UpdatePasswordState(userID, orgID, oldpassword string, time int64) error {
 	panic("implement me")
 }
 
+//EnforcePolicy mock
 func (us UserStoreMock) EnforcePolicy(policy models.PolicyEnforcer) error {
 	return us.Called(policy).Error(0)
 }
 
+//GetGroups mock
 func (us UserStoreMock) GetGroups(userID, orgID string) ([]models.Group, error) {
 	panic("implement me")
 }
 
+//GetAccessMapDetails mock
 func (us UserStoreMock) GetAccessMapDetails(userID, orgID string) ([]models.AccessMapDetail, error) {
 	panic("implement me")
 }
 
+//GetAssignedServices mock
 func (us UserStoreMock) GetAssignedServices(userID, orgID string) (services []models.Service, err error) {
 	panic("implement me")
 }
 
+//DeleteAllUserAccessMaps mock
 func (us UserStoreMock) DeleteAllUserAccessMaps(userID, orgID string) error {
 	panic("implement me")
 }
 
+//GetAllDevices mock
 func (us UserStoreMock) GetAllDevices(userID, orgID string) ([]models.UserDevice, error) {
 	panic("implement me")
 }
 
+//DeregisterUserDevices mock
 func (us UserStoreMock) DeregisterUserDevices(userID, orgID string) error {
 	panic("implement me")
 }
 
+//GetTOTPDevices mock
 func (us UserStoreMock) GetTOTPDevices(userID, orgID string) ([]models.UserDevice, error) {
 	return []models.UserDevice{{
 		UserID:        userID,

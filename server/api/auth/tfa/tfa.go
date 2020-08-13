@@ -247,7 +247,7 @@ func sendNotificationThroughCloudProxy(fcmTokens []string, orgName, appName, ipA
 //
 //}
 
-//This function will handle all 2fa process,
+//HandleTfaAndGetDeviceID handles all 2fa process,
 // update device hygiene from u2f
 // and return device ID of 2fa device
 func HandleTfaAndGetDeviceID(signResponse *u2f.SignResponse, tfaMethod, totpCode, userID, clientIP, appName, timezone, orgName, orgID string) (deviceID string, reason consts.FailedReason, ok bool) {
@@ -426,7 +426,7 @@ func rsaVerify(signedChallenge string, originalChallenge string, publicKeyPEM st
 
 }
 
-//Check newly enrolled device via U2F or TOTP
+//CheckDeviceEnroll checks newly enrolled device via U2F or TOTP
 func CheckDeviceEnroll(deviceID, clientIP, orgName, timezone, orgID string) (bool, error) {
 	deviceDetail, err := devices.Store.GetFromID(deviceID)
 	if err != nil {

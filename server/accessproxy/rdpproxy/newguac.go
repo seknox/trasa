@@ -40,7 +40,7 @@ func NewProxy() *Proxy {
 
 }
 
-// serveWS implements /api/v1/connect
+// ServeWS serves rdp connection through guacamole proxy
 func (p *Proxy) ServeWS(params models.ConnectionParams, uc models.UserContext, ws *websocket.Conn) {
 
 	checkAndInitParams(&uc, &params)

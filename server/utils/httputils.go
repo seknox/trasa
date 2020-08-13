@@ -118,7 +118,7 @@ func ParseAndValidateRequest(r *http.Request, reqStruct interface{}) error {
 	return nil
 }
 
-//GetHttpClient
+//GetHttpClient return a http client
 func GetHttpClient(insecure bool) *http.Client {
 	var client *http.Client
 

@@ -12,6 +12,7 @@ type RedisMock struct {
 	mock.Mock
 }
 
+//Set mock
 func (r RedisMock) Set(key string, expiry time.Duration, val ...string) error {
 
 	r.TestData().Set(key, val)
@@ -19,6 +20,7 @@ func (r RedisMock) Set(key string, expiry time.Duration, val ...string) error {
 	return nil
 }
 
+//Get mock
 func (r RedisMock) Get(key string, field string) (string, error) {
 	//v:=r.s[key]
 
@@ -37,22 +39,27 @@ func (r RedisMock) Get(key string, field string) (string, error) {
 	return "", errors.New("not found")
 }
 
+//MGet mock
 func (r RedisMock) MGet(key string, field ...string) ([]string, error) {
 	panic("implement me")
 }
 
+//Delete mock
 func (r RedisMock) Delete(key string) error {
 	panic("implement me")
 }
 
+//SetVerifyIntent
 func (r RedisMock) SetVerifyIntent(key string, expiry time.Duration, intent, field, val string) error {
 	panic("implement me")
 }
 
+//VerifyIntent
 func (r RedisMock) VerifyIntent(key string, intent consts.VerifyTokenIntent) error {
 	panic("implement me")
 }
 
+//GetSession
 func (r *RedisMock) GetSession(key string) (userID, orgID, deviceID, browserID, auth string, err error) {
 	val := r.TestData().Get(key)
 
@@ -83,14 +90,17 @@ func (r *RedisMock) GetSession(key string) (userID, orgID, deviceID, browserID, 
 	return
 }
 
+//WaitForStatusAndGet
 func (r RedisMock) WaitForStatusAndGet(key, field string) (success bool, val string) {
 	panic("implement me")
 }
 
+//SetHTTPGatewaySession
 func (r RedisMock) SetHTTPGatewaySession(key, orgusr, authDataVal string, sessionRecord string) error {
 	panic("implement me")
 }
 
+//GetHTTPGatewaySession
 func (r RedisMock) GetHTTPGatewaySession(key string) (user, auth, sessionRecord string, err error) {
 	panic("implement me")
 }
