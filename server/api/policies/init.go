@@ -7,17 +7,17 @@ import (
 
 //InitStore initialises package state
 func InitStore(state *global.State) {
-	Store = PolicyStore{State: state}
+	Store = policyStore{State: state}
 }
 
 //Store is the package state variable which contains database connections
-var Store PolicyAdapter
+var Store adapter
 
-type PolicyStore struct {
+type policyStore struct {
 	*global.State
 }
 
-type PolicyAdapter interface {
+type adapter interface {
 	GetPolicy(policyID, orgID string) (models.Policy, error)
 	GetAllPolicies(orgID string) ([]models.Policy, error)
 	CreatePolicy(policy models.Policy) error

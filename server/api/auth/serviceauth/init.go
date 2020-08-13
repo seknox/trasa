@@ -8,20 +8,20 @@ import (
 
 //InitStore initialises package state
 func InitStore(state *global.State, policyFunc models.CheckPolicyFunc) {
-	Store = SStore{
+	Store = sStore{
 		State:           state,
 		checkPolicyFunc: policyFunc,
 	}
 }
 
 //Store is the package state variable which contains database connections
-var Store SAdapter
+var Store adapter
 
-type SStore struct {
+type sStore struct {
 	*global.State
 	checkPolicyFunc models.CheckPolicyFunc
 }
 
-type SAdapter interface {
+type adapter interface {
 	CheckPolicy(serviceID, userID, orgID, userIP, timezone string, policy *models.Policy, adhoc bool) (bool, consts.FailedReason)
 }

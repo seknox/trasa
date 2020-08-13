@@ -7,17 +7,17 @@ import (
 
 //InitStore initialises package state
 func InitStore(state *global.State) {
-	Store = AccessMapStore{state}
+	Store = accessMapStore{state}
 }
 
 //Store is the package state variable which contains database connections
-var Store AccessMapAdapter
+var Store accessMapAdapter
 
-type AccessMapStore struct {
+type accessMapStore struct {
 	*global.State
 }
 
-type AccessMapAdapter interface {
+type accessMapAdapter interface {
 	GetServiceUserMaps(serviceID, orgID string) (appusers []models.AccessMapDetail, err error)
 	CreateServiceUserMap(appUser *models.ServiceUserMap) error
 	UpdateServiceUserMap(mapID, orgID, privilege string) error

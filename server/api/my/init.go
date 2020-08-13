@@ -8,7 +8,7 @@ import (
 //InitStore initialises package state
 func InitStore(con *global.State) {
 	// initialize local state
-	Store = MyStore{
+	Store = myStore{
 		State: con,
 	}
 
@@ -22,12 +22,12 @@ func InitStore(con *global.State) {
 //}
 
 //Store is the package state variable which contains database connections
-var Store MyAdapter
+var Store adapter
 
-type MyStore struct {
+type myStore struct {
 	*global.State
 }
 
-type MyAdapter interface {
+type adapter interface {
 	GetUserAppsDetailsWithPolicyFromUserID(userID, orgID string) ([]models.MyServiceDetails, error)
 }

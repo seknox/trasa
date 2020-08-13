@@ -8,7 +8,7 @@ import (
 
 //InitStore initialises package state
 func InitStore(state *global.State) {
-	Store = NotifStore{State: state}
+	Store = notifStore{State: state}
 }
 
 func InitStoreMock() *NotifMock {
@@ -18,13 +18,13 @@ func InitStoreMock() *NotifMock {
 }
 
 //Store is the package state variable which contains database connections
-var Store NotifAdapter
+var Store adapter
 
-type NotifStore struct {
+type notifStore struct {
 	*global.State
 }
 
-type NotifAdapter interface {
+type adapter interface {
 	GetPendingNotif(userID, orgID string) ([]models.InAppNotification, error)
 	StoreNotif(notif models.InAppNotification) (err error)
 	UpdateNotif(notif models.InAppNotification) error

@@ -8,7 +8,7 @@ import (
 )
 
 //GetAdminEmails returns all users of a organizations
-func (s MiscStore) GetAdmins(orgID string) ([]models.User, error) {
+func (s miscStore) GetAdmins(orgID string) ([]models.User, error) {
 	var users = make([]models.User, 0)
 
 	rows, err := s.DB.Query(`SELECT users.org_id, users.id,  username, first_name, middle_name,
@@ -38,21 +38,21 @@ func (s MiscStore) GetAdmins(orgID string) ([]models.User, error) {
 }
 
 // CRDBStoreNotif stores notification that is to be notified to user.
-func (s MiscStore) StoreNotif(notif models.InAppNotification) (err error) {
+func (s miscStore) StoreNotif(notif models.InAppNotification) (err error) {
 	_, err = s.DB.Exec(`INSERT into inapp_notifs (id, user_id, emitter_id, org_id, label,text, created_on, is_resolved, resolved_on)
 						 values($1, $2, $3, $4, $5, $6, $7, $8, $9);`,
 		notif.NotificationID, notif.UserID, notif.EmitterID, notif.OrgID, notif.NotificationLabel, notif.NotificationText, notif.CreatedOn, notif.IsResolved, notif.ResolvedOn)
 	return
 }
 
-func (s MiscStore) UpdateNotif(notif models.InAppNotification) error {
+func (s miscStore) UpdateNotif(notif models.InAppNotification) error {
 	_, err := s.DB.Exec(`UPDATE inapp_notifs set is_resolved=$3, resolved_on=$4 WHERE emitter_id=$1 AND org_id=$2;`,
 		notif.EmitterID, notif.OrgID, notif.IsResolved, notif.ResolvedOn)
 	return err
 
 }
 
-func (s MiscStore) UpdateNotifFromNotifID(notif models.InAppNotification) error {
+func (s miscStore) UpdateNotifFromNotifID(notif models.InAppNotification) error {
 
 	_, err := s.DB.Exec(`UPDATE inapp_notifs set is_resolved=$1, resolved_on=$2 WHERE id=$3 AND org_id=$4;`,
 		notif.IsResolved, notif.ResolvedOn, notif.NotificationID, notif.OrgID)
@@ -60,7 +60,7 @@ func (s MiscStore) UpdateNotifFromNotifID(notif models.InAppNotification) error 
 
 }
 
-func (s MiscStore) GetGeoLocation(ip string) (geo models.GeoLocation, err error) {
+func (s miscStore) GetGeoLocation(ip string) (geo models.GeoLocation, err error) {
 	locations, err := s.Geoip.City(net.ParseIP(ip))
 	if err != nil {
 		return geo, err
@@ -75,7 +75,7 @@ func (s MiscStore) GetGeoLocation(ip string) (geo models.GeoLocation, err error)
 	return geo, nil
 }
 
-func (s MiscStore) GetEntityDescription(entityID string, entityType consts.EntityConst, orgID string) (string, string, error) {
+func (s miscStore) GetEntityDescription(entityID string, entityType consts.EntityConst, orgID string) (string, string, error) {
 	var query = ``
 	var val1, val2 string
 	switch entityType {

@@ -9,7 +9,7 @@ import (
 
 //InitStore initialises package state
 func InitStore(state *global.State) {
-	Store = RedisStore{State: state}
+	Store = redisStore{State: state}
 }
 
 func InitStoreMock() *RedisMock {
@@ -19,13 +19,13 @@ func InitStoreMock() *RedisMock {
 }
 
 //Store is the package state variable which contains database connections
-var Store RedisAdapter
+var Store adapter
 
-type RedisStore struct {
+type redisStore struct {
 	*global.State
 }
 
-type RedisAdapter interface {
+type adapter interface {
 	Set(key string, expiry time.Duration, val ...string) error
 	Get(key string, field string) (string, error)
 	MGet(key string, field ...string) ([]string, error)

@@ -18,7 +18,7 @@ import (
 // First we check secret storage setting. If credStorage specefies tsxvalut, we store it in our database
 // else we use api token to store it in secret storage provider.
 // Configuration for vault should be stored in trasa_featuresv1 table.
-func (s VaultStore) StoreSecret(key models.ServiceSecretVault) error {
+func (s vaultStore) StoreSecret(key models.ServiceSecretVault) error {
 	// feature, err := Connect.CRDBGetOrgFeatureStatus(s.OrgID, "vault")
 	// if err != nil {
 	// 	logger.Error(err)
@@ -61,7 +61,7 @@ func (s VaultStore) StoreSecret(key models.ServiceSecretVault) error {
 }
 
 // GetSecret is single method for retreiving secret either from tsxvault or 3rd party storage provider.
-func (s VaultStore) GetSecret(orgID, serviceID, secretType, secretid string) (string, error) {
+func (s vaultStore) GetSecret(orgID, serviceID, secretType, secretid string) (string, error) {
 
 	if s.TsxvKey.State == false {
 		return "", fmt.Errorf("encryption key is not retrieved yet")
@@ -81,7 +81,7 @@ func (s VaultStore) GetSecret(orgID, serviceID, secretType, secretid string) (st
 
 // TsxvStoreSecret stores secret in Service_keyvaultv1 table.
 // It should be receiving already encrypted secret from the caller.
-func (s VaultStore) TsxvStoreSecret(secret models.ServiceSecretVault) error {
+func (s vaultStore) TsxvStoreSecret(secret models.ServiceSecretVault) error {
 
 	_, err := s.TsxvGetSecret(secret.OrgID, secret.ServiceID, secret.SecretType, secret.SecretID)
 	if err != nil {
@@ -110,7 +110,7 @@ func (s VaultStore) TsxvStoreSecret(secret models.ServiceSecretVault) error {
 // 	added_at INT,
 // 	last_updated INT
 // )`,
-func (s VaultStore) TsxvGetSecretDetail(orgID, serviceID, appType, secretID string) (*models.ServiceSecretVault, error) {
+func (s vaultStore) TsxvGetSecretDetail(orgID, serviceID, appType, secretID string) (*models.ServiceSecretVault, error) {
 	var secret models.ServiceSecretVault
 	err := s.DB.QueryRow(`
 		SELECT id, org_id, service_id, secret_type, secret_id, secret, added_at,last_updated, updated_by FROM service_keyvault WHERE org_id = $1 AND service_id = $2 AND secret_id=$3 AND secret_type=$4`,
@@ -121,7 +121,7 @@ func (s VaultStore) TsxvGetSecretDetail(orgID, serviceID, appType, secretID stri
 }
 
 // GetSecret is only returns secret value from tsxVault
-func (s VaultStore) TsxvGetSecret(orgID, serviceID, appType, secretid string) ([]byte, error) {
+func (s vaultStore) TsxvGetSecret(orgID, serviceID, appType, secretid string) ([]byte, error) {
 	var secret []byte
 	err := s.DB.QueryRow(`SELECT secret FROM service_keyvault WHERE org_id = $1 AND service_id = $2 AND secret_id=$3 AND secret_type=$4`,
 		orgID, serviceID, secretid, appType).
@@ -131,7 +131,7 @@ func (s VaultStore) TsxvGetSecret(orgID, serviceID, appType, secretid string) ([
 }
 
 // GetSecret is only returns secret value from tsxVault
-func (s VaultStore) TsxvDeleteSecret(orgID, serviceID, secretType, secretid string) error {
+func (s vaultStore) TsxvDeleteSecret(orgID, serviceID, secretType, secretid string) error {
 	_, err := s.DB.Exec(`DELETE FROM service_keyvault WHERE org_id = $1 AND secret_id = $2 AND secret_id=$3 AND secret_type=$4`,
 		orgID, serviceID, secretid, secretType)
 
@@ -139,7 +139,7 @@ func (s VaultStore) TsxvDeleteSecret(orgID, serviceID, secretType, secretid stri
 }
 
 // GetSecret is only returns secret value from tsxVault
-func (s VaultStore) TsxvDeleteAllSecret(orgID string) error {
+func (s vaultStore) TsxvDeleteAllSecret(orgID string) error {
 	_, err := s.DB.Exec(`DELETE FROM service_keyvault WHERE org_id = $1`, orgID)
 
 	return err
@@ -156,7 +156,7 @@ func (s VaultStore) TsxvDeleteAllSecret(orgID string) error {
 //  status BOOL,
 // 	log JSONB
 // )`,
-func (s VaultStore) TsxvStoreEncKeyHash(secret models.EncryptionKeyLog) error {
+func (s vaultStore) TsxvStoreEncKeyHash(secret models.EncryptionKeyLog) error {
 
 	_, err := s.DB.Exec(`INSERT into keylog (id, org_id, hash, generated_at, status, last_updated)
 		values($1, $2, $3, $4, $5, $6);`,
@@ -165,7 +165,7 @@ func (s VaultStore) TsxvStoreEncKeyHash(secret models.EncryptionKeyLog) error {
 	return err
 }
 
-func (s VaultStore) TsxvGetEncKeyHash(orgID, keyHash string) (models.EncryptionKeyLog, error) {
+func (s vaultStore) TsxvGetEncKeyHash(orgID, keyHash string) (models.EncryptionKeyLog, error) {
 
 	var kl models.EncryptionKeyLog
 	err := s.DB.QueryRow(`SELECT id, org_id, hash, generated_at, status, last_updated FROM keylog WHERE org_id = $1 AND hash =$2`,
@@ -176,7 +176,7 @@ func (s VaultStore) TsxvGetEncKeyHash(orgID, keyHash string) (models.EncryptionK
 
 }
 
-func (s VaultStore) TsxvUpdateEncKeyHashLog(orgID, keyHash string, time int64, status bool) error {
+func (s vaultStore) TsxvUpdateEncKeyHashLog(orgID, keyHash string, time int64, status bool) error {
 
 	_, err := s.DB.Exec(`UPDATE keylog SET status = $1, last_updated = $2 WHERE org_id = $3 AND hash =$4;`,
 		status, time, orgID, keyHash)
@@ -184,7 +184,7 @@ func (s VaultStore) TsxvUpdateEncKeyHashLog(orgID, keyHash string, time int64, s
 	return err
 }
 
-func (s VaultStore) TsxvdeactivateAllKeys(orgID string, time int64) error {
+func (s vaultStore) TsxvdeactivateAllKeys(orgID string, time int64) error {
 	_, err := s.DB.Exec(`UPDATE keylog SET status = $1, last_updated = $2 WHERE org_id = $3`,
 		false, time, orgID)
 
@@ -194,7 +194,7 @@ func (s VaultStore) TsxvdeactivateAllKeys(orgID string, time int64) error {
 // TsxVaultTestEncrypter stores test data in database. this should be encrypted by
 // newly created encryption token and should be decrypted in compared when
 // token key retreival process is finished to verify if key works.
-func (s VaultStore) TsxvTestEncrypter(key []byte) error {
+func (s vaultStore) TsxvTestEncrypter(key []byte) error {
 
 	secretValue := "testsecret"
 	var secret models.ServiceSecretVault
@@ -225,7 +225,7 @@ func (s VaultStore) TsxvTestEncrypter(key []byte) error {
 	return nil
 }
 
-func (s VaultStore) TsxvTestDecrypter(key []byte) error {
+func (s vaultStore) TsxvTestDecrypter(key []byte) error {
 	// retrieve from database
 	ct, err := s.TsxvGetSecret("testorg", "testapp", "testssh", "testid")
 	if err != nil {
@@ -249,7 +249,7 @@ func (s VaultStore) TsxvTestDecrypter(key []byte) error {
 // TsxVaultTester performd encryption, secret storage in db, retrieving secret and perform decryption
 // to test every thing is working in tsxVault.
 // This test should be performed after shamir key reducer returns successful key retreival.
-func (s VaultStore) TsxVaultTester() error {
+func (s vaultStore) TsxVaultTester() error {
 
 	if s.TsxvKey.State == false {
 		return fmt.Errorf("Encryption key is not retrieved yet.")
@@ -307,7 +307,7 @@ func (s VaultStore) TsxVaultTester() error {
 
 // AesEncrypt receives message to be encrypted from caller, retrieves key from global key store and performs encryption.
 // This function should be used instead of directly using utils.AESEncrypt
-func (s VaultStore) AesEncrypt(message []byte) ([]byte, error) {
+func (s vaultStore) AesEncrypt(message []byte) ([]byte, error) {
 	// get decrypted email password or key.
 	if s.TsxvKey.State == false {
 		return nil, fmt.Errorf("encryption key is not retrieved yet")
@@ -323,7 +323,7 @@ func (s VaultStore) AesEncrypt(message []byte) ([]byte, error) {
 
 // AesDecrypt receives message to be decrypted from caller, retrieves key from global key store and performs encryption.
 // This function should be used instead of directly using utils.AESDecrypt
-func (s VaultStore) AesDecrypt(message []byte) ([]byte, error) {
+func (s vaultStore) AesDecrypt(message []byte) ([]byte, error) {
 	// get decrypted email password or key.
 	if s.TsxvKey.State == false {
 		return nil, fmt.Errorf("encryption key is not retrieved yet")
@@ -338,7 +338,7 @@ func (s VaultStore) AesDecrypt(message []byte) ([]byte, error) {
 }
 
 // GetKeyOrTokenWithTag returns key or token detail but without actual key value but rather tagged value.
-func (s VaultStore) GetKeyOrTokenWithTag(orgID string, keyName string) (*models.KeysHolder, error) {
+func (s vaultStore) GetKeyOrTokenWithTag(orgID string, keyName string) (*models.KeysHolder, error) {
 	var k models.KeysHolder
 	err := s.DB.QueryRow(`
 		SELECT id, org_id, name, tag, added_by, added_at FROM key_holder WHERE org_id = $1 AND name = $2 ;`, orgID, keyName).Scan(&k.KeyID, &k.OrgID, &k.KeyName, &k.KeyTag, &k.AddedBy, &k.AddedAt)
@@ -349,7 +349,7 @@ func (s VaultStore) GetKeyOrTokenWithTag(orgID string, keyName string) (*models.
 // StoreKeyOrTokens inserts certificate detail in cert_holderv1. If cert for service_id or type already exists,
 // StoreKeyOrTokens should update the value.
 // In case of Idp SCIM key, keyID is idpID from idpv1
-func (s VaultStore) StoreKeyOrTokens(k models.KeysHolder) error {
+func (s vaultStore) StoreKeyOrTokens(k models.KeysHolder) error {
 
 	storedKey, err := s.GetKeyOrTokenWithTag(k.OrgID, k.KeyName)
 	if errors.Is(err, sql.ErrNoRows) {
@@ -368,7 +368,7 @@ func (s VaultStore) StoreKeyOrTokens(k models.KeysHolder) error {
 }
 
 // GenAndStoreKey generates encryption keys, store it in database.
-func (s VaultStore) GenAndStoreKey(orgID string) (*[32]byte, error) {
+func (s vaultStore) GenAndStoreKey(orgID string) (*[32]byte, error) {
 	encryptionKey, err := utils.AESGenKey()
 	if err != nil {
 		return encryptionKey, err
@@ -398,12 +398,12 @@ func (s VaultStore) GenAndStoreKey(orgID string) (*[32]byte, error) {
 }
 
 // GetTsxVaultKey returns retreival status of encryption key
-func (s VaultStore) GetTsxVaultKey() (*[32]byte, bool) {
+func (s vaultStore) GetTsxVaultKey() (*[32]byte, bool) {
 	return s.TsxvKey.Key, s.TsxvKey.State
 }
 
 // SetTsxVaultKey returns retreival status of encryption key
-func (s VaultStore) SetTsxVaultKey(key *[32]byte, status bool) {
+func (s vaultStore) SetTsxVaultKey(key *[32]byte, status bool) {
 
 	s.TsxvKey.Key = key
 	s.TsxvKey.State = status

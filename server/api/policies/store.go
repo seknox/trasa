@@ -6,7 +6,7 @@ import (
 	"github.com/seknox/trasa/server/models"
 )
 
-func (s PolicyStore) GetPolicy(policyID, orgID string) (models.Policy, error) {
+func (s policyStore) GetPolicy(policyID, orgID string) (models.Policy, error) {
 	var policy models.Policy
 	var tempDayTimeStr string
 	err := s.DB.QueryRow(`SELECT id, name, org_id, day_time,risk_threshold, tfa_enabled,file_transfer,record_session,ip_source,device_policy,expiry,allowed_countries , created_at, updated_at from policies WHERE id=$1 AND org_id=$2`, policyID, orgID).
@@ -21,7 +21,7 @@ func (s PolicyStore) GetPolicy(policyID, orgID string) (models.Policy, error) {
 }
 
 // CreatePolicy in database
-func (s PolicyStore) CreatePolicy(policy models.Policy) error {
+func (s policyStore) CreatePolicy(policy models.Policy) error {
 
 	dayTime, err := json.Marshal(policy.DayAndTime)
 	if err != nil {
@@ -35,7 +35,7 @@ func (s PolicyStore) CreatePolicy(policy models.Policy) error {
 	return err
 }
 
-func (s PolicyStore) UpdatePolicy(policy models.Policy) error {
+func (s policyStore) UpdatePolicy(policy models.Policy) error {
 	day_time, err := json.Marshal(policy.DayAndTime)
 	if err != nil {
 		return err
@@ -47,7 +47,7 @@ func (s PolicyStore) UpdatePolicy(policy models.Policy) error {
 	return err
 }
 
-func (s PolicyStore) GetAllPolicies(orgID string) ([]models.Policy, error) {
+func (s policyStore) GetAllPolicies(orgID string) ([]models.Policy, error) {
 	policies := []models.Policy{}
 	rows, err := s.DB.Query(`
 SELECT coalesce(count,0) used_by,
@@ -87,13 +87,13 @@ from policies
 	return policies, err
 }
 
-func (s PolicyStore) DeletePolicy(policyID, orgID string) error {
+func (s policyStore) DeletePolicy(policyID, orgID string) error {
 	_, err := s.DB.Exec(`DELETE FROM policies WHERE id = $1 AND org_id=$2 RETURNING *`, policyID, orgID)
 
 	return err
 }
 
-func (s PolicyStore) GetAccessPolicy(userID, serviceID, privilege, orgID string) (policy *models.Policy, adhoc bool, err error) {
+func (s policyStore) GetAccessPolicy(userID, serviceID, privilege, orgID string) (policy *models.Policy, adhoc bool, err error) {
 	policy, adhoc, err = s.getUserAccessPolicy(userID, serviceID, privilege, orgID)
 	if err != nil {
 		policy, adhoc, err = s.getUserGroupAccessPolicy(userID, serviceID, privilege, orgID)
@@ -107,7 +107,7 @@ func (s PolicyStore) GetAccessPolicy(userID, serviceID, privilege, orgID string)
 	return
 }
 
-func (s PolicyStore) getUserAccessPolicy(userID, serviceID, privilege, orgID string) (policy *models.Policy, adhoc bool, err error) {
+func (s policyStore) getUserAccessPolicy(userID, serviceID, privilege, orgID string) (policy *models.Policy, adhoc bool, err error) {
 
 	policy = &models.Policy{}
 	var day_time string
@@ -139,7 +139,7 @@ WHERE map.user_id= $1 AND map.service_id= $2 AND map.privilege=$3 AND  map.org_i
 }
 
 //get permission of usergroup assigned to app
-func (s PolicyStore) getUserGroupAccessPolicy(userID, serviceID, privilege, orgID string) (policy *models.Policy, adhoc bool, err error) {
+func (s policyStore) getUserGroupAccessPolicy(userID, serviceID, privilege, orgID string) (policy *models.Policy, adhoc bool, err error) {
 	policy = &models.Policy{}
 
 	var day_time string
@@ -174,7 +174,7 @@ func (s PolicyStore) getUserGroupAccessPolicy(userID, serviceID, privilege, orgI
 }
 
 //get permission of usergroup assigned to appgroup
-func (s PolicyStore) getServiceUserGroupAccessPolicy(userID, serviceID, privilege, orgID string) (policy *models.Policy, adhoc bool, err error) {
+func (s policyStore) getServiceUserGroupAccessPolicy(userID, serviceID, privilege, orgID string) (policy *models.Policy, adhoc bool, err error) {
 	policy = &models.Policy{}
 
 	var day_time string

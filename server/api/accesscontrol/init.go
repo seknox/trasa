@@ -7,7 +7,7 @@ import (
 
 //InitStore initialises package state
 func InitStore(state *global.State, checkPolicyFunc models.CheckPolicyFunc) {
-	ACStore = Store{
+	ACStore = store{
 		State:           state,
 		CheckPolicyFunc: checkPolicyFunc,
 	}
@@ -16,12 +16,12 @@ func InitStore(state *global.State, checkPolicyFunc models.CheckPolicyFunc) {
 //TODO use this store for ssh and rdp also
 
 //TODO use interface
-var ACStore Store
+var ACStore store
 
-type Store struct {
+type store struct {
 	*global.State
 	CheckPolicyFunc models.CheckPolicyFunc
 }
 
-type Adapter interface {
+type adapter interface {
 }

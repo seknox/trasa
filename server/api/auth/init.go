@@ -7,7 +7,7 @@ import (
 
 //InitStore initialises package state
 func InitStore(state *global.State) {
-	Store = AuthStore{state}
+	Store = authStore{state}
 }
 
 func InitStoreMock() *AuthMock {
@@ -17,13 +17,13 @@ func InitStoreMock() *AuthMock {
 }
 
 //Store is the package state variable which contains database connections
-var Store Adapter
+var Store adapter
 
-type AuthStore struct {
+type authStore struct {
 	*global.State
 }
 
-type Adapter interface {
+type adapter interface {
 	GetLoginDetails(trasaID, orgDomain string) (*models.UserWithPass, error)
 	Logout(sessionID string) error
 }

@@ -10,7 +10,7 @@ import (
 	"github.com/seknox/trasa/server/models"
 )
 
-func (s UserStore) GetFromID(userID, orgID string) (user *models.User, err error) {
+func (s userStore) GetFromID(userID, orgID string) (user *models.User, err error) {
 	user = &models.User{}
 	err = s.DB.QueryRow("SELECT org_id, id,username, first_name,middle_name, last_name, email, user_role,status, created_at, updated_at, idp_name FROM users WHERE id = $1 AND org_id=$2", userID, orgID).
 		Scan(&user.OrgID, &user.ID, &user.UserName, &user.FirstName, &user.MiddleName, &user.LastName, &user.Email, &user.UserRole, &user.Status, &user.CreatedAt, &user.UpdatedAt, &user.IdpName)
@@ -19,7 +19,7 @@ func (s UserStore) GetFromID(userID, orgID string) (user *models.User, err error
 }
 
 //GetAll returns all users of a organizations
-func (s UserStore) GetAll(orgID string) ([]models.User, error) {
+func (s userStore) GetAll(orgID string) ([]models.User, error) {
 	var users = make([]models.User, 0)
 
 	rows, err := s.DB.Query(`SELECT users.org_id, users.id,  username, first_name, middle_name,
@@ -49,7 +49,7 @@ func (s UserStore) GetAll(orgID string) ([]models.User, error) {
 }
 
 //GetAll returns all users of a organizations
-func (s UserStore) GetAdminEmails(orgID string) ([]string, error) {
+func (s userStore) GetAdminEmails(orgID string) ([]string, error) {
 	var users = make([]string, 0)
 
 	rows, err := s.DB.Query(`SELECT users.email
@@ -74,7 +74,7 @@ func (s UserStore) GetAdminEmails(orgID string) ([]string, error) {
 
 }
 
-func (s UserStore) Delete(userID, orgID string) (string, string, error) {
+func (s userStore) Delete(userID, orgID string) (string, string, error) {
 	var (
 		email, userRole string
 	)
@@ -85,21 +85,21 @@ func (s UserStore) Delete(userID, orgID string) (string, string, error) {
 	return email, userRole, err
 }
 
-func (s UserStore) Update(user models.User) error {
+func (s userStore) Update(user models.User) error {
 	_, err := s.DB.Exec(`UPDATE users SET username = $1, first_name = $2, middle_name = $3, last_name = $4, email = $5, user_role = $6, updated_at  = $7,status=$8 WHERE id = $9;`,
 		user.UserName, user.FirstName, user.MiddleName, user.LastName, user.Email, user.UserRole, user.UpdatedAt, user.Status, user.ID)
 
 	return err
 }
 
-func (s UserStore) UpdatePassword(userID, password string) error {
+func (s userStore) UpdatePassword(userID, password string) error {
 	_, err := s.DB.Exec(`UPDATE users SET password = $1 WHERE id = $2;`, password, userID)
 
 	return err
 }
 
 // UpdatePasswordState maintains state of user password history
-func (s UserStore) UpdatePasswordState(userID, orgID, oldpassword string, time int64) error {
+func (s userStore) UpdatePasswordState(userID, orgID, oldpassword string, time int64) error {
 	op := []string{oldpassword}
 	var passState models.PasswordState
 	// first check if row already exists for userid orgid. If not then Insert OR Update
@@ -132,7 +132,7 @@ func (s UserStore) UpdatePasswordState(userID, orgID, oldpassword string, time i
 	return nil
 }
 
-func (s UserStore) DeleteActivePolicy(userID, orgID, enforceType string) error {
+func (s userStore) DeleteActivePolicy(userID, orgID, enforceType string) error {
 	_, err := s.DB.Exec(`DELETE FROM policy_enforcer WHERE user_id = $1 AND org_id=$2 AND type=$3 RETURNING *`,
 		userID, orgID, enforceType)
 
@@ -140,12 +140,12 @@ func (s UserStore) DeleteActivePolicy(userID, orgID, enforceType string) error {
 }
 
 // DeleteAppUserbasedOnUserID will remove a user from every apps
-func (s UserStore) DeleteAllUserAccessMaps(userID, orgID string) error {
+func (s userStore) DeleteAllUserAccessMaps(userID, orgID string) error {
 	_, err := s.DB.Exec(`DELETE FROM user_accessmaps WHERE user_id = $1 AND org_id=$2`, userID, orgID)
 	return err
 }
 
-func (s UserStore) CRDBGetPendingNotif(userID, orgID string) ([]models.InAppNotification, error) {
+func (s userStore) CRDBGetPendingNotif(userID, orgID string) ([]models.InAppNotification, error) {
 
 	var notifs []models.InAppNotification = make([]models.InAppNotification, 0)
 
@@ -170,7 +170,7 @@ func (s UserStore) CRDBGetPendingNotif(userID, orgID string) ([]models.InAppNoti
 
 }
 
-func (s UserStore) Create(user *models.UserWithPass) error {
+func (s userStore) Create(user *models.UserWithPass) error {
 	_, err := s.DB.Exec(`INSERT into users (org_id, id,  username, first_name, middle_name, last_name, email, password, user_role,status, created_at, updated_at, idp_name, external_id)
 						 values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);`,
 		user.OrgID, user.ID, user.UserName, user.FirstName,
@@ -179,7 +179,7 @@ func (s UserStore) Create(user *models.UserWithPass) error {
 	return err
 }
 
-func (s UserStore) GetPasswordState(userID, orgID string) (models.PasswordState, error) {
+func (s userStore) GetPasswordState(userID, orgID string) (models.PasswordState, error) {
 	var passState models.PasswordState
 	err := s.DB.QueryRow(`SELECT user_id, org_id,  last_passwords, last_updated FROM password_state WHERE user_id = $1 and org_id = $2`,
 		userID, orgID).
@@ -187,7 +187,7 @@ func (s UserStore) GetPasswordState(userID, orgID string) (models.PasswordState,
 	return passState, err
 }
 
-func (s UserStore) GetDevicesByType(userID, deviceType, orgID string) ([]models.UserDevice, error) {
+func (s userStore) GetDevicesByType(userID, deviceType, orgID string) ([]models.UserDevice, error) {
 	var device models.UserDevice
 	var userDevices = make([]models.UserDevice, 0)
 	rows, err := s.DB.Query("SELECT id, type, fcm_token, public_key, device_hygiene, added_at  FROM devices WHERE deleted != true AND user_id = $1 AND org_id=$2 AND type = $3",
@@ -208,7 +208,7 @@ func (s UserStore) GetDevicesByType(userID, deviceType, orgID string) ([]models.
 	return userDevices, nil
 }
 
-func (s UserStore) GetTOTPDevices(userID, orgID string) ([]models.UserDevice, error) {
+func (s userStore) GetTOTPDevices(userID, orgID string) ([]models.UserDevice, error) {
 	devices := []models.UserDevice{}
 
 	//var userHash *string
@@ -229,14 +229,14 @@ func (s UserStore) GetTOTPDevices(userID, orgID string) ([]models.UserDevice, er
 	return devices, nil
 }
 
-func (s UserStore) GetEnforcedPolicy(userID, orgID, enforceType string) (policy models.PolicyEnforcer, err error) {
+func (s userStore) GetEnforcedPolicy(userID, orgID, enforceType string) (policy models.PolicyEnforcer, err error) {
 	err = s.DB.QueryRow("SELECT id, user_id, org_id,pending, type FROM policy_enforcer WHERE user_id = $1 AND org_id = $2 AND type=$3;",
 		userID, orgID, enforceType).
 		Scan(&policy.EnforceID, &policy.UserID, &policy.OrgID, &policy.Pending, &policy.EnforceType)
 	return
 }
 
-func (s UserStore) GetGroups(userID, orgID string) ([]models.Group, error) {
+func (s userStore) GetGroups(userID, orgID string) ([]models.Group, error) {
 	groups := make([]models.Group, 0)
 	rows, err := s.DB.Query(`SELECT g.name,g.id,ug.created_at from groups g
 							JOIN user_group_maps ug on g.id = ug.group_id
@@ -256,19 +256,19 @@ func (s UserStore) GetGroups(userID, orgID string) ([]models.Group, error) {
 	return groups, nil
 }
 
-func (s UserStore) UpdatePublicKey(userID string, publicKey string) error {
+func (s userStore) UpdatePublicKey(userID string, publicKey string) error {
 	_, err := s.DB.Exec("Update users SET public_key=$1  WHERE id = $2 ;", publicKey, userID)
 
 	return err
 }
 
-func (s UserStore) EnforcePolicy(policy models.PolicyEnforcer) error {
+func (s userStore) EnforcePolicy(policy models.PolicyEnforcer) error {
 	_, err := s.DB.Exec(`INSERT into policy_enforcer (id, user_id, org_id, type, pending, assigned_by, assigned_on, resolved_on) values($1, $2, $3, $4, $5, $6, $7, $8);`,
 		policy.EnforceID, policy.UserID, policy.OrgID, policy.EnforceType, policy.Pending, policy.AssignedBy, policy.AssignedOn, policy.ResolvedOn)
 	return err
 }
 
-func (s UserStore) GetAllByIdp(orgID, idpName string) ([]models.User, error) {
+func (s userStore) GetAllByIdp(orgID, idpName string) ([]models.User, error) {
 	var usr []models.User = make([]models.User, 0)
 	var user models.User
 
@@ -292,7 +292,7 @@ func (s UserStore) GetAllByIdp(orgID, idpName string) ([]models.User, error) {
 }
 
 // TransferUser transfers user(based on email) to another provided idp
-func (s UserStore) TransferUser(orgID, email, idpName string) error {
+func (s userStore) TransferUser(orgID, email, idpName string) error {
 	_, err := s.DB.Exec(`UPDATE users SET idp_name = $1 WHERE org_id=$2 AND email = $3;`,
 		idpName, orgID, email)
 

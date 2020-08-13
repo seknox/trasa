@@ -4,17 +4,17 @@ import "github.com/seknox/trasa/server/global"
 
 //InitStore initialises package state
 func InitStore(state *global.State) {
-	Store = StatStore{state}
+	Store = statStore{state}
 }
 
 //Store is the package state variable which contains database connections
-var Store StatAdapter
+var Store adapter
 
-type StatStore struct {
+type statStore struct {
 	*global.State
 }
 
-type StatAdapter interface {
+type adapter interface {
 	//Services
 	GetTotalServices(orgID string) (int64, error)
 	GetTotalManagedUsers(entityType, entityID, orgID string) (count int, err error)

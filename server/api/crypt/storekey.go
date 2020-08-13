@@ -7,7 +7,7 @@ import (
 	"github.com/seknox/trasa/server/models"
 )
 
-func (s CryptStore) StoreKey(k models.KeysHolder) error {
+func (s cryptStore) StoreKey(k models.KeysHolder) error {
 
 	storedKey, err := s.GetKeyOrTokenWithTag(k.OrgID, k.KeyName)
 	if errors.Is(err, sql.ErrNoRows) {
@@ -26,7 +26,7 @@ func (s CryptStore) StoreKey(k models.KeysHolder) error {
 }
 
 // GetKeyOrTokenWithTag returns key or token detail but without actual key value but rather tagged value.
-func (s CryptStore) GetKeyOrTokenWithTag(orgID string, keyName string) (*models.KeysHolder, error) {
+func (s cryptStore) GetKeyOrTokenWithTag(orgID string, keyName string) (*models.KeysHolder, error) {
 	var k models.KeysHolder
 	err := s.DB.QueryRow(`
 		SELECT id, org_id, name, tag, added_by, added_at FROM key_holder WHERE org_id = $1 AND name = $2 ;`, orgID, keyName).Scan(&k.KeyID, &k.OrgID, &k.KeyName, &k.KeyTag, &k.AddedBy, &k.AddedAt)
@@ -35,7 +35,7 @@ func (s CryptStore) GetKeyOrTokenWithTag(orgID string, keyName string) (*models.
 }
 
 // GetKeyOrTokenWithTag returns key or token detail but without actual key value but rather tagged value.
-func (s CryptStore) GetKeyOrTokenWithKeyval(orgID, keyName string) (*models.KeysHolder, error) {
+func (s cryptStore) GetKeyOrTokenWithKeyval(orgID, keyName string) (*models.KeysHolder, error) {
 	var k models.KeysHolder
 	err := s.DB.QueryRow(`
 		SELECT id, org_id, name, value, added_by, added_at FROM key_holder WHERE org_id = $1 AND name = $2 ;`,
@@ -49,7 +49,7 @@ func (s CryptStore) GetKeyOrTokenWithKeyval(orgID, keyName string) (*models.Keys
 }
 
 // GetKeyOrTokenWithTag returns key or token detail but without actual key value but rather tagged value.
-func (s CryptStore) GetKeyOrTokenWithKeyvalAndID(orgID, keyName, keyID string) (*models.KeysHolder, error) {
+func (s cryptStore) GetKeyOrTokenWithKeyvalAndID(orgID, keyName, keyID string) (*models.KeysHolder, error) {
 	var k models.KeysHolder
 	err := s.DB.QueryRow(`
 		SELECT id, org_id, name, value, added_by, added_at FROM key_holder WHERE org_id = $1 AND name = $2 AND id=$3 ;`,

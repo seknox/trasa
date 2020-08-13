@@ -8,7 +8,7 @@ import (
 
 //InitStore initialises package state
 func InitStore(state *global.State) {
-	Store = MiscStore{State: state}
+	Store = miscStore{State: state}
 }
 
 func InitMock() *MiscMock {
@@ -18,13 +18,13 @@ func InitMock() *MiscMock {
 }
 
 //Store is the package state variable which contains database connections
-var Store MiscAdapter
+var Store adapter
 
-type MiscStore struct {
+type miscStore struct {
 	*global.State
 }
 
-type MiscAdapter interface {
+type adapter interface {
 	GetAdmins(orgID string) ([]models.User, error)
 
 	GetGeoLocation(ip string) (geo models.GeoLocation, err error)

@@ -8,7 +8,7 @@ import (
 
 //This is new api to get my apps which retrives authapps based on group policies
 
-func (s MyStore) GetUserAppsDetailsWithPolicyFromUserID(userID, orgID string) ([]models.MyServiceDetails, error) {
+func (s myStore) GetUserAppsDetailsWithPolicyFromUserID(userID, orgID string) ([]models.MyServiceDetails, error) {
 	var appusers = make([]models.MyServiceDetails, 0)
 
 	//New Query which returns adhoc permissions too

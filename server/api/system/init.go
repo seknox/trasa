@@ -7,7 +7,7 @@ import (
 
 //InitStore initialises package state
 func InitStore(state *global.State) {
-	Store = SystemStore{state}
+	Store = systemStore{state}
 }
 
 func InitStoreMock() *SystemMock {
@@ -17,13 +17,13 @@ func InitStoreMock() *SystemMock {
 }
 
 //Store is the package state variable which contains database connections
-var Store SystemAdapter
+var Store adapter
 
-type SystemStore struct {
+type systemStore struct {
 	*global.State
 }
 
-type SystemAdapter interface {
+type adapter interface {
 	// global settings
 	SetGlobalSetting(setting models.GlobalSettings) error
 	GetGlobalSetting(orgID, settingType string) (models.GlobalSettings, error)

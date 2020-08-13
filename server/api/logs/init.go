@@ -13,7 +13,7 @@ import (
 //InitStore initialises package state
 func InitStore(con *global.State) {
 	// initialize local state
-	Store = LogStore{
+	Store = logStore{
 		State: con,
 	}
 
@@ -26,13 +26,13 @@ func InitStoreMock() *LogsMock {
 }
 
 //Store is the package state variable which contains database connections
-var Store LogAdapter
+var Store adapter
 
-type LogStore struct {
+type logStore struct {
 	*global.State
 }
 
-type LogAdapter interface {
+type adapter interface {
 	LogSignup(signup *models.InitSignup) error
 	LogLogin(log *AuthLog, reason consts.FailedReason, status bool) error
 

@@ -9,7 +9,7 @@ import (
 //InitStore initialises package state
 func InitStore(con *global.State) {
 	// initialize local state
-	Store = UserStore{
+	Store = userStore{
 		State: con,
 	}
 
@@ -23,13 +23,13 @@ func InitStoreMock() *userstoremocks.UserStoreMock {
 }
 
 //Store is the package state variable which contains database connections
-var Store UserAdapter
+var Store adapter
 
-type UserStore struct {
+type userStore struct {
 	*global.State
 }
 
-type UserAdapter interface {
+type adapter interface {
 	//CRUD
 	GetFromID(userID, orgID string) (*models.User, error)
 	GetAll(orgID string) ([]models.User, error)

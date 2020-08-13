@@ -4,7 +4,7 @@ import (
 	"github.com/seknox/trasa/server/models"
 )
 
-func (s GroupStore) Create(group *models.Group) error {
+func (s groupStore) Create(group *models.Group) error {
 	_, err := s.DB.Exec(`INSERT into groups (id, org_id, name,type,  status, created_at,updated_at)
 						values($1, $2, $3, $4, $5, $6, $7);`,
 		&group.GroupID, &group.OrgID, &group.GroupName, &group.GroupType, &group.Status, &group.CreatedAt, &group.UpdatedAt)
@@ -12,7 +12,7 @@ func (s GroupStore) Create(group *models.Group) error {
 	return err
 }
 
-func (s GroupStore) Get(groupID, orgID string) (models.Group, error) {
+func (s groupStore) Get(groupID, orgID string) (models.Group, error) {
 	var group models.Group
 	err := s.DB.QueryRow(`SELECT id, org_id, name, type, status FROM groups WHERE id=$1 AND org_id=$2`,
 		groupID, orgID).
@@ -21,7 +21,7 @@ func (s GroupStore) Get(groupID, orgID string) (models.Group, error) {
 	return group, err
 }
 
-func (s GroupStore) GetAllUserGroups(orgID string) ([]models.Group, error) {
+func (s groupStore) GetAllUserGroups(orgID string) ([]models.Group, error) {
 
 	groups := make([]models.Group, 0)
 
@@ -44,7 +44,7 @@ func (s GroupStore) GetAllUserGroups(orgID string) ([]models.Group, error) {
 	return groups, nil
 }
 
-func (s GroupStore) GetAllServiceGroups(orgID string) ([]models.Group, error) {
+func (s groupStore) GetAllServiceGroups(orgID string) ([]models.Group, error) {
 
 	groups := make([]models.Group, 0)
 
@@ -70,7 +70,7 @@ func (s GroupStore) GetAllServiceGroups(orgID string) ([]models.Group, error) {
 	return groups, nil
 }
 
-func (s GroupStore) Update(group *models.Group) error {
+func (s groupStore) Update(group *models.Group) error {
 	_, err := s.DB.Exec(`UPDATE groups set name=$1, updated_at=$2 where id=$3 AND org_id=$4;`,
 		&group.GroupName, &group.UpdatedAt, &group.GroupID, &group.OrgID)
 
@@ -78,7 +78,7 @@ func (s GroupStore) Update(group *models.Group) error {
 }
 
 // Delete  deletes a row from group table and delete every element from GroupMap table
-func (s GroupStore) Delete(groupID, orgID string) (name string, err error) {
+func (s groupStore) Delete(groupID, orgID string) (name string, err error) {
 
 	err = s.DB.QueryRow(`DELETE FROM groups WHERE id=$1 AND org_id=$2 RETURNING name;`,
 		groupID, orgID).

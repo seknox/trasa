@@ -10,7 +10,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func (s RedisStore) Set(key string, expiry time.Duration, val ...string) error {
+func (s redisStore) Set(key string, expiry time.Duration, val ...string) error {
 	client := s.RedisClient
 	ctx := context.Background()
 	err := client.HSet(ctx, key, val).Err()
@@ -22,7 +22,7 @@ func (s RedisStore) Set(key string, expiry time.Duration, val ...string) error {
 }
 
 // RedisGenericStore can be used to store any key value. Main key should be unique value while value key name will be "data" and value should be json encoded byte.
-func (s RedisStore) Get(key string, field string) (string, error) {
+func (s redisStore) Get(key string, field string) (string, error) {
 	client := s.RedisClient
 	vals, err := client.HMGet(context.Background(), key, field).Result()
 	if err != nil || len(vals) != 1 {
@@ -37,7 +37,7 @@ func (s RedisStore) Get(key string, field string) (string, error) {
 }
 
 // RedisGenericStore can be used to store any key value. Main key should be unique value while value key name will be "data" and value should be json encoded byte.
-func (s RedisStore) MGet(key string, field ...string) ([]string, error) {
+func (s redisStore) MGet(key string, field ...string) ([]string, error) {
 	client := s.RedisClient
 	vals, err := client.HMGet(context.Background(), key, field...).Result()
 	if err != nil {
@@ -47,7 +47,7 @@ func (s RedisStore) MGet(key string, field ...string) ([]string, error) {
 }
 
 // GetSession can be used to store any key value. Main key should be unique value while value key name will be "data" and value should be json encoded byte.
-func (s RedisStore) GetSession(key string) (userID, orgID, deviceID, browserID, auth string, err error) {
+func (s redisStore) GetSession(key string) (userID, orgID, deviceID, browserID, auth string, err error) {
 	client := s.RedisClient
 	ctx := context.Background()
 	var vals []interface{}
@@ -78,7 +78,7 @@ func (s RedisStore) GetSession(key string) (userID, orgID, deviceID, browserID, 
 	return
 }
 
-func (s RedisStore) SetVerifyIntent(key string, expiry time.Duration, intent, field, val string) error {
+func (s redisStore) SetVerifyIntent(key string, expiry time.Duration, intent, field, val string) error {
 	client := s.RedisClient
 	ctx := context.Background()
 	err := client.HMSet(ctx, key, "intent", intent, field, val).Err()
@@ -90,7 +90,7 @@ func (s RedisStore) SetVerifyIntent(key string, expiry time.Duration, intent, fi
 }
 
 //TODO @sshah check this logic
-func (s RedisStore) VerifyIntent(key string, intent consts.VerifyTokenIntent) error {
+func (s redisStore) VerifyIntent(key string, intent consts.VerifyTokenIntent) error {
 	client := s.RedisClient
 	res, err := client.HMGet(context.Background(), key, "intent").Result()
 	if err != nil {
@@ -109,7 +109,7 @@ func (s RedisStore) VerifyIntent(key string, intent consts.VerifyTokenIntent) er
 	//return client.HGet(context.Background(), key, field...).String()
 }
 
-func (s RedisStore) Delete(key string) error {
+func (s redisStore) Delete(key string) error {
 	client := s.RedisClient
 	ctx := context.Background()
 	return client.Del(ctx, key).Err()
@@ -119,7 +119,7 @@ func (s RedisStore) Delete(key string) error {
 
 // WaitForStatusAndGet polls redis to until timeout or status field is true
 // then returns a field.
-func (s RedisStore) WaitForStatusAndGet(key, field string) (success bool, val string) {
+func (s redisStore) WaitForStatusAndGet(key, field string) (success bool, val string) {
 	timeout := time.After(60 * time.Second)
 	tick := time.Tick(1000 * time.Millisecond)
 	//var ret string
@@ -149,7 +149,7 @@ func (s RedisStore) WaitForStatusAndGet(key, field string) (success bool, val st
 }
 
 // SetHTTPGatewaySession
-func (s RedisStore) SetHTTPGatewaySession(key, orgusr, authDataVal string, sessionRecord string) error {
+func (s redisStore) SetHTTPGatewaySession(key, orgusr, authDataVal string, sessionRecord string) error {
 	client := s.RedisClient
 	ctx := context.Background()
 	err := client.HSet(ctx, key, "user", orgusr, "auth", authDataVal, "sessionRecord", sessionRecord).Err()
@@ -162,7 +162,7 @@ func (s RedisStore) SetHTTPGatewaySession(key, orgusr, authDataVal string, sessi
 }
 
 // GetHTTPGatewaySession
-func (s RedisStore) GetHTTPGatewaySession(key string) (user, auth, sessionRecord string, err error) {
+func (s redisStore) GetHTTPGatewaySession(key string) (user, auth, sessionRecord string, err error) {
 	client := s.RedisClient
 	ctx := context.Background()
 	var vals []interface{}

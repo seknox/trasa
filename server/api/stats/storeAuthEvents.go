@@ -17,7 +17,7 @@ import (
 
 //select sum(array_length(string_to_array(managed_accounts,','),1)) from servicesv1;
 
-func (s StatStore) GetAggregatedLoginFails(entityType, entityID, orgID, timezone, timeFilter string) (reasons []failedReasonsByType, err error) {
+func (s statStore) GetAggregatedLoginFails(entityType, entityID, orgID, timezone, timeFilter string) (reasons []failedReasonsByType, err error) {
 	reasons = make([]failedReasonsByType, 0)
 
 	loc, err := time.LoadLocation(timezone)
@@ -63,7 +63,7 @@ func (s StatStore) GetAggregatedLoginFails(entityType, entityID, orgID, timezone
 	return reasons, err
 }
 
-func (s StatStore) GetAggregatedLoginHours(entityType, entityID, timezone, orgID, timeFilter, statusFilter string) (logins []loginsByHour, err error) {
+func (s statStore) GetAggregatedLoginHours(entityType, entityID, timezone, orgID, timeFilter, statusFilter string) (logins []loginsByHour, err error) {
 	logins = make([]loginsByHour, 0)
 	loc, err := time.LoadLocation(timezone)
 	if err != nil {
@@ -139,7 +139,7 @@ out:
 	return logins, err
 }
 
-func (s StatStore) GetAggregatedIPs(entityType, entityID, orgID, timezone, timeFilter, statusFilter string) (aggIps, error) {
+func (s statStore) GetAggregatedIPs(entityType, entityID, orgID, timezone, timeFilter, statusFilter string) (aggIps, error) {
 
 	var ippool aggIps
 
@@ -261,7 +261,7 @@ func sortIps(arr []ipcount) []firstOctet {
 	return firstOctets
 }
 
-func (s StatStore) GetLoginsByType(entityType, entityID, orgID, timezone, timeFilter, statusFilter string) (logins []nameValue, err error) {
+func (s statStore) GetLoginsByType(entityType, entityID, orgID, timezone, timeFilter, statusFilter string) (logins []nameValue, err error) {
 	logins = make([]nameValue, 0)
 
 	loc, err := time.LoadLocation(timezone)
@@ -321,7 +321,7 @@ out:
 	return logins, err
 }
 
-func (s StatStore) SortLoginByCity(entityType, entityID, orgID, timezone, timeFilter, statusFilter string) ([]geoDataType, error) {
+func (s statStore) SortLoginByCity(entityType, entityID, orgID, timezone, timeFilter, statusFilter string) ([]geoDataType, error) {
 	var dat geoDataType
 	var docs []geoDataType = make([]geoDataType, 0)
 
@@ -392,7 +392,7 @@ func (s StatStore) SortLoginByCity(entityType, entityID, orgID, timezone, timeFi
 	//return string(docsStr), err
 }
 
-func (s StatStore) GetAllAuthEventsByEntityType(entityType, entityID, timeFilter, timezone string) (totalEventsAuthEvents, error) {
+func (s statStore) GetAllAuthEventsByEntityType(entityType, entityID, timeFilter, timezone string) (totalEventsAuthEvents, error) {
 	var events totalEventsAuthEvents
 
 	// events.TotalLogins = &new(int64)
@@ -448,7 +448,7 @@ func (s StatStore) GetAllAuthEventsByEntityType(entityType, entityID, timeFilter
 	return events, err
 }
 
-func (s StatStore) GetTodayHexaLoginEvents(entityType, entityID, orgID, statusFilter, timezone string) ([]todayHexa, error) {
+func (s statStore) GetTodayHexaLoginEvents(entityType, entityID, orgID, statusFilter, timezone string) ([]todayHexa, error) {
 	var hexas = make([]todayHexa, 0)
 	loc, err := time.LoadLocation(timezone)
 	if err != nil {
@@ -502,7 +502,7 @@ func (s StatStore) GetTodayHexaLoginEvents(entityType, entityID, orgID, statusFi
 
 // GetTotalLoginsByDate generates time range based on current time and delta (start time for organization)
 // and returns json array of total login events per day.
-func (s StatStore) GetTotalLoginsByDate(entityType, entityID, orgID, timezone string) ([]totalEventsByDate, error) {
+func (s statStore) GetTotalLoginsByDate(entityType, entityID, orgID, timezone string) ([]totalEventsByDate, error) {
 	var events []totalEventsByDate
 	loc, err := time.LoadLocation(timezone)
 	if err != nil {
@@ -585,7 +585,7 @@ GROUP BY login_day  ORDER BY login_day DESC LIMIT 45;`, limitTime.UnixNano(), or
 	return events, err
 }
 
-func (s StatStore) GetRemoteAppCount(entityType, entityID, orgID, timezone, timeFilter, statusFilter string) (count int, err error) {
+func (s statStore) GetRemoteAppCount(entityType, entityID, orgID, timezone, timeFilter, statusFilter string) (count int, err error) {
 
 	loc, err := time.LoadLocation(timezone)
 	if err != nil {

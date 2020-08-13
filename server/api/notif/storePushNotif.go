@@ -7,7 +7,7 @@ import (
 )
 
 // SendPushNotification sends push notification to TRASA mobile app
-func (s NotifStore) SendPushNotification(fcmToken, orgName, appName, ipAddr, time, challenge string) error {
+func (s notifStore) SendPushNotification(fcmToken, orgName, appName, ipAddr, time, challenge string) error {
 	ctx := context.Background()
 
 	// Obtain a messaging.Client from the App.

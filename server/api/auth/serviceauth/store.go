@@ -5,7 +5,7 @@ import (
 	"github.com/seknox/trasa/server/models"
 )
 
-func (s SStore) CheckPolicy(serviceID, userID, orgID, userIP, timezone string, policy *models.Policy, adhoc bool) (bool, consts.FailedReason) {
+func (s sStore) CheckPolicy(serviceID, userID, orgID, userIP, timezone string, policy *models.Policy, adhoc bool) (bool, consts.FailedReason) {
 
 	params := models.ConnectionParams{
 		ServiceID: serviceID,

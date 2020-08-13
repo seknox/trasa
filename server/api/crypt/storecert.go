@@ -16,7 +16,7 @@ import (
 
 // StoreCert inserts certificate detail in cert_holderv1. If cert for service_id or type already exists,
 // StoreCert should update the value.
-func (s CryptStore) StoreCert(ch models.CertHolder) error {
+func (s cryptStore) StoreCert(ch models.CertHolder) error {
 
 	storedCert, err := s.GetCertDetail(ch.OrgID, ch.EntityID, ch.CertType)
 	if errors.Is(err, sql.ErrNoRows) {
@@ -36,14 +36,14 @@ func (s CryptStore) StoreCert(ch models.CertHolder) error {
 }
 
 // delete CA
-func (s CryptStore) DelCA(userID, orgID string) error {
+func (s cryptStore) DelCA(userID, orgID string) error {
 	_, err := s.DB.Exec(`DELETE from devices where user_id = $1 AND org_id=$2`, userID, orgID)
 
 	return err
 }
 
 // get cert
-func (s CryptStore) GetCertDetail(orgID, entityID, certType string) (*models.CertHolder, error) {
+func (s cryptStore) GetCertDetail(orgID, entityID, certType string) (*models.CertHolder, error) {
 	var ch models.CertHolder
 	err := s.DB.QueryRow(`
 		SELECT id, org_id, entity_id, cert, cert_type, created_at, last_updated
@@ -54,7 +54,7 @@ func (s CryptStore) GetCertDetail(orgID, entityID, certType string) (*models.Cer
 }
 
 // get cert
-func (s CryptStore) GetAllCAs(orgID string) ([]models.CertHolder, error) {
+func (s cryptStore) GetAllCAs(orgID string) ([]models.CertHolder, error) {
 	var cas []models.CertHolder
 	rows, err := s.DB.Query(`
 		SELECT id, org_id, entity_id, cert, cert_type, created_at, last_updated
@@ -78,7 +78,7 @@ func (s CryptStore) GetAllCAs(orgID string) ([]models.CertHolder, error) {
 
 // get user devices
 //Deprecated
-func (s CryptStore) GetCAkey(orgID string) ([]byte, error) {
+func (s cryptStore) GetCAkey(orgID string) ([]byte, error) {
 	var key []byte
 	err := s.DB.QueryRow(`
 		SELECT key FROM cert_holder WHERE org_id = $1 AND cert_type = 'ca'
@@ -87,7 +87,7 @@ func (s CryptStore) GetCAkey(orgID string) ([]byte, error) {
 	return key, err
 }
 
-func (s CryptStore) GetCertHolder(certType, entityID, orgID string) (models.CertHolder, error) {
+func (s cryptStore) GetCertHolder(certType, entityID, orgID string) (models.CertHolder, error) {
 	var certHolder models.CertHolder
 	err := s.DB.QueryRow(`SELECT id, org_id, entity_id, cert, "key", csr, cert_type, created_at, last_updated FROM cert_holder WHERE entity_id=$1 AND org_id=$2 AND cert_type=$3`,
 		entityID, orgID, certType).

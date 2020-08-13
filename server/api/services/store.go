@@ -8,7 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func (s ServiceStore) GetFromID(serviceID string) (service *models.Service, err error) {
+func (s serviceStore) GetFromID(serviceID string) (service *models.Service, err error) {
 	service = &models.Service{}
 	err = s.DB.QueryRow(`
 SELECT id,org_id, name, secret_key, passthru,adhoc, created_at,hostname, type, managed_accounts,remoteapp_name,native_log,rdp_protocol,proxy_config
@@ -23,7 +23,7 @@ SELECT id,org_id, name, secret_key, passthru,adhoc, created_at,hostname, type, m
 	return service, nil
 }
 
-func (s ServiceStore) GetFromHostname(hostname, ServiceType, remoteAppName, orgID string) (service *models.Service, err error) {
+func (s serviceStore) GetFromHostname(hostname, ServiceType, remoteAppName, orgID string) (service *models.Service, err error) {
 	logrus.Debug(hostname, ServiceType, remoteAppName, orgID)
 	service = &models.Service{}
 	err = s.DB.QueryRow(`
@@ -41,7 +41,7 @@ SELECT org_id,id, name, secret_key, passthru,adhoc, created_at,hostname, type, m
 	return service, err
 }
 
-func (s ServiceStore) Create(app *models.Service) (err error) {
+func (s serviceStore) Create(app *models.Service) (err error) {
 
 	_, err = s.DB.Exec(`INSERT into services (id, org_id, name, secret_key,type, passthru, hostname, created_at, updated_at, deleted_at, managed_accounts,adhoc,remoteapp_name,rdp_protocol,native_log, proxy_config, external_provider_name, external_id, external_security_group, distro_name,distro_version, ip_details )
 						 values($1, $2, $3, $4, $5, $6, $7, $8 ,$9, $10,$11, $12, $13,$14,$15,$16, $17, $18, $19, $20, $21, $22);`,
@@ -50,7 +50,7 @@ func (s ServiceStore) Create(app *models.Service) (err error) {
 	return err
 }
 
-func (s ServiceStore) Update(service *models.Service) error {
+func (s serviceStore) Update(service *models.Service) error {
 	_, err := s.DB.Exec(`UPDATE services SET name = $1, type = $2, passthru = $3, updated_at = $4, hostname=$7, adhoc=$8,remoteapp_name=$9,rdp_protocol=$10,native_log=$11 WHERE id = $5 AND org_id = $6;`,
 		&service.Name, &service.Type, &service.Passthru, &service.UpdatedAt, &service.ID, &service.OrgID, &service.Hostname, &service.Adhoc, &service.RemoteAppName, &service.RdpProtocol, &service.NativeLog)
 
@@ -60,7 +60,7 @@ func (s ServiceStore) Update(service *models.Service) error {
 	return err
 }
 
-func (s ServiceStore) updateHttpProxy(serviceID, orgID string, time int64, proxyConfig models.ReverseProxy) error {
+func (s serviceStore) updateHttpProxy(serviceID, orgID string, time int64, proxyConfig models.ReverseProxy) error {
 	_, err := s.DB.Exec(`UPDATE services SET proxy_config = $1, updated_at=$2 WHERE id = $3 AND org_id = $4;`,
 		proxyConfig, time, serviceID, orgID)
 
@@ -68,7 +68,7 @@ func (s ServiceStore) updateHttpProxy(serviceID, orgID string, time int64, proxy
 }
 
 //Delete deletes a service and returns its name
-func (s ServiceStore) Delete(serviceID, orgID string) (serviceName string, err error) {
+func (s serviceStore) Delete(serviceID, orgID string) (serviceName string, err error) {
 	err = s.DB.QueryRow(`DELETE FROM services WHERE id = $1 AND org_id=$2 RETURNING name`, serviceID, orgID).Scan(&serviceName)
 	if err != nil {
 		return "", err
@@ -76,7 +76,7 @@ func (s ServiceStore) Delete(serviceID, orgID string) (serviceName string, err e
 	return serviceName, nil
 }
 
-func (s ServiceStore) AddManagedAccounts(serviceID, orgID string, username string) error {
+func (s serviceStore) AddManagedAccounts(serviceID, orgID string, username string) error {
 	// we first check if similer service already exists in database. This is searched in context of organization
 	var managedAccounts string
 	err := s.DB.QueryRow("SELECT managed_accounts FROM services WHERE id = $1 AND org_id=$2", serviceID, orgID).Scan(&managedAccounts)
@@ -101,7 +101,7 @@ func (s ServiceStore) AddManagedAccounts(serviceID, orgID string, username strin
 	return err
 }
 
-func (s ServiceStore) RemoveManagedAccounts(serviceID, orgID string, username string) error {
+func (s serviceStore) RemoveManagedAccounts(serviceID, orgID string, username string) error {
 	// we first check if similer service already exists in database. This is searched in context of organization
 	var managedAccounts string
 	err := s.DB.QueryRow("SELECT managed_accounts FROM services WHERE id = $1 AND org_id=$2 ",
@@ -136,7 +136,7 @@ func sliceManagedUsers(index int, array []string) []string {
 
 //GetAllByType returns all services of org
 // Service_id, Service_name, adhoc,hostname
-func (s ServiceStore) GetAllByType(serviceType, orgID string) (services []models.Service, err error) {
+func (s serviceStore) GetAllByType(serviceType, orgID string) (services []models.Service, err error) {
 	services = make([]models.Service, 0)
 
 	var rows *sql.Rows
@@ -156,7 +156,7 @@ func (s ServiceStore) GetAllByType(serviceType, orgID string) (services []models
 	return
 }
 
-// func (s ServiceStore) GetHttpProxy(serviceID, orgID string) (httpProxy models.HttpProxyOps, err error) {
+// func (s serviceStore) GetHttpProxy(serviceID, orgID string) (httpProxy models.HttpProxyOps, err error) {
 // 	var proxyMeta string
 
 // 	err = s.DB.QueryRow("SELECT proxy_meta,status, created_at, updated_at FROM gateway_http WHERE service_id=$1 AND org_id= $2", serviceID, orgID).Scan(&proxyMeta, &httpProxy.Status, &httpProxy.CreatedAt, &httpProxy.UpdatedAt)
@@ -170,12 +170,12 @@ func (s ServiceStore) GetAllByType(serviceType, orgID string) (services []models
 // }
 
 // get service Details based on service id. Returns service id and service name.
-func (s ServiceStore) GetServiceNameFromID(serviceID string, orgID string) (appName string, err error) {
+func (s serviceStore) GetServiceNameFromID(serviceID string, orgID string) (appName string, err error) {
 	err = s.DB.QueryRow("SELECT services.name FROM services WHERE id= $1 AND org_id=$2", serviceID, orgID).Scan(&appName)
 	return
 }
 
-func (s ServiceStore) GetTotalServiceUsers(serviceID string, orgID string) (int64, error) {
+func (s serviceStore) GetTotalServiceUsers(serviceID string, orgID string) (int64, error) {
 	var count int64
 	row := s.DB.QueryRow(`
 select COUNT(*) from (SELECT  DISTINCT * FROM 
@@ -206,7 +206,7 @@ where service_id=$1 AND org_id=$2) AS c;`, serviceID, orgID)
 	return count, err
 }
 
-func (s ServiceStore) GetAllHostnames(orgID, appType string) ([]string, error) {
+func (s serviceStore) GetAllHostnames(orgID, appType string) ([]string, error) {
 	var hosts []string = make([]string, 0)
 
 	rows, err := s.DB.Query(`SELECT hostname FROM services where org_id=$1 AND type=$2;`, orgID, appType)
