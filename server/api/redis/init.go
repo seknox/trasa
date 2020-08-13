@@ -7,6 +7,7 @@ import (
 	"github.com/seknox/trasa/server/global"
 )
 
+//InitStore initialises package state
 func InitStore(state *global.State) {
 	Store = RedisStore{State: state}
 }
@@ -17,6 +18,7 @@ func InitStoreMock() *RedisMock {
 	return m
 }
 
+//Store is the package state variable which contains database connections
 var Store RedisAdapter
 
 type RedisStore struct {

@@ -7,6 +7,7 @@ import (
 	"github.com/seknox/trasa/server/models"
 )
 
+//InitStore initialises package state
 func InitStore(state *global.State, policyFunc models.CheckPolicyFunc) {
 	Store = GWStore{
 		proxy:           NewProxy(),
@@ -15,6 +16,7 @@ func InitStore(state *global.State, policyFunc models.CheckPolicyFunc) {
 	}
 }
 
+//Store is the package state variable which contains database connections
 var Store GWAdapter
 
 type GWStore struct {

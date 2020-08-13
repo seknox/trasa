@@ -2,10 +2,12 @@ package stats
 
 import "github.com/seknox/trasa/server/global"
 
+//InitStore initialises package state
 func InitStore(state *global.State) {
 	Store = StatStore{state}
 }
 
+//Store is the package state variable which contains database connections
 var Store StatAdapter
 
 type StatStore struct {

@@ -5,6 +5,7 @@ import (
 	"github.com/seknox/trasa/server/models"
 )
 
+//InitStore initialises package state
 func InitStore(state *global.State, checkPolicyFunc models.CheckPolicyFunc) {
 	ACStore = Store{
 		State:           state,

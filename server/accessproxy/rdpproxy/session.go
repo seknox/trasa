@@ -178,7 +178,7 @@ func (s *Session) Start(ws *websocket.Conn) (errcode string, err error) {
 
 	//logrus.Debug("auth success,  tfa")
 
-	var tfaSuccess = true
+	tfaSuccess := true
 	var tfaDeviceID string
 	tfaSuccess, tfaDeviceID = s.handleTfa(ws, writer)
 

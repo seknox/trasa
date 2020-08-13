@@ -5,6 +5,7 @@ import (
 	"github.com/seknox/trasa/server/models"
 )
 
+//InitStore initialises package state
 func InitStore(state *global.State) {
 	Store = VaultStore{State: state}
 }
@@ -15,6 +16,7 @@ func InitStoreMock() *VaultMock {
 	return m
 }
 
+//Store is the package state variable which contains database connections
 var Store VaultAdapter
 
 type VaultStore struct {

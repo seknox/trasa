@@ -181,15 +181,16 @@ func timeChecker(hour, minute int, from, to []int) bool {
 // TrasaUAC validates policy for user access
 func TrasaUAC(params *models.ConnectionParams, policy *models.Policy, adHocSwitch bool) (bool, consts.FailedReason) {
 
-	checkPermission, reason := false, consts.REASON_UNKNOWN
+	ok := false
+	reason := consts.REASON_UNKNOWN
 
-	// 2) we check users rergular policy
-	checkPermission, reason = CheckTrasaUAC(params.Timezone, params.UserIP, policy)
-	if checkPermission == true {
+	//we check users policy
+	ok, reason = CheckTrasaUAC(params.Timezone, params.UserIP, policy)
+	if ok == true {
 		return true, "user authorised by uac check"
 	}
 
-	return checkPermission, reason
+	return ok, reason
 }
 
 func CheckDevicePolicy(policy models.DevicePolicy, accessDeviceID, tfaDeviceID, orgID string) (consts.FailedReason, bool, error) {
