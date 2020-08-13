@@ -11,8 +11,8 @@ func InitStore(state *global.State) {
 }
 
 //InitStoreMock will init mock state of this package
-func InitStoreMock() *VaultMock {
-	m := new(VaultMock)
+func InitStoreMock() *vaultMock {
+	m := new(vaultMock)
 	Store = m
 	return m
 }

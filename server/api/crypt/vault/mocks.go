@@ -5,91 +5,91 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-type VaultMock struct {
+type vaultMock struct {
 	mock.Mock
 }
 
-func (v *VaultMock) StoreSecret(key models.ServiceSecretVault) error {
+func (v *vaultMock) StoreSecret(key models.ServiceSecretVault) error {
 	panic("implement me")
 }
 
-func (v *VaultMock) GetSecret(orgID, serviceID, secretType, secretid string) (string, error) {
+func (v *vaultMock) GetSecret(orgID, serviceID, secretType, secretid string) (string, error) {
 	args := v.Called(orgID, serviceID, secretType, secretid)
 	return args.String(0), args.Error(1)
 }
 
-func (v *VaultMock) TsxvStoreSecret(secret models.ServiceSecretVault) error {
+func (v *vaultMock) TsxvStoreSecret(secret models.ServiceSecretVault) error {
 	panic("implement me")
 }
 
-func (v *VaultMock) TsxvGetSecretDetail(orgID, serviceID, appType, secretid string) (*models.ServiceSecretVault, error) {
+func (v *vaultMock) TsxvGetSecretDetail(orgID, serviceID, appType, secretid string) (*models.ServiceSecretVault, error) {
 	panic("implement me")
 }
 
-func (v *VaultMock) TsxvGetSecret(orgID, serviceID, appType, secretid string) ([]byte, error) {
+func (v *vaultMock) TsxvGetSecret(orgID, serviceID, appType, secretid string) ([]byte, error) {
 	panic("implement me")
 }
 
-func (v *VaultMock) TsxvDeleteSecret(orgID, serviceID, secretType, secretid string) error {
+func (v *vaultMock) TsxvDeleteSecret(orgID, serviceID, secretType, secretid string) error {
 	panic("implement me")
 }
 
-func (v *VaultMock) TsxvDeleteAllSecret(orgID string) error {
+func (v *vaultMock) TsxvDeleteAllSecret(orgID string) error {
 	panic("implement me")
 }
 
-func (v *VaultMock) TsxvStoreEncKeyHash(secret models.EncryptionKeyLog) error {
+func (v *vaultMock) TsxvStoreEncKeyHash(secret models.EncryptionKeyLog) error {
 	panic("implement me")
 }
 
-func (v *VaultMock) TsxvGetEncKeyHash(orgID, keyHash string) (models.EncryptionKeyLog, error) {
+func (v *vaultMock) TsxvGetEncKeyHash(orgID, keyHash string) (models.EncryptionKeyLog, error) {
 	panic("implement me")
 }
 
-func (v *VaultMock) TsxvUpdateEncKeyHashLog(orgID, keyHash string, time int64, status bool) error {
+func (v *vaultMock) TsxvUpdateEncKeyHashLog(orgID, keyHash string, time int64, status bool) error {
 	panic("implement me")
 }
 
-func (v *VaultMock) TsxvdeactivateAllKeys(orgID string, time int64) error {
+func (v *vaultMock) TsxvdeactivateAllKeys(orgID string, time int64) error {
 	panic("implement me")
 }
 
-func (v *VaultMock) TsxvTestEncrypter(key []byte) error {
+func (v *vaultMock) TsxvTestEncrypter(key []byte) error {
 	panic("implement me")
 }
 
-func (v *VaultMock) TsxvTestDecrypter(key []byte) error {
+func (v *vaultMock) TsxvTestDecrypter(key []byte) error {
 	panic("implement me")
 }
 
-func (v *VaultMock) TsxVaultTester() error {
+func (v *vaultMock) TsxVaultTester() error {
 	panic("implement me")
 }
 
-func (v *VaultMock) AesEncrypt(message []byte) ([]byte, error) {
+func (v *vaultMock) AesEncrypt(message []byte) ([]byte, error) {
 	panic("implement me")
 }
 
-func (v *VaultMock) AesDecrypt(message []byte) ([]byte, error) {
+func (v *vaultMock) AesDecrypt(message []byte) ([]byte, error) {
 	panic("implement me")
 }
 
-func (v *VaultMock) GetKeyOrTokenWithTag(orgID string, keyName string) (*models.KeysHolder, error) {
+func (v *vaultMock) GetKeyOrTokenWithTag(orgID string, keyName string) (*models.KeysHolder, error) {
 	panic("implement me")
 }
 
-func (v *VaultMock) StoreKeyOrTokens(k models.KeysHolder) error {
+func (v *vaultMock) StoreKeyOrTokens(k models.KeysHolder) error {
 	panic("implement me")
 }
 
-func (v *VaultMock) GenAndStoreKey(orgID string) (*[32]byte, error) {
+func (v *vaultMock) GenAndStoreKey(orgID string) (*[32]byte, error) {
 	panic("implement me")
 }
 
-func (v *VaultMock) GetTsxVaultKey() (*[32]byte, bool) {
+func (v *vaultMock) GetTsxVaultKey() (*[32]byte, bool) {
 	panic("implement me")
 }
 
-func (v *VaultMock) SetTsxVaultKey(key *[32]byte, status bool) {
+func (v *vaultMock) SetTsxVaultKey(key *[32]byte, status bool) {
 	panic("implement me")
 }

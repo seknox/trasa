@@ -42,38 +42,38 @@ func (l *logsMock) GetLoginEventsByPage(entityType, entityID, orgID string, page
 
 //TODO implement methods
 
-func (l logsMock) AddNewActiveSession(session *AuthLog, connID, appType string) error {
+func (l *logsMock) AddNewActiveSession(session *AuthLog, connID, appType string) error {
 	panic("implement me")
 }
 
-func (l logsMock) RemoveActiveSession(connID string) error {
+func (l *logsMock) RemoveActiveSession(connID string) error {
 	panic("implement me")
 }
 
-func (l logsMock) RemoveAllActiveSessions() {
+func (l *logsMock) RemoveAllActiveSessions() {
 	panic("implement me")
 }
 
-func (l logsMock) ServeLiveSessions(ws *websocket.Conn) {
+func (l *logsMock) ServeLiveSessions(ws *websocket.Conn) {
 	panic("implement me")
 }
 
-func (l logsMock) LogInAppTrail(ip, userAgent, description string, user *models.User, status bool) error {
+func (l *logsMock) LogInAppTrail(ip, userAgent, description string, user *models.User, status bool) error {
 	panic("implement me")
 }
 
-func (l logsMock) GetOrgInAppTrails(orgID string, page int, size int, dateFrom, dateTo int64) ([]models.InAppTrail, error) {
+func (l *logsMock) GetOrgInAppTrails(orgID string, page int, size int, dateFrom, dateTo int64) ([]models.InAppTrail, error) {
 	panic("implement me")
 }
 
-func (l logsMock) GetFromMinio(path, bucketName string) (io.ReadSeeker, error) {
+func (l *logsMock) GetFromMinio(path, bucketName string) (io.ReadSeeker, error) {
 	panic("implement me")
 }
 
-func (l logsMock) PutIntoMinio(path, filepath, bucketName string) error {
+func (l *logsMock) PutIntoMinio(path, filepath, bucketName string) error {
 	panic("implement me")
 }
 
-func (l logsMock) UploadHTTPLogToMinio(file *os.File, login AuthLog) error {
+func (l *logsMock) UploadHTTPLogToMinio(file *os.File, login AuthLog) error {
 	panic("implement me")
 }
