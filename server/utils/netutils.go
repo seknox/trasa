@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-//I sPrivateIP returns boolean value based on ip type
+//IsPrivateIP returns boolean value based on ip type
 func IsPrivateIP(ip net.IP) bool {
 	if ip == nil {
 		logrus.Error("is private ip: ip is nil")

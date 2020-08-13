@@ -14,6 +14,7 @@ func InitStore(con *global.State) {
 
 }
 
+//InitStoreMock will init mock state of this package
 //func InitStoreMock() *userstoremocks.UserStoreMock {
 //	// initialize local state
 //	mockUser := new(userstoremocks.UserStoreMock)

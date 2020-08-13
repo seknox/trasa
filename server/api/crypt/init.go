@@ -10,6 +10,7 @@ func InitStore(state *global.State) {
 	Store = cryptStore{State: state}
 }
 
+//InitStoreMock will init mock state of this package
 func InitStoreMock() *CryptMock {
 	m := new(CryptMock)
 	Store = m

@@ -9,46 +9,56 @@ type UserStoreMock struct {
 	mock.Mock
 }
 
+//GetAllByIdp mock
 func (us UserStoreMock) GetAllByIdp(orgID, idpName string) ([]models.User, error) {
 	panic("implement me")
 }
 
+//TransferUser mock
 func (us UserStoreMock) TransferUser(orgID, email, idpName string) error {
 	panic("implement me")
 }
 
+//GetFromID mock
 func (us UserStoreMock) GetFromID(userID, orgID string) (*models.User, error) {
 	args := us.Called(userID, orgID)
 
 	return args.Get(0).(*models.User), args.Error(1)
 }
 
+//GetAdminEmails mock
 func (us UserStoreMock) GetAdminEmails(orgID string) ([]string, error) {
 	args := us.Called(orgID)
 
 	return args.Get(0).([]string), args.Error(1)
 }
 
+//GetAll mock
 func (us UserStoreMock) GetAll(orgID string) ([]models.User, error) {
 	panic("implement me")
 }
 
+//Create mock
 func (us UserStoreMock) Create(user *models.UserWithPass) error {
 	panic("implement me")
 }
 
+//Delete mock
 func (us UserStoreMock) Delete(userID, orgID string) (string, string, error) {
 	panic("implement me")
 }
 
+//Update mock
 func (us UserStoreMock) Update(user models.User) error {
 	panic("implement me")
 }
 
+//UpdatePublicKey mock
 func (us UserStoreMock) UpdatePublicKey(userID string, publicKey string) error {
 	panic("implement me")
 }
 
+//UpdatePassword mock
 func (us UserStoreMock) UpdatePassword(userID, password string) error {
 	panic("implement me")
 }

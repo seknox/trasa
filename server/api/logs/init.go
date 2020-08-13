@@ -19,6 +19,7 @@ func InitStore(con *global.State) {
 
 }
 
+//InitStoreMock will init mock state of this package
 func InitStoreMock() *LogsMock {
 	lmock := new(LogsMock)
 	Store = lmock

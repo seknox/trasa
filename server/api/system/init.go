@@ -10,6 +10,7 @@ func InitStore(state *global.State) {
 	Store = systemStore{state}
 }
 
+//InitStoreMock will init mock state of this package
 func InitStoreMock() *SystemMock {
 	lmock := new(SystemMock)
 	Store = lmock
