@@ -87,10 +87,10 @@ TRASA server running on `https://app.trasa`
 
 - [x] assign user to service
 - [x] edit privilege
-- [ ] remove user from service
+- [X] remove user from service
 - [x] assign usergroup to service
 - [x] edit privilege
-- [ ] remove usergroup from service
+- [x] remove usergroup from service
 - [x] assign usergroup to servicegroup
 - [ ] edit privilege
 - [ ] remove usergroup from servicegroup

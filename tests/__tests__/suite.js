@@ -26,6 +26,7 @@ import {DeleteServiceGroup} from "../src/service/delete_service_group";
 import {RenameAccessMap} from "../src/accessmap/rename_accessmap_privilege";
 import {DeletePolicy} from "../src/policy/delete";
 import {RemoveServiceFromGroup} from "../src/service/remove_service_from_group";
+import {RemoveAccessMap} from "../src/accessmap/delete_accessmap";
 
 // import {sshtest} from "../src/ssh";
 
@@ -44,10 +45,10 @@ beforeAll(async () => {
 describe('InitialLoginAndEnroDevice', InitialUserLoginAndDeviceEnrol)
 
 // describe('Login', LoginTfa)
-// describe("policy create",CreatePolicy)
+describe("policy create",CreatePolicy)
 //
-// describe("user create",CreateUser)
-// describe("user group create",CreateUserGroup)
+describe("user create",CreateUser)
+describe("user group create",CreateUserGroup)
 // describe("add user to group",AddUserToGroup)
 //
 // //
@@ -55,26 +56,29 @@ describe('Service create', CreateService)
 describe("service group create",CreateServiceGroup)
 describe("add service to group",AddServiceToGroup)
 //
-// describe('User access map',UserAccessMap)
-// describe('User group access map',UserGroupAccessMap)
-// describe('User group service group access map',UserGroupServiceGroupAccessMap)
+describe('User access map',UserAccessMap)
+describe('remove user accessmap',RemoveAccessMap)
+describe('User group access map',UserGroupAccessMap)
+describe('remove user accessmap',RemoveAccessMap)
+
+describe('User group service group access map',UserGroupServiceGroupAccessMap)
 //
-// describe('rename access map privilege',RenameAccessMap)
+describe('rename access map privilege',RenameAccessMap)
 //
 //
 describe('remove service from group',RemoveServiceFromGroup)
-// describe('Rename service group',RenameServiceGroup)
-// describe('Delete service group',DeleteServiceGroup)
+describe('Rename service group',RenameServiceGroup)
+describe('Delete service group',DeleteServiceGroup)
 //
 
 
 
-// describe("user update",UpdateUser)
-// describe("user delete",DeleteUser)
-// describe("policy update",UpdatePolicy)
-// describe("policy delete",DeletePolicy)
+describe("user update",UpdateUser)
+describe("user delete",DeleteUser)
+describe("policy update",UpdatePolicy)
+describe("policy delete",DeletePolicy)
 //  //
- // describe('Service update', UpdateService)
- // describe('Service delete', DeleteService)
+ describe('Service update', UpdateService)
+ describe('Service delete', DeleteService)
 
 // describe("SSH",sshtest)
