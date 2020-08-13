@@ -5,6 +5,7 @@ import (
 	"strings"
 )
 
+//NormalizeString trims spaces and convert into lowercase
 func NormalizeString(s string) string {
 	s = strings.TrimSpace(s)
 
@@ -33,6 +34,7 @@ func DomainFromEmail(email string) string {
 
 }
 
+//ArrayContainsString check if an string array contains a string
 func ArrayContainsString(s []string, e string) bool {
 	for _, a := range s {
 		if a == e {
@@ -42,6 +44,7 @@ func ArrayContainsString(s []string, e string) bool {
 	return false
 }
 
+//ToStringArr casts interface array into string array
 func ToStringArr(vals []interface{}) ([]string, error) {
 	var resultStrArr = make([]string, 0)
 	for _, v := range vals {

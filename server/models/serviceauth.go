@@ -5,6 +5,7 @@ import (
 	"github.com/tstranex/u2f"
 )
 
+//UpstreamCreds contains credentials/login details of upstream service
 type UpstreamCreds struct {
 	Password          string `json:"password"`
 	HostCert          string `json:"hostCert"`
@@ -56,4 +57,5 @@ type ConnectionParams struct {
 	//UserAgent       string
 }
 
+//CheckPolicyFunc is a function which takes connection parameters and checks policy
 type CheckPolicyFunc func(params *ConnectionParams, policy *Policy, adhoc bool) (bool, consts.FailedReason)

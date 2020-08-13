@@ -250,6 +250,7 @@ func AuthHTTPAccessProxy(w http.ResponseWriter, r *http.Request) {
 
 }
 
+//DestroyHttpSession ends http session and starts logout sequence
 func DestroyHttpSession(w http.ResponseWriter, r *http.Request) {
 
 	err := r.ParseMultipartForm(10 << 20)
@@ -263,7 +264,7 @@ func DestroyHttpSession(w http.ResponseWriter, r *http.Request) {
 
 	sessionID := r.Form.Get("sid")
 
-	LogoutSequence(sessionID)
+	logoutSequence(sessionID)
 	logger.Trace("session destroyed ", sessionID)
 	utils.TrasaResponse(w, http.StatusOK, "success", "session destroyed", "Destroy session", nil)
 }
@@ -377,10 +378,10 @@ func gopherPNG(imsgData string) io.Reader {
 	return base64.NewDecoder(base64.StdEncoding, strings.NewReader(imsgData))
 }
 
-func LogoutSequence(sessionID string) {
+func logoutSequence(sessionID string) {
 	defer func() {
 		if r := recover(); r != nil {
-			logger.Errorf(`Panic in LogoutSequence: %v:%s`, r, string(debug.Stack()))
+			logger.Errorf(`Panic in logoutSequence: %v:%s`, r, string(debug.Stack()))
 		}
 
 	}()

@@ -49,7 +49,7 @@ func VerifyTotpCode(totpCode, userID, orgID string) (bool, string, error) {
 func SendU2F(userID, orgID, appName, ip string) (bool, string) {
 
 	// If code reaches here, its time to generate random challenge, store it in redis with 2 min timer, send remote notification to user.
-	challenge := utils.GetRandomID(5)
+	challenge := utils.GetRandomString(5)
 
 	//fmt.Printf("challenge: %s\n", hex.EncodeToString(challenge))
 	var userDevice models.UserDevice
@@ -325,7 +325,7 @@ func HandleTfaAndGetDeviceID(signResponse *u2f.SignResponse, tfaMethod, totpCode
 		}
 
 	} else {
-		challenge := utils.GetRandomID(5)
+		challenge := utils.GetRandomString(5)
 
 		c := make(chan U2f, 1)
 
@@ -446,7 +446,7 @@ func CheckDeviceEnroll(deviceID, clientIP, orgName, timezone, orgID string) (boo
 			return false, err
 		}
 	} else {
-		challenge := utils.GetRandomID(5)
+		challenge := utils.GetRandomString(5)
 		err := notif.Store.SendPushNotification(deviceDetail.FcmToken, orgName, "Test", clientIP, now.String(), challenge)
 		if err != nil {
 			return false, err

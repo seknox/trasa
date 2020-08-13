@@ -9,7 +9,8 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-func GetRandomID(length int) string {
+//GetRandomString returns random string
+func GetRandomString(length int) string {
 	val := make([]byte, length)
 	_, _ = rand.Read(val)
 	// if err != nil {

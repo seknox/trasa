@@ -42,7 +42,7 @@ func StoreServiceCredentials(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var s models.ServiceSecretVault
-	s.KeyID = utils.GetRandomID(7)
+	s.KeyID = utils.GetRandomString(7)
 	s.ServiceID = req.ServiceID
 	s.SecretType = req.Type
 	s.OrgID = userContext.Org.ID

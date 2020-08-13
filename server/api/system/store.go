@@ -7,12 +7,14 @@ import (
 	logger "github.com/sirupsen/logrus"
 )
 
+//SetGlobalSetting inserts setting value into database
 func (s systemStore) SetGlobalSetting(setting models.GlobalSettings) error {
 	_, err := s.DB.Exec(`INSERT into global_settings (id, org_id, status, type, value, updated_by, updated_on) values($1, $2, $3, $4, $5, $6, $7);`,
 		setting.SettingID, setting.OrgID, setting.Status, setting.SettingType, setting.SettingValue, setting.UpdatedBy, setting.UpdatedOn)
 	return err
 }
 
+//GetGlobalSetting returns a particular setting
 func (s systemStore) GetGlobalSetting(orgID, settingType string) (models.GlobalSettings, error) {
 	//logger.Trace(orgID, settingType)
 	var setting models.GlobalSettings
@@ -24,6 +26,7 @@ func (s systemStore) GetGlobalSetting(orgID, settingType string) (models.GlobalS
 	return setting, err
 }
 
+//UpdateGlobalSetting updates setting from db, if it doesn't exists new row will be inserted
 func (s systemStore) UpdateGlobalSetting(setting models.GlobalSettings) error {
 
 	result, err := s.DB.Exec(`UPDATE global_settings SET status = $3, value = $4, updated_by = $5, updated_on =$6  WHERE org_id = $1 AND type = $2;`,

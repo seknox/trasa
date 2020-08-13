@@ -38,7 +38,7 @@ func EnforcePasswordPolicyNow(w http.ResponseWriter, r *http.Request) {
 	policy.ResolvedOn = time.Now().Unix()
 
 	for _, v := range allUsers {
-		policy.EnforceID = utils.GetRandomID(7)
+		policy.EnforceID = utils.GetRandomString(7)
 		policy.UserID = v.ID
 		err := users.Store.EnforcePolicy(policy)
 		if err != nil {

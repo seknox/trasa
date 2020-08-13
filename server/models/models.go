@@ -17,6 +17,7 @@ import (
 	"github.com/go-redis/redis/v8"
 )
 
+//Gstate is a global state struct which contains database connections, configurations etc
 type Gstate struct {
 	db             *sql.DB
 	geoip          *geoip2.Reader

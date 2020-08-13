@@ -115,7 +115,7 @@ func fillInitialFields(req *models.Service) *models.Service {
 
 	req.CreatedAt = time.Now().Unix()
 	req.UpdatedAt = time.Now().Unix()
-	req.SecretKey = utils.GetRandomID(17) //hex.EncodeToString(apptoken)
+	req.SecretKey = utils.GetRandomString(17) //hex.EncodeToString(apptoken)
 	req.Passthru = false
 	req.ManagedAccounts = ""
 	req.Hostname = utils.NormalizeString(req.Hostname)

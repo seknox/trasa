@@ -61,6 +61,7 @@ func GetUserDevicesByType(w http.ResponseWriter, r *http.Request) {
 	utils.TrasaResponse(w, 200, "success", "devices fetched.", "SingleUserDevices", resp)
 }
 
+//RemoveUserDevice removes user device
 func RemoveUserDevice(w http.ResponseWriter, r *http.Request) {
 	userContext := r.Context().Value("user").(models.UserContext)
 	deviceID := chi.URLParam(r, "deviceID")
@@ -76,6 +77,7 @@ func RemoveUserDevice(w http.ResponseWriter, r *http.Request) {
 
 }
 
+//TrustUserDevice marks certain user device as trusted
 func TrustUserDevice(w http.ResponseWriter, r *http.Request) {
 	userContext := r.Context().Value("user").(models.UserContext)
 

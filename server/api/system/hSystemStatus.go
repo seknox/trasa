@@ -24,6 +24,7 @@ type cpustat struct {
 	CPUStat  []float64 `json:"cpuStat"`
 }
 
+//SystemStatus returns information about system TRASA is running on.
 func SystemStatus(w http.ResponseWriter, r *http.Request) {
 
 	var systemStat sysStatus

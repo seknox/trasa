@@ -58,7 +58,7 @@ func SyncNow(w http.ResponseWriter, r *http.Request) {
 		srvc.Name = strings.ToLower(v.Name)
 		srvc.Type = "ssh"
 		srvc.OrgID = uc.User.OrgID
-		srvc.SecretKey = utils.GetRandomID(7)
+		srvc.SecretKey = utils.GetRandomString(7)
 		srvc.Adhoc = false
 		srvc.Passthru = false
 		srvc.CreatedAt = time.Now().Unix() //.In(nep).String() // .UTC().Format(time.RFC3339)

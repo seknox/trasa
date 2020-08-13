@@ -85,7 +85,7 @@ func InitCA(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var ca models.CertHolder
-	ca.CertID = utils.GetRandomID(10)
+	ca.CertID = utils.GetRandomString(10)
 	ca.EntityID = "HTTP_CA"
 	ca.OrgID = uc.User.OrgID
 	ca.Cert = cert
@@ -225,7 +225,7 @@ func UploadCA(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var ca models.CertHolder
-	ca.CertID = utils.GetRandomID(10)
+	ca.CertID = utils.GetRandomString(10)
 	ca.EntityID = "ca"
 	ca.OrgID = uc.User.OrgID
 	ca.Cert = []byte(req.CertVal)

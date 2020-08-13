@@ -20,6 +20,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+//GetMyDetail returns current user details
 func GetMyDetail(w http.ResponseWriter, r *http.Request) {
 	userContext := r.Context().Value("user").(models.UserContext)
 	utils.TrasaResponse(w, 200, "success", "my", "my", userContext)
@@ -29,6 +30,7 @@ type forgotPassReq struct {
 	Email string `json:"email"`
 }
 
+//ForgotPassword starts forgot password process
 func ForgotPassword(w http.ResponseWriter, r *http.Request) {
 	var req forgotPassReq
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
@@ -49,7 +51,7 @@ func ForgotPassword(w http.ResponseWriter, r *http.Request) {
 	// if we are here, it means username password validation succeeded. we will generate a unique token attached to this user.
 	// and send this token in response. this token will be used to validate tfa request and retrieve userID for this user.
 	// this userID will be used to retrieve user detail and send in response to successful authentication.
-	token := utils.GetRandomID(15)
+	token := utils.GetRandomString(15)
 	//TODO @sshah is the intent corrent here?
 	err = redis.Store.Set(token, time.Second*400, "orgUser", orgUser, "intent", "AUTH_REQ_FORGOT_PASS")
 	if err != nil {

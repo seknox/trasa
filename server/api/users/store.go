@@ -10,6 +10,7 @@ import (
 	"github.com/seknox/trasa/server/models"
 )
 
+//GetFromID returns user details from user ID
 func (s userStore) GetFromID(userID, orgID string) (user *models.User, err error) {
 	user = &models.User{}
 	err = s.DB.QueryRow("SELECT org_id, id,username, first_name,middle_name, last_name, email, user_role,status, created_at, updated_at, idp_name FROM users WHERE id = $1 AND org_id=$2", userID, orgID).
@@ -18,7 +19,7 @@ func (s userStore) GetFromID(userID, orgID string) (user *models.User, err error
 	return
 }
 
-//GetAll returns all users of a organizations
+//GetAll returns all users of an organization
 func (s userStore) GetAll(orgID string) ([]models.User, error) {
 	var users = make([]models.User, 0)
 
@@ -48,7 +49,7 @@ func (s userStore) GetAll(orgID string) ([]models.User, error) {
 
 }
 
-//GetAll returns all users of a organizations
+//GetAdminEmails returns email of all admins of an organization
 func (s userStore) GetAdminEmails(orgID string) ([]string, error) {
 	var users = make([]string, 0)
 
@@ -74,17 +75,17 @@ func (s userStore) GetAdminEmails(orgID string) ([]string, error) {
 
 }
 
-func (s userStore) Delete(userID, orgID string) (string, string, error) {
-	var (
-		email, userRole string
-	)
-	err := s.DB.QueryRow(`DELETE FROM users WHERE id = $1 AND org_id=$2 RETURNING email, user_role`,
+//Delete deletes a user and returns its email and user role
+func (s userStore) Delete(userID, orgID string) (email string, userRole string, err error) {
+
+	err = s.DB.QueryRow(`DELETE FROM users WHERE id = $1 AND org_id=$2 RETURNING email, user_role`,
 		userID, orgID).
 		Scan(&email, &userRole)
 
 	return email, userRole, err
 }
 
+//Update updates UserName, FirstName, MiddleName, LastName, Email, UserRole, UpdatedAt and  Status of given user based in user ID
 func (s userStore) Update(user models.User) error {
 	_, err := s.DB.Exec(`UPDATE users SET username = $1, first_name = $2, middle_name = $3, last_name = $4, email = $5, user_role = $6, updated_at  = $7,status=$8 WHERE id = $9;`,
 		user.UserName, user.FirstName, user.MiddleName, user.LastName, user.Email, user.UserRole, user.UpdatedAt, user.Status, user.ID)
@@ -92,6 +93,7 @@ func (s userStore) Update(user models.User) error {
 	return err
 }
 
+//UpdatePassword updates password of given user. It expects password to be already hashed
 func (s userStore) UpdatePassword(userID, password string) error {
 	_, err := s.DB.Exec(`UPDATE users SET password = $1 WHERE id = $2;`, password, userID)
 
@@ -132,6 +134,7 @@ func (s userStore) UpdatePasswordState(userID, orgID, oldpassword string, time i
 	return nil
 }
 
+//DeleteActivePolicy deletes an active policy
 func (s userStore) DeleteActivePolicy(userID, orgID, enforceType string) error {
 	_, err := s.DB.Exec(`DELETE FROM policy_enforcer WHERE user_id = $1 AND org_id=$2 AND type=$3 RETURNING *`,
 		userID, orgID, enforceType)
@@ -145,31 +148,7 @@ func (s userStore) DeleteAllUserAccessMaps(userID, orgID string) error {
 	return err
 }
 
-func (s userStore) CRDBGetPendingNotif(userID, orgID string) ([]models.InAppNotification, error) {
-
-	var notifs []models.InAppNotification = make([]models.InAppNotification, 0)
-
-	rows, err := s.DB.Query("SELECT id, user_id, emitter_id, org_id, label,text, created_on FROM inapp_notifs WHERE user_id=$1 AND org_id=$2 AND is_resolved=$3 ORDER BY created_on DESC;",
-		userID, orgID, false)
-	if err != nil {
-		return notifs, err
-	}
-
-	defer rows.Close()
-
-	for rows.Next() {
-		var notif models.InAppNotification
-		err = rows.Scan(&notif.NotificationID, &notif.UserID, &notif.EmitterID, &notif.OrgID, &notif.NotificationLabel, &notif.NotificationText, &notif.CreatedOn)
-		if err != nil {
-			return notifs, err
-		}
-		notifs = append(notifs, notif)
-	}
-
-	return notifs, nil
-
-}
-
+//Create inserts  a new user into user table
 func (s userStore) Create(user *models.UserWithPass) error {
 	_, err := s.DB.Exec(`INSERT into users (org_id, id,  username, first_name, middle_name, last_name, email, password, user_role,status, created_at, updated_at, idp_name, external_id)
 						 values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);`,
@@ -179,6 +158,7 @@ func (s userStore) Create(user *models.UserWithPass) error {
 	return err
 }
 
+//GetPasswordState returns password state of a user
 func (s userStore) GetPasswordState(userID, orgID string) (models.PasswordState, error) {
 	var passState models.PasswordState
 	err := s.DB.QueryRow(`SELECT user_id, org_id,  last_passwords, last_updated FROM password_state WHERE user_id = $1 and org_id = $2`,
@@ -187,6 +167,7 @@ func (s userStore) GetPasswordState(userID, orgID string) (models.PasswordState,
 	return passState, err
 }
 
+//GetDevicesByType returns array of devices of given type
 func (s userStore) GetDevicesByType(userID, deviceType, orgID string) ([]models.UserDevice, error) {
 	var device models.UserDevice
 	var userDevices = make([]models.UserDevice, 0)
@@ -208,6 +189,7 @@ func (s userStore) GetDevicesByType(userID, deviceType, orgID string) ([]models.
 	return userDevices, nil
 }
 
+//GetTOTPDevices returns all totp devices(mobile or htoken) of a user. Onlu totpsec and fcm_token fields are retrieved
 func (s userStore) GetTOTPDevices(userID, orgID string) ([]models.UserDevice, error) {
 	devices := []models.UserDevice{}
 

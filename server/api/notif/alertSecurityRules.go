@@ -66,7 +66,7 @@ func CheckAndFireSecurityRule(orgID, constName, entityValue string) {
 	notif.ResolvedOn = 0
 
 	for _, v := range getAdmins {
-		notif.NotificationID = utils.GetRandomID(10)
+		notif.NotificationID = utils.GetRandomString(10)
 		notif.UserID = v.ID
 		// we call notification store to store notification for this event in user id who is to be notified.
 		err = Store.StoreNotif(notif)

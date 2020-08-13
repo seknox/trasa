@@ -38,7 +38,7 @@ func StoreKey(w http.ResponseWriter, r *http.Request) {
 
 	var store models.KeysHolder
 	store.OrgID = uc.User.OrgID
-	store.KeyID = utils.GetRandomID(5)
+	store.KeyID = utils.GetRandomString(5)
 	store.KeyTag = fmt.Sprintf("%s-xxxx-xxxx...", req.KeyVal[0:4])
 	store.AddedBy = uc.User.ID
 	store.AddedAt = time.Now().Unix()

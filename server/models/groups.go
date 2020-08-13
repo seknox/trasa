@@ -1,5 +1,6 @@
 package models
 
+//Group can be user or service group
 type Group struct {
 	GroupID     string `json:"groupID"`
 	OrgID       string `json:"orgID"`
@@ -11,7 +12,8 @@ type Group struct {
 	UpdatedAt   int64  `json:"updatedAt"`
 }
 
-type UserGroup struct {
+//UserGroupMap is a database relation map between user and group
+type UserGroupMap struct {
 	MapID     string `json:"mapID"`
 	GroupID   string `json:"groupID"`
 	OrgID     string `json:"orgID"`
@@ -21,6 +23,7 @@ type UserGroup struct {
 	UpdatedAt int64  `json:"updated_at"`
 }
 
+//ServiceGroupMap is a database relation map between Service and Group
 type ServiceGroupMap struct {
 	MapID         string `json:"mapID"`
 	GroupID       string `json:"groupID"`
@@ -29,14 +32,4 @@ type ServiceGroupMap struct {
 	Status        bool   `json:"status"`
 	CreatedAt     int64  `json:"createdAt"`
 	UpdatedAt     int64  `json:"updated_at"`
-}
-
-type GroupMap struct {
-	MapID   string `json:"mapID"`
-	GroupID string `json:"groupID"`
-	OrgID   string `json:"orgID"`
-	// EntityVal can be either userID, serviceID or policy string for current group in context.
-	EntityVal string `json:"entityVal"`
-	CreatedAt int64  `json:"createdAt"`
-	UpdatedAt int64  `json:"updated_at"`
 }

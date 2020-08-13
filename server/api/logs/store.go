@@ -273,7 +273,7 @@ func querySQLInappTrail(conn *sql.DB, sqlStr string, arg ...interface{}) ([]mode
 func (s logStore) LogInAppTrail(ip, userAgent, description string, user *models.User, status bool) error {
 
 	_, err := s.DB.Exec(fmt.Sprintf(`INSERT INTO inapp_trails (%s) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`, inappptrailparams),
-		utils.GetRandomID(5),
+		utils.GetRandomString(5),
 		ip,
 		userAgent,
 		user.Email,
