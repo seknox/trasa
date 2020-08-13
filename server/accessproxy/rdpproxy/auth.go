@@ -101,8 +101,6 @@ func handlePolicy(params *models.ConnectionParams, serviceID string) (ok bool, r
 	params.SessionRecord = policy.RecordSession
 	params.Skip2FA = !policy.TfaRequired
 
-	//TODO device policy
-
 	reason, ok, err = accesscontrol.CheckDevicePolicy(policy.DevicePolicy, params.AccessDeviceID, "", params.OrgID)
 
 	if err != nil {
