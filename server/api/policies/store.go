@@ -110,7 +110,7 @@ func (s policyStore) GetAccessPolicy(userID, serviceID, privilege, orgID string)
 func (s policyStore) getUserAccessPolicy(userID, serviceID, privilege, orgID string) (policy *models.Policy, adhoc bool, err error) {
 
 	policy = &models.Policy{}
-	var day_time string
+	var dayTime string
 
 	err = s.DB.QueryRow(`
 	SELECT policies.day_time,
@@ -128,12 +128,12 @@ FROM user_accessmaps map
 JOIN policies ON map.policy_id=policies.id AND map.org_id=policies.org_id                             
 JOIN services ON map.service_id=services.id AND map.org_id=services.org_id
 WHERE map.user_id= $1 AND map.service_id= $2 AND map.privilege=$3 AND  map.org_id=$4;`, userID, serviceID, privilege, orgID).
-		Scan(&day_time, &adhoc, &policy.TfaRequired, &policy.RecordSession, &policy.FileTransfer, &policy.IPSource, &policy.RiskThreshold, &policy.Expiry, &policy.AllowedCountries, &policy.DevicePolicy)
+		Scan(&dayTime, &adhoc, &policy.TfaRequired, &policy.RecordSession, &policy.FileTransfer, &policy.IPSource, &policy.RiskThreshold, &policy.Expiry, &policy.AllowedCountries, &policy.DevicePolicy)
 	if err != nil {
 		return
 	}
 
-	err = json.Unmarshal([]byte(day_time), &policy.DayAndTime)
+	err = json.Unmarshal([]byte(dayTime), &policy.DayAndTime)
 
 	return
 }
@@ -142,7 +142,7 @@ WHERE map.user_id= $1 AND map.service_id= $2 AND map.privilege=$3 AND  map.org_i
 func (s policyStore) getUserGroupAccessPolicy(userID, serviceID, privilege, orgID string) (policy *models.Policy, adhoc bool, err error) {
 	policy = &models.Policy{}
 
-	var day_time string
+	var dayTime string
 
 	//In this case appgroup_id of appgroup_usergroup_mapv1 table is used as service_id
 	//because usergroup is assigned to single Service
@@ -163,12 +163,12 @@ func (s policyStore) getUserGroupAccessPolicy(userID, serviceID, privilege, orgI
 					) as gappusersv1  
 						 JOIN services ON gappusersv1.servicegroup_id=services.id AND gappusersv1.org_id=services.org_id 
 					WHERE gappusersv1.user_id= $1 AND gappusersv1.servicegroup_id= $2 AND gappusersv1.privilege=$3 AND  gappusersv1.org_id=$4  AND gappusersv1.map_type='service';`, userID, serviceID, privilege, orgID).
-		Scan(&day_time, &adhoc, &policy.TfaRequired, &policy.RecordSession, &policy.FileTransfer, &policy.IPSource, &policy.RiskThreshold, &policy.Expiry, &policy.AllowedCountries, &policy.DevicePolicy)
+		Scan(&dayTime, &adhoc, &policy.TfaRequired, &policy.RecordSession, &policy.FileTransfer, &policy.IPSource, &policy.RiskThreshold, &policy.Expiry, &policy.AllowedCountries, &policy.DevicePolicy)
 	if err != nil {
 		return
 	}
 
-	err = json.Unmarshal([]byte(day_time), &policy.DayAndTime)
+	err = json.Unmarshal([]byte(dayTime), &policy.DayAndTime)
 
 	return
 }
@@ -177,7 +177,7 @@ func (s policyStore) getUserGroupAccessPolicy(userID, serviceID, privilege, orgI
 func (s policyStore) getServiceUserGroupAccessPolicy(userID, serviceID, privilege, orgID string) (policy *models.Policy, adhoc bool, err error) {
 	policy = &models.Policy{}
 
-	var day_time string
+	var dayTime string
 
 	err = s.DB.QueryRow(`SELECT 
        gappusersv1.day_time,
@@ -197,12 +197,12 @@ FROM (usergroup_accessmaps ag_ug
 		) as gappusersv1  
 			 JOIN services ON gappusersv1.service_id=services.id AND gappusersv1.org_id=services.org_id
 		WHERE gappusersv1.user_id= $1 AND gappusersv1.service_id= $2 AND gappusersv1.privilege=$3 AND gappusersv1.org_id=$4 AND gappusersv1.map_type='servicegroup';`, userID, serviceID, privilege, orgID).
-		Scan(&day_time, &adhoc, &policy.TfaRequired, &policy.RecordSession, &policy.FileTransfer, &policy.IPSource, &policy.RiskThreshold, &policy.Expiry, &policy.AllowedCountries, &policy.DevicePolicy)
+		Scan(&dayTime, &adhoc, &policy.TfaRequired, &policy.RecordSession, &policy.FileTransfer, &policy.IPSource, &policy.RiskThreshold, &policy.Expiry, &policy.AllowedCountries, &policy.DevicePolicy)
 	if err != nil {
 		return
 	}
 
-	err = json.Unmarshal([]byte(day_time), &policy.DayAndTime)
+	err = json.Unmarshal([]byte(dayTime), &policy.DayAndTime)
 
 	return
 }

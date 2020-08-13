@@ -30,22 +30,22 @@ import (
 )
 
 const (
-	goto_keyboard_interactive = "trasa: goto_keyboard_interactive"
-	goto_public_key           = "trasa: goto_public_key"
-	fail_now                  = "trasa: fail_now"
+	gotoKeyboardInteractive = "trasa: goto_keyboard_interactive"
+	gotoPublicKey           = "trasa: goto_public_key"
+	failNow                 = "trasa: fail_now"
 )
 
 //Decides which auth method to use next from previous error
 func nextAuthMethodHandler(conn ssh.ConnMetadata, prevErr error) ([]string, bool, error) {
 
 	switch prevErr.Error() {
-	case goto_keyboard_interactive:
+	case gotoKeyboardInteractive:
 		return []string{"keyboard-interactive"}, true, nil
 	case "ssh: no auth passed yet":
 		return []string{"publickey", "keyboard-interactive"}, false, nil
-	case goto_public_key:
+	case gotoPublicKey:
 		return []string{"publickey", "keyboard-interactive"}, false, nil
-	case fail_now:
+	case failNow:
 		return []string{}, false, prevErr
 	default:
 		if prevErr != nil {
