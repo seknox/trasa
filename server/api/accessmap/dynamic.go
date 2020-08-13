@@ -158,7 +158,7 @@ func notifyAdmins(orgID, hostname, appType, userEmail string) {
 	tmplt.TimeInt = time.Now().Unix()
 	err = notif.Store.SendEmail(orgID, consts.EMAIL_DYNAMIC_ACCESS, tmplt)
 	if err != nil {
-		logger.Errorf("send dynamic access email", err)
+		logger.Errorf("send dynamic access email: %v", err)
 	}
 
 }
