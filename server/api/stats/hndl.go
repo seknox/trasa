@@ -23,41 +23,36 @@ func GetAggregatedUsers(w http.ResponseWriter, r *http.Request) {
 	entityType := chi.URLParam(r, "entitytype")
 	entityID := chi.URLParam(r, "entityid")
 
-	switch entityType {
-	case "org":
-		usersAgg, err := Store.GetAggregatedIdpUsers(entityType, entityID, uc.User.OrgID)
-		if err != nil {
-			logrus.Error(err)
-			utils.TrasaResponse(w, 200, "failed", "Could not get user count", "GetTotalGroups", nil)
-			return
-		}
-
-		usersAgg.Groups, err = Store.GetTotalGroups(uc.User.OrgID, "usergroup")
-		if err != nil {
-			logrus.Error(err)
-			utils.TrasaResponse(w, 200, "failed", "Could not get user count", "GetTotalGroups", nil)
-			return
-		}
-
-		usersAgg.Admins, err = Store.GetTotalAdmins(uc.User.OrgID)
-		if err != nil {
-			logrus.Error(err)
-			utils.TrasaResponse(w, 200, "failed", "Could not get user count", "GetTotalAdmins", nil)
-			return
-		}
-
-		usersAgg.DisabledUsers, err = Store.GetTotalDisabledUsers(uc.User.OrgID)
-		if err != nil {
-			logrus.Error(err)
-			utils.TrasaResponse(w, 200, "failed", "Could not get user count", "GetTotalDisabled", nil)
-			return
-		}
-
-		utils.TrasaResponse(w, 200, "success", "", "", usersAgg)
+	usersAgg, err := Store.GetAggregatedIdpUsers(entityType, entityID, uc.User.OrgID)
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "Could not get user count", "GetTotalGroups", nil)
 		return
 	}
-	logrus.Error("unsupported entity ", entityType)
-	utils.TrasaResponse(w, 200, "failed", "Not supported yet", "", nil)
+
+	usersAgg.Groups, err = Store.GetTotalGroups(uc.User.OrgID, "usergroup")
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "Could not get user count", "GetTotalGroups", nil)
+		return
+	}
+
+	usersAgg.Admins, err = Store.GetTotalAdmins(uc.User.OrgID)
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "Could not get user count", "GetTotalAdmins", nil)
+		return
+	}
+
+	usersAgg.DisabledUsers, err = Store.GetTotalDisabledUsers(uc.User.OrgID)
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "Could not get user count", "GetTotalDisabled", nil)
+		return
+	}
+
+	utils.TrasaResponse(w, 200, "success", "", "", usersAgg)
+
 }
 
 //GetAggregatedDevices returns device stats (total devices, mobile devices, total browsers)
@@ -65,36 +60,33 @@ func GetAggregatedDevices(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
 	entityType := chi.URLParam(r, "entitytype")
 	entityID := chi.URLParam(r, "entityid")
-	var res allUserDevices
+	var res AllUserDevices
 	var err error
-	switch entityType {
-	case "org":
-		res.TotalBrowsers, res.BrowserByType, err = Store.GetAggregatedBrowsers(entityType, uc.Org.ID, uc.User.OrgID)
-		if err != nil {
-			logrus.Error(err)
-			utils.TrasaResponse(w, 200, "failed", "Could not get aggregated browsers", "", nil)
-			return
-		}
-		res.TotalMobiles, res.MobileByType, err = Store.GetAggregatedMobileDevices(entityType, entityID, uc.User.OrgID)
-		if err != nil {
-			logrus.Error(err)
-			utils.TrasaResponse(w, 200, "failed", "Could not get aggregated mobiles", "", nil)
-			return
-		}
 
-		res.TotalWorkstations, res.WorkstationByType, err = Store.GetAggregatedDeviceUsers(entityType, entityID, "workstation", uc.User.OrgID)
-		if err != nil {
-			logrus.Error(err)
-			utils.TrasaResponse(w, 200, "failed", "Could not get  aggregated workstation", "", nil)
-			return
-		}
-		res.TotalUserdeivce = res.TotalWorkstations + res.TotalMobiles + res.TotalBrowsers
-
-		utils.TrasaResponse(w, 200, "success", "", "", res)
+	res.TotalBrowsers, res.BrowserByType, err = Store.GetAggregatedBrowsers(entityType, uc.Org.ID, uc.User.OrgID)
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "Could not get aggregated browsers", "", nil)
 		return
 	}
-	logrus.Error("unsupported entity ", entityType)
-	utils.TrasaResponse(w, 200, "failed", "Not supported yet", "", nil)
+	res.TotalMobiles, res.MobileByType, err = Store.GetAggregatedMobileDevices(entityType, entityID, uc.User.OrgID)
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "Could not get aggregated mobiles", "", nil)
+		return
+	}
+
+	res.TotalWorkstations, res.WorkstationByType, err = Store.GetAggregatedDeviceUsers(entityType, entityID, "workstation", uc.User.OrgID)
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "Could not get  aggregated workstation", "", nil)
+		return
+	}
+	res.TotalUserdeivce = res.TotalWorkstations + res.TotalMobiles + res.TotalBrowsers
+
+	utils.TrasaResponse(w, 200, "success", "", "", res)
+	return
+
 }
 
 //GetAggregatedFailedReasons aggregates authentication according to failed reasons
@@ -172,8 +164,8 @@ func GetAggregatedLoginHours(w http.ResponseWriter, r *http.Request) {
 //GetTotalManagedUsers returns total managed users (password stored in vault)
 func GetTotalManagedUsers(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
-
-	managedUsers, err := Store.GetTotalManagedUsers("org", uc.Org.ID, uc.Org.ID)
+	serviceID := chi.URLParam(r, "entityid")
+	managedUsers, err := Store.GetTotalManagedUsers("service", serviceID, uc.Org.ID)
 	if err != nil {
 		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "failed to get managed users", "GetTotalManagedUsers", nil)
@@ -291,19 +283,20 @@ func GetPoliciesStats(w http.ResponseWriter, r *http.Request) {
 //	utils.TrasaResponse(w, 200, "success", "", "GetCAstats", nil, resp)
 //}
 
-func GetAppPermStats(w http.ResponseWriter, r *http.Request) {
+type PermStats struct {
+	Users      int `json:"users"`
+	Policies   int `json:"policy"`
+	Groups     int `json:"groups"`
+	Secrets    int `json:"secrets"`
+	Privileges int `json:"privileges"`
+}
+
+func GetServicePermStats(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
 
 	serviceID := chi.URLParam(r, "serviceID")
 
-	var resp struct {
-		Users      int `json:"users"`
-		Policies   int `json:"policy"`
-		Groups     int `json:"groups"`
-		Secrets    int `json:"secrets"`
-		Privileges int `json:"privileges"`
-	}
-
+	var resp PermStats
 	var err error
 	//fmt.Println("org inside gettotal: ", userContext.Org.ID)
 	resp.Secrets, err = Store.GetTotalManagedUsers("service", serviceID, uc.Org.ID)

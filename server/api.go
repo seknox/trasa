@@ -270,7 +270,7 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		r.Get("/stats/loginsbytype/{entitytype}/{entityid}/{timeFilter}/{statusFilter}", stats.GetLoginsByType)
 		r.Get("/stats/total/{entitytype}/{entityid}/{timeFilter}", stats.GetSuccessAndFailedEvents)
 		r.Get("/stats/ca", stats.GetCAStats)
-		r.Get("/stats/appperms/{serviceID}", stats.GetAppPermStats)
+		r.Get("/stats/appperms/{serviceID}", stats.GetServicePermStats)
 		r.Get("/events/stats/{entitytype}/{entityid}/byday", stats.GetTotalLoginsByDate)
 
 		r.Get("/system/status", system.SystemStatus)

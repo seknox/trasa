@@ -14,7 +14,7 @@ func (s statStore) GetTotalDisabledUsers(orgID string) (int, error) {
 	return total, err
 }
 
-func (s statStore) GetAggregatedIdpUsers(entityType, entityID, orgID string) (users totalUsers, err error) {
+func (s statStore) GetAggregatedIdpUsers(entityType, entityID, orgID string) (users TotalUsers, err error) {
 	users.Users = 0
 	rows, err := s.DB.Query(`select count(*) as c,idp_name from users WHERE org_id=$1 GROUP BY idp_name ORDER BY c ASC`, orgID)
 	if err != nil {

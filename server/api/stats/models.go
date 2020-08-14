@@ -1,6 +1,6 @@
 package stats
 
-type totalUsers struct {
+type TotalUsers struct {
 	Users         int `json:"users"`
 	Admins        int `json:"admins"`
 	Groups        int `json:"groups"`
@@ -14,7 +14,7 @@ type idpUsers struct {
 	Value int    `json:"value"`
 }
 
-type allUserDevices struct {
+type AllUserDevices struct {
 	TotalUserdeivce   int            `json:"totalUserdevices"`
 	TotalBrowsers     int            `json:"totalBrowsers"`
 	TotalMobiles      int            `json:"totalMobiles"`
@@ -31,7 +31,7 @@ type deviceByType struct {
 	Value int `json:"value"`
 }
 
-type allServices struct {
+type AllServices struct {
 	TotalServices  int         `json:"totalServices"`
 	ServicesByType []nameValue `json:"servicesByType"`
 	TotalGroups    int         `json:"totalGroups"`
@@ -45,14 +45,14 @@ type nameValue struct {
 	Value int    `json:"value"`
 }
 
-type failedReasonsByType struct {
+type FailedReasonsByType struct {
 	// using Name and Value instead of Type and Count because echart expects such.
 	Name  string `json:"name"`
 	Label string `json:"label"`
 	Value int    `json:"value"`
 }
 
-type loginsByHour struct {
+type LoginsByHour struct {
 	Hour  string `json:"name"`
 	Count string `json:"value"`
 }

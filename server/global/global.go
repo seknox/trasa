@@ -73,8 +73,13 @@ type KexDerivedKey struct {
 }
 
 func InitDBSTORE() *State {
-	//checkInitDirsAndFiles()
 	config = parseConfig()
+	return InitDBSTOREWithConfig(config)
+}
+
+func InitDBSTOREWithConfig(config Config) *State {
+	//checkInitDirsAndFiles()
+
 	level, _ := logrus.ParseLevel(config.Logging.Level)
 	logOutputToFile := flag.Bool("f", false, "Write to file")
 
