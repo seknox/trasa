@@ -88,7 +88,7 @@ type totalEventsByDate struct {
 	FailedLogins     int64  `json:"failedLogins"`
 }
 
-type aggIps struct {
+type AggIps struct {
 	Key      string       `json:"-"`
 	Name     string       `json:"name"`
 	Value    int          `json:"value"`

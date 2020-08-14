@@ -139,9 +139,9 @@ out:
 	return logins, err
 }
 
-func (s statStore) GetAggregatedIPs(entityType, entityID, orgID, timezone, timeFilter, statusFilter string) (aggIps, error) {
+func (s statStore) GetAggregatedIPs(entityType, entityID, orgID, timezone, timeFilter, statusFilter string) (AggIps, error) {
 
-	var ippool aggIps
+	var ippool AggIps
 
 	loc, err := time.LoadLocation(timezone)
 	if err != nil {

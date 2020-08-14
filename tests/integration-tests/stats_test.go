@@ -385,3 +385,65 @@ func TestGetServicePermStats(t *testing.T) {
 	}
 
 }
+
+func TestGetIPAggs(t *testing.T) {
+	// Create a request to pass to our handler. We don't have any query parameters for now, so we'll
+	// pass 'nil' as the third parameter.
+	req, err := http.NewRequest("GET", "/api/v1/stats/appperms/2fef188a-cc13-438b-8564-2803a072f650", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(testutils.AddTestUserContext(stats.GetIPAggs))
+
+	///stats/ips/{entitytype}/{entityid}/{timeFilter}/{statusFilter}
+	rctx := chi.NewRouteContext()
+	rctx.URLParams.Add("entityid", "2fef188a-cc13-438b-8564-2803a072f650")
+	req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, rctx))
+
+	handler.ServeHTTP(rr, req)
+
+	// Check the status code is what we expect.
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	var resp struct {
+		models.TrasaResponseStruct
+		Data []stats.AggIps `json:"data"`
+	}
+
+	err = json.Unmarshal(rr.Body.Bytes(), &resp)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if resp.Status != "success" {
+		t.Fatal(resp.Reason)
+	}
+
+	if len(resp.Data) == 0 {
+		t.Fatalf(`response data is blank, resp: %s`, string(rr.Body.Bytes()))
+	}
+	data := resp.Data[0]
+
+	if data.Value != 233 {
+		t.Errorf(`incorrect assigned users, expected:%d got %d`, 233, data.Value)
+	}
+	//if data.Groups != 0 {
+	//	t.Errorf(`incorrect assigned groups, expected:%d got %d`, 0, data.Groups)
+	//}
+	//if data.Policies != 2 {
+	//	t.Errorf(`incorrect assigned policies, expected:%d got %d`, 2, data.Policies)
+	//}
+	//if data.Privileges != 2 {
+	//	t.Errorf(`incorrect assigned priviliges, expected:%d got %d`, 2, data.Privileges)
+	//}
+	//if data.Secrets != 2 {
+	//	t.Errorf(`incorrect stored secrets, expected:%d got %d`, 2, data.Secrets)
+	//}
+
+}

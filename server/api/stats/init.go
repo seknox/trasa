@@ -42,7 +42,7 @@ type adapter interface {
 	GetAggregatedLoginFails(entityType, entityID, orgID, timezone, timeFilter string) (reasons []FailedReasonsByType, err error)
 	GetAggregatedLoginHours(entityType, entityID, timezone, orgID, timeFilter, statusFilter string) (logins []LoginsByHour, err error)
 	GetTotalLoginsByDate(entityType, entityID, orgID, timezone string) ([]totalEventsByDate, error)
-	GetAggregatedIPs(entityType, entityID, orgID, timezone, timeFilter, statusFilter string) (aggIps, error)
+	GetAggregatedIPs(entityType, entityID, orgID, timezone, timeFilter, statusFilter string) (AggIps, error)
 	GetLoginsByType(entityType, entityID, orgID, timezone, timeFilter, statusFilter string) (logins []nameValue, err error)
 	SortLoginByCity(entityType, entityID, orgID, timezone, timeFilter, statusFilter string) ([]geoDataType, error)
 	GetAllAuthEventsByEntityType(entityType, entityID, timeFilter, timezone string) (totalEventsAuthEvents, error)
