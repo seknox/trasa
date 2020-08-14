@@ -20,6 +20,7 @@ type globalSettings struct {
 	DeviceHygiene  models.GlobalSettings `json:"deviceHygiene"`
 }
 
+//GlobalSettings returns all global settings
 func GlobalSettings(w http.ResponseWriter, r *http.Request) {
 	logrus.Trace("request received")
 	userContext := r.Context().Value("user").(models.UserContext)
@@ -63,6 +64,7 @@ type updatePassPolicyReq struct {
 	Enable bool                  `json:"enable"`
 }
 
+//UpdatePasswordPolicy updates password policy  in global settings
 func UpdatePasswordPolicy(w http.ResponseWriter, r *http.Request) {
 	logrus.Trace("request received")
 	userContext := r.Context().Value("user").(models.UserContext)
@@ -99,6 +101,7 @@ func UpdatePasswordPolicy(w http.ResponseWriter, r *http.Request) {
 
 }
 
+//UpdateSSHCertSetting updates ssh cert settings  in global settings
 func UpdateSSHCertSetting(w http.ResponseWriter, r *http.Request) {
 	//mandatoryCert
 
@@ -132,6 +135,7 @@ func UpdateSSHCertSetting(w http.ResponseWriter, r *http.Request) {
 	utils.TrasaResponse(w, 200, "success", "Setting updated", "SSH certificate policy updated", nil, nil)
 }
 
+//UpdateDeviceHygieneSetting updates device hygiene enforce settings
 func UpdateDeviceHygieneSetting(w http.ResponseWriter, r *http.Request) {
 	logrus.Trace("device hygeiene req")
 	uc := r.Context().Value("user").(models.UserContext)
@@ -164,6 +168,7 @@ func UpdateDeviceHygieneSetting(w http.ResponseWriter, r *http.Request) {
 	utils.TrasaResponse(w, 200, "success", "Setting updated", "UpdateDeviceHygieneSetting", nil, nil)
 }
 
+//UpdateDynamicAccessSetting updates dynamic access settings
 func UpdateDynamicAccessSetting(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
 	var req models.GlobalDynamicAccessSettings
@@ -198,6 +203,7 @@ func UpdateDynamicAccessSetting(w http.ResponseWriter, r *http.Request) {
 	utils.TrasaResponse(w, 200, "success", "Setting updated", "dynamic access setting updated", nil, nil)
 }
 
+//UpdateEmailSetting updates email settings
 func UpdateEmailSetting(w http.ResponseWriter, r *http.Request) {
 	logrus.Trace("UpdateEmailSetting request received")
 	uc := r.Context().Value("user").(models.UserContext)
@@ -224,7 +230,7 @@ func UpdateEmailSetting(w http.ResponseWriter, r *http.Request) {
 	}
 
 	key.OrgID = uc.User.OrgID
-	key.KeyID = utils.GetRandomID(5)
+	key.KeyID = utils.GetRandomString(5)
 	key.KeyTag = fmt.Sprintf("%sxxxx-xxxx...", start)
 	key.AddedBy = uc.User.ID
 	key.AddedAt = time.Now().Unix()

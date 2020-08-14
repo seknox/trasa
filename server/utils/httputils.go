@@ -106,6 +106,7 @@ func GetIp(r *http.Request) string {
 	return ip
 }
 
+//ParseAndValidateRequest unmarshalls request body into given struct and also verify json fields
 func ParseAndValidateRequest(r *http.Request, reqStruct interface{}) error {
 
 	if err := json.NewDecoder(r.Body).Decode(&reqStruct); err != nil {
@@ -117,7 +118,7 @@ func ParseAndValidateRequest(r *http.Request, reqStruct interface{}) error {
 	return nil
 }
 
-//GetHttpClient
+//GetHttpClient return a http client
 func GetHttpClient(insecure bool) *http.Client {
 	var client *http.Client
 

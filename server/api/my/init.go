@@ -5,14 +5,16 @@ import (
 	"github.com/seknox/trasa/server/models"
 )
 
+//InitStore initialises package state
 func InitStore(con *global.State) {
 	// initialize local state
-	Store = MyStore{
+	Store = myStore{
 		State: con,
 	}
 
 }
 
+//InitStoreMock will init mock state of this package
 //func InitStoreMock() *userstoremocks.UserStoreMock {
 //	// initialize local state
 //	mockUser := new(userstoremocks.UserStoreMock)
@@ -20,12 +22,13 @@ func InitStore(con *global.State) {
 //	return mockUser
 //}
 
-var Store MyAdapter
+//Store is the package state variable which contains database connections
+var Store adapter
 
-type MyStore struct {
+type myStore struct {
 	*global.State
 }
 
-type MyAdapter interface {
+type adapter interface {
 	GetUserAppsDetailsWithPolicyFromUserID(userID, orgID string) ([]models.MyServiceDetails, error)
 }

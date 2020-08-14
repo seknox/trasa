@@ -89,7 +89,7 @@ func GetDownloadableFileList(w http.ResponseWriter, r *http.Request) {
 func GetFileDownloadToken(w http.ResponseWriter, r *http.Request) {
 	userContext := r.Context().Value("user").(models.UserContext)
 	userID := userContext.User.ID
-	authKey := utils.GetRandomID(17)
+	authKey := utils.GetRandomString(17)
 	err := redis.Store.Set(authKey, time.Second*600, "userID", userID)
 	if err != nil {
 		logrus.Error(err)

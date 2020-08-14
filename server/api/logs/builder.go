@@ -134,7 +134,7 @@ func NewHTTPAuthLog(endpoint consts.ConstEndpoints, ip, sessionID, userAgent str
 	}
 
 	var session AuthLog
-	session.EventID = utils.GetRandomID(5)
+	session.EventID = utils.GetRandomString(5)
 	session.SessionID = sessionID
 	session.OrgID = user.OrgID
 	session.UserID = user.ID

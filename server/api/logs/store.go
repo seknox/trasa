@@ -57,7 +57,7 @@ const inappptrailparams = `
 	description
 `
 
-func (s LogStore) LogSignup(signup *models.InitSignup) error {
+func (s logStore) LogSignup(signup *models.InitSignup) error {
 
 	var logData models.SignupLog
 
@@ -77,7 +77,7 @@ func (s LogStore) LogSignup(signup *models.InitSignup) error {
 
 }
 
-func (s LogStore) LogLogin(log *AuthLog, reason consts.FailedReason, status bool) error {
+func (s logStore) LogLogin(log *AuthLog, reason consts.FailedReason, status bool) error {
 
 	log.Status = status
 	log.LogoutTime = time.Now().UnixNano()
@@ -121,7 +121,7 @@ func (s LogStore) LogLogin(log *AuthLog, reason consts.FailedReason, status bool
 	return err
 }
 
-func (s LogStore) GetLoginEvents(entityType, entityID, orgID string) (logEvents []AuthLog, err error) {
+func (s logStore) GetLoginEvents(entityType, entityID, orgID string) (logEvents []AuthLog, err error) {
 
 	sqlStr := ""
 
@@ -140,7 +140,7 @@ func (s LogStore) GetLoginEvents(entityType, entityID, orgID string) (logEvents 
 
 }
 
-func (s LogStore) GetLoginEventsByPage(entityType, entityID, orgID string, page int, size int, dateFrom, dateTo int64) ([]AuthLog, error) {
+func (s logStore) GetLoginEventsByPage(entityType, entityID, orgID string, page int, size int, dateFrom, dateTo int64) ([]AuthLog, error) {
 
 	sqlStr := ``
 
@@ -204,7 +204,7 @@ func querySQLAuth(conn *sql.DB, sqlStr string, arg ...interface{}) ([]AuthLog, e
 	return logEvents, nil
 }
 
-func (s LogStore) GetOrgInAppTrails(orgID string, page int, size int, dateFrom, dateTo int64) ([]models.InAppTrail, error) {
+func (s logStore) GetOrgInAppTrails(orgID string, page int, size int, dateFrom, dateTo int64) ([]models.InAppTrail, error) {
 
 	var logEvents = make([]models.InAppTrail, 0)
 
@@ -270,10 +270,10 @@ func querySQLInappTrail(conn *sql.DB, sqlStr string, arg ...interface{}) ([]mode
 	return logEvents, nil
 }
 
-func (s LogStore) LogInAppTrail(ip, userAgent, description string, user *models.User, status bool) error {
+func (s logStore) LogInAppTrail(ip, userAgent, description string, user *models.User, status bool) error {
 
 	_, err := s.DB.Exec(fmt.Sprintf(`INSERT INTO inapp_trails (%s) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`, inappptrailparams),
-		utils.GetRandomID(5),
+		utils.GetRandomString(5),
 		ip,
 		userAgent,
 		user.Email,
@@ -290,7 +290,7 @@ func (s LogStore) LogInAppTrail(ip, userAgent, description string, user *models.
 	return err
 }
 
-func (s LogStore) GetFromMinio(path, bucketName string) (object io.ReadSeeker, err error) {
+func (s logStore) GetFromMinio(path, bucketName string) (object io.ReadSeeker, err error) {
 	// Download log file to minio
 	if global.GetConfig().Minio.Status {
 		return s.MinioClient.GetObject(bucketName, path, minio.GetObjectOptions{})
@@ -299,7 +299,7 @@ func (s LogStore) GetFromMinio(path, bucketName string) (object io.ReadSeeker, e
 	return os.OpenFile(filename, os.O_RDONLY, os.ModePerm)
 }
 
-func (s LogStore) PutIntoMinio(objectName, logfilepath, bucketName string) error {
+func (s logStore) PutIntoMinio(objectName, logfilepath, bucketName string) error {
 	// Download log file to minio
 	if global.GetConfig().Minio.Status {
 		_, err := s.MinioClient.FPutObject(bucketName, objectName, logfilepath, minio.PutObjectOptions{})
@@ -316,7 +316,7 @@ func (s LogStore) PutIntoMinio(objectName, logfilepath, bucketName string) error
 }
 
 // UploadHTTPLogToMinio uploads http txt and video log to minio
-func (s LogStore) UploadHTTPLogToMinio(file *os.File, login AuthLog) error {
+func (s logStore) UploadHTTPLogToMinio(file *os.File, login AuthLog) error {
 
 	bucketName := "trasa-https-logs"
 	filePath := file.Name()

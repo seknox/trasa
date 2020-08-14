@@ -109,7 +109,7 @@ func createDynamicServiceAndAccessMap(hostname, serviceType, userID, userEmail, 
 	newservice.ID = utils.GetUUID()
 
 	newservice.Adhoc = false
-	newservice.SecretKey = utils.GetRandomID(17)
+	newservice.SecretKey = utils.GetRandomString(17)
 	newservice.ManagedAccounts = ""
 	newservice.CreatedAt = time.Now().Unix() //.In(nep).String() // .UTC().Format(time.RFC3339)
 	newservice.UpdatedAt = time.Now().Unix() //.In(nep).String()
@@ -158,7 +158,7 @@ func notifyAdmins(orgID, hostname, appType, userEmail string) {
 	tmplt.TimeInt = time.Now().Unix()
 	err = notif.Store.SendEmail(orgID, consts.EMAIL_DYNAMIC_ACCESS, tmplt)
 	if err != nil {
-		logger.Errorf("send dynamic access email", err)
+		logger.Errorf("send dynamic access email: %v", err)
 	}
 
 }

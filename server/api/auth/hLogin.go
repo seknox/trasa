@@ -125,7 +125,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	// this token will be used to validate tfa request and retrieve userID for this user.
 	// this userID will be used to retrieve user detail and send in response to successful authentication.
 	// @sshahcodes 18 dec, 2019. changing second parameter from hardcoded device-id to login. This will ensure that subsequent tfa requests are tied to this login authentication event.
-	// token := utils.GetRandomID(15) // using public key for token
+	// token := utils.GetRandomString(15) // using public key for token
 
 	priv, pub, err := utils.ECDHGenKeyPair()
 	if err != nil {

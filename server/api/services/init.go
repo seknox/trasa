@@ -5,9 +5,10 @@ import (
 	"github.com/seknox/trasa/server/models"
 )
 
+//InitStore initialises package state
 func InitStore(con *global.State) {
 	// initialize local state
-	Store = ServiceStore{
+	Store = serviceStore{
 		State: con,
 	}
 
@@ -20,13 +21,14 @@ func InitStore(con *global.State) {
 //	return mockApp
 //}
 
-var Store Adapter
+//Store is the package state variable which contains database connections
+var Store adapter
 
-type ServiceStore struct {
+type serviceStore struct {
 	*global.State
 }
 
-type Adapter interface {
+type adapter interface {
 
 	//CRUD
 	GetFromID(serviceID string) (*models.Service, error)

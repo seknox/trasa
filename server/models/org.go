@@ -7,7 +7,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-// Org stores behavious related to every Tenants
+// Org stores info related to every Tenants
 type Org struct {
 	ID             string `json:"ID"`
 	OrgName        string `json:"orgName"`

@@ -6,7 +6,7 @@ import (
 	"github.com/seknox/trasa/server/models"
 )
 
-func (s PolicyStore) GetPolicy(policyID, orgID string) (models.Policy, error) {
+func (s policyStore) GetPolicy(policyID, orgID string) (models.Policy, error) {
 	var policy models.Policy
 	var tempDayTimeStr string
 	err := s.DB.QueryRow(`SELECT id, name, org_id, day_time,risk_threshold, tfa_enabled,file_transfer,record_session,ip_source,device_policy,expiry,allowed_countries , created_at, updated_at from policies WHERE id=$1 AND org_id=$2`, policyID, orgID).
@@ -21,7 +21,7 @@ func (s PolicyStore) GetPolicy(policyID, orgID string) (models.Policy, error) {
 }
 
 // CreatePolicy in database
-func (s PolicyStore) CreatePolicy(policy models.Policy) error {
+func (s policyStore) CreatePolicy(policy models.Policy) error {
 
 	dayTime, err := json.Marshal(policy.DayAndTime)
 	if err != nil {
@@ -35,7 +35,7 @@ func (s PolicyStore) CreatePolicy(policy models.Policy) error {
 	return err
 }
 
-func (s PolicyStore) UpdatePolicy(policy models.Policy) error {
+func (s policyStore) UpdatePolicy(policy models.Policy) error {
 	day_time, err := json.Marshal(policy.DayAndTime)
 	if err != nil {
 		return err
@@ -47,7 +47,7 @@ func (s PolicyStore) UpdatePolicy(policy models.Policy) error {
 	return err
 }
 
-func (s PolicyStore) GetAllPolicies(orgID string) ([]models.Policy, error) {
+func (s policyStore) GetAllPolicies(orgID string) ([]models.Policy, error) {
 	policies := []models.Policy{}
 	rows, err := s.DB.Query(`
 SELECT coalesce(count,0) used_by,
@@ -87,18 +87,18 @@ from policies
 	return policies, err
 }
 
-func (s PolicyStore) DeletePolicy(policyID, orgID string) error {
+func (s policyStore) DeletePolicy(policyID, orgID string) error {
 	_, err := s.DB.Exec(`DELETE FROM policies WHERE id = $1 AND org_id=$2 RETURNING *`, policyID, orgID)
 
 	return err
 }
 
-func (s PolicyStore) GetAccessPolicy(userID, serviceID, orgID string) (policy *models.Policy, privilege string, adhoc bool, err error) {
-	policy, privilege, adhoc, err = s.getUserAccessPolicy(userID, serviceID, orgID)
+func (s policyStore) GetAccessPolicy(userID, serviceID, privilege, orgID string) (policy *models.Policy, adhoc bool, err error) {
+	policy, adhoc, err = s.getUserAccessPolicy(userID, serviceID, privilege, orgID)
 	if err != nil {
-		policy, privilege, adhoc, err = s.getUserGroupAccessPolicy(userID, serviceID, orgID)
+		policy, adhoc, err = s.getUserGroupAccessPolicy(userID, serviceID, privilege, orgID)
 		if err != nil {
-			policy, privilege, adhoc, err = s.getServiceUserGroupAccessPolicy(userID, serviceID, orgID)
+			policy, adhoc, err = s.getServiceUserGroupAccessPolicy(userID, serviceID, privilege, orgID)
 			if err != nil {
 				return
 			}
@@ -107,16 +107,15 @@ func (s PolicyStore) GetAccessPolicy(userID, serviceID, orgID string) (policy *m
 	return
 }
 
-func (s PolicyStore) getUserAccessPolicy(userID, serviceID, orgID string) (policy *models.Policy, privilege string, adhoc bool, err error) {
+func (s policyStore) getUserAccessPolicy(userID, serviceID, privilege, orgID string) (policy *models.Policy, adhoc bool, err error) {
 
 	policy = &models.Policy{}
-	var day_time string
+	var dayTime string
 
 	err = s.DB.QueryRow(`
 	SELECT policies.day_time,
 			adhoc,
 			policies.tfa_enabled,
-			map.privilege,
 			policies.record_session,
 			policies.file_transfer,
 			policies.ip_source,
@@ -128,22 +127,22 @@ func (s PolicyStore) getUserAccessPolicy(userID, serviceID, orgID string) (polic
 FROM user_accessmaps map
 JOIN policies ON map.policy_id=policies.id AND map.org_id=policies.org_id                             
 JOIN services ON map.service_id=services.id AND map.org_id=services.org_id
-WHERE map.user_id= $1 AND map.service_id= $2 AND map.org_id=$3;`, userID, serviceID, orgID).
-		Scan(&day_time, &adhoc, &policy.TfaRequired, &privilege, &policy.RecordSession, &policy.FileTransfer, &policy.IPSource, &policy.RiskThreshold, &policy.Expiry, &policy.AllowedCountries, &policy.DevicePolicy)
+WHERE map.user_id= $1 AND map.service_id= $2 AND map.privilege=$3 AND  map.org_id=$4;`, userID, serviceID, privilege, orgID).
+		Scan(&dayTime, &adhoc, &policy.TfaRequired, &policy.RecordSession, &policy.FileTransfer, &policy.IPSource, &policy.RiskThreshold, &policy.Expiry, &policy.AllowedCountries, &policy.DevicePolicy)
 	if err != nil {
 		return
 	}
 
-	err = json.Unmarshal([]byte(day_time), &policy.DayAndTime)
+	err = json.Unmarshal([]byte(dayTime), &policy.DayAndTime)
 
 	return
 }
 
 //get permission of usergroup assigned to app
-func (s PolicyStore) getUserGroupAccessPolicy(userID, serviceID, orgID string) (policy *models.Policy, privilege string, adhoc bool, err error) {
+func (s policyStore) getUserGroupAccessPolicy(userID, serviceID, privilege, orgID string) (policy *models.Policy, adhoc bool, err error) {
 	policy = &models.Policy{}
 
-	var day_time string
+	var dayTime string
 
 	//In this case appgroup_id of appgroup_usergroup_mapv1 table is used as service_id
 	//because usergroup is assigned to single Service
@@ -151,7 +150,6 @@ func (s PolicyStore) getUserGroupAccessPolicy(userID, serviceID, orgID string) (
 			SELECT gappusersv1.day_time,
 				   adhoc,
 				   gappusersv1.tfa_enabled,
-			       gappusersv1.privilege,
 			       gappusersv1.record_session,
 			       gappusersv1.file_transfer,
 			       gappusersv1.ip_source,
@@ -164,37 +162,47 @@ func (s PolicyStore) getUserGroupAccessPolicy(userID, serviceID, orgID string) (
 					join user_group_maps ug on ug.group_id=ag_ug.usergroup_id  
 					) as gappusersv1  
 						 JOIN services ON gappusersv1.servicegroup_id=services.id AND gappusersv1.org_id=services.org_id 
-					WHERE gappusersv1.user_id= $1 AND gappusersv1.servicegroup_id= $2 AND gappusersv1.org_id=$3  AND gappusersv1.map_type='service';`, userID, serviceID, orgID).
-		Scan(&day_time, &adhoc, &policy.TfaRequired, &privilege, &policy.RecordSession, &policy.FileTransfer, &policy.IPSource, &policy.RiskThreshold, &policy.Expiry, &policy.AllowedCountries, &policy.DevicePolicy)
+					WHERE gappusersv1.user_id= $1 AND gappusersv1.servicegroup_id= $2 AND gappusersv1.privilege=$3 AND  gappusersv1.org_id=$4  AND gappusersv1.map_type='service';`, userID, serviceID, privilege, orgID).
+		Scan(&dayTime, &adhoc, &policy.TfaRequired, &policy.RecordSession, &policy.FileTransfer, &policy.IPSource, &policy.RiskThreshold, &policy.Expiry, &policy.AllowedCountries, &policy.DevicePolicy)
 	if err != nil {
 		return
 	}
 
-	err = json.Unmarshal([]byte(day_time), &policy.DayAndTime)
+	err = json.Unmarshal([]byte(dayTime), &policy.DayAndTime)
 
 	return
 }
 
 //get permission of usergroup assigned to appgroup
-func (s PolicyStore) getServiceUserGroupAccessPolicy(userID, serviceID, orgID string) (policy *models.Policy, privilege string, adhoc bool, err error) {
+func (s policyStore) getServiceUserGroupAccessPolicy(userID, serviceID, privilege, orgID string) (policy *models.Policy, adhoc bool, err error) {
 	policy = &models.Policy{}
 
-	var day_time string
+	var dayTime string
 
-	err = s.DB.QueryRow(`SELECT gappusersv1.day_time,adhoc,gappusersv1.tfa_enabled,gappusersv1.privilege,gappusersv1.record_session,gappusersv1.file_transfer,gappusersv1.ip_source,gappusersv1.risk_threshold,gappusersv1.expiry,gappusersv1.allowed_countries,gappusersv1.device_policy 
+	err = s.DB.QueryRow(`SELECT 
+       gappusersv1.day_time,
+       adhoc,
+       gappusersv1.tfa_enabled,
+       gappusersv1.record_session,
+       gappusersv1.file_transfer,
+       gappusersv1.ip_source,
+       gappusersv1.risk_threshold,
+       gappusersv1.expiry,
+       gappusersv1.allowed_countries,
+       gappusersv1.device_policy 
 FROM (usergroup_accessmaps ag_ug 
 		join policies p on ag_ug.policy_id=p.id 
 		join user_group_maps ug on ug.group_id=ag_ug.usergroup_id 
 		join service_group_maps ag on ag.group_id=ag_ug.servicegroup_id 
 		) as gappusersv1  
 			 JOIN services ON gappusersv1.service_id=services.id AND gappusersv1.org_id=services.org_id
-		WHERE gappusersv1.user_id= $1 AND gappusersv1.service_id= $2 AND gappusersv1.org_id=$3 AND gappusersv1.map_type='servicegroup';`, userID, serviceID, orgID).
-		Scan(&day_time, &adhoc, &policy.TfaRequired, &privilege, &policy.RecordSession, &policy.FileTransfer, &policy.IPSource, &policy.RiskThreshold, &policy.Expiry, &policy.AllowedCountries, &policy.DevicePolicy)
+		WHERE gappusersv1.user_id= $1 AND gappusersv1.service_id= $2 AND gappusersv1.privilege=$3 AND gappusersv1.org_id=$4 AND gappusersv1.map_type='servicegroup';`, userID, serviceID, privilege, orgID).
+		Scan(&dayTime, &adhoc, &policy.TfaRequired, &policy.RecordSession, &policy.FileTransfer, &policy.IPSource, &policy.RiskThreshold, &policy.Expiry, &policy.AllowedCountries, &policy.DevicePolicy)
 	if err != nil {
 		return
 	}
 
-	err = json.Unmarshal([]byte(day_time), &policy.DayAndTime)
+	err = json.Unmarshal([]byte(dayTime), &policy.DayAndTime)
 
 	return
 }

@@ -10,27 +10,30 @@ import (
 	"github.com/seknox/trasa/server/models"
 )
 
+//InitStore initialises package state
 func InitStore(con *global.State) {
 	// initialize local state
-	Store = LogStore{
+	Store = logStore{
 		State: con,
 	}
 
 }
 
-func InitStoreMock() *LogsMock {
-	lmock := new(LogsMock)
+//InitStoreMock will init mock state of this package
+func InitStoreMock() *logsMock {
+	lmock := new(logsMock)
 	Store = lmock
 	return lmock
 }
 
-var Store LogAdapter
+//Store is the package state variable which contains database connections
+var Store adapter
 
-type LogStore struct {
+type logStore struct {
 	*global.State
 }
 
-type LogAdapter interface {
+type adapter interface {
 	LogSignup(signup *models.InitSignup) error
 	LogLogin(log *AuthLog, reason consts.FailedReason, status bool) error
 

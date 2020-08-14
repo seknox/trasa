@@ -5,22 +5,24 @@ import (
 	"github.com/seknox/trasa/server/models"
 )
 
+//InitStore initialises package state
 func InitStore(state *global.State) {
-	Store = PolicyStore{State: state}
+	Store = policyStore{State: state}
 }
 
-var Store PolicyAdapter
+//Store is the package state variable which contains database connections
+var Store adapter
 
-type PolicyStore struct {
+type policyStore struct {
 	*global.State
 }
 
-type PolicyAdapter interface {
+type adapter interface {
 	GetPolicy(policyID, orgID string) (models.Policy, error)
 	GetAllPolicies(orgID string) ([]models.Policy, error)
 	CreatePolicy(policy models.Policy) error
 	UpdatePolicy(policy models.Policy) error
 	DeletePolicy(policyID, orgID string) error
 
-	GetAccessPolicy(userID, serviceID, orgID string) (policy *models.Policy, privilege string, adhoc bool, err error)
+	GetAccessPolicy(userID, serviceID, privilege, orgID string) (policy *models.Policy, adhoc bool, err error)
 }

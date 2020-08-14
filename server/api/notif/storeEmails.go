@@ -94,7 +94,7 @@ func SendErrorReport(err error, desc string) {
 // SendEmail is single interface to send emails within TRASA operations.
 // Ideally, setting values should be retrieved during start of trasacore and updated during setting update
 // to remove database hit in every email sending operations. TODO @bhrg3se
-func (s NotifStore) SendEmail(orgID string, emailType consts.EmailType, emailTemplate interface{}) error {
+func (s notifStore) SendEmail(orgID string, emailType consts.EmailType, emailTemplate interface{}) error {
 	setting, err := system.Store.GetGlobalSetting(orgID, consts.GLOBAL_EMAIL_CONFIG)
 	if err != nil || setting.Status == false {
 		return fmt.Errorf("Email setting not configured: %v", err)

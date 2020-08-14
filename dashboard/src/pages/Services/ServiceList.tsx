@@ -179,6 +179,7 @@ export default function ServiceList() {
   const [rdp, setrdp] = useState([]);
   const [ssh, setssh] = useState([]);
   const [db, setdb] = useState([]);
+  const [radius, setRadius] = useState([]);
   const [other, setothers] = useState([]);
   const [query, setquery] = useState('');
 
@@ -196,6 +197,7 @@ export default function ServiceList() {
         setrdp(response.data.data[0].rdp);
         setssh(response.data.data[0].ssh);
         setdb(response.data.data[0].db);
+        setRadius(response.data.data[0].radius);
         setothers(response.data.data[0].other);
       })
       .catch((error) => {
@@ -240,7 +242,13 @@ export default function ServiceList() {
 
   return (
     <div className={classes.root}>
-      <Button variant="contained" size="small" onClick={toggleConfigDrawer('right', true)}>
+      <Button
+        variant="contained"
+        size="small"
+        name="create-new-service-button"
+        id="create-new-service-button"
+        onClick={toggleConfigDrawer('right', true)}
+      >
         Create new Service
       </Button>
       <Drawer
@@ -264,30 +272,35 @@ export default function ServiceList() {
         />
       </Paper>
       <div className={classes.servicesDemiter}>
-        <p>HTTPs applications</p>
+        <p>HTTPs services</p>
         <Divider light />{' '}
       </div>
       <Renderservices data={https} query={query} serviceType="http" />
 
       <div className={classes.servicesDemiter}>
-        <p>RDP applications</p>
+        <p>RDP services</p>
         <Divider light />{' '}
       </div>
       <Renderservices data={rdp} serviceType="rdp" query={query} />
       <div className={classes.servicesDemiter}>
-        <p>SSH applications</p>
+        <p>SSH services</p>
         <Divider light />{' '}
       </div>
       <Renderservices data={ssh} serviceType="ssh" query={query} />
 
       <div className={classes.servicesDemiter}>
-        <p>Database applications</p>
+        <p>Database services</p>
         <Divider light />{' '}
       </div>
       <Renderservices data={db} serviceType="db" query={query} />
+      <div className={classes.servicesDemiter}>
+        <p>Radius services</p>
+        <Divider light />{' '}
+      </div>
+      <Renderservices data={radius} serviceType="radius" query={query} />
 
       <div className={classes.servicesDemiter}>
-        <p>Other applications</p>
+        <p>Other services</p>
         <Divider light />{' '}
       </div>
       <Renderservices data={other} serviceType="other" query={query} />
@@ -314,6 +327,9 @@ function Renderservices(props: any) {
   const [data, setData] = useState([]);
 
   useEffect(() => {
+    if (!props.data) {
+      return;
+    }
     const filteredService = props.data.filter((a: any) => {
       return JSON.stringify(a).toUpperCase().includes(props.query.toUpperCase().trim());
     });
@@ -328,6 +344,9 @@ function Renderservices(props: any) {
       return RdpIcon;
     }
     if (val === 'http') {
+      return Service;
+    }
+    if (val === 'radius') {
       return Service;
     }
     if (val === 'db') {
@@ -385,6 +404,7 @@ function Renderservices(props: any) {
             <div className={classes.buttonSpace} />
             <br />
             <Button
+              id={value.serviceName}
               variant="outlined"
               color="secondary"
               component={Link}

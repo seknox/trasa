@@ -107,7 +107,7 @@ func AuthHTTPAccessProxy(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	policy, privilege, adhoc, err := policies.Store.GetAccessPolicy(userDetailFromDB.ID, serviceDetailFromDB.ID, orgDetailFromDB.ID)
+	policy, adhoc, err := policies.Store.GetAccessPolicy(userDetailFromDB.ID, serviceDetailFromDB.ID, "", orgDetailFromDB.ID)
 	if err != nil {
 		logger.Debug(err)
 		utils.TrasaResponse(w, 200, "failed", "no policy assigned", "AuthHTTPAccessProxy", nil)
@@ -116,7 +116,7 @@ func AuthHTTPAccessProxy(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// TODO @sshahcodes, check if we can assign user's username here
-	authlog.Privilege = privilege
+	//authlog.Privilege = privilege
 	//authlog.Privilege = userDetailFromDB.UserName
 	authlog.SessionRecord = policy.RecordSession
 
@@ -250,6 +250,7 @@ func AuthHTTPAccessProxy(w http.ResponseWriter, r *http.Request) {
 
 }
 
+//DestroyHttpSession ends http session and starts logout sequence
 func DestroyHttpSession(w http.ResponseWriter, r *http.Request) {
 
 	err := r.ParseMultipartForm(10 << 20)
@@ -263,7 +264,7 @@ func DestroyHttpSession(w http.ResponseWriter, r *http.Request) {
 
 	sessionID := r.Form.Get("sid")
 
-	LogoutSequence(sessionID)
+	logoutSequence(sessionID)
 	logger.Trace("session destroyed ", sessionID)
 	utils.TrasaResponse(w, http.StatusOK, "success", "session destroyed", "Destroy session", nil)
 }
@@ -377,10 +378,10 @@ func gopherPNG(imsgData string) io.Reader {
 	return base64.NewDecoder(base64.StdEncoding, strings.NewReader(imsgData))
 }
 
-func LogoutSequence(sessionID string) {
+func logoutSequence(sessionID string) {
 	defer func() {
 		if r := recover(); r != nil {
-			logger.Errorf(`Panic in LogoutSequence: %v:%s`, r, string(debug.Stack()))
+			logger.Errorf(`Panic in logoutSequence: %v:%s`, r, string(debug.Stack()))
 		}
 
 	}()

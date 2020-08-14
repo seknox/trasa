@@ -23,7 +23,7 @@
   usessl = false
 
 [platform]
-  base = "private"
+  base = "public"
 
 [redis]
   server = "redis:6379"

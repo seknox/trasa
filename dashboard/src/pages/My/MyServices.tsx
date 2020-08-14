@@ -231,6 +231,8 @@ export default function MyAppsList() {
       );
     } else if (serviceType === 'db') {
       // window.open("sql://"+ encodeURIComponent(userName) + "@" + serviceID);setState({ open: false })
+    } else if (serviceType === 'radius') {
+      // window.open("sql://"+ encodeURIComponent(userName) + "@" + serviceID);setState({ open: false })
     } else {
       window.open(
         `/my/service/connectrdp#username=${encodeURIComponent(
@@ -480,6 +482,10 @@ const returnAppIcon = (val: any) => {
   if (val === 'http') {
     return Service;
   }
+  if (val === 'radius') {
+    return Service;
+  }
+
   if (val === 'db') {
     return DatabaseIcon;
   }

@@ -275,7 +275,7 @@ func UpdateUsersGroup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if req.UpdateType == "add" {
-		var userGroup models.UserGroup
+		var userGroup models.UserGroupMap
 		userGroup.OrgID = userContext.User.OrgID
 		userGroup.GroupID = req.GroupID
 

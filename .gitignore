@@ -8,5 +8,5 @@ server/server
 .vscode/
 .idea/
 
-# sql testing file
-app.trasa.io.session.sql
+build/etc/trasa/certs/
+build/etc/trasa/static/

@@ -23,7 +23,7 @@ func forgotPassTfaResp(userDetails models.User) (err error) {
 	// while previously we created temporary password for users and send it to them via email,
 	// we now will generate a short lived token which will be presented in a link.
 	// this will allow us to verify user account as well and let the user setup password as soon as the token is validated.
-	verifyToken := utils.GetRandomID(12)
+	verifyToken := utils.GetRandomString(12)
 
 	// config fie should provide full url scheme
 	verifyURL := fmt.Sprintf("%s/woa/verify#token=%s", dashboardPath, verifyToken)

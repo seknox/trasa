@@ -5,17 +5,19 @@ import (
 	"github.com/seknox/trasa/server/models"
 )
 
+//InitStore initialises package state
 func InitStore(state *global.State) {
-	Store = GroupStore{state}
+	Store = groupStore{state}
 }
 
-var Store Adapter
+//Store is the package state variable which contains database connections
+var Store adapter
 
-type GroupStore struct {
+type groupStore struct {
 	*global.State
 }
 
-type Adapter interface {
+type adapter interface {
 	//CRUD
 
 	Get(groupID, orgID string) (models.Group, error)

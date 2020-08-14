@@ -5,19 +5,22 @@ import (
 	"github.com/seknox/trasa/server/models"
 )
 
+//InitStore initialises package state
 func InitStore(state *global.State) {
-	Store = CryptStore{State: state}
+	Store = cryptStore{State: state}
 }
 
-func InitStoreMock() *CryptMock {
-	m := new(CryptMock)
+//InitStoreMock will init mock state of this package
+func InitStoreMock() *cryptMock {
+	m := new(cryptMock)
 	Store = m
 	return m
 }
 
-var Store CryptAdapter
+//Store is the package state variable which contains database connections
+var Store adapter
 
-type CryptAdapter interface {
+type adapter interface {
 	StoreKey(k models.KeysHolder) error
 	GetKeyOrTokenWithTag(orgID string, keyName string) (*models.KeysHolder, error)
 	GetKeyOrTokenWithKeyval(orgID, keyName string) (*models.KeysHolder, error)
@@ -31,6 +34,6 @@ type CryptAdapter interface {
 	GetCertHolder(certType, entityID, orgID string) (models.CertHolder, error)
 }
 
-type CryptStore struct {
+type cryptStore struct {
 	*global.State
 }

@@ -93,7 +93,7 @@ export default function CreateUserGroup(props: any) {
 
           <br />
           <Box display="flex" alignItems="center" justifyContent="center">
-            <Button variant="contained" color="secondary" onClick={(e) => submitCreateGroup(e)}>
+            <Button variant="contained" color="secondary" onClick={(e) => submitCreateGroup(e)} id='createGroupSubmitBtn'>
               Submit
             </Button>
           </Box>

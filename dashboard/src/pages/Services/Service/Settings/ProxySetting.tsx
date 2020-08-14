@@ -12,7 +12,7 @@ import TextField from '@material-ui/core/TextField';
 // import classNames from "classnames";
 import Typography from '@material-ui/core/Typography';
 import axios from 'axios';
-import mixpanel from 'mixpanel-browser';
+// import mixpanel from 'mixpanel-browser';
 import React, { useState } from 'react';
 import Constants from '../../../../Constants';
 // Form validation
@@ -225,7 +225,7 @@ export default function ProxySetting(props: ProxySettingProps) {
 
   const handleSubmit = () => {
     setLoader(true);
-    mixpanel.track('http proxy');
+    // mixpanel.track('http proxy');
 
     const { serviceDetail } = props;
     const req = {

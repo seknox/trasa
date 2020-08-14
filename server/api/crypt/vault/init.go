@@ -5,19 +5,22 @@ import (
 	"github.com/seknox/trasa/server/models"
 )
 
+//InitStore initialises package state
 func InitStore(state *global.State) {
-	Store = VaultStore{State: state}
+	Store = vaultStore{State: state}
 }
 
-func InitStoreMock() *VaultMock {
-	m := new(VaultMock)
+//InitStoreMock will init mock state of this package
+func InitStoreMock() *vaultMock {
+	m := new(vaultMock)
 	Store = m
 	return m
 }
 
-var Store VaultAdapter
+//Store is the package state variable which contains database connections
+var Store adapter
 
-type VaultStore struct {
+type vaultStore struct {
 	*global.State
 }
 
@@ -25,7 +28,7 @@ type VaultStore struct {
 //
 // Expose only generic functions like StoreSecret and hide functions like TsxvStoreSecret
 // Implementation of TRASA vault/ separate vault should be hidden to the package caller
-type VaultAdapter interface {
+type adapter interface {
 	StoreSecret(key models.ServiceSecretVault) error
 	GetSecret(orgID, serviceID, secretType, secretid string) (string, error)
 	TsxvStoreSecret(secret models.ServiceSecretVault) error

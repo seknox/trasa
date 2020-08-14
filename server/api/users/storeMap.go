@@ -6,7 +6,7 @@ import (
 	"github.com/seknox/trasa/server/models"
 )
 
-func (s UserStore) GetAccessMapDetails(userID, orgID string) ([]models.AccessMapDetail, error) {
+func (s userStore) GetAccessMapDetails(userID, orgID string) ([]models.AccessMapDetail, error) {
 	var accessMapDetail models.AccessMapDetail
 	var mapDetails = make([]models.AccessMapDetail, 0)
 	rows, err := s.DB.Query(`
@@ -71,7 +71,7 @@ SELECT DISTINCT services.org_id,services.name,services.type,services.hostname, s
 }
 
 //GetServicesAssigned returns Apps assigned to a user with the policy
-func (s UserStore) GetAssignedServices(userID, orgID string) (services []models.Service, err error) {
+func (s userStore) GetAssignedServices(userID, orgID string) (services []models.Service, err error) {
 
 	services = make([]models.Service, 0)
 	var rows *sql.Rows

@@ -5,23 +5,26 @@ import (
 	"github.com/seknox/trasa/server/models"
 )
 
+//InitStore initialises package state
 func InitStore(state *global.State) {
-	Store = OrgStore{State: state}
+	Store = orgStore{State: state}
 }
 
-func InitStoreMock() *OrgMock {
-	lmock := new(OrgMock)
+//InitStoreMock will init mock state of this package
+func InitStoreMock() *orgMock {
+	lmock := new(orgMock)
 	Store = lmock
 	return lmock
 }
 
-var Store OrgAdapter
+//Store is the package state variable which contains database connections
+var Store orgAdapter
 
-type OrgStore struct {
+type orgStore struct {
 	*global.State
 }
 
-type OrgAdapter interface {
+type orgAdapter interface {
 	Get(orgID string) (models.Org, error)
 	CheckOrgExists() (orgID string, err error)
 	CreateOrg(org *models.Org) error

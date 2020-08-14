@@ -157,7 +157,7 @@ func PreConfiguredIdps(idp models.IdentityProvider, uc models.UserContext) model
 		v.SCIMEndpoint = fmt.Sprintf("https://%s/scim/v2", global.GetConfig().Trasa.Trasacore)
 		v.ClientID = ""
 		v.ClientSecret = ""
-		v.AudienceURI = utils.GetRandomID(7)
+		v.AudienceURI = utils.GetRandomString(7)
 		v.RedirectURL = fmt.Sprintf("https://%s/idp/external/saml/%s/%s", global.GetConfig().Trasa.Trasacore, uc.User.OrgID, v.IdpName)
 		v.OrgID = uc.User.OrgID
 		v.CreatedBy = uc.User.ID
@@ -173,7 +173,7 @@ func PreConfiguredIdps(idp models.IdentityProvider, uc models.UserContext) model
 		v.SCIMEndpoint = ""
 		v.ClientID = ""
 		v.ClientSecret = ""
-		v.AudienceURI = utils.GetRandomID(7)
+		v.AudienceURI = utils.GetRandomString(7)
 		v.RedirectURL = fmt.Sprintf("https://%s/idp/external/saml/%s/%s", global.GetConfig().Trasa.Trasacore, uc.User.OrgID, v.IdpName)
 		v.OrgID = uc.User.OrgID
 		v.CreatedBy = uc.User.ID
@@ -247,7 +247,7 @@ func GenerateSCIMAuthToken(w http.ResponseWriter, r *http.Request) {
 
 	idpID := chi.URLParam(r, "idpID")
 
-	pass := utils.GetRandomID(14)
+	pass := utils.GetRandomString(14)
 
 	passorg := fmt.Sprintf("%s:%s", pass, uc.User.OrgID)
 

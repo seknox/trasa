@@ -8,7 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func (s OrgStore) RemoveAllManagedAccounts(orgID string) error {
+func (s orgStore) RemoveAllManagedAccounts(orgID string) error {
 
 	_, err := s.DB.Exec(`UPDATE services SET managed_accounts = $1  WHERE org_id=$2`, "", orgID)
 	if err != nil {
@@ -19,7 +19,7 @@ func (s OrgStore) RemoveAllManagedAccounts(orgID string) error {
 	return nil
 }
 
-func (s OrgStore) CheckOrgExists() (orgID string, err error) {
+func (s orgStore) CheckOrgExists() (orgID string, err error) {
 	err = s.DB.QueryRow(`select id from org`).Scan(&orgID)
 	if errors.Is(err, sql.ErrNoRows) {
 		return "", nil
@@ -28,7 +28,7 @@ func (s OrgStore) CheckOrgExists() (orgID string, err error) {
 
 }
 
-func (s OrgStore) CreateOrg(org *models.Org) error {
+func (s orgStore) CreateOrg(org *models.Org) error {
 
 	_, err := s.DB.Exec(`INSERT into org (id, org_name, domain, primary_contact,timezone, created_at,phone_number,license)
 						 values($1, $2, $3, $4, $5,$6,$7,$8);`, org.ID, org.OrgName, org.Domain, org.PrimaryContact, org.Timezone, org.CreatedAt, org.PhoneNumber, org.License)
@@ -36,7 +36,7 @@ func (s OrgStore) CreateOrg(org *models.Org) error {
 	return err
 }
 
-func (s OrgStore) Get(orgID string) (models.Org, error) {
+func (s orgStore) Get(orgID string) (models.Org, error) {
 	var org models.Org
 	err := s.DB.QueryRow("SELECT id, org_name, domain, primary_contact, timezone, phone_number,created_at FROM org WHERE id = $1", orgID).Scan(&org.ID, &org.OrgName, &org.Domain,
 		&org.PrimaryContact, &org.Timezone, &org.PhoneNumber, &org.CreatedAt)
@@ -44,7 +44,7 @@ func (s OrgStore) Get(orgID string) (models.Org, error) {
 	return org, err
 }
 
-func (s OrgStore) GetIDP(orgID, idpName string) (models.IdentityProvider, error) {
+func (s orgStore) GetIDP(orgID, idpName string) (models.IdentityProvider, error) {
 	var idp models.IdentityProvider
 	err := s.DB.QueryRow("SELECT id, org_id, name,type, meta, is_enabled, redirect_url, audience_uri, endpoint, created_by , last_updated FROM idp WHERE org_id = $1 AND name=$2",
 		orgID, idpName).

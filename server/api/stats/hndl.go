@@ -16,6 +16,8 @@ import (
 	//"io"
 )
 
+//GetAggregatedUsers returns user aggregations
+//It returns stats like total users in IDP, admin users, disabled users etc
 func GetAggregatedUsers(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
 	entityType := chi.URLParam(r, "entitytype")
@@ -58,6 +60,7 @@ func GetAggregatedUsers(w http.ResponseWriter, r *http.Request) {
 	utils.TrasaResponse(w, 200, "failed", "Not supported yet", "", nil)
 }
 
+//GetAggregatedDevices returns device stats (total devices, mobile devices, total browsers)
 func GetAggregatedDevices(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
 	entityType := chi.URLParam(r, "entitytype")
@@ -94,6 +97,7 @@ func GetAggregatedDevices(w http.ResponseWriter, r *http.Request) {
 	utils.TrasaResponse(w, 200, "failed", "Not supported yet", "", nil)
 }
 
+//GetAggregatedFailedReasons aggregates authentication according to failed reasons
 func GetAggregatedFailedReasons(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
 	entityType := chi.URLParam(r, "entitytype")
@@ -111,6 +115,7 @@ func GetAggregatedFailedReasons(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+//GetAggregatedServices aggregates services according to type
 func GetAggregatedServices(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
 	//entityType := chi.URLParam(r, "entitytype")
@@ -127,6 +132,7 @@ func GetAggregatedServices(w http.ResponseWriter, r *http.Request) {
 
 }
 
+//GetAggregatedIDPServices aggregates services according to IDP
 func GetAggregatedIDPServices(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
 	idpName := chi.URLParam(r, "idpname")
@@ -142,6 +148,7 @@ func GetAggregatedIDPServices(w http.ResponseWriter, r *http.Request) {
 
 }
 
+//GetAggregatedLoginHours aggregates authentications according to hour
 func GetAggregatedLoginHours(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
 
@@ -162,6 +169,7 @@ func GetAggregatedLoginHours(w http.ResponseWriter, r *http.Request) {
 
 }
 
+//GetTotalManagedUsers returns total managed users (password stored in vault)
 func GetTotalManagedUsers(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
 
@@ -176,6 +184,7 @@ func GetTotalManagedUsers(w http.ResponseWriter, r *http.Request) {
 
 }
 
+//GetIPAggs aggregates authentications according to client IP
 func GetIPAggs(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
 	timeFilter := chi.URLParam(r, "timeFilter")
@@ -194,6 +203,8 @@ func GetIPAggs(w http.ResponseWriter, r *http.Request) {
 	utils.TrasaResponse(w, 200, "success", "", "GetIPAggs", aggsIPs)
 
 }
+
+//GetLoginsByType aggregates authentications by service type
 func GetLoginsByType(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
 	timeFilter := chi.URLParam(r, "timeFilter")
@@ -235,6 +246,7 @@ func GetMapPlotData(w http.ResponseWriter, r *http.Request) {
 	utils.TrasaResponse(w, 200, "success", "", "GetIPAggs", geoPlotData)
 }
 
+//GetPoliciesStats returns policy stats
 func GetPoliciesStats(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
 
@@ -357,6 +369,7 @@ func GetSuccessAndFailedEvents(w http.ResponseWriter, r *http.Request) {
 	utils.TrasaResponse(w, 200, "success", "fetched auth events", "GetSuccessAndFailedEvents", events)
 }
 
+//GetCAStats returns CA stats
 func GetCAStats(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
 

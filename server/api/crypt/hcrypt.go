@@ -16,6 +16,8 @@ import (
 )
 
 //TODO complete init ssh CA
+
+//InitSSHCA creates SSH CA of given type
 func InitSSHCA(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
 	caType := chi.URLParam(r, "type")
@@ -58,6 +60,7 @@ func InitSSHCA(w http.ResponseWriter, r *http.Request) {
 
 }
 
+//InitCA initialises HTTP CA of given type
 func InitCA(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
 	logrus.Trace("request received")
@@ -85,7 +88,7 @@ func InitCA(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var ca models.CertHolder
-	ca.CertID = utils.GetRandomID(10)
+	ca.CertID = utils.GetRandomString(10)
 	ca.EntityID = "HTTP_CA"
 	ca.OrgID = uc.User.OrgID
 	ca.Cert = cert
@@ -108,6 +111,7 @@ func InitCA(w http.ResponseWriter, r *http.Request) {
 	utils.TrasaResponse(w, 200, "success", "CA created", "InitCA-initca.New", ca)
 }
 
+//GetHttpCADetail returns HTTP CA details
 func GetHttpCADetail(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
 	logrus.Trace("request received")
@@ -125,7 +129,7 @@ func GetHttpCADetail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var certResp CertHolderResponse
+	var certResp certHolderResponse
 	certResp.CreatedAt = cert.CreatedAt
 	certResp.LastUpdated = cert.LastUpdated
 	certResp.Cert = certDetail
@@ -136,6 +140,7 @@ func GetHttpCADetail(w http.ResponseWriter, r *http.Request) {
 
 }
 
+//GetAllCAs returns all CAs of an organization
 func GetAllCAs(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
 	logrus.Trace("request received")
@@ -145,9 +150,9 @@ func GetAllCAs(w http.ResponseWriter, r *http.Request) {
 		utils.TrasaResponse(w, 200, "failed", "failed to fetch data", "GetAllCA-GetCertDetail", nil, nil)
 		return
 	}
-	var certList []CertHolderResponse
+	var certList []certHolderResponse
 	for _, cert := range cas {
-		var certResp CertHolderResponse
+		var certResp certHolderResponse
 		if cert.CertType == consts.CERT_TYPE_HTTP_CA {
 			certDetail, err := certinfo.ParseCertificatePEM(cert.Cert)
 			if err != nil {
@@ -197,7 +202,7 @@ func DownloadSshCA(w http.ResponseWriter, r *http.Request) {
 
 }
 
-type CertHolderResponse struct {
+type certHolderResponse struct {
 	CertID   string                `json:"certID"`
 	OrgID    string                `json:"orgID"`
 	EntityID string                `json:"entityID"`
@@ -208,6 +213,7 @@ type CertHolderResponse struct {
 	LastUpdated int64  `json:"lastUpdated"`
 }
 
+//UploadCA uploads new HTTP CA from user
 func UploadCA(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
 
@@ -225,7 +231,7 @@ func UploadCA(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var ca models.CertHolder
-	ca.CertID = utils.GetRandomID(10)
+	ca.CertID = utils.GetRandomString(10)
 	ca.EntityID = "ca"
 	ca.OrgID = uc.User.OrgID
 	ca.Cert = []byte(req.CertVal)

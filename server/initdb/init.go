@@ -83,7 +83,7 @@ func initOrg() {
 		panic(err)
 		return
 	}
-	global.SetOrgID(orgID)
+	global.SetOrgID(org.ID)
 
 	hashedpass, err := bcrypt.GenerateFromPassword([]byte(consts.DEFAULT_ROOT_PASSWORD), bcrypt.DefaultCost)
 	if err != nil {
@@ -109,7 +109,7 @@ func storeGlobalPasswordPolicy() {
 	passJson, _ := json.Marshal(passPolicy)
 
 	setting.OrgID = global.GetConfig().Trasa.OrgId
-	setting.SettingID = utils.GetRandomID(7)
+	setting.SettingID = utils.GetRandomString(7)
 	setting.SettingType = consts.GLOBAL_PASSWORD_CONFIG
 	setting.SettingValue = string(passJson)
 	setting.UpdatedBy = "SYSTEM"
@@ -126,7 +126,7 @@ func storeDeviceHygieneCheck() {
 	var setting models.GlobalSettings
 
 	setting.OrgID = global.GetConfig().Trasa.OrgId
-	setting.SettingID = utils.GetRandomID(7)
+	setting.SettingID = utils.GetRandomString(7)
 	setting.SettingType = consts.GLOBAL_DEVICE_HYGIENE_CHECK
 	setting.SettingValue = "{}"
 	setting.UpdatedBy = "SYSTEM"
@@ -148,7 +148,7 @@ func storeGlobalEmailSettings() {
 	setting.OrgID = global.GetConfig().Trasa.OrgId
 	setting.SettingType = consts.GLOBAL_EMAIL_CONFIG
 	setting.UpdatedBy = "SYSTEM"
-	setting.SettingID = utils.GetRandomID(7)
+	setting.SettingID = utils.GetRandomString(7)
 	setting.SettingType = consts.GLOBAL_EMAIL_CONFIG
 	setting.UpdatedOn = time.Now().Unix()
 	err := system.Store.SetGlobalSetting(setting)
@@ -171,7 +171,7 @@ func storeGlobalTRASASshAuth() {
 	setting.Status = true
 	setting.OrgID = global.GetConfig().Trasa.OrgId
 	setting.UpdatedBy = "SYSTEM"
-	setting.SettingID = utils.GetRandomID(7)
+	setting.SettingID = utils.GetRandomString(7)
 	setting.SettingType = consts.GLOBAL_TRASA_SSH_CERT_ENFORCE
 	setting.UpdatedOn = time.Now().Unix()
 	err := system.Store.SetGlobalSetting(setting)
@@ -195,7 +195,7 @@ func storeGlobalDynamicServiceSetting() {
 	setting.Status = true
 	setting.OrgID = global.GetConfig().Trasa.OrgId
 	setting.UpdatedBy = "SYSTEM"
-	setting.SettingID = utils.GetRandomID(7)
+	setting.SettingID = utils.GetRandomString(7)
 	setting.SettingType = consts.GLOBAL_DYNAMIC_ACCESS
 	setting.UpdatedOn = time.Now().Unix()
 	err := system.Store.SetGlobalSetting(setting)
@@ -272,7 +272,7 @@ func storeDefaultSecRules() {
 	}
 
 	for _, v := range rule {
-		v.RuleID = utils.GetRandomID((10))
+		v.RuleID = utils.GetRandomString((10))
 		v.OrgID = global.GetConfig().Trasa.OrgId
 		v.CreatedBy = "SYSTEM"
 		v.Action = `{"alertType":"email", "alertTo":"orgAdmins"}`

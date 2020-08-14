@@ -8,12 +8,12 @@ import (
 	"github.com/seknox/trasa/server/utils"
 )
 
-func (s StatStore) GetTotalServices(orgID string) (count int64, err error) {
+func (s statStore) GetTotalServices(orgID string) (count int64, err error) {
 	err = s.DB.QueryRow(`select COUNT(*) from services where org_id=$1;`, orgID).Scan(&count)
 	return
 }
 
-func (s StatStore) GetTotalManagedUsers(entityType, entityID, orgID string) (count int, err error) {
+func (s statStore) GetTotalManagedUsers(entityType, entityID, orgID string) (count int, err error) {
 	count = 0
 	var managedAcc string
 	sb := sqlbuilder.NewSelectBuilder()
@@ -35,7 +35,7 @@ func (s StatStore) GetTotalManagedUsers(entityType, entityID, orgID string) (cou
 	return count, err
 }
 
-func (s StatStore) GetPoliciesOfService(serviceID, orgID string) (count int, err error) {
+func (s statStore) GetPoliciesOfService(serviceID, orgID string) (count int, err error) {
 	count = 0
 
 	//TODO check this query
@@ -57,7 +57,7 @@ func (s StatStore) GetPoliciesOfService(serviceID, orgID string) (count int, err
 	return count, err
 }
 
-func (s StatStore) GetTotalPrivilegesOfService(serviceID, orgID string) (count int, err error) {
+func (s statStore) GetTotalPrivilegesOfService(serviceID, orgID string) (count int, err error) {
 	count = 0
 	err = s.DB.QueryRow(`SELECT count(DISTINCT privilege) as count from
         (
@@ -76,7 +76,7 @@ func (s StatStore) GetTotalPrivilegesOfService(serviceID, orgID string) (count i
 	return count, err
 }
 
-func (s StatStore) GetTotalGroupsServiceIsAssignedTo(serviceID, orgID string) (count int, err error) {
+func (s statStore) GetTotalGroupsServiceIsAssignedTo(serviceID, orgID string) (count int, err error) {
 	count = 0
 	err = s.DB.QueryRow(`SELECT count(DISTINCT group_id) as count  FROM service_group_maps 
              	where service_id=$2  AND service_group_maps.org_id=$1 ;`, orgID, serviceID).Scan(&count)
@@ -84,7 +84,7 @@ func (s StatStore) GetTotalGroupsServiceIsAssignedTo(serviceID, orgID string) (c
 	return count, err
 }
 
-//func (s StatStore) GetTotalGroupsServiceIsAssignedTo(serviceID, orgID string) (count int, err error) {
+//func (s statStore) GetTotalGroupsServiceIsAssignedTo(serviceID, orgID string) (count int, err error) {
 //	count = 0
 //	err = s.DB.QueryRow(`SELECT count(DISTINCT appgroup_id) as count
 // FROM appgroup_usergroup_mapv1
@@ -94,7 +94,7 @@ func (s StatStore) GetTotalGroupsServiceIsAssignedTo(serviceID, orgID string) (c
 //	return count, err
 //}
 
-func (s StatStore) GetTotalUsersAssignedToService(serviceID, orgID string) (count int, err error) {
+func (s statStore) GetTotalUsersAssignedToService(serviceID, orgID string) (count int, err error) {
 	count = 0
 	err = s.DB.QueryRow(`
 SELECT count (DISTINCT user_id)
@@ -117,7 +117,7 @@ UNION
 	return count, err
 }
 
-func (s StatStore) GetAggregatedServices(orgID string) (apps allServices, err error) {
+func (s statStore) GetAggregatedServices(orgID string) (apps allServices, err error) {
 	apps.ServicesByType = []nameValue{}
 	apps.TotalServices = 0
 	rows, err := s.DB.Query(`select count(*) as c,type from services WHERE org_id=$1 GROUP BY type ORDER BY c ASC`, orgID)
@@ -154,7 +154,7 @@ func (s StatStore) GetAggregatedServices(orgID string) (apps allServices, err er
 	return apps, err
 }
 
-func (s StatStore) GetAggregatedIDPServices(idpName, orgID string) ([]nameValue, error) {
+func (s statStore) GetAggregatedIDPServices(idpName, orgID string) ([]nameValue, error) {
 	appsByType := []nameValue{}
 
 	rows, err := s.DB.Query(`select count(*) as c,type from services WHERE org_id=$1 AND external_provider_name=$2 GROUP BY type ORDER BY c ASC`, orgID, idpName)

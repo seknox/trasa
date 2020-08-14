@@ -10,7 +10,7 @@ import (
 )
 
 //TODO how to store tls/ssl certs
-func (s ServiceStore) UpdateSSLCerts(caCert, caKey, clientCert, clientKey, serviceID, orgID string) error {
+func (s serviceStore) UpdateSSLCerts(caCert, caKey, clientCert, clientKey, serviceID, orgID string) error {
 
 	certID, err := uuid.NewV4()
 	if err != nil {
@@ -56,7 +56,7 @@ VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`, certID.String(), orgID, serviceID, clientC
 
 }
 
-func (s ServiceStore) UpdateHostCert(hostCert, serviceID, orgID string) error {
+func (s serviceStore) UpdateHostCert(hostCert, serviceID, orgID string) error {
 	certID, err := uuid.NewV4()
 	if err != nil {
 		return err

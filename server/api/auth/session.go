@@ -16,6 +16,7 @@ import (
 	"golang.org/x/crypto/nacl/secretbox"
 )
 
+//LogoutHandler handles logout
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	sessionToken := r.Header.Get("X-SESSION")
 	if sessionToken == "" || sessionToken == "null" {
@@ -58,7 +59,7 @@ func sessionResponse(userDetails *models.User, deviceID, browserID string) (resp
 	return response, nil
 }
 
-// setSessionCookie sets, encrypts and serializes session cookies and csrf tokens
+// SetSession sets, encrypts and serializes session cookies and csrf tokens
 func SetSession(userID, orgID, deviceID, browserID string) (string, string, error) {
 
 	sessionKey := utils.GetRandomBytes(17)

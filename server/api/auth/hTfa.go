@@ -255,7 +255,7 @@ func handleIntentResponse(req tfaRequest, user *models.User, deviceID, browserID
 		} else {
 			// respond with change password intent
 			if policy.Pending == true {
-				verifyToken := utils.GetRandomID(7)
+				verifyToken := utils.GetRandomString(7)
 				// store token to redis
 				err = redis.Store.Set(
 					verifyToken,
@@ -288,7 +288,7 @@ func handleIntentResponse(req tfaRequest, user *models.User, deviceID, browserID
 		resp.OrgName = userWithPass.OrgName
 		return "success", "", consts.AUTH_RESP_ENROL_DEVICE, resp
 	case consts.AUTH_REQ_CHANGE_PASS:
-		verifyToken := utils.GetRandomID(7)
+		verifyToken := utils.GetRandomString(7)
 		// store token to redis
 		err := redis.Store.Set(verifyToken,
 			consts.TOKEN_EXPIRY_CHANGEPASS,

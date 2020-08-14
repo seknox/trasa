@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func PasswordManAndLogger(r *http.Request, sessionID, csrfToken, userName string, isSSO bool, sessionRecord string) {
+func passwordManAndLogger(r *http.Request, sessionID, csrfToken, userName string, isSSO bool, sessionRecord string) {
 	if sessionRecord != "true" {
 		return
 	}
@@ -28,7 +28,7 @@ func PasswordManAndLogger(r *http.Request, sessionID, csrfToken, userName string
 
 	directoryBuilder := fmt.Sprintf("/var/trasa/thg/logs/%s", sessionID)
 
-	CreateDirIfNotExist(directoryBuilder)
+	createDirIfNotExist(directoryBuilder)
 
 	logPath := fmt.Sprintf("%s/%s.http-raw", directoryBuilder, sessionID)
 	file, err := os.OpenFile(logPath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0755)
@@ -74,7 +74,7 @@ type rawSession struct {
 	Data string
 }
 
-func CreateDirIfNotExist(dir string) {
+func createDirIfNotExist(dir string) {
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
 		err = os.MkdirAll(dir, 0755)
 		if err != nil {

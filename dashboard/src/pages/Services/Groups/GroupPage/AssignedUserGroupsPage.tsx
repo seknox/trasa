@@ -52,6 +52,7 @@ export default function AssignedUserGroup(props: any) {
   return (
     <div>
       <Button
+        id='assignUserGroupBtn'
         variant="contained"
         color="secondary"
         size="small"

@@ -190,7 +190,7 @@ var counter uint32
 //	utils.TrasaResponse(w, 200, "success", "auth challenge presented.", "SignRequest", nil, req)
 //}
 
-// signReq is used by TfaHandler
+//SignReq is used by TfaHandler
 func SignReq(userID, orgID string) (*u2f.WebSignRequest, error) {
 
 	return nil, nil

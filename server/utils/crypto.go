@@ -102,7 +102,7 @@ func LoadPrivateKey(data []byte) (interface{}, error) {
 	return nil, fmt.Errorf("square/go-jose: parse error, got '%s', '%s', '%s' and '%s'", err0, err1, err2, err3)
 }
 
-// generatePrivateKey creates a RSA Private Key of specified byte size
+// GeneratePrivateKey creates a RSA Private Key of specified byte size
 func GeneratePrivateKey(bitSize int) (*rsa.PrivateKey, error) {
 	// Private Key generation
 	privateKey, err := rsa.GenerateKey(rand.Reader, bitSize)
@@ -120,7 +120,7 @@ func GeneratePrivateKey(bitSize int) (*rsa.PrivateKey, error) {
 	return privateKey, nil
 }
 
-// encodePrivateKeyToPEM encodes Private Key from RSA to PEM format
+// EncodePrivateKeyToPEM encodes Private Key from RSA to PEM format
 func EncodePrivateKeyToPEM(privateKey *rsa.PrivateKey) []byte {
 	// Get ASN.1 DER format
 	privDER := x509.MarshalPKCS1PrivateKey(privateKey)
@@ -138,7 +138,7 @@ func EncodePrivateKeyToPEM(privateKey *rsa.PrivateKey) []byte {
 	return privatePEM
 }
 
-// generatePublicKey take a rsa.PublicKey and return bytes suitable for writing to .pub file
+// GeneratePublicKey take a rsa.PublicKey and return bytes suitable for writing to .pub file
 // returns in the format "ssh-rsa ..."
 func GeneratePublicKey(privatekey *rsa.PublicKey) ([]byte, error) {
 	publicRsaKey, err := ssh.NewPublicKey(privatekey)
@@ -293,7 +293,7 @@ func AESDecryptHexString(key []byte, message string) ([]byte, error) {
 
 func EncryptorAndSharder(secretData string) (string, []string) {
 	//fmt.Println("initial root token: ", secretData)
-	SecretKeyBytes, err := hex.DecodeString(GetRandomID(32))
+	SecretKeyBytes, err := hex.DecodeString(GetRandomString(32))
 	if err != nil {
 		fmt.Println(err)
 	}

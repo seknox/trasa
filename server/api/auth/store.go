@@ -7,7 +7,7 @@ import (
 	"github.com/seknox/trasa/server/models"
 )
 
-func (s AuthStore) GetLoginDetails(trasaID, orgDomain string) (*models.UserWithPass, error) {
+func (s authStore) GetLoginDetails(trasaID, orgDomain string) (*models.UserWithPass, error) {
 	//var users []models.UserWithPass = make([]models.UserWithPass, 0)
 	isTrasaIDEmail := strings.Contains(trasaID, "@")
 
@@ -34,7 +34,7 @@ func (s AuthStore) GetLoginDetails(trasaID, orgDomain string) (*models.UserWithP
 	return &user, err
 }
 
-func (s AuthStore) Logout(sessionID string) error {
+func (s authStore) Logout(sessionID string) error {
 	client := s.RedisClient
 	ctx := context.Background()
 	return client.Del(ctx, sessionID).Err()

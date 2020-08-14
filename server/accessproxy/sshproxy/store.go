@@ -226,9 +226,9 @@ func (s Store) checkPolicy(params *models.ConnectionParams) (*models.Policy, con
 	//	return nil, consts.REASON_DEVICE_POLICY_FAILED, err
 	//}
 
-	policy, privilege, adhoc, err := policies.Store.GetAccessPolicy(params.UserID, params.ServiceID, params.OrgID)
+	policy, adhoc, err := policies.Store.GetAccessPolicy(params.UserID, params.ServiceID, params.Privilege, params.OrgID)
 
-	if errors.Is(err, sql.ErrNoRows) || privilege != params.Privilege {
+	if errors.Is(err, sql.ErrNoRows) {
 		//if service is not assigned to user, create one (only if dynamic access is enabled)
 		policy, err = accessmap.CreateDynamicAccessMap(params.ServiceID, params.UserID, params.TrasaID, params.Privilege, params.OrgID)
 		if err != nil {

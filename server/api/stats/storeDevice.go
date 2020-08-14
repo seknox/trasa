@@ -1,6 +1,6 @@
 package stats
 
-func (s StatStore) GetAggregatedDeviceUsers(entityType, entityID, deviceType, orgID string) (total int, devices []deviceByType, err error) {
+func (s statStore) GetAggregatedDeviceUsers(entityType, entityID, deviceType, orgID string) (total int, devices []deviceByType, err error) {
 	//TODO handle diffenent entities
 	devices = []deviceByType{}
 	total = 0
@@ -33,7 +33,7 @@ GROUP BY   device_hygiene->'deviceOS'->>'osName',device_hygiene->'deviceOS'->>'o
 	return total, devices, err
 }
 
-func (s StatStore) GetAggregatedMobileDevices(entityType, entityID, orgID string) (total int, devices []deviceByType, err error) {
+func (s statStore) GetAggregatedMobileDevices(entityType, entityID, orgID string) (total int, devices []deviceByType, err error) {
 	//TODO handle diffenent entities
 	devices = []deviceByType{}
 	total = 0
@@ -64,7 +64,7 @@ GROUP BY   device_hygiene->'deviceInfo'->>'brand',device_hygiene->'deviceInfo'->
 	return total, devices, err
 }
 
-func (s StatStore) GetAggregatedBrowsers(entityType, entityID, orgID string) (total int, devices []deviceByType, err error) {
+func (s statStore) GetAggregatedBrowsers(entityType, entityID, orgID string) (total int, devices []deviceByType, err error) {
 
 	rows, err := s.DB.Query(`select
     COALESCE(name,'') as browser_name,

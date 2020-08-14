@@ -347,7 +347,7 @@ export default function UserOverview(props: UserOverviewProps) {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={deleteSingleUser} className={classes.warningButton}>
+            <Button onClick={deleteSingleUser} className={classes.warningButton} id='confirmDeleteBtn'>
               Yes, Delete
             </Button>
             <Button
@@ -554,6 +554,8 @@ function DeleteMenu(props: any) {
   return (
     <div>
       <IconButton
+        name="userMenuBtn"
+        id="userMenuBtn"
         aria-label="More"
         aria-owns={anchorEl ? 'long-menu' : ''}
         aria-haspopup="true"
@@ -569,12 +571,12 @@ function DeleteMenu(props: any) {
         PaperProps={{}}
       >
         <MenuItem onClick={props.handleUpdateDrawerOpen}>
-          <Button variant="contained" color="secondary">
+          <Button variant="contained" color="secondary" id="userUpdateBtn">
             Update <EditIcon />
           </Button>
         </MenuItem>
         <MenuItem onClick={props.deleteUser}>
-          <Button color="secondary" variant="contained">
+          <Button color="secondary" variant="contained" id="userDeleteBtn">
             Delete
             <Delete />
           </Button>

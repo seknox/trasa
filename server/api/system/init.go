@@ -5,23 +5,26 @@ import (
 	"github.com/seknox/trasa/server/models"
 )
 
+//InitStore initialises package state
 func InitStore(state *global.State) {
-	Store = SystemStore{state}
+	Store = systemStore{state}
 }
 
-func InitStoreMock() *SystemMock {
-	lmock := new(SystemMock)
+//InitStoreMock will init mock state of this package
+func InitStoreMock() *systemMock {
+	lmock := new(systemMock)
 	Store = lmock
 	return lmock
 }
 
-var Store SystemAdapter
+//Store is the package state variable which contains database connections
+var Store adapter
 
-type SystemStore struct {
+type systemStore struct {
 	*global.State
 }
 
-type SystemAdapter interface {
+type adapter interface {
 	// global settings
 	SetGlobalSetting(setting models.GlobalSettings) error
 	GetGlobalSetting(orgID, settingType string) (models.GlobalSettings, error)

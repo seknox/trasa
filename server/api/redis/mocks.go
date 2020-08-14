@@ -8,18 +8,20 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-type RedisMock struct {
+type redisMock struct {
 	mock.Mock
 }
 
-func (r RedisMock) Set(key string, expiry time.Duration, val ...string) error {
+//Set mock
+func (r *redisMock) Set(key string, expiry time.Duration, val ...string) error {
 
 	r.TestData().Set(key, val)
 
 	return nil
 }
 
-func (r RedisMock) Get(key string, field string) (string, error) {
+//Get mock
+func (r *redisMock) Get(key string, field string) (string, error) {
 	//v:=r.s[key]
 
 	arr, ok := r.TestData().Get(key).Data().([]string)
@@ -37,23 +39,28 @@ func (r RedisMock) Get(key string, field string) (string, error) {
 	return "", errors.New("not found")
 }
 
-func (r RedisMock) MGet(key string, field ...string) ([]string, error) {
+//MGet mock
+func (r *redisMock) MGet(key string, field ...string) ([]string, error) {
 	panic("implement me")
 }
 
-func (r RedisMock) Delete(key string) error {
+//Delete mock
+func (r *redisMock) Delete(key string) error {
 	panic("implement me")
 }
 
-func (r RedisMock) SetVerifyIntent(key string, expiry time.Duration, intent, field, val string) error {
+//SetVerifyIntent mock
+func (r *redisMock) SetVerifyIntent(key string, expiry time.Duration, intent, field, val string) error {
 	panic("implement me")
 }
 
-func (r RedisMock) VerifyIntent(key string, intent consts.VerifyTokenIntent) error {
+//VerifyIntent mock
+func (r redisMock) VerifyIntent(key string, intent consts.VerifyTokenIntent) error {
 	panic("implement me")
 }
 
-func (r *RedisMock) GetSession(key string) (userID, orgID, deviceID, browserID, auth string, err error) {
+//GetSession mock
+func (r *redisMock) GetSession(key string) (userID, orgID, deviceID, browserID, auth string, err error) {
 	val := r.TestData().Get(key)
 
 	arr, ok := val.Data().([]string)
@@ -83,14 +90,17 @@ func (r *RedisMock) GetSession(key string) (userID, orgID, deviceID, browserID, 
 	return
 }
 
-func (r RedisMock) WaitForStatusAndGet(key, field string) (success bool, val string) {
+//WaitForStatusAndGet mock
+func (r *redisMock) WaitForStatusAndGet(key, field string) (success bool, val string) {
 	panic("implement me")
 }
 
-func (r RedisMock) SetHTTPGatewaySession(key, orgusr, authDataVal string, sessionRecord string) error {
+//SetHTTPGatewaySession mock
+func (r *redisMock) SetHTTPGatewaySession(key, orgusr, authDataVal string, sessionRecord string) error {
 	panic("implement me")
 }
 
-func (r RedisMock) GetHTTPGatewaySession(key string) (user, auth, sessionRecord string, err error) {
+//GetHTTPGatewaySession mock
+func (r *redisMock) GetHTTPGatewaySession(key string) (user, auth, sessionRecord string, err error) {
 	panic("implement me")
 }
