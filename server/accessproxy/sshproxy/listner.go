@@ -1,33 +1,36 @@
 package sshproxy
 
 import (
-	"io/ioutil"
-	"net"
-	"runtime/debug"
-
+	"github.com/pkg/errors"
 	"github.com/seknox/ssh"
 	"github.com/seknox/trasa/server/global"
+	"github.com/seknox/trasa/server/utils"
 	"github.com/sirupsen/logrus"
+	"io/ioutil"
+	"net"
 )
 
-func ListenSSH() {
+func ListenSSH(closeChan chan bool) error {
 
-	defer func() {
-		if r := recover(); r != nil {
-			logrus.Errorf("Recovered in ListenSSH(),: %v : %s", r, string(debug.Stack()))
-		}
-	}()
+	//defer func() {
+	//	if r := recover(); r != nil {
+	//		logrus.Errorf("Recovered in ListenSSH(),: %v : %s", r, string(debug.Stack()))
+	//	}
+	//}()
 
 	privateBytes, err := ioutil.ReadFile("/etc/trasa/certs/id_rsa")
-
 	if err != nil {
-		panic("Failed to load private key" + err.Error())
+		pkey, err := utils.GeneratePrivateKey(4082)
+		if err != nil {
+			return errors.WithMessage(err, "Failed to load private key")
+		}
+		privateBytes = utils.EncodePrivateKeyToPEM(pkey)
 	}
 
 	//TODO IMPORTANT key pass
-	private, err := ssh.ParsePrivateKeyWithPassphrase(privateBytes, []byte("testpass"))
+	private, err := ssh.ParsePrivateKey(privateBytes)
 	if err != nil {
-		panic("Failed to parse private key")
+		return errors.WithMessage(err, "Failed to parse private key")
 	}
 
 	/////////// SERVER CONFIG 	///////////////
@@ -45,15 +48,23 @@ func ListenSSH() {
 	logrus.Debug("TRASA gateway started")
 
 	listenAddr := global.GetConfig().SSHProxy.ListenAddr
+	if listenAddr == "" {
+		listenAddr = ":8022"
+	}
 	sshListener, err := net.Listen("tcp", listenAddr)
 	if err != nil {
-		logrus.Debugf("net.Listen failed: %v", err)
-		return
+
+		return errors.Errorf("net.Listen failed: %v", err)
 	}
 
 	defer sshListener.Close()
 
-	for {
+	var done = false
+	go func() {
+		<-closeChan
+		done = true
+	}()
+	for !done {
 		conn, err := sshListener.Accept()
 		if err != nil {
 			logrus.Error("listen.Accept failed: %v", err)
@@ -70,6 +81,7 @@ func ListenSSH() {
 		go start(conn, config)
 	}
 
+	return nil
 }
 
 func bannerCallBackHandler(conn ssh.ConnMetadata) string {

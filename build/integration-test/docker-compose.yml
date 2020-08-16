@@ -6,6 +6,8 @@ services:
     - "6379:6379"
   ssh-test-server:
     image: rastasheep/ubuntu-sshd
+    ports:
+    - "2222:22"
   db:
     image: postgres
     ports:

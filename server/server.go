@@ -75,7 +75,15 @@ func StartServr() {
 	initdb.InitDB()
 
 	logrus.Trace("Starting API Server...")
-	go sshproxy.ListenSSH()
+
+	closeChan := make(chan bool, 1)
+	go func() {
+		err := sshproxy.ListenSSH(closeChan)
+		if err != nil {
+			logrus.Error(err)
+		}
+		closeChan <- true
+	}()
 
 	webproxy.PrepareProxyConfig()
 

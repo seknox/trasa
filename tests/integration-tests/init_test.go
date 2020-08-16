@@ -2,8 +2,25 @@ package integration_tests
 
 import (
 	"fmt"
+	"github.com/seknox/trasa/server/accessproxy/rdpproxy"
+	"github.com/seknox/trasa/server/accessproxy/sshproxy"
+	"github.com/seknox/trasa/server/api/accesscontrol"
+	"github.com/seknox/trasa/server/api/accessmap"
+	"github.com/seknox/trasa/server/api/auth"
+	"github.com/seknox/trasa/server/api/auth/serviceauth"
 	"github.com/seknox/trasa/server/api/crypt"
+	"github.com/seknox/trasa/server/api/crypt/vault"
+	"github.com/seknox/trasa/server/api/devices"
+	"github.com/seknox/trasa/server/api/groups"
+	"github.com/seknox/trasa/server/api/idps"
+	"github.com/seknox/trasa/server/api/logs"
+	"github.com/seknox/trasa/server/api/misc"
+	"github.com/seknox/trasa/server/api/my"
+	"github.com/seknox/trasa/server/api/notif"
 	"github.com/seknox/trasa/server/api/orgs"
+	"github.com/seknox/trasa/server/api/policies"
+	"github.com/seknox/trasa/server/api/redis"
+	"github.com/seknox/trasa/server/api/services"
 	"github.com/seknox/trasa/server/api/stats"
 	"github.com/seknox/trasa/server/api/system"
 	"github.com/seknox/trasa/server/api/users"
@@ -14,7 +31,6 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	fmt.Println("_________________________________________________________________________________________________________")
 	setupTestEnv()
 	m.Run()
 }
@@ -87,11 +103,32 @@ func setupTestEnv() {
 		panic(err)
 	}
 
+	rdpproxy.InitStore(state, accesscontrol.TrasaUAC)
+	sshproxy.InitStore(state, accesscontrol.TrasaUAC)
+	serviceauth.InitStore(state, accesscontrol.TrasaUAC)
+
+	accesscontrol.InitStore(state, accesscontrol.TrasaUAC)
+
+	accessmap.InitStore(state)
+
+	auth.InitStore(state)
+
 	crypt.InitStore(state)
-	users.InitStore(state)
+	devices.InitStore(state)
+	groups.InitStore(state)
+	idps.InitStore(state)
+	logs.InitStore(state)
+	misc.InitStore(state)
+	my.InitStore(state)
+	notif.InitStore(state)
 	orgs.InitStore(state)
+	policies.InitStore(state)
+	redis.InitStore(state)
+	services.InitStore(state)
 	system.InitStore(state)
 	stats.InitStore(state)
+	users.InitStore(state)
+	vault.InitStore(state)
 
 	initdb.InitDB()
 
