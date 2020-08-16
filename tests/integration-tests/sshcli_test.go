@@ -59,7 +59,7 @@ func handleKBAuth(t *testing.T) ssh.AuthMethod {
 			if !strings.Contains(questions[0], "Email") {
 				t.Fatalf(`incorrect  question, want: %s got: %s`, "Enter Email (TRASA)", questions[0])
 			}
-			t.Log("Enter TRASA credentials")
+			//t.Log("Enter TRASA credentials")
 
 			return []string{trasaEmail, trasaPass}, nil
 
@@ -67,7 +67,7 @@ func handleKBAuth(t *testing.T) ssh.AuthMethod {
 			if len(questions) != 1 {
 				t.Fatalf(`incorrect number of question, want: %d got: %d`, 1, len(questions))
 			}
-			t.Log("Choose service")
+			//t.Log("Choose service")
 
 			return []string{`127.0.0.1:2222`}, nil
 
@@ -76,7 +76,7 @@ func handleKBAuth(t *testing.T) ssh.AuthMethod {
 				t.Fatalf(`incorrect number of question, want: %d got: %d`, 1, len(questions))
 			}
 			_, totp, _ := utils.CalculateTotp(totpSEC)
-			t.Log("Second factor authentication " + totp)
+			//t.Log("Second factor authentication " + totp)
 			return []string{totp}, nil
 
 		case strings.Contains(instruction, "Host key verify"):

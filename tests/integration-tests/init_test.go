@@ -31,11 +31,35 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	setupTestEnv()
+	state := setupTestEnv()
 	m.Run()
+	tearDown(state)
 }
 
-func setupTestEnv() {
+func tearDown(state *global.State) {
+	state.DB.Exec(`delete from users;`)
+	state.DB.Exec(`delete from services;`)
+	state.DB.Exec(`delete from adhoc_perms;`)
+	state.DB.Exec(`delete from auth_logs;`)
+	state.DB.Exec(`delete from backups;`)
+	state.DB.Exec(`delete from org;`)
+	state.DB.Exec(`delete from devices;`)
+	state.DB.Exec(`delete from browsers;`)
+	state.DB.Exec(`delete from cert_holder;`)
+	state.DB.Exec(`delete from global_settings;`)
+	state.DB.Exec(`delete from groups;`)
+	state.DB.Exec(`delete from inapp_notifs;`)
+	state.DB.Exec(`delete from key_holder;`)
+	state.DB.Exec(`delete from keylog;`)
+	state.DB.Exec(`delete from password_state;`)
+	state.DB.Exec(`delete from policies;`)
+	state.DB.Exec(`delete from security_rules;`)
+	state.DB.Exec(`delete from user_accessmaps;`)
+	state.DB.Exec(`delete from user_group_maps;`)
+
+}
+
+func setupTestEnv() *global.State {
 	testConfig := global.Config{
 		Database: struct {
 			Dbname     string `toml:"dbname"`
@@ -132,6 +156,7 @@ func setupTestEnv() {
 
 	initdb.InitDB()
 
+	return state
 }
 
 func insertMockData(state *global.State) error {
