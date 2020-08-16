@@ -3,6 +3,7 @@ package integration_tests
 import (
 	"crypto/rand"
 	"fmt"
+	"github.com/seknox/trasa/server/utils"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/testdata"
 	"net"
@@ -96,4 +97,9 @@ func newServer(c net.Conn, conf *ssh.ServerConfig) (*server, error) {
 	}
 	go ssh.DiscardRequests(reqs)
 	return &server{sconn, chans}, nil
+}
+
+func getTotpCode(secret string) string {
+	_, t, _ := utils.CalculateTotp(secret)
+	return t
 }

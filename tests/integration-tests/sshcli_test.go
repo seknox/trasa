@@ -1,9 +1,6 @@
 package integration_tests
 
 import (
-	"bytes"
-	"errors"
-	"fmt"
 	"github.com/seknox/trasa/server/accessproxy/sshproxy"
 	"github.com/seknox/trasa/server/utils"
 	"golang.org/x/crypto/ssh"
@@ -12,74 +9,6 @@ import (
 	"testing"
 	"time"
 )
-
-const (
-	trasaEmail   = "root"
-	trasaPass    = "changeme"
-	totpSEC      = "AV2COXZHVG4OAFSF"
-	upstreamUser = "bhrg3se"
-	upstreamPass = "downwiththe"
-)
-
-// tryAuthBothSides runs the handshake and returns the resulting errors from both sides of the connection.
-func tryAuthBothSides(t *testing.T, config *ssh.ClientConfig) (clientError error, serverAuthErrors []error) {
-	c1, c2, err := netPipe()
-	if err != nil {
-		t.Fatalf("netPipe: %v", err)
-	}
-	defer c1.Close()
-	defer c2.Close()
-
-	certChecker := ssh.CertChecker{
-		IsUserAuthority: func(k ssh.PublicKey) bool {
-			return bytes.Equal(k.Marshal(), testPublicKeys["ecdsa"].Marshal())
-		},
-		UserKeyFallback: func(conn ssh.ConnMetadata, key ssh.PublicKey) (*ssh.Permissions, error) {
-			if conn.User() == "testuser" && bytes.Equal(key.Marshal(), testPublicKeys["rsa"].Marshal()) {
-				return nil, nil
-			}
-
-			return nil, fmt.Errorf("pubkey for %q not acceptable", conn.User())
-		},
-		IsRevoked: func(c *ssh.Certificate) bool {
-			return c.Serial == 666
-		},
-	}
-
-	serverConfig := &ssh.ServerConfig{
-		PasswordCallback: func(conn ssh.ConnMetadata, pass []byte) (*ssh.Permissions, error) {
-			if conn.User() == "testuser" && string(pass) == clientPassword {
-				return nil, nil
-			}
-			return nil, errors.New("password auth failed")
-		},
-		PublicKeyCallback: certChecker.Authenticate,
-		KeyboardInteractiveCallback: func(conn ssh.ConnMetadata, challenge ssh.KeyboardInteractiveChallenge) (*ssh.Permissions, error) {
-			ans, err := challenge("user",
-				"instruction",
-				[]string{"question1", "question2"},
-				[]bool{true, true})
-			if err != nil {
-				return nil, err
-			}
-			ok := conn.User() == "testuser" && ans[0] == "answer1" && ans[1] == "answer2"
-			if ok {
-				challenge("user", "motd", nil, nil)
-				return nil, nil
-			}
-			return nil, errors.New("keyboard-interactive failed")
-		},
-	}
-	serverConfig.AddHostKey(testSigners["rsa"])
-
-	serverConfig.AuthLogCallback = func(conn ssh.ConnMetadata, method string, err error) {
-		serverAuthErrors = append(serverAuthErrors, err)
-	}
-
-	go newServer(c1, serverConfig)
-	_, _, _, err = ssh.NewClientConn(c2, "", config)
-	return err, serverAuthErrors
-}
 
 func TestSSHAuthWithoutPublicKey(t *testing.T) {
 	done := make(chan bool, 1)
