@@ -53,7 +53,6 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		r.Post("/tfa", auth.TfaHandler)
 		r.Delete("/logout", auth.LogoutHandler)
 
-		r.Post("/enrol/ext", auth.EnrolBrowserExtension)
 		r.Post("/accessproxy/http", serviceauth.AuthHTTPAccessProxy)
 
 		r.Post("/crypto/kex", crypt.Kex)
