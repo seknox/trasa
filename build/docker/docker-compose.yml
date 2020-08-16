@@ -3,7 +3,7 @@ services:
   trasa-server:
     build:
       context: ../..
-      dockerfile: build/test/Dockerfile
+      dockerfile: Dockerfile
     ports:
       - "80:80"
       - "443:443"
