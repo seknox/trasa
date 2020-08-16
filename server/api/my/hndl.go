@@ -209,7 +209,7 @@ func GetAuthMeta(w http.ResponseWriter, r *http.Request) {
 
 }
 
-type getMyAppDetail struct {
+type MyServiceDetail struct {
 	User       models.User               `json:"user"`
 	MyServices []models.MyServiceDetails `json:"myServices"`
 }
@@ -217,7 +217,7 @@ type getMyAppDetail struct {
 // GetMyServicesDetail retrieves services assigned to current user including permission/policy details
 func GetMyServicesDetail(w http.ResponseWriter, r *http.Request) {
 	userContext := r.Context().Value("user").(models.UserContext)
-	var response = getMyAppDetail{
+	var response = MyServiceDetail{
 		User:       models.User{},
 		MyServices: make([]models.MyServiceDetails, 0),
 	}
