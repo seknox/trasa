@@ -2,11 +2,12 @@ package notif
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"html/template"
-	"net/smtp"
 	"runtime"
+	"strconv"
 	"time"
 
 	"github.com/pkg/errors"
@@ -18,6 +19,7 @@ import (
 	"github.com/seknox/trasa/server/utils"
 	"github.com/sirupsen/logrus"
 
+	"gopkg.in/gomail.v2"
 	"gopkg.in/mailgun/mailgun-go.v1"
 )
 
@@ -407,28 +409,25 @@ func userCrud(emailIntegration models.EmailIntegrationConfig, emailData interfac
 
 func smtpEmail(creds models.EmailIntegrationConfig, subject string, receivers []string, cc []string, emailBody string) error {
 	logrus.Trace("sending smtp email")
-	auth := smtp.PlainAuth(
-		"",
-		creds.AuthKey,
-		creds.AuthPass,
-		creds.ServerAddress,
-	)
-
-	mime := "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\r\n"
-	from := "From: TRASA team\r\n"
-	sub := fmt.Sprintf("Subject: %s\r\n", subject)
-	err := smtp.SendMail(
-		fmt.Sprintf("%s:%s", creds.ServerAddress, creds.ServerPort),
-		auth,
-		creds.SenderAddress,
-
-		receivers,
-		[]byte(from+sub+mime+emailBody),
-	)
+	port, err := strconv.Atoi(creds.ServerPort)
 	if err != nil {
 		return err
 	}
+	d := gomail.NewDialer(creds.ServerAddress, port, creds.AuthKey, creds.AuthPass)
+	d.TLSConfig = &tls.Config{InsecureSkipVerify: global.GetConfig().Security.InsecureSkipVerify}
 
+	m := gomail.NewMessage()
+	m.SetHeader("From", creds.AuthKey)
+	m.SetHeaders(map[string][]string{
+		"To": receivers,
+	})
+	m.SetHeader("Subject", subject)
+	m.SetBody("text/html", emailBody)
+
+	//d := gomail.Dialer{Host: "localhost", Port: 587}
+	if err := d.DialAndSend(m); err != nil {
+		return err
+	}
 	return nil
 }
 
