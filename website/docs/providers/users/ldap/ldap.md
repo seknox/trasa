@@ -28,11 +28,11 @@ There are 2 things needed when integrating TRASA with LDAP server.
 
 
 ## 1. Create New Identity Provider
-![create idp](./create-idp.png 'create idp')
+![create idp](/img/docs/users/ldap/create-idp.png 'create idp')
 
 
 ## 2. Configure Identity Provider
-![Configuring LDAP IDP](./configuring-ldap.png 'Configuring LDAP IDP')
+![Configuring LDAP IDP](/img/docs/users/ldap/configuring-ldap.png 'Configuring LDAP IDP')
 
 
 
@@ -43,7 +43,7 @@ There are 2 things needed when integrating TRASA with LDAP server.
 
 
 ## 3. Import Users from LDAP server
-![Importing Users from LDAP](./import-ldap-users.png 'Importing Users from LDAP')
+![Importing Users from LDAP](/img/docs/users/ldap/import-ldap-users.png 'Importing Users from LDAP')
 
 Provide full path to LDAP user group. As an example, here we have used user group name `ldapgroup`
 

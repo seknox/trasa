@@ -21,11 +21,11 @@ module.exports = {
         src: 'img/trasa-bluebg.svg',
       },
       links: [
-        { to: 'blog', label: 'Blog', position: 'right' },
+        // { to: 'blog', label: 'Blog', position: 'right' },
         {
           to: 'docs/',
           activeBasePath: 'docs',
-          label: 'Docs',
+          label: 'Admin Docs',
           position: 'right',
         },
         {

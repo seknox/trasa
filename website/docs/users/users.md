@@ -1,10 +1,8 @@
 ---
-id: users-overview
+id: users
 title: Users
-sidebar_label: Overview
+sidebar_label: Introduction
 ---
-
-
 
 A user profile must be created in TRASA before they can access protected services.
 
@@ -17,3 +15,10 @@ Managing users in TRASA is the quickest way to provision for remote access for y
 ## Unique user profile
 
 All TRASA users are uniquely identifiable. TRASA automatically assigns UUID for each user. Along with unique ID, email and username should of each user enrolled in TRASA must be unique.
+
+
+## User roles
+TRASA has two user roles
+1. `orgAdmin` - User with administrative privilege to configure TRASA.
+2. `selfUser` - User who uses TRASA to access protected services.
+
