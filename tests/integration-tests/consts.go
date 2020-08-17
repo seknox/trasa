@@ -9,7 +9,7 @@ const (
 	trasaEmail   = "root"
 	trasaPass    = "changeme"
 	totpSEC      = "AV2COXZHVG4OAFSF"
-	upstreamUser = "bhrg3se"
+	upstreamUser = "root"
 	upstreamPass = "root"
 )
 

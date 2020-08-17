@@ -268,7 +268,7 @@ func TestGetAggregatedLoginHours(t *testing.T) {
 	}
 	data := resp.Data[0]
 
-	t.Log(string(rr.Body.Bytes()))
+	//	t.Log(string(rr.Body.Bytes()))
 	if len(data) != 24 {
 		t.Errorf(`incorrect login hours length, expected:%d got %d`, 24, len(data))
 	}
