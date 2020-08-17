@@ -22,7 +22,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Setup config for test
-        run: cp -r tests/build/etc/trasa /etc/trasa
+        run: sudo cp -r tests/build/etc/trasa /etc/trasa
 
       - name: Test
         working-directory: ./tests
