@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
+	"github.com/kabukky/httpscerts"
+	"github.com/seknox/trasa/server/initdb"
 	"net/http"
 	"strings"
-
-	"github.com/seknox/trasa/server/initdb"
 
 	"github.com/seknox/trasa/server/api/my"
 
@@ -105,7 +105,19 @@ func StartServr() {
 
 	go startRadiusServer()
 
-	err := http.ListenAndServeTLS(":443", "/etc/trasa/certs/trasa-server-dev.crt", "/etc/trasa/certs/trasa-server-dev.key", r)
+	err := httpscerts.Check("/etc/trasa/certs/trasa-server.crt", "/etc/trasa/certs/trasa-server.key")
+	// If they are not available, generate new ones.
+	if err != nil {
+		err = httpscerts.Generate("/etc/trasa/certs/trasa-server.crt", "/etc/trasa/certs/trasa-server.key", trasaListenAddr)
+		if err != nil {
+			logrus.Fatal("Error: Couldn't create https certs.")
+		}
+	}
+
+	err = http.ListenAndServeTLS(":443",
+		"/etc/trasa/certs/trasa-server.crt",
+		"/etc/trasa/certs/trasa-server.key",
+		r)
 	if err != nil {
 		fmt.Println(err)
 		logrus.Error(err)

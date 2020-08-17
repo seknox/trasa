@@ -20,9 +20,9 @@ require (
 	github.com/hashicorp/vault/api v1.0.5-0.20200317185738-82f498082f02
 	github.com/huandu/go-sqlbuilder v1.8.0
 	github.com/jinzhu/now v1.1.1
+	github.com/kabukky/httpscerts v0.0.0-20150320125433-617593d7dcb3
 	github.com/lib/pq v1.8.0
 	github.com/minio/minio-go v6.0.14+incompatible
-	github.com/mssola/user_agent v0.5.2
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/oschwald/geoip2-golang v1.4.0
 	github.com/phuslu/iploc v1.0.20200808
