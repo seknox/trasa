@@ -5,6 +5,8 @@ import (
 	"net/http"
 
 	"github.com/seknox/trasa/server/api/auth/serviceauth"
+	"github.com/seknox/trasa/server/global"
+	"github.com/seknox/trasa/server/utils"
 
 	"github.com/seknox/trasa/server/accessproxy/rdpproxy"
 	"github.com/seknox/trasa/server/accessproxy/sshproxy"
@@ -23,6 +25,7 @@ import (
 	"github.com/seknox/trasa/server/api/logs"
 	"github.com/seknox/trasa/server/api/my"
 	"github.com/seknox/trasa/server/api/notif"
+	"github.com/seknox/trasa/server/api/orgs"
 	"github.com/seknox/trasa/server/api/policies"
 	"github.com/seknox/trasa/server/api/services"
 	"github.com/seknox/trasa/server/api/stats"
@@ -35,7 +38,10 @@ import (
 // CoreAPIRoutes holds api route declarations for trasa-server
 func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 
-	r.Use(middlewares.Dumper{}.Handler)
+	logLevel := utils.NormalizeString(global.GetConfig().Logging.Level)
+	if logLevel == "trace" {
+		r.Use(middlewares.Dumper{}.Handler)
+	}
 
 	r.NotFound(func(w http.ResponseWriter, req *http.Request) {
 		logrus.Debug("NOT FOUND URL in core api: ", req.URL)
@@ -138,13 +144,11 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		r.Use(authmiddleware.Handler)
 		r.Use(inapptrailmiddleware.Handler)
 
-		//public APIs
-		//TODO @sshah verify these
-
 		r.Post("/devicedetailpipe", devices.DeviceDetailPipe)
 		r.Post("/passmydevicedetail", devices.PassMyDeviceDetail)
 
-		//r.Post("/gateway/ext/sync", gateway.SyncExtension)
+		r.Get("/org/detail", orgs.Get)
+		r.Post("/org/update", orgs.Update)
 
 		r.Get("/my", my.GetMyDetail)
 		r.Post("/my/forgotpass", my.ForgotPassword)
@@ -321,9 +325,6 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 
 		//// we are using http session validator in this case
 		//r.Post("/gateway/getpass", mdlwr.HttpSessionValidator(gateway.ValidateUserAndGetPass))
-
-		//r.Get("/gateway/internalhosts", mdlwr.SessionValidator(Authorization(gateway.GetInternalHosts)))
-		//r.Post("/gateway/updateinternalhosts", mdlwr.SessionValidator(Authorization(mdlwr.InAppTrailWrapper(gateway.UpdateInternalHosts, consts.UPDATE_HTTP_PROXY, true))))
 
 	})
 

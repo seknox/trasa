@@ -18,7 +18,9 @@ Your browser should send all HTTPs traffic of your upstream service to the TRASA
 + A domain name for web service which points to TRASA (should be a subdomain of TRASA server A record)
 + IP or domain name of primary web service (where TRASA access proxy will forward incoming requests)
 
-> **Note:** Users will need to install TRASA browser extension in their browsers to access HTTPs service. 
+:::note
+Users will need to install TRASA browser extension in their browsers to access HTTPs service. 
+:::
 
 ### In this guide
 + Gitlab is hosted in IP `10.10.0.10`. 

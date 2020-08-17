@@ -28,6 +28,8 @@ type orgAdapter interface {
 	Get(orgID string) (models.Org, error)
 	CheckOrgExists() (orgID string, err error)
 	CreateOrg(org *models.Org) error
+	update(org models.Org) error
+
 	GetIDP(orgID, idpName string) (models.IdentityProvider, error)
 
 	RemoveAllManagedAccounts(orgID string) error
