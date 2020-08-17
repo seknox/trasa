@@ -3,9 +3,8 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import Constants from '../../../Constants';
 import EmailSetting from './Emails';
-import HttpGwSetting from './InternalHosts';
-import PasswordSettings from './PasswordPolicy';
 import OrgAccountSetting from './OrgAccount';
+import PasswordSettings from './PasswordPolicy';
 
 export type PassPolicyProps = {};
 
@@ -53,9 +52,6 @@ export default function SystemStatus() {
       </Grid>
       <Grid item xs={9}>
         <PasswordSettings />
-      </Grid>
-      <Grid item xs={9}>
-        <HttpGwSetting />
       </Grid>
     </Grid>
   );

@@ -326,9 +326,6 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		//// we are using http session validator in this case
 		//r.Post("/gateway/getpass", mdlwr.HttpSessionValidator(gateway.ValidateUserAndGetPass))
 
-		//r.Get("/gateway/internalhosts", mdlwr.SessionValidator(Authorization(gateway.GetInternalHosts)))
-		//r.Post("/gateway/updateinternalhosts", mdlwr.SessionValidator(Authorization(mdlwr.InAppTrailWrapper(gateway.UpdateInternalHosts, consts.UPDATE_HTTP_PROXY, true))))
-
 	})
 
 	return r
