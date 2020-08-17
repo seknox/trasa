@@ -37,6 +37,6 @@ jobs:
         run: make clear
 
       - name: Build
-        working-directory: ./tests
+        working-directory: ./server
         run: go build
 
