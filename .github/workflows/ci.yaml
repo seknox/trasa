@@ -4,6 +4,7 @@ on :
   push:
     branches:
       - ci-setup
+      - dev
 
 jobs:
   test:
@@ -20,6 +21,9 @@ jobs:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
 
+      - name: Setup config for test
+        run: cp -r tests/build/etc/trasa /etc/trasa
+
       - name: Test
         working-directory: ./tests
         run: |
@@ -29,4 +33,8 @@ jobs:
       - name: Clean
         working-directory: ./tests
         run: make clear
+
+      - name: Build
+        working-directory: ./tests
+        run: go build
 

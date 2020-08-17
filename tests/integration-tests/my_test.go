@@ -44,8 +44,8 @@ func TestGetMyServicesDetail(t *testing.T) {
 
 	data := resp.Data[0]
 
-	if data.User.ID != "153f7582-5ae2-46ba-8c1c-79ef73fe296e" {
-		t.Errorf(`GetMyServicesDetail returned incorrect userID. want: %s got: %s`, "153f7582-5ae2-46ba-8c1c-79ef73fe296e", data.User.ID)
+	if data.User.ID != "13c45cfb-72ca-4177-b968-03604cab6a27" {
+		t.Errorf(`GetMyServicesDetail returned incorrect userID. want: %s got: %s`, "13c45cfb-72ca-4177-b968-03604cab6a27", data.User.ID)
 	}
 
 	myServices := data.MyServices
