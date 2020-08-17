@@ -28,6 +28,13 @@ func (o *orgMock) CreateOrg(org *models.Org) error {
 	args := o.Called(org)
 	return args.Error(0)
 }
+
+func (o *orgMock) update(org models.Org) error {
+
+	args := o.Called(org)
+	return args.Error(0)
+}
+
 func (o *orgMock) GetIDP(orgID, idpName string) (models.IdentityProvider, error) {
 	args := o.Called(orgID, idpName)
 	return args.Get(0).(models.IdentityProvider), args.Error(0)

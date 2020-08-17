@@ -23,6 +23,7 @@ import (
 	"github.com/seknox/trasa/server/api/logs"
 	"github.com/seknox/trasa/server/api/my"
 	"github.com/seknox/trasa/server/api/notif"
+	"github.com/seknox/trasa/server/api/orgs"
 	"github.com/seknox/trasa/server/api/policies"
 	"github.com/seknox/trasa/server/api/services"
 	"github.com/seknox/trasa/server/api/stats"
@@ -138,13 +139,11 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		r.Use(authmiddleware.Handler)
 		r.Use(inapptrailmiddleware.Handler)
 
-		//public APIs
-		//TODO @sshah verify these
-
 		r.Post("/devicedetailpipe", devices.DeviceDetailPipe)
 		r.Post("/passmydevicedetail", devices.PassMyDeviceDetail)
 
-		//r.Post("/gateway/ext/sync", gateway.SyncExtension)
+		r.Get("/org/detail", orgs.Get)
+		r.Post("/org/update", orgs.Update)
 
 		r.Get("/my", my.GetMyDetail)
 		r.Post("/my/forgotpass", my.ForgotPassword)
