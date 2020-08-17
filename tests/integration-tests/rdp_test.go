@@ -57,11 +57,11 @@ func TestServeWS(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			gotErrCode, _, gotStatus := connectGuac(t, &tt.args.params)
 			if tt.wantStatus != gotStatus {
-				t.Errorf("connectGuac() status = %v, wantErr %v", gotStatus, tt.wantStatus)
+				t.Errorf("connectGuac() status = %t, wantErr %t", gotStatus, tt.wantStatus)
 				return
 			}
 			if tt.wantErrCode != gotErrCode {
-				t.Errorf("connectGuac() status = %v, wantErr %v", gotStatus, tt.wantStatus)
+				t.Errorf("connectGuac() errCode = %s, wantErrCode %s", gotErrCode, tt.wantErrCode)
 				return
 			}
 
@@ -118,7 +118,7 @@ func connectGuac(t *testing.T, params *models.ConnectionParams) (err_code, err_m
 		if len(inst.Args) != 2 {
 			t.Fatalf(`invalid guacamole error instruction: %s`, inst.String())
 		}
-		return inst.Args[0], inst.Args[1], false
+		return inst.Args[1], inst.Args[0], false
 
 	default:
 		t.Fatalf(`error in test code`)

@@ -279,7 +279,7 @@ INSERT INTO cert_holder (id, org_id, entity_id, cert, key, csr, cert_type, creat
 
 INSERT INTO global_settings (id, org_id, status, type, value, updated_by, updated_on) VALUES
 	('578f606d162077', '153f7582-5ae2-46ba-8c1c-79ef73fe296e', false, 'GLOBAL_PASSWORD_CONFIG', '{"enforceStrongPass": false, "expiry": "never", "minimumChars": 8, "zxcvbnScore": 2}', 'SYSTEM', 1596720454),
-	('685f3a20a0e63c', '153f7582-5ae2-46ba-8c1c-79ef73fe296e', true, 'GLOBAL_DYNAMIC_ACCESS', '{"admins": null, "policyID": "f022d753-5f5f-4035-b3d4-59db0079d634", "status": true, "userGroups": ["0b09af8d-9928-4b72-8a2c-0cb72a9b9220"]}', '13c45cfb-72ca-4177-b968-03604cab6a27', 1596422977),
+	('685f3a20a0e63c', '153f7582-5ae2-46ba-8c1c-79ef73fe296e', false, 'GLOBAL_DYNAMIC_ACCESS', '{"admins": null, "policyID": "f022d753-5f5f-4035-b3d4-59db0079d634", "status": true, "userGroups": ["0b09af8d-9928-4b72-8a2c-0cb72a9b9220"]}', '13c45cfb-72ca-4177-b968-03604cab6a27', 1596422977),
 	('da93641c46ebd8', '153f7582-5ae2-46ba-8c1c-79ef73fe296e', true, 'GLOBAL_TRASA_SSH_CERT_ENFORCE', '{"mandatoryCertAuth": false}', 'SYSTEM', 1596340811),
 	('ddf0c07f5c3c83', '153f7582-5ae2-46ba-8c1c-79ef73fe296e', true, 'GLOBAL_EMAIL_CONFIG', '{"authKey": "trasa.io", "authPass": "key-xxxx-xxxx...", "integrationType": "EMAIL_MAILGUN", "senderAddress": "secure@trasa.io", "serverAddress": "", "serverPort": ""}', '13c45cfb-72ca-4177-b968-03604cab6a27', 1596451264),
 	('eb495ea95067fb', '153f7582-5ae2-46ba-8c1c-79ef73fe296e', false, 'GLOBAL_DEVICE_HYGIENE_CHECK', '{}', '13c45cfb-72ca-4177-b968-03604cab6a27', 1596451786),
