@@ -18,109 +18,109 @@ func Test_permissionChecker(t *testing.T) {
 	}{
 		{
 			name: "",
-			args: args{"orgAdmin", "/api/v1/services/path", "POST"},
+			args: args{"orgAdmin", "services", "POST"},
 			want: true,
 		},
 
 		{
 			name: "",
-			args: args{"normal", "/api/v1/services/path", "POST"},
+			args: args{"normal", "services", "POST"},
 			want: false,
 		},
 
 		{
 			name: "",
-			args: args{"normal", "/api/v1/users", "POST"},
+			args: args{"normal", "users", "POST"},
 			want: false,
 		},
 
 		{
 			name: "",
-			args: args{"normal", "/api/v1/system/path", "GET"},
+			args: args{"normal", "system", "GET"},
 			want: false,
 		},
 
 		{
 			name: "",
-			args: args{"orgAdmin", "/api/v1/system/path", "POST"},
+			args: args{"orgAdmin", "system", "POST"},
 			want: true,
 		},
 
 		{
 			name: "",
-			args: args{"orgAdmin", "/api/v1/org/path", "POST"},
+			args: args{"orgAdmin", "org", "POST"},
 			want: true,
 		},
 
 		{
 			name: "",
-			args: args{"orgAdmin", "/api/v1/crypto/path", "POST"},
+			args: args{"orgAdmin", "crypto", "POST"},
 			want: true,
 		},
 
 		{
 			name: "",
-			args: args{"orgAdmin", "/api/v1/groups/path", "PUT"},
+			args: args{"orgAdmin", "groups", "POST"},
 			want: true,
 		},
 
 		{
 			name: "",
-			args: args{"orgAdmin", "/api/v1/logs/path", "POST"},
+			args: args{"orgAdmin", "logs", "POST"},
 			want: true,
 		},
 
 		{
 			name: "",
-			args: args{"orgAdmin", "/api/v1/devices/path", "POST"},
+			args: args{"orgAdmin", "devices", "POST"},
 			want: true,
 		},
 
 		{
 			name: "",
-			args: args{"orgAdmin", "/api/v1/stats/path", "POST"},
+			args: args{"orgAdmin", "stats", "POST"},
 			want: true,
 		},
 
 		{
 			name: "",
-			args: args{"orgAdmin", "/api/v1/gateway/path", "GET"},
+			args: args{"orgAdmin", "gateway", "GET"},
+			want: true,
+		},
+
+		{
+			name: "",
+			args: args{"orgAdmin", "idp", "POST"},
+			want: true,
+		},
+
+		{
+			name: "",
+			args: args{"normal", "gateway", "POST"},
 			want: false,
 		},
 
 		{
 			name: "",
-			args: args{"orgAdmin", "/api/v1/idp/path", "POST"},
+			args: args{"normalUser", "stats", "POST"},
 			want: false,
 		},
 
 		{
 			name: "",
-			args: args{"normal", "/api/v1/gateway/path", "POST"},
+			args: args{"normalUser", "devices", "POST"},
 			want: false,
 		},
 
 		{
 			name: "",
-			args: args{"normalUser", "/api/v1/stats/path", "POST"},
+			args: args{"normalUser", "org", "POST"},
 			want: false,
 		},
 
 		{
 			name: "",
-			args: args{"normalUser", "/api/v1/devices/path", "POST"},
-			want: false,
-		},
-
-		{
-			name: "",
-			args: args{"normalUser", "/api/v1/org/path", "POST"},
-			want: false,
-		},
-
-		{
-			name: "",
-			args: args{"normalUser", "/api/v1/system/path", "POST"},
+			args: args{"normalUser", "system", "POST"},
 			want: false,
 		},
 

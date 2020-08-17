@@ -75,7 +75,7 @@ func (lr *WrappedTunnel) readFromGuests(guest *websocket.Conn) {
 	for {
 		_, data, err := guest.ReadMessage()
 		if err != nil {
-			logrus.Debugf(`Could not read from viewer, disconnected: `, err)
+			logrus.Debugf(`Could not read from viewer, disconnected: %v`, err)
 			return
 		}
 		lr.WriteCloser.Write(data)

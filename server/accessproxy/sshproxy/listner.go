@@ -67,7 +67,7 @@ func ListenSSH(closeChan chan bool) error {
 	for !done {
 		conn, err := sshListener.Accept()
 		if err != nil {
-			logrus.Error("listen.Accept failed: %v", err)
+			logrus.Errorf("listen.Accept failed: %v", err)
 			continue
 			//return err
 		}

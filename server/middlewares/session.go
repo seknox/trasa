@@ -3,8 +3,6 @@ package middlewares
 import (
 	"context"
 	"encoding/base64"
-	"net/http"
-
 	"github.com/gorilla/websocket"
 	"github.com/pkg/errors"
 	"github.com/seknox/trasa/server/api/orgs"
@@ -15,6 +13,7 @@ import (
 	"github.com/seknox/trasa/server/utils"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/nacl/secretbox"
+	"net/http"
 )
 
 // SessionValidator is a middleware that checks for csrf tokens and session cookies
