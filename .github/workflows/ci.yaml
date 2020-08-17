@@ -24,11 +24,13 @@ jobs:
       - name: Setup config for test
         run: sudo cp -r tests/build/etc/trasa /etc/trasa
 
-      - name: Test
+      - name: Unit Test
         working-directory: ./tests
-        run: |
-          make unit-test
-          make integration-test
+        run: make unit-test
+
+      - name: Integration Test
+        working-directory: ./tests
+        run: make integration-test
 
       - name: Clean
         working-directory: ./tests

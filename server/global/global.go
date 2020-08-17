@@ -132,7 +132,7 @@ func InitDBSTOREWithConfig(config Config) *State {
 	opt := option.WithCredentialsFile(absPath)
 	app, err := firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {
-		logrus.Error("firebase key not found: %v", err)
+		logrus.Errorf("firebase key not found: %v", err)
 		//panic(err)
 	}
 
