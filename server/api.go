@@ -5,6 +5,8 @@ import (
 	"net/http"
 
 	"github.com/seknox/trasa/server/api/auth/serviceauth"
+	"github.com/seknox/trasa/server/global"
+	"github.com/seknox/trasa/server/utils"
 
 	"github.com/seknox/trasa/server/accessproxy/rdpproxy"
 	"github.com/seknox/trasa/server/accessproxy/sshproxy"
@@ -36,7 +38,10 @@ import (
 // CoreAPIRoutes holds api route declarations for trasa-server
 func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 
-	r.Use(middlewares.Dumper{}.Handler)
+	logLevel := utils.NormalizeString(global.GetConfig().Logging.Level)
+	if logLevel == "trace" {
+		r.Use(middlewares.Dumper{}.Handler)
+	}
 
 	r.NotFound(func(w http.ResponseWriter, req *http.Request) {
 		logrus.Debug("NOT FOUND URL in core api: ", req.URL)
