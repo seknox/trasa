@@ -4,7 +4,7 @@ dependency:
 	@cd ../server && go get -v ./...
 
 end-to-end-test: docker-up-all dependency
-	@jest
+	@yarn jest
 	@make clear
 
 integration-test: docker-up-db dependency

@@ -24,7 +24,6 @@ import (
 
 	"github.com/seknox/ssh"
 
-	"strconv"
 	"strings"
 	"time"
 )
@@ -489,37 +488,37 @@ func updateSessionCredentials(sess *Session, signer ssh.Signer, hostkeyCallback 
 // Returns index of app list.
 // Returns -1 if dynamic ip is entered.
 // Returns -2 if input is invalid.
-func searchAppName(input string, appUsers []models.AccessMapDetail) int {
-	input = strings.Trim(input, "")
-	for i, app := range appUsers {
-		if strings.EqualFold(input, app.ServiceName) {
-			return i
-		} else if input == app.Hostname {
-			return i
-		}
-	}
-
-	splittedInput := strings.Split(input, ":")
-	//If port is included
-	if (len(splittedInput) == 2) && splittedInput[0] != "" && splittedInput[1] != "" {
-		ip := net.ParseIP(splittedInput[0])
-		if ip != nil {
-			return -1
-		}
-	} else if len(splittedInput) == 1 {
-		ip := net.ParseIP(input)
-		if ip != nil {
-			return -1
-		}
-	}
-
-	index, err := strconv.Atoi(input)
-
-	//appNum, errStrConv = strconv.Atoi(ans[0])
-	//Check if choice is out of index
-	if err != nil || index > len(appUsers) || index < 1 {
-		return -2
-	}
-	return index - 1
-
-}
+//func searchAppName(input string, appUsers []models.AccessMapDetail) int {
+//	input = strings.Trim(input, "")
+//	for i, app := range appUsers {
+//		if strings.EqualFold(input, app.ServiceName) {
+//			return i
+//		} else if input == app.Hostname {
+//			return i
+//		}
+//	}
+//
+//	splittedInput := strings.Split(input, ":")
+//	//If port is included
+//	if (len(splittedInput) == 2) && splittedInput[0] != "" && splittedInput[1] != "" {
+//		ip := net.ParseIP(splittedInput[0])
+//		if ip != nil {
+//			return -1
+//		}
+//	} else if len(splittedInput) == 1 {
+//		ip := net.ParseIP(input)
+//		if ip != nil {
+//			return -1
+//		}
+//	}
+//
+//	index, err := strconv.Atoi(input)
+//
+//	//appNum, errStrConv = strconv.Atoi(ans[0])
+//	//Check if choice is out of index
+//	if err != nil || index > len(appUsers) || index < 1 {
+//		return -2
+//	}
+//	return index - 1
+//
+//}

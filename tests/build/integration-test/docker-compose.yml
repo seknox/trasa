@@ -3,11 +3,23 @@ services:
   redis:
     image: redis
     ports:
-    - "6379:6379"
+    - "16379:6379"
   ssh-test-server:
     image: rastasheep/ubuntu-sshd
     ports:
     - "2222:22"
+  guacd:
+    image: guacamole/guacd
+    ports:
+    - "4822:4822"
+
+  rdp-test-server:
+    image: umis/xubuntu-office-xrdp-desktop:v1.0
+    environment:
+      - "USERNAME:root"
+      - "PASSWORD:root"
+    ports:
+    - "33899:3389"
   db:
     image: postgres
     ports:

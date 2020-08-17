@@ -99,7 +99,7 @@ func setupTestEnv() *global.State {
 			Usercert   string   `toml:"usercert"`
 			Userkey    string   `toml:"userkey"`
 			Cacert     string   `toml:"cacert"`
-		}{"", []string{"127.0.0.1:6379"}, false, "", "", ""},
+		}{"", []string{"127.0.0.1:16379"}, false, "", "", ""},
 		Timezone: struct {
 			Location string `toml:"location"`
 		}{"Asia/Kathmandu"},

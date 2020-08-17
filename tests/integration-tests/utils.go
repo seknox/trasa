@@ -1,41 +1,18 @@
 package integration_tests
 
 import (
+	"context"
 	"crypto/rand"
 	"fmt"
+	"github.com/gorilla/websocket"
+	"github.com/seknox/trasa/server/models"
 	"github.com/seknox/trasa/server/utils"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/testdata"
 	"net"
+	"net/http"
 )
-
-var clientPassword = "tiger"
-
-// netPipe is analogous to net.Pipe, but it uses a real net.Conn, and
-// therefore is buffered (net.Pipe deadlocks if both sides start with
-// a write.)
-func netPipe() (net.Conn, net.Conn, error) {
-	listener, err := net.Listen("tcp", "127.0.0.1:0")
-	if err != nil {
-		listener, err = net.Listen("tcp", "[::1]:0")
-		if err != nil {
-			return nil, nil, err
-		}
-	}
-	defer listener.Close()
-	c1, err := net.Dial("tcp", listener.Addr().String())
-	if err != nil {
-		return nil, nil, err
-	}
-
-	c2, err := listener.Accept()
-	if err != nil {
-		c1.Close()
-		return nil, nil, err
-	}
-
-	return c1, c2, nil
-}
 
 var (
 	testPrivateKeys map[string]interface{}
@@ -102,4 +79,101 @@ func newServer(c net.Conn, conf *ssh.ServerConfig) (*server, error) {
 func getTotpCode(secret string) string {
 	_, t, _ := utils.CalculateTotp(secret)
 	return t
+}
+
+// AddTestUserContext is a middleware that adds  mock userContext
+func AddTestUserContext(next http.HandlerFunc) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		userContext := models.UserContext{
+			User: &models.User{
+				ID:         "13c45cfb-72ca-4177-b968-03604cab6a27",
+				OrgID:      "153f7582-5ae2-46ba-8c1c-79ef73fe296e",
+				UserName:   "root",
+				FirstName:  "Bhargab",
+				MiddleName: "",
+				LastName:   "Acharya",
+				Email:      "bhargab@seknox.com",
+				Groups:     nil,
+				UserRole:   "orgAdmin",
+				Status:     true,
+				IdpName:    "trasa",
+			},
+			Org: models.Org{
+				ID:             "153f7582-5ae2-46ba-8c1c-79ef73fe296e",
+				OrgName:        "Trasa",
+				Domain:         "trasa.io",
+				PrimaryContact: "",
+				Timezone:       "Asia/Kathmandu",
+				PhoneNumber:    "",
+				CreatedAt:      0,
+				PlatformBase:   "",
+				License:        models.License{},
+			},
+			DeviceID:  "",
+			BrowserID: "",
+		}
+		ctx := context.WithValue(r.Context(), "user", userContext)
+		next(w, r.WithContext(ctx))
+
+	})
+
+}
+
+// AddTestUserContextWS is a middleware that adds  mock userContext to ws handlers
+func AddTestUserContextWS(next func(params models.ConnectionParams, uc models.UserContext, ws *websocket.Conn)) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		conn, err := upgrader.Upgrade(w, r, nil)
+		if err != nil {
+			logrus.Error(err)
+			return
+		}
+		//defer conn.Close()
+
+		//TODO use different generic model for session validation
+		var params models.ConnectionParams
+		err = conn.ReadJSON(&params)
+		if err != nil {
+			logrus.Error(err)
+			conn.WriteMessage(1, []byte(err.Error()))
+			conn.Close()
+			return
+		}
+
+		userContext := models.UserContext{
+			User: &models.User{
+				ID:         "13c45cfb-72ca-4177-b968-03604cab6a27",
+				OrgID:      "153f7582-5ae2-46ba-8c1c-79ef73fe296e",
+				UserName:   "root",
+				FirstName:  "Bhargab",
+				MiddleName: "",
+				LastName:   "Acharya",
+				Email:      "bhargab@seknox.com",
+				Groups:     nil,
+				UserRole:   "orgAdmin",
+				Status:     true,
+				IdpName:    "trasa",
+			},
+			Org: models.Org{
+				ID:             "153f7582-5ae2-46ba-8c1c-79ef73fe296e",
+				OrgName:        "Trasa",
+				Domain:         "trasa.io",
+				PrimaryContact: "",
+				Timezone:       "Asia/Kathmandu",
+				PhoneNumber:    "",
+				CreatedAt:      0,
+				PlatformBase:   "",
+				License:        models.License{},
+			},
+			DeviceID:  "",
+			BrowserID: "",
+		}
+
+		params.UserIP = utils.GetIp(r)
+
+		next(params, userContext, conn)
+
+	})
+
 }

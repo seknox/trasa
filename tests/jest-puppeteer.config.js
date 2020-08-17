@@ -3,7 +3,7 @@ module.exports = {
       // dumpio: true,
       ignoreHTTPSErrors: true,
        slowMo: 50,
-      headless: false,
+      headless: true,
      // devtools: true,
       defaultViewport: {
         width: 1300,
