@@ -117,7 +117,7 @@ func (s statStore) GetAggregatedLoginHours(entityType, entityID, timezone, orgID
 		logins = append(logins, login)
 	}
 out:
-	for i := 0; i < 24; i++ {
+	for i := 0; i < 23; i++ {
 
 		for j := i; j >= 0; j-- {
 			if len(logins) < i+1 {
