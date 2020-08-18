@@ -44,6 +44,13 @@ func (s orgStore) Get(orgID string) (models.Org, error) {
 	return org, err
 }
 
+func (s orgStore) update(org models.Org) error {
+	_, err := s.DB.Exec(`UPDATE org SET org_name = $1, domain = $2, primary_contact = $3, timezone = $4, phone_number = $5  WHERE id = $6;`,
+		org.OrgName, org.Domain, org.PrimaryContact, org.Timezone, org.PhoneNumber, org.ID)
+
+	return err
+}
+
 func (s orgStore) GetIDP(orgID, idpName string) (models.IdentityProvider, error) {
 	var idp models.IdentityProvider
 	err := s.DB.QueryRow("SELECT id, org_id, name,type, meta, is_enabled, redirect_url, audience_uri, endpoint, created_by , last_updated FROM idp WHERE org_id = $1 AND name=$2",
