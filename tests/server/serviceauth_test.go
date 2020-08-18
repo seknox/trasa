@@ -1,7 +1,6 @@
 package server_test
 
 import (
-	"bytes"
 	"encoding/json"
 	"github.com/seknox/trasa/server/api/auth/serviceauth"
 	"github.com/seknox/trasa/server/models"
@@ -137,17 +136,4 @@ func TestAgentAuth(t *testing.T) {
 		})
 	}
 
-}
-
-func getreqWithBody(t *testing.T, body interface{}) *http.Request {
-	bodyBytes, err := json.Marshal(body)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	req, err := http.NewRequest("GET", "", bytes.NewBuffer(bodyBytes))
-	if err != nil {
-		t.Fatal(err)
-	}
-	return req
 }

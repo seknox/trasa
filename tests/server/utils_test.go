@@ -1,8 +1,10 @@
 package server_test
 
 import (
+	"bytes"
 	"context"
 	"crypto/rand"
+	"encoding/json"
 	"fmt"
 	"github.com/gorilla/websocket"
 	"github.com/seknox/trasa/server/models"
@@ -12,6 +14,7 @@ import (
 	"golang.org/x/crypto/ssh/testdata"
 	"net"
 	"net/http"
+	"testing"
 )
 
 var (
@@ -176,4 +179,17 @@ func AddTestUserContextWS(next func(params models.ConnectionParams, uc models.Us
 
 	})
 
+}
+
+func getreqWithBody(t *testing.T, body interface{}) *http.Request {
+	bodyBytes, err := json.Marshal(body)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	req, err := http.NewRequest("POST", "", bytes.NewBuffer(bodyBytes))
+	if err != nil {
+		t.Fatal(err)
+	}
+	return req
 }
