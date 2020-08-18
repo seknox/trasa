@@ -12,7 +12,7 @@ import (
 	"golang.org/x/crypto/ssh"
 )
 
-type creds struct {
+type ServiceCreds struct {
 	Username   string `json:"username"`
 	Credential string `json:"credential"`
 	ServiceID  string `json:"serviceID"`
@@ -24,7 +24,7 @@ type creds struct {
 // storing it separate will also decouples our core dependency in vault
 func StoreServiceCredentials(w http.ResponseWriter, r *http.Request) {
 	userContext := r.Context().Value("user").(models.UserContext)
-	var req creds
+	var req ServiceCreds
 
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logrus.Error(err)
@@ -76,7 +76,7 @@ func StoreServiceCredentials(w http.ResponseWriter, r *http.Request) {
 func ViewCreds(w http.ResponseWriter, r *http.Request) {
 	//fmt.Println("Got GetPassword")
 	userContext := r.Context().Value("user").(models.UserContext)
-	var req creds
+	var req ServiceCreds
 
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logrus.Error(err)
@@ -108,7 +108,7 @@ func ViewCreds(w http.ResponseWriter, r *http.Request) {
 func DeleteCreds(w http.ResponseWriter, r *http.Request) {
 	userContext := r.Context().Value("user").(models.UserContext)
 	//	fmt.Println("Got deletepass")
-	var req creds
+	var req ServiceCreds
 
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logrus.Error(err)
