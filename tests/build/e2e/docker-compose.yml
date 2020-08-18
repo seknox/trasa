@@ -2,7 +2,7 @@ version: '3.8'
 services:
   trasa-server:
     build:
-      context: ../../..
+      context: ../..
       dockerfile: tests/build/end-to-end/Dockerfile
     ports:
       - "80:80"
