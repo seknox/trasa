@@ -15,11 +15,11 @@ services:
 
   rdp-test-server:
     image: umis/xubuntu-office-xrdp-desktop:v1.0
-    environment:
-      - "USERNAME:root"
-      - "PASSWORD:root"
     ports:
     - "33899:3389"
+    networks:
+      test_network:
+        ipv4_address: 172.16.238.12
   db:
     image: postgres
     ports:
@@ -28,4 +28,14 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+
+networks:
+  test_network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.238.0/24
+
 
