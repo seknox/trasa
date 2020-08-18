@@ -12,7 +12,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/testdata"
-	"net"
 	"net/http"
 	"testing"
 )
@@ -62,21 +61,6 @@ func init() {
 	if err != nil {
 		panic(fmt.Sprintf("Unable to create certificate signer: %v", err))
 	}
-}
-
-type server struct {
-	*ssh.ServerConn
-	chans <-chan ssh.NewChannel
-}
-
-func newServer(c net.Conn, conf *ssh.ServerConfig) (*server, error) {
-
-	sconn, chans, reqs, err := ssh.NewServerConn(c, conf)
-	if err != nil {
-		return nil, err
-	}
-	go ssh.DiscardRequests(reqs)
-	return &server{sconn, chans}, nil
 }
 
 func getTotpCode(secret string) string {

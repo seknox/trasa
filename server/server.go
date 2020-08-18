@@ -103,7 +103,7 @@ func StartServr() {
 
 	go http.ListenAndServe(":80", http.HandlerFunc(redirect))
 
-	go startRadiusServer()
+	go StartRadiusServer(closeChan)
 
 	err := httpscerts.Check("/etc/trasa/certs/trasa-server.crt", "/etc/trasa/certs/trasa-server.key")
 	// If they are not available, generate new ones.

@@ -13,11 +13,15 @@ import (
 	"layeh.com/radius"
 )
 
-func startRadiusServer() {
+func StartRadiusServer(done chan bool) {
 	server := radius.PacketServer{
 		Handler:      radius.HandlerFunc(serviceauth.RadiusLogin),
 		SecretSource: DynamicSecretSource(),
 	}
+	go func() {
+		<-done
+		server.Shutdown(context.Background())
+	}()
 
 	logrus.Debug("Starting radius server on UDP :1812")
 	if err := server.ListenAndServe(); err != nil {
