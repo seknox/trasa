@@ -64,8 +64,8 @@ func TestSSHAuthWithPublicKey(t *testing.T) {
 	cconf := ssh.ClientConfig{
 		User: upstreamUser,
 		Auth: []ssh.AuthMethod{
-			handleKBAuth(t),
 			ssh.PublicKeys(pk),
+			handleKBAuth(t),
 		},
 		HostKeyCallback: func(hostname string, remote net.Addr, key ssh.PublicKey) error {
 			return nil
@@ -108,8 +108,8 @@ func TestSSHAuthWithAuthorisedPublicKey(t *testing.T) {
 	cconf := ssh.ClientConfig{
 		User: upstreamUser,
 		Auth: []ssh.AuthMethod{
-			handleKBAuth(t),
 			ssh.PublicKeys(pk),
+			handleKBAuth(t),
 		},
 		HostKeyCallback: func(hostname string, remote net.Addr, key ssh.PublicKey) error {
 			return nil

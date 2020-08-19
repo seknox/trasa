@@ -35,6 +35,19 @@ func TestConnectNewSSH(t *testing.T) {
 			wantErrMsg: "Service not created",
 			wantStatus: false,
 		},
+		{
+			name: "should pass",
+			args: args{models.ConnectionParams{
+				TotpCode:  getTotpCode(totpSEC),
+				Privilege: "root",
+				Password:  "root",
+				OptHeight: 1500,
+				OptWidth:  1500,
+				Hostname:  "127.0.0.1:2222",
+			}},
+			wantErrMsg: "",
+			wantStatus: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -97,6 +110,17 @@ func connectSSHWS(t *testing.T, params *models.ConnectionParams) (string, bool) 
 
 	//TODO implement a generic format for detecting error and complete the test
 
-	return msgStr, false
+	for i := 0; i < 50; i++ {
+		_, _, err := ws.ReadMessage()
+		if err != nil {
+			t.Fatal(err)
+		}
+		err = ws.WriteMessage(websocket.TextMessage, []byte(`y`))
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	return "", true
 
 }
