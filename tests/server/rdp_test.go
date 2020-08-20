@@ -43,14 +43,14 @@ func TestServeWS(t *testing.T) {
 			args: args{models.ConnectionParams{
 				TotpCode:  getTotpCode(totpSEC),
 				Privilege: "root",
-				Password:  "root",
+				Password:  "Docker",
 				OptHeight: 1500,
 				OptWidth:  1500,
-				Hostname:  "127.0.0.1:33899",
+				Hostname:  "172.16.238.12:33899",
 			}},
 			wantErrMsg:  "",
 			wantErrCode: "3339",
-			wantStatus:  false,
+			wantStatus:  true,
 		},
 	}
 	for _, tt := range tests {
@@ -157,6 +157,11 @@ func waitForErrorOrTFA(t *testing.T, ws *websocket.Conn) *guacamole.Instruction 
 
 		if inst.Opcode == guacamole.TfaOpcode || inst.Opcode == "error" {
 			return inst
+		}
+
+		err = ws.WriteMessage(websocket.TextMessage, guacamole.NewInstruction("nop").Byte())
+		if err != nil {
+			t.Fatalf(`cannot write to server: %v`, err)
 		}
 
 	}

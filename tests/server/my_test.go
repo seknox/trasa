@@ -54,4 +54,6 @@ func TestGetMyServicesDetail(t *testing.T) {
 		t.Errorf(`GetMyServicesDetail returned incorrect number of services. want: %d got: %d`, 3, len(data.MyServices))
 	}
 
+	//TODO add more expectations
+
 }

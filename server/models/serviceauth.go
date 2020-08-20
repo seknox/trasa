@@ -26,7 +26,7 @@ type UpstreamCreds struct {
 type ConnectionParams struct {
 	ServiceID       string           `json:"serviceID"`
 	ServiceName     string           `json:"-"`
-	AppSecret       string           `json:"appSecret"`
+	ServiceSecret   string           `json:"serviceSecret"`
 	TfaMethod       string           `json:"tfaMethod"`
 	TotpCode        string           `json:"totpCode"`
 	TrasaID         string           `json:"trasaID"`

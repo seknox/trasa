@@ -10,6 +10,8 @@ import (
 	"time"
 )
 
+//TODO make tabular tests
+
 func TestSSHAuthWithoutPublicKey(t *testing.T) {
 	done := make(chan bool, 1)
 	go sshproxy.ListenSSH(done)
@@ -19,6 +21,94 @@ func TestSSHAuthWithoutPublicKey(t *testing.T) {
 	cconf := ssh.ClientConfig{
 		User: upstreamUser,
 		Auth: []ssh.AuthMethod{
+			handleKBAuth(t),
+		},
+		HostKeyCallback: func(hostname string, remote net.Addr, key ssh.PublicKey) error {
+			return nil
+		},
+		BannerCallback: nil,
+	}
+
+	client, err := ssh.Dial("tcp", "127.0.0.1:8022", &cconf)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	s, err := client.NewSession()
+	if err != nil {
+		t.Fatalf(`could not start session: %v`, err)
+	}
+
+	//s.Close()
+	//t.Log("closed++++++++++++++++++++++++++++++++++++++")
+
+	err = s.Run("ls")
+	if err != nil {
+		t.Fatalf(`could not run command: %v`, err)
+	}
+
+	done <- true
+}
+
+func TestSSHAuthWithPublicKey(t *testing.T) {
+	done := make(chan bool, 1)
+	go sshproxy.ListenSSH(done)
+
+	time.Sleep(time.Second * 2)
+
+	pk, err := ssh.ParsePrivateKey([]byte(testPrivateKey))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	cconf := ssh.ClientConfig{
+		User: upstreamUser,
+		Auth: []ssh.AuthMethod{
+			ssh.PublicKeys(pk),
+			handleKBAuth(t),
+		},
+		HostKeyCallback: func(hostname string, remote net.Addr, key ssh.PublicKey) error {
+			return nil
+		},
+		BannerCallback: nil,
+	}
+
+	client, err := ssh.Dial("tcp", "127.0.0.1:8022", &cconf)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	s, err := client.NewSession()
+	if err != nil {
+		t.Fatalf(`could not start session: %v`, err)
+	}
+
+	//s.Close()
+	//t.Log("closed++++++++++++++++++++++++++++++++++++++")
+
+	err = s.Run("ls")
+	if err != nil {
+		t.Fatalf(`could not run command: %v`, err)
+	}
+
+	done <- true
+}
+
+func TestSSHAuthWithAuthorisedPublicKey(t *testing.T) {
+	done := make(chan bool, 1)
+	go sshproxy.ListenSSH(done)
+
+	time.Sleep(time.Second * 2)
+
+	pk, err := ssh.ParsePrivateKey([]byte(testPrivateKey2))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	cconf := ssh.ClientConfig{
+		User: upstreamUser,
+		Auth: []ssh.AuthMethod{
+			ssh.PublicKeys(pk),
 			handleKBAuth(t),
 		},
 		HostKeyCallback: func(hostname string, remote net.Addr, key ssh.PublicKey) error {

@@ -62,7 +62,7 @@ func Getkey(w http.ResponseWriter, r *http.Request) {
 
 	key, err := tsxvault.Store.GetKeyOrTokenWithTag(uc.User.OrgID, vendorID)
 	if err != nil {
-		logger.Error(err)
+		logger.Error(err, vendorID)
 		utils.TrasaResponse(w, 200, "failed", "failed to get token.", "Getkey-GetKeyOrTokenWithTag", nil)
 		return
 	}
@@ -96,17 +96,24 @@ func EncryptAndStoreKeyOrToken(req models.KeysHolder) ([]byte, error) {
 	return req.KeyVal, nil
 }
 
+type VaultInit struct {
+	SecretShares    int `json:"secretShares"`
+	SecretThreshold int `json:"secretThreshold"`
+}
+type VaultInitResp struct {
+	UnsealKeys   []string `json:"unsealKeys"`
+	DecryptKeys  []string `json:"decryptKeys"`
+	EncRootToken string   `json:"encRootToken"`
+	Tsxvault     bool     `json:"tsxvault"`
+}
+
 // TsxvaultInit initializes TRASA built in secure storage. master key for encryption is
 // Shamir'ed into 5 keys with minimum 3 keys threshold and responded back to administrator.
 func TsxvaultInit(w http.ResponseWriter, r *http.Request) {
-	type vaultInit struct {
-		SecretShares    int `json:"secretShares"`
-		SecretThreshold int `json:"secretThreshold"`
-	}
 
 	uc := r.Context().Value("user").(models.UserContext)
 
-	var req vaultInit
+	var req VaultInit
 
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logger.Error(err)
@@ -145,14 +152,7 @@ func TsxvaultInit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	type vaultInitResp struct {
-		UnsealKeys   []string `json:"unsealKeys"`
-		DecryptKeys  []string `json:"decryptKeys"`
-		EncRootToken string   `json:"encRootToken"`
-		Tsxvault     bool     `json:"tsxvault"`
-	}
-
-	var resp vaultInitResp
+	var resp VaultInitResp
 	resp.UnsealKeys = encKeyShards
 	resp.Tsxvault = true
 
@@ -205,7 +205,7 @@ func ReInit(w http.ResponseWriter, r *http.Request) {
 
 }
 
-type vaultStatus struct {
+type VaultStatus struct {
 	InitStatus  models.GlobalSettings              `json:"initStatus"`
 	SealStatus  *hashicorpVault.SealStatusResponse `json:"sealStatus"`
 	TokenStatus hashicorpVault.SealStatusResponse  `json:"tokenStatus"`
@@ -225,7 +225,7 @@ func Status(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var resp vaultStatus
+	var resp VaultStatus
 	resp.InitStatus = vaultInitStatus
 
 	resp.Tsxvault = global.GetConfig().Vault.Tsxvault

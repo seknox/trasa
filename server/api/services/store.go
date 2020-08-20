@@ -38,7 +38,7 @@ SELECT org_id,id, name, secret_key, passthru,adhoc, created_at,hostname, type, m
 		return service, err
 	}
 
-	return service, err
+	return service, nil
 }
 
 func (s serviceStore) Create(app *models.Service) (err error) {

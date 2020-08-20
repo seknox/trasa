@@ -1,8 +1,10 @@
 package server_test
 
 import (
+	"bytes"
 	"context"
 	"crypto/rand"
+	"encoding/json"
 	"fmt"
 	"github.com/gorilla/websocket"
 	"github.com/seknox/trasa/server/models"
@@ -10,8 +12,8 @@ import (
 	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/testdata"
-	"net"
 	"net/http"
+	"testing"
 )
 
 var (
@@ -59,21 +61,6 @@ func init() {
 	if err != nil {
 		panic(fmt.Sprintf("Unable to create certificate signer: %v", err))
 	}
-}
-
-type server struct {
-	*ssh.ServerConn
-	chans <-chan ssh.NewChannel
-}
-
-func newServer(c net.Conn, conf *ssh.ServerConfig) (*server, error) {
-
-	sconn, chans, reqs, err := ssh.NewServerConn(c, conf)
-	if err != nil {
-		return nil, err
-	}
-	go ssh.DiscardRequests(reqs)
-	return &server{sconn, chans}, nil
 }
 
 func getTotpCode(secret string) string {
@@ -176,4 +163,17 @@ func AddTestUserContextWS(next func(params models.ConnectionParams, uc models.Us
 
 	})
 
+}
+
+func getreqWithBody(t *testing.T, body interface{}) *http.Request {
+	bodyBytes, err := json.Marshal(body)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	req, err := http.NewRequest("POST", "", bytes.NewBuffer(bodyBytes))
+	if err != nil {
+		t.Fatal(err)
+	}
+	return req
 }
