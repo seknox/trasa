@@ -4,17 +4,16 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/seknox/trasa/core/crypt"
-	"github.com/seknox/trasa/server/api/providers/vault"
+	"github.com/seknox/trasa/server/api/providers/vault/tsxvault"
 	"github.com/seknox/trasa/server/api/system"
 	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/models"
 )
 
 func Test_handlePass(t *testing.T) {
-	_ = crypt.InitStoreMock()
+	//_ = crypt.InitStoreMock()
 	systemstore := system.InitStoreMock()
-	vaultstore := vault.InitStoreMock()
+	vaultstore := tsxvault.InitStoreMock()
 
 	type args struct {
 		params *models.ConnectionParams

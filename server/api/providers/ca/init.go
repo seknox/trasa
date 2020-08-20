@@ -10,6 +10,13 @@ func InitStore(state *global.State) {
 	Store = cryptStore{State: state}
 }
 
+//InitStoreMock will init mock state of this package
+func InitStoreMock() *cryptMock {
+	m := new(cryptMock)
+	Store = m
+	return m
+}
+
 //Store is the package state variable which contains database connections
 var Store adapter
 

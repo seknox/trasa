@@ -8,17 +8,16 @@ import (
 	"github.com/seknox/trasa/server/api/accessmap"
 	"github.com/seknox/trasa/server/api/auth"
 	"github.com/seknox/trasa/server/api/auth/serviceauth"
-	"github.com/seknox/trasa/server/api/crypt"
-	"github.com/seknox/trasa/server/api/crypt/vault"
 	"github.com/seknox/trasa/server/api/devices"
 	"github.com/seknox/trasa/server/api/groups"
-	"github.com/seknox/trasa/server/api/idps"
 	"github.com/seknox/trasa/server/api/logs"
 	"github.com/seknox/trasa/server/api/misc"
 	"github.com/seknox/trasa/server/api/my"
 	"github.com/seknox/trasa/server/api/notif"
 	"github.com/seknox/trasa/server/api/orgs"
 	"github.com/seknox/trasa/server/api/policies"
+	"github.com/seknox/trasa/server/api/providers/ca"
+	"github.com/seknox/trasa/server/api/providers/vault/tsxvault"
 	"github.com/seknox/trasa/server/api/redis"
 	"github.com/seknox/trasa/server/api/services"
 	"github.com/seknox/trasa/server/api/stats"
@@ -141,10 +140,9 @@ func setupTestEnv() *global.State {
 
 	auth.InitStore(state)
 
-	crypt.InitStore(state)
+	tsxvault.InitStore(state)
 	devices.InitStore(state)
 	groups.InitStore(state)
-	idps.InitStore(state)
 	logs.InitStore(state)
 	misc.InitStore(state)
 	my.InitStore(state)
@@ -156,7 +154,7 @@ func setupTestEnv() *global.State {
 	system.InitStore(state)
 	stats.InitStore(state)
 	users.InitStore(state)
-	vault.InitStore(state)
+	ca.InitStore(state)
 
 	initdb.InitDB()
 
