@@ -5,8 +5,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/seknox/trasa/server/api/crypt"
-	"github.com/seknox/trasa/server/api/crypt/vault"
+	"github.com/seknox/trasa/core/crypt"
+	"github.com/seknox/trasa/server/api/providers/vault"
 	"github.com/seknox/trasa/server/api/system"
 	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/models"

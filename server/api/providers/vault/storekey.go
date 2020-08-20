@@ -1,4 +1,4 @@
-package crypt
+package vault
 
 import (
 	"database/sql"

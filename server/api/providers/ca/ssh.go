@@ -1,4 +1,4 @@
-package crypt
+package ca
 
 import (
 	"crypto/rand"

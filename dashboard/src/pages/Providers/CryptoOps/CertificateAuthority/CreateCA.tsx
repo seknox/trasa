@@ -63,7 +63,7 @@ function CreateCA() {
 
     let req = { CN: caName, names: [caDetails] };
     axios
-      .post(Constants.TRASA_HOSTNAME + '/api/v1/system/ca/init', req)
+      .post(Constants.TRASA_HOSTNAME + '/api/v1/providers/ca/tsxca/init', req)
       .then((response) => {
         setLoader(false);
       })

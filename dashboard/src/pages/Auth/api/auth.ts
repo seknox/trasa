@@ -3,7 +3,7 @@ import Constants from '../../../Constants';
 
 export function FetchExternalIdps(setIdps: (v: any) => void) {
   axios
-    .get(`${Constants.TRASA_HOSTNAME}/idp/external/providers`)
+    .get(`${Constants.TRASA_HOSTNAME}/api/woa/providers/uidp/all`)
     .then((response) => {
       if (response.data.status === 'success') {
         // console.log(response.data);

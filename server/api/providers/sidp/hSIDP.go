@@ -1,4 +1,4 @@
-package idps
+package sidp
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/go-chi/chi"
-	"github.com/seknox/trasa/server/api/crypt"
+	"github.com/seknox/trasa/server/api/providers/vault"
 	"github.com/seknox/trasa/server/api/services"
 	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/models"
@@ -37,7 +37,7 @@ func SyncNow(w http.ResponseWriter, r *http.Request) {
 
 	//vendorID := chi.URLParam(r, "vendorID")
 
-	key, err := crypt.Store.GetKeyOrTokenWithKeyval(uc.User.OrgID, consts.KEY_DOAPI)
+	key, err := vault.Store.GetKeyOrTokenWithKeyval(uc.User.OrgID, consts.KEY_DOAPI)
 	if err != nil {
 		logger.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "failed to fetch api key.", "SyncNow", nil, nil)

@@ -10,9 +10,9 @@ import (
 
 	uuid "github.com/satori/go.uuid"
 	"github.com/seknox/trasa/server/api/devices"
-	"github.com/seknox/trasa/server/api/idps"
 	"github.com/seknox/trasa/server/api/logs"
 	"github.com/seknox/trasa/server/api/orgs"
+	"github.com/seknox/trasa/server/api/providers/uidp"
 	"github.com/seknox/trasa/server/api/redis"
 	"github.com/seknox/trasa/server/api/system"
 	"github.com/seknox/trasa/server/api/users"
@@ -270,7 +270,7 @@ func CheckPassword(userDetails *models.UserWithPass, email, password string) (re
 			fullUserPath = fmt.Sprintf("CN=%s, %s", email, idp.IdpMeta)
 		}
 
-		err = idps.BindLdap(fullUserPath, password, idp.Endpoint)
+		err = uidp.BindLdap(fullUserPath, password, idp.Endpoint)
 		if err != nil {
 
 			return consts.REASON_LDAP_AUTH_FAILED, err

@@ -1,4 +1,4 @@
-package idps
+package uidp
 
 import (
 	"encoding/json"
@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/go-chi/chi"
-	"github.com/seknox/trasa/server/api/crypt/vault"
+	"github.com/seknox/trasa/server/api/providers/vault/tsxvault"
 	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/global"
 	"github.com/seknox/trasa/server/models"
@@ -113,7 +113,7 @@ func UpdateIdp(w http.ResponseWriter, r *http.Request) {
 		key.AddedBy = uc.User.ID
 		key.AddedAt = time.Now().UnixNano()
 		//fmt.Println("keys: ", string(dbstore.TsxvKey.Key[:]))
-		ct, err := vault.Store.AesEncrypt([]byte(idp.ClientSecret))
+		ct, err := tsxvault.Store.AesEncrypt([]byte(idp.ClientSecret))
 		if err != nil {
 			logger.Error(err)
 			utils.TrasaResponse(w, 200, "failed", "failed to store token. Vault is sealed", "Could not update IDP", nil)
@@ -122,7 +122,7 @@ func UpdateIdp(w http.ResponseWriter, r *http.Request) {
 		key.KeyVal = ct
 		key.KeyName = consts.KEY_LDAP
 
-		err = vault.Store.StoreKeyOrTokens(key)
+		err = tsxvault.Store.StoreKeyOrTokens(key)
 		if err != nil {
 			logger.Error(err)
 			utils.TrasaResponse(w, 200, "failed", "Failed to update IDP. Error in StoreKeyOrTokens.", "Could not update IDP", nil)
@@ -158,7 +158,7 @@ func PreConfiguredIdps(idp models.IdentityProvider, uc models.UserContext) model
 		v.ClientID = ""
 		v.ClientSecret = ""
 		v.AudienceURI = utils.GetRandomString(7)
-		v.RedirectURL = fmt.Sprintf("https://%s/idp/external/saml/%s/%s", global.GetConfig().Trasa.Trasacore, uc.User.OrgID, v.IdpName)
+		v.RedirectURL = fmt.Sprintf("https://%s/auth/external/saml/%s/%s", global.GetConfig().Trasa.Trasacore, uc.User.OrgID, v.IdpName)
 		v.OrgID = uc.User.OrgID
 		v.CreatedBy = uc.User.ID
 		v.LastUpdated = time.Now().Unix()
@@ -174,7 +174,7 @@ func PreConfiguredIdps(idp models.IdentityProvider, uc models.UserContext) model
 		v.ClientID = ""
 		v.ClientSecret = ""
 		v.AudienceURI = utils.GetRandomString(7)
-		v.RedirectURL = fmt.Sprintf("https://%s/idp/external/saml/%s/%s", global.GetConfig().Trasa.Trasacore, uc.User.OrgID, v.IdpName)
+		v.RedirectURL = fmt.Sprintf("https://%s/auth/external/saml/%s/%s", global.GetConfig().Trasa.Trasacore, uc.User.OrgID, v.IdpName)
 		v.OrgID = uc.User.OrgID
 		v.CreatedBy = uc.User.ID
 		v.LastUpdated = time.Now().Unix()
@@ -268,7 +268,7 @@ func GenerateSCIMAuthToken(w http.ResponseWriter, r *http.Request) {
 	req.KeyVal = hashedpass
 	req.KeyName = "scimkey"
 
-	err = vault.Store.StoreKeyOrTokens(req)
+	err = tsxvault.Store.StoreKeyOrTokens(req)
 	if err != nil {
 		logger.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "failed to store token.", "GenerateSCIMAuthToken-StoreKeyOrTokens", nil)

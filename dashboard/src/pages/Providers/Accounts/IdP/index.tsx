@@ -58,7 +58,7 @@ export default function IdpPage() {
 
   useEffect(() => {
     axios
-      .get(`${Constants.TRASA_HOSTNAME}/api/v1/idp/external/all`)
+      .get(`${Constants.TRASA_HOSTNAME}/api/v1/providers/uidp/all`)
 
       .then((response) => {
         if (response.data.status === 'success') {

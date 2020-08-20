@@ -3,8 +3,8 @@ package services
 import (
 	"encoding/json"
 
-	"github.com/seknox/trasa/server/api/crypt"
-	"github.com/seknox/trasa/server/api/crypt/vault"
+	"github.com/seknox/trasa/server/api/providers/ca"
+	"github.com/seknox/trasa/server/api/providers/vault/tsxvault"
 	"github.com/seknox/trasa/server/api/system"
 	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/models"
@@ -19,7 +19,7 @@ func GetUpstreamCreds(user, serviceID, serviceType, orgID string) (*models.Upstr
 
 	switch serviceType {
 	case "db":
-		certHolder, err := crypt.Store.GetCertHolder(consts.CERT_TYPE_TLS_KEYS, serviceID, orgID)
+		certHolder, err := ca.Store.GetCertHolder(consts.CERT_TYPE_TLS_KEYS, serviceID, orgID)
 		if err == nil {
 			resp.ClientCert = string(certHolder.Cert)
 			//resp.ClientKey = string(certHolder.Key)
@@ -27,12 +27,12 @@ func GetUpstreamCreds(user, serviceID, serviceType, orgID string) (*models.Upstr
 		}
 
 	case "ssh":
-		hostCert, caHost, caUser := crypt.GetSSHCerts(serviceID, orgID)
+		hostCert, caHost, caUser := ca.GetSSHCerts(serviceID, orgID)
 		resp.HostCert = hostCert
 		resp.UserCaCert = caUser
 		resp.HostCaCert = caHost
 
-		userKey, userCrt, err := crypt.GenerateTempSSHCert(user, orgID)
+		userKey, userCrt, err := ca.GenerateTempSSHCert(user, orgID)
 		if err != nil {
 			logrus.Error(err)
 			resp.ClientKey = ""
@@ -64,7 +64,7 @@ func GetUpstreamCreds(user, serviceID, serviceType, orgID string) (*models.Upstr
 
 	//First try to get key from vault
 	//
-	clientKey, err := vault.Store.GetSecret(orgID, serviceID, "key", user)
+	clientKey, err := tsxvault.Store.GetSecret(orgID, serviceID, "key", user)
 	if err != nil {
 		logrus.Debug(err)
 	} else {
@@ -74,7 +74,7 @@ func GetUpstreamCreds(user, serviceID, serviceType, orgID string) (*models.Upstr
 
 	//userDetails := userContext.User
 	//logrus.Debug(orgID, serviceID, "password", user)
-	pass, err := vault.Store.GetSecret(orgID, serviceID, "password", user)
+	pass, err := tsxvault.Store.GetSecret(orgID, serviceID, "password", user)
 	if err != nil {
 		logrus.Error(err)
 		resp.Password = ""

@@ -1,4 +1,4 @@
-package idps
+package uidp
 
 import (
 	"reflect"

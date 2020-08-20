@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/go-chi/chi"
-	"github.com/seknox/trasa/server/api/crypt"
+	"github.com/seknox/trasa/server/api/providers/ca"
 	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/models"
 	"github.com/seknox/trasa/server/utils"
@@ -95,7 +95,7 @@ func DownloadHostCerts(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sshHostCA, err := crypt.Store.GetCertHolder(consts.CERT_TYPE_SSH_CA, "host", userContext.Org.ID)
+	sshHostCA, err := ca.Store.GetCertHolder(consts.CERT_TYPE_SSH_CA, "host", userContext.Org.ID)
 	if err != nil {
 		logrus.Debugf(`could not get CA key: %v`, err)
 		utils.TrasaResponse(w, http.StatusOK, "failed", "could not get CA key", "GenerateKeyPair", nil)
