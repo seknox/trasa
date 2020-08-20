@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/seknox/trasa/server/api/crypt"
+	"github.com/seknox/trasa/server/api/providers/ca"
 	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/models"
 	"github.com/sirupsen/logrus"
@@ -373,19 +373,19 @@ func GetCAStats(w http.ResponseWriter, r *http.Request) {
 		HttpCA      bool `json:"httpCA"`
 	}
 	//fmt.Println("org inside gettotal: ", userContext.Org.ID)
-	_, err := crypt.Store.GetCertDetail(uc.Org.ID, "user", consts.CERT_TYPE_SSH_CA)
+	_, err := ca.Store.GetCertDetail(uc.Org.ID, "user", consts.CERT_TYPE_SSH_CA)
 	if err == nil {
 		resp.SshUserCA = true
 	}
-	_, err = crypt.Store.GetCertDetail(uc.Org.ID, "host", consts.CERT_TYPE_SSH_CA)
+	_, err = ca.Store.GetCertDetail(uc.Org.ID, "host", consts.CERT_TYPE_SSH_CA)
 	if err == nil {
 		resp.SshHostCA = true
 	}
-	_, err = crypt.Store.GetCertDetail(uc.Org.ID, "system", consts.CERT_TYPE_SSH_CA)
+	_, err = ca.Store.GetCertDetail(uc.Org.ID, "system", consts.CERT_TYPE_SSH_CA)
 	if err == nil {
 		resp.SshSystemCA = true
 	}
-	_, err = crypt.Store.GetCertDetail(uc.Org.ID, "ca", consts.CERT_TYPE_HTTP_CA)
+	_, err = ca.Store.GetCertDetail(uc.Org.ID, "ca", consts.CERT_TYPE_HTTP_CA)
 	if err == nil {
 		resp.HttpCA = true
 	}

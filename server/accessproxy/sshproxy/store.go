@@ -13,9 +13,9 @@ import (
 	"github.com/pkg/errors"
 	"github.com/seknox/ssh"
 	"github.com/seknox/trasa/server/api/accessmap"
-	"github.com/seknox/trasa/server/api/crypt"
 	"github.com/seknox/trasa/server/api/logs"
 	"github.com/seknox/trasa/server/api/policies"
+	"github.com/seknox/trasa/server/api/providers/ca"
 	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/models"
 	"github.com/seknox/trasa/server/utils"
@@ -51,7 +51,7 @@ func (s Store) validateTempCert(publicKey ssh.PublicKey, privilege string, orgID
 		return errors.Errorf("invalid certificate")
 	}
 
-	caKey, err := crypt.Store.GetCertDetail(orgID, "system", consts.CERT_TYPE_SSH_CA)
+	caKey, err := ca.Store.GetCertDetail(orgID, "system", consts.CERT_TYPE_SSH_CA)
 	if err != nil {
 		//logger.Error(err)
 		//dbstore.SendErrorReport(err, "CA not initialised")

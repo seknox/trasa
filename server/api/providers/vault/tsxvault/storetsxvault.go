@@ -1,4 +1,4 @@
-package vault
+package tsxvault
 
 import (
 	"crypto/sha512"

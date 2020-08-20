@@ -1,4 +1,4 @@
-package idps
+package uidp
 
 import (
 	"github.com/seknox/trasa/server/models"
@@ -36,7 +36,7 @@ func (s idpStore) GetByID(orgID, idpID string) (models.IdentityProvider, error) 
 	return idp, err
 }
 
-// CreateIDP created new Identity Provider
+// CreateIDP creates new Identity Provider
 func (s idpStore) CreateIDP(idp *models.IdentityProvider) error {
 
 	_, err := s.DB.Exec(`INSERT into idp (id, org_id, name,type, meta, is_enabled, redirect_url, audience_uri,client_id, endpoint, created_by , integration_type,scim_endpoint, last_updated )

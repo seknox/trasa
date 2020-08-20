@@ -5,13 +5,15 @@ import (
 	"net/http"
 
 	"github.com/seknox/trasa/server/api/auth/serviceauth"
+	"github.com/seknox/trasa/server/api/crypt"
+	"github.com/seknox/trasa/server/api/providers/ca"
+	"github.com/seknox/trasa/server/api/providers/sidp"
+	"github.com/seknox/trasa/server/api/providers/uidp"
 	"github.com/seknox/trasa/server/global"
 	"github.com/seknox/trasa/server/utils"
 
 	"github.com/seknox/trasa/server/accessproxy/rdpproxy"
 	"github.com/seknox/trasa/server/accessproxy/sshproxy"
-
-	"github.com/seknox/trasa/server/api/crypt"
 
 	"github.com/seknox/trasa/server/middlewares"
 
@@ -21,7 +23,6 @@ import (
 	"github.com/seknox/trasa/server/api/auth/tfa"
 	"github.com/seknox/trasa/server/api/devices"
 	"github.com/seknox/trasa/server/api/groups"
-	"github.com/seknox/trasa/server/api/idps"
 	"github.com/seknox/trasa/server/api/logs"
 	"github.com/seknox/trasa/server/api/my"
 	"github.com/seknox/trasa/server/api/notif"
@@ -95,6 +96,7 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		r.Post("/devices/brsrdetail", devices.GetBrsrDetails)
 
 		r.Post("/forgotpass", my.ForgotPassword)
+		r.Get("/providers/uidp/all", uidp.GetAllIdps)
 
 	})
 	r.Get("/api/v1/my/download_file/get/{fileName}/{sskey}", my.FileDownloadHandler)
@@ -173,11 +175,6 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		//After device is enrolled
 		r.Post("/my/enroldevice", auth.Enrol2FADevice)
 		r.Get("/my/authmeta/{appID}/{username}", my.GetAuthMeta)
-
-		//r.Get("/my/regreq", mdlwr.SessionValidator(Authorization(crypto.RegisterRequest)))
-		//r.Post("/my/regresp", mdlwr.SessionValidator(Authorization(crypto.RegisterResponse)))
-		//r.Post("/my/signreq", mdlwr.SessionValidator(Authorization(crypto.SignRequest)))
-		//r.Post("/my/signresp", mdlwr.SessionValidator(Authorization(crypto.SignResponseHandler)))
 
 		r.Get("/my/notifs", notif.GetPendingNotif)
 		r.Post("/my/notif/resolve", notif.ResolveNotif)
@@ -283,20 +280,6 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		//r.Post("/remote/auth/radius", services.RadiusLogin)
 
 		//
-		//// TSxVault Operations
-		r.Get("/crypto/key/{vendorID}", system.Getkey)
-		r.Post("/crypto/store/key", system.StoreKey)
-		r.Post("/crypto/vault/init", system.TsxvaultInit)
-		r.Delete("/crypto/vault/reinit", system.ReInit)
-		r.Get("/crypto/vault/status", system.Status)
-		r.Post("/crypto/vault/decrypt", system.DecryptKey)
-
-		r.Post("/system/ca/init", crypt.InitCA)
-		r.Post("/system/sshca/init/{type}", crypt.InitSSHCA)
-		r.Post("/system/ca/upload", crypt.UploadCA)
-		r.Get("/system/ca/detail", crypt.GetHttpCADetail)
-		r.Get("/system/ca/all", crypt.GetAllCAs)
-		r.Get("/system/ca/ssh/{type}", crypt.DownloadSshCA)
 
 		// Global System settings
 		r.Get("/system/settings/all", system.GlobalSettings)
@@ -310,20 +293,32 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		r.Post("/system/settings/dynamicaccess/update", system.UpdateDynamicAccessSetting)
 
 		// Identity Providers
-		r.Post("/idp/external/create", idps.CreateIdp)
-		r.Post("/idp/external/update", idps.UpdateIdp)
-		r.Get("/idp/external/cloudiaas/syncstatus/{vendorID}", idps.GetSyncDetail)
-		r.Post("/idp/external/cloudiaas/syncnow/{vendorID}", idps.SyncNow)
-		r.Get("/idp/external/all", idps.GetAllIdps)
-		r.Post("/idp/external/generatescimtoken/{idpID}", idps.GenerateSCIMAuthToken)
+		r.Post("/providers/uidp/create", uidp.CreateIdp)
+		r.Post("/providers/uidp/update", uidp.UpdateIdp)
+		r.Get("/providers/uidp/all", uidp.GetAllIdps)
+		r.Post("/providers/uidp/generatescimtoken/{idpID}", uidp.GenerateSCIMAuthToken)
+		r.Post("/providers/uidp/ldap/importusers", uidp.ImportLdapUsers)
+		r.Post("/providers/uidp/activateordisable", uidp.ActivateOrDisableIdp)
+		r.Get("/providers/uidp/users/all/{idpname}", uidp.GetAllUsersForIdp)
+		r.Post("/providers/uidp/users/transfer", uidp.TransferUserToGivenIdp)
 
-		r.Post("/idp/external/ldap/importusers", idps.ImportLdapUsers)
-		r.Post("/idp/external/activateordisable", idps.ActivateOrDisableIdp)
-		r.Get("/idp/users/all/{idpname}", idps.GetAllUsersForIdp)
-		r.Post("/idp/users/transfer", idps.TransferUserToGivenIdp)
+		r.Get("/providers/sidp/syncstatus/{vendorID}", sidp.GetSyncDetail)
+		r.Post("/providers/sidp/syncnow/{vendorID}", sidp.SyncNow)
 
-		//// we are using http session validator in this case
-		//r.Post("/gateway/getpass", mdlwr.HttpSessionValidator(gateway.ValidateUserAndGetPass))
+		//// TSxVault Operations
+		r.Get("/providers/vault/tsxvault/key/{vendorID}", system.Getkey)
+		r.Post("/providers/vault/tsxvault/store/key", system.StoreKey)
+		r.Post("/providers/vault/tsxvault/init", system.TsxvaultInit)
+		r.Delete("/providers/vault/tsxvault/reinit", system.ReInit)
+		r.Get("/providers/vault/tsxvault/status", system.Status)
+		r.Post("/providers/vault/tsxvault/decrypt", system.DecryptKey)
+
+		r.Post("/providers/ca/tsxca/init", ca.InitCA)
+		r.Post("/providers/ca/tsxca/ssh/init/{type}", ca.InitSSHCA)
+		r.Post("/providers/ca/tsxca/upload", ca.UploadCA)
+		r.Get("/providers/ca/tsxca/http/detail", ca.GetHttpCADetail)
+		r.Get("/providers/ca/tsxca/all", ca.GetAllCAs)
+		r.Get("/providers/ca/tsxca/ssh/{type}", ca.DownloadSshCA)
 
 	})
 

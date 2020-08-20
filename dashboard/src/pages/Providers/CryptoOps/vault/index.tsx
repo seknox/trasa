@@ -157,7 +157,7 @@ export default function VaultConfig() {
 
   const getVaultStatus = () => {
     axios
-      .get(`${Constants.TRASA_HOSTNAME}/api/v1/crypto/vault/status`)
+      .get(`${Constants.TRASA_HOSTNAME}/api/v1/providers/vault/tsxvault/status`)
       .then((response) => {
         if (response.data.data[0].initStatus.updatedOn) {
           const date = new Date(response.data.data[0].initStatus.updatedOn * 1000);
@@ -180,7 +180,7 @@ export default function VaultConfig() {
     const reqData = { secretShares: 5, secretThreshold: 3 };
 
     axios
-      .post(`${Constants.TRASA_HOSTNAME}/api/v1/crypto/vault/init`, reqData)
+      .post(`${Constants.TRASA_HOSTNAME}/api/v1/providers/vault/tsxvault/init`, reqData)
       .then((response) => {
         const resp = response.data.data[0];
 
@@ -233,7 +233,7 @@ export default function VaultConfig() {
     const reqData = { key: keyval };
 
     axios
-      .post(`${Constants.TRASA_HOSTNAME}/api/v1/crypto/vault/decrypt`, reqData)
+      .post(`${Constants.TRASA_HOSTNAME}/api/v1/providers/vault/tsxvault/decrypt`, reqData)
       .then((response) => {
         if (response.data.status === 'success') {
           settokenStatus(response.data.data[0]);
@@ -259,7 +259,7 @@ export default function VaultConfig() {
     setLoader(true);
 
     axios
-      .delete(`${Constants.TRASA_HOSTNAME}/api/v1/crypto/vault/reinit`)
+      .delete(`${Constants.TRASA_HOSTNAME}/api/v1/providers/vault/tsxvault/reinit`)
       .then((response) => {
         setLoader(false);
         if (response.data.status === 'success' && response.data.reason === 'submit-init') {

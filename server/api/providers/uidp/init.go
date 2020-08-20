@@ -1,4 +1,4 @@
-package idps
+package uidp
 
 import (
 	"github.com/seknox/trasa/server/global"
@@ -25,7 +25,4 @@ type adapter interface {
 	UpdateIDP(idp *models.IdentityProvider) error
 	UpdateLDAPIDP(idp *models.IdentityProvider) error
 	activateOrDisableIdp(orgID, idpID string, updateTime int64, updateVal bool) error
-
-	// cloudIaas idp
-	GetCloudSyncState(orgID, cName string) (*models.CloudIaaSSync, error)
 }

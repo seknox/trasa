@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/seknox/trasa/server/api/crypt"
 	"github.com/seknox/trasa/server/api/orgs"
+	"github.com/seknox/trasa/server/api/providers/ca"
 	"github.com/seknox/trasa/server/api/system"
 	"github.com/seknox/trasa/server/api/users"
 	"github.com/seknox/trasa/server/consts"
@@ -208,7 +208,7 @@ func storeGlobalDynamicServiceSetting() {
 }
 
 func initSystemCA() {
-	_, err := crypt.Store.GetCertHolder(consts.CERT_TYPE_SSH_CA, "user", global.GetConfig().Trasa.OrgId)
+	_, err := ca.Store.GetCertHolder(consts.CERT_TYPE_SSH_CA, "user", global.GetConfig().Trasa.OrgId)
 	if !errors.Is(err, sql.ErrNoRows) {
 		logrus.Debug("ssh CA already initialised")
 		return
@@ -227,7 +227,7 @@ func initSystemCA() {
 
 	privateKeyBytes := utils.EncodePrivateKeyToPEM(privateKey)
 
-	ca := models.CertHolder{
+	caCert := models.CertHolder{
 		CertID:      utils.GetUUID(),
 		OrgID:       global.GetConfig().Trasa.OrgId,
 		EntityID:    "system",
@@ -239,7 +239,7 @@ func initSystemCA() {
 		CertMeta:    "",
 		LastUpdated: time.Now().Unix(),
 	}
-	err = crypt.Store.StoreCert(ca)
+	err = ca.Store.StoreCert(caCert)
 	if err != nil {
 		logrus.Error(err)
 		return

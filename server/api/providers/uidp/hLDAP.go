@@ -1,15 +1,16 @@
-package idps
+package uidp
 
 import (
 	"crypto/tls"
 	"fmt"
-	"github.com/go-chi/chi"
 	"net/http"
 	"strings"
 	"time"
 
-	"github.com/seknox/trasa/server/api/crypt"
-	"github.com/seknox/trasa/server/api/crypt/vault"
+	"github.com/go-chi/chi"
+
+	"github.com/seknox/trasa/server/api/providers/vault"
+	"github.com/seknox/trasa/server/api/providers/vault/tsxvault"
 	"github.com/seknox/trasa/server/api/users"
 	"github.com/seknox/trasa/server/models"
 
@@ -39,14 +40,14 @@ func ImportLdapUsers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// get client secret from keyholders.
-	ct, err := crypt.Store.GetKeyOrTokenWithKeyvalAndID(uc.User.OrgID, consts.KEY_LDAP, req.IdpID)
+	ct, err := vault.Store.GetKeyOrTokenWithKeyvalAndID(uc.User.OrgID, consts.KEY_LDAP, req.IdpID)
 	if err != nil {
 		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "IFailed to fetch secret value for ldap system user", "failed to import users", nil)
 		return
 	}
 
-	password, err := vault.Store.AesDecrypt(ct.KeyVal)
+	password, err := tsxvault.Store.AesDecrypt(ct.KeyVal)
 
 	ldapBindUsername := fmt.Sprintf("uid=%s,%s", idpDetail.ClientID, idpDetail.IdpMeta)
 	if idpDetail.IdpName == "ad" {

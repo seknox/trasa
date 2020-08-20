@@ -83,7 +83,7 @@ export default function TlsConfig(props: any) {
       csrVal: csrFile,
     };
 
-    axios.post(`${Constants.TRASA_HOSTNAME}/api/v1/system/ca/upload`, formData).then((r) => {
+    axios.post(`${Constants.TRASA_HOSTNAME}/api/v1/providers/ca/tsxca/upload`, formData).then((r) => {
       if (r.data.status === 'success') {
         setLoader(false);
         setRespStatus(true);

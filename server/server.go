@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/kabukky/httpscerts"
-	"github.com/seknox/trasa/server/initdb"
 	"net/http"
 	"strings"
+
+	"github.com/kabukky/httpscerts"
+	"github.com/seknox/trasa/server/initdb"
 
 	"github.com/seknox/trasa/server/api/my"
 
@@ -22,16 +23,18 @@ import (
 	"github.com/seknox/trasa/server/accessproxy/sshproxy"
 	"github.com/seknox/trasa/server/api/accessmap"
 	"github.com/seknox/trasa/server/api/auth"
-	"github.com/seknox/trasa/server/api/crypt"
-	"github.com/seknox/trasa/server/api/crypt/vault"
 	"github.com/seknox/trasa/server/api/devices"
 	"github.com/seknox/trasa/server/api/groups"
-	"github.com/seknox/trasa/server/api/idps"
 	"github.com/seknox/trasa/server/api/logs"
 	"github.com/seknox/trasa/server/api/misc"
 	"github.com/seknox/trasa/server/api/notif"
 	"github.com/seknox/trasa/server/api/orgs"
 	"github.com/seknox/trasa/server/api/policies"
+	"github.com/seknox/trasa/server/api/providers/ca"
+	"github.com/seknox/trasa/server/api/providers/sidp"
+	"github.com/seknox/trasa/server/api/providers/uidp"
+	"github.com/seknox/trasa/server/api/providers/vault"
+	"github.com/seknox/trasa/server/api/providers/vault/tsxvault"
 	"github.com/seknox/trasa/server/api/redis"
 	"github.com/seknox/trasa/server/api/services"
 	"github.com/seknox/trasa/server/api/stats"
@@ -54,11 +57,11 @@ func StartServr() {
 	accessmap.InitStore(state)
 
 	auth.InitStore(state)
-
-	crypt.InitStore(state)
+	vault.InitStore(state)
+	tsxvault.InitStore(state)
 	devices.InitStore(state)
 	groups.InitStore(state)
-	idps.InitStore(state)
+	uidp.InitStore(state)
 	logs.InitStore(state)
 	misc.InitStore(state)
 	my.InitStore(state)
@@ -70,7 +73,11 @@ func StartServr() {
 	system.InitStore(state)
 	stats.InitStore(state)
 	users.InitStore(state)
-	vault.InitStore(state)
+
+	uidp.InitStore(state)
+
+	sidp.InitStore(state)
+	ca.InitStore(state)
 
 	initdb.InitDB()
 

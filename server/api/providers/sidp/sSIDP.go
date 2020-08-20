@@ -1,4 +1,4 @@
-package idps
+package sidp
 
 import "github.com/seknox/trasa/server/models"
 

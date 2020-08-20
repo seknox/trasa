@@ -376,7 +376,7 @@ function DOConnectAndSync() {
     updateActionStatus({ ...actionStatus, respStatus: false, statusMsg: '', loader: true });
     // mixpanel.track('manage-accounts-dointegration');
     axios
-      .post(`${Constants.TRASA_HOSTNAME}/api/v1/crypto/store/key`, storedKey)
+      .post(`${Constants.TRASA_HOSTNAME}/api/v1/providers/vault/tsxvault/store/key`, storedKey)
       .then((r) => {
         updateActionStatus({ ...actionStatus, loader: false });
         if (r.data.status === 'success') {
@@ -416,11 +416,11 @@ function DOConnectAndSync() {
     };
     axios
       .post(
-        `${Constants.TRASA_HOSTNAME}/api/v1/idp/external/cloudiaas/syncnow/do`,
+        `${Constants.TRASA_HOSTNAME}/api/v1/providers/sidp/syncnow/do`,
         storedKey,
         config,
       )
-      .then((r) => {
+      .then((r: any) => {
         updateActionStatus({ ...actionStatus, loader: false });
         if (r.data.status === 'success') {
           updateActionStatus({
@@ -456,7 +456,7 @@ function DOConnectAndSync() {
       },
     };
     axios
-      .get(`${Constants.TRASA_HOSTNAME}/api/v1/crypto/key/KEY_DOAPI`, config)
+      .get(`${Constants.TRASA_HOSTNAME}/api/v1/providers/vault/key/KEY_DOAPI`, config)
 
       .then((response) => {
         // console.log(response.data)

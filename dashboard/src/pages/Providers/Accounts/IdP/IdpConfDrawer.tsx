@@ -181,7 +181,7 @@ function SAMLIdP(props: any) {
       idp.endpoint = props.idpDetail.endpoint;
     }
     axios
-      .post(`${Constants.TRASA_HOSTNAME}/api/v1/idp/external/update`, idp)
+      .post(`${Constants.TRASA_HOSTNAME}/api/v1/providers/uidp/update`, idp)
       .then((r) => {
         setLoader(false);
 
@@ -378,7 +378,7 @@ function SCIMConfig(props: any) {
 
     axios
       .post(
-        `${Constants.TRASA_HOSTNAME}/api/v1/idp/external/generatescimtoken/${props.idp.idpID}`,
+        `${Constants.TRASA_HOSTNAME}/api/v1/providers/uidp/generatescimtoken/${props.idp.idpID}`,
         '',
         config,
       )
@@ -529,7 +529,7 @@ function LdapIdp(props: any) {
       idp.audienceURI = props.idpDetail.audienceURI;
     }
     axios
-      .post(`${Constants.TRASA_HOSTNAME}/api/v1/idp/external/update`, idp)
+      .post(`${Constants.TRASA_HOSTNAME}/api/v1/providers/uidp/update`, idp)
       .then(() => {
         setLoader(false);
       })
@@ -762,7 +762,7 @@ function LdapSync(props: any) {
     };
 
     axios
-      .post(`${Constants.TRASA_HOSTNAME}/api/v1/idp/external/ldap/importusers`, idp)
+      .post(`${Constants.TRASA_HOSTNAME}/api/v1/providers/uidp/ldap/importusers`, idp)
       .then((r) => {
         updateActionStatus({ ...actionStatus, loader: false });
         if (r.data.status === 'success') {
@@ -959,7 +959,7 @@ function MigrateUsers(props: any) {
 
   useEffect(() => {
     axios
-      .get(`${Constants.TRASA_HOSTNAME}/api/v1/idp/users/all/trasa`)
+      .get(`${Constants.TRASA_HOSTNAME}/api/v1/providers/uidp/users/all/trasa`)
 
       .then((response) => {
         if (response.data.status === 'success') {
@@ -972,7 +972,7 @@ function MigrateUsers(props: any) {
       });
 
     axios
-      .get(`${Constants.TRASA_HOSTNAME}/api/v1/idp/users/all/${props.idp.idpName}`)
+      .get(`${Constants.TRASA_HOSTNAME}/api/v1/providers/uidp/users/all/${props.idp.idpName}`)
 
       .then((response) => {
         if (response.data.status === 'success') {
@@ -1002,7 +1002,7 @@ function MigrateUsers(props: any) {
         'X-CSRF': localStorage.getItem('X-CSRF'),
       },
     };
-    axios.post(`${Constants.TRASA_HOSTNAME}/api/v1/idp/users/transfer`, req, config).then(() => {
+    axios.post(`${Constants.TRASA_HOSTNAME}/api/v1/providers/uidp/users/transfer`, req, config).then(() => {
       updateActionStatus({ ...actionStatus, loader: false });
     });
   };
@@ -1117,7 +1117,7 @@ function DisableIdp(props: any) {
 
     const req = { idpID: props.idp.idpID, active: state };
     axios
-      .post(`${Constants.TRASA_HOSTNAME}/api/v1/idp/external/activateordisable`, req)
+      .post(`${Constants.TRASA_HOSTNAME}/api/v1/providers/uidp/activateordisable`, req)
       .then(() => {
         setLoader(false);
       })
