@@ -46,10 +46,10 @@ func TestServeWS(t *testing.T) {
 				Password:  "Docker",
 				OptHeight: 1500,
 				OptWidth:  1500,
-				Hostname:  "172.16.238.12:33899",
+				Hostname:  "172.16.238.12",
 			}},
 			wantErrMsg:  "",
-			wantErrCode: "3339",
+			wantErrCode: "",
 			wantStatus:  true,
 		},
 	}
@@ -97,7 +97,10 @@ func connectGuac(t *testing.T, params *models.ConnectionParams) (err_code, err_m
 		t.Fatal(err)
 	}
 
-	ws.WriteMessage(websocket.TextMessage, paramBytes)
+	err = ws.WriteMessage(websocket.TextMessage, paramBytes)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	inst := waitForErrorOrTFA(t, ws)
 
@@ -111,7 +114,10 @@ func connectGuac(t *testing.T, params *models.ConnectionParams) (err_code, err_m
 			guacamole.TfaOpcode,
 			params.TotpCode,
 		)
-		ws.WriteMessage(websocket.TextMessage, totpResp.Byte())
+		err = ws.WriteMessage(websocket.TextMessage, totpResp.Byte())
+		if err != nil {
+			t.Fatal(err)
+		}
 		break
 
 	case "error":
@@ -144,7 +150,7 @@ func connectGuac(t *testing.T, params *models.ConnectionParams) (err_code, err_m
 
 func waitForErrorOrTFA(t *testing.T, ws *websocket.Conn) *guacamole.Instruction {
 	//Wait for tfa response
-	for i := 0; i < 100; i++ {
+	for i := 0; i < 50; i++ {
 		_, b, err := ws.ReadMessage()
 		if err != nil {
 			t.Fatal(err)

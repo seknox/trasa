@@ -17,9 +17,9 @@ services:
     image: umis/xubuntu-office-xrdp-desktop:v1.0
     ports:
     - "3389:3389"
-#    networks:
-#      test_network:
-#        ipv4_address: 172.16.238.12
+    networks:
+      test_network:
+        ipv4_address: 172.16.238.12
   db:
     image: postgres
     ports:
