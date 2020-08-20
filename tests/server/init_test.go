@@ -125,6 +125,7 @@ func setupTestEnv() *global.State {
 	}
 
 	state := global.InitDBSTOREWithConfig(testConfig)
+	tearDown(state)
 	err := insertMockData(state)
 	if err != nil {
 		panic(err)
