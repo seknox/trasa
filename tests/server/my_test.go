@@ -1,11 +1,18 @@
 package server_test
 
 import (
+	"bytes"
+	"context"
 	"encoding/json"
+	"github.com/go-chi/chi"
 	"github.com/seknox/trasa/server/api/my"
 	"github.com/seknox/trasa/server/models"
+	"io"
+	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"testing"
 )
 
@@ -55,5 +62,226 @@ func TestGetMyServicesDetail(t *testing.T) {
 	}
 
 	//TODO add more expectations
+
+}
+
+func TestMyFiles(t *testing.T) {
+
+	fileUpload(t)
+	fileDownloadList(t, 1)
+	token := getFileDownloadToken(t)
+	fileDownload(t, token)
+	fileDelete(t)
+	fileDownloadList(t, 0)
+
+}
+
+func fileUpload(t *testing.T) {
+	file, err := os.Create("somefile.test")
+	if err != nil {
+		t.Error(err)
+	}
+	file.WriteString("test data, test data")
+	file.Seek(0, 0)
+
+	filename := file.Name()
+	defer file.Close()
+
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	part, err := writer.CreateFormFile("file", filepath.Base(filename))
+	if err != nil {
+		writer.Close()
+		t.Error(err)
+	}
+
+	io.Copy(part, file)
+	writer.Close()
+
+	req, err := http.NewRequest("POST", "", body)
+	if err != nil {
+		t.Fatal(err)
+	}
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+
+	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(AddTestUserContext(my.FileUploadHandler))
+
+	// directly and pass in our Request and ResponseRecorder.
+	handler.ServeHTTP(rr, req)
+
+	// Check the status code is what we expect.
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	var resp struct {
+		models.TrasaResponseStruct
+	}
+
+	err = json.Unmarshal(rr.Body.Bytes(), &resp)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if resp.Status != "success" {
+		t.Fatal(resp.Reason)
+	}
+
+}
+
+func fileDownloadList(t *testing.T, wantLen int) {
+	req, err := http.NewRequest("GET", "", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(AddTestUserContext(my.GetDownloadableFileList))
+
+	// directly and pass in our Request and ResponseRecorder.
+	handler.ServeHTTP(rr, req)
+
+	// Check the status code is what we expect.
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	var resp struct {
+		models.TrasaResponseStruct
+		Data [][]string `json:"data"`
+	}
+
+	err = json.Unmarshal(rr.Body.Bytes(), &resp)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if resp.Status != "success" {
+		t.Fatal(resp.Reason)
+	}
+	if len(resp.Data) == 0 {
+		t.Fatal(resp.Reason)
+	}
+
+	fileList := resp.Data[0]
+
+	if len(fileList) != wantLen {
+		t.Fatalf("incorrect file list length, got=%d want=%d", len(fileList), wantLen)
+	}
+
+}
+
+func getFileDownloadToken(t *testing.T) string {
+	req, err := http.NewRequest("GET", "", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(AddTestUserContext(my.GetFileDownloadToken))
+
+	// directly and pass in our Request and ResponseRecorder.
+	handler.ServeHTTP(rr, req)
+
+	// Check the status code is what we expect.
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	var resp struct {
+		models.TrasaResponseStruct
+	}
+
+	err = json.Unmarshal(rr.Body.Bytes(), &resp)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if resp.Status != "success" {
+		t.Fatal(resp.Reason)
+	}
+
+	if rr.Header().Get("sskey") == "" {
+		t.Fatal("download token is empty")
+	}
+
+	return rr.Header().Get("sskey")
+
+}
+
+func fileDownload(t *testing.T, token string) {
+	req, err := http.NewRequest("GET", "", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	rctx := chi.NewRouteContext()
+	rctx.URLParams.Add("sskey", token)
+	rctx.URLParams.Add("fileName", "somefile.test")
+	req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, rctx))
+
+	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(AddTestUserContext(my.FileDownloadHandler))
+
+	// directly and pass in our Request and ResponseRecorder.
+	handler.ServeHTTP(rr, req)
+
+	// Check the status code is what we expect.
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	body := rr.Body.String()
+
+	if body != "test data, test data" {
+		t.Errorf("handler returned wrong body: got %v want %v",
+			body, "test data, test data")
+	}
+
+}
+
+func fileDelete(t *testing.T) {
+	req, err := http.NewRequest("GET", "", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rctx := chi.NewRouteContext()
+	rctx.URLParams.Add("fileName", "somefile.test")
+	req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, rctx))
+
+	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(AddTestUserContext(my.FileDeleteHandler))
+
+	// directly and pass in our Request and ResponseRecorder.
+	handler.ServeHTTP(rr, req)
+
+	// Check the status code is what we expect.
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	var resp struct {
+		models.TrasaResponseStruct
+	}
+
+	err = json.Unmarshal(rr.Body.Bytes(), &resp)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if resp.Status != "success" {
+		t.Fatal(resp.Reason)
+	}
 
 }
