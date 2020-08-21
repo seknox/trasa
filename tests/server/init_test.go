@@ -17,6 +17,9 @@ import (
 	"github.com/seknox/trasa/server/api/orgs"
 	"github.com/seknox/trasa/server/api/policies"
 	"github.com/seknox/trasa/server/api/providers/ca"
+	"github.com/seknox/trasa/server/api/providers/sidp"
+	"github.com/seknox/trasa/server/api/providers/uidp"
+	"github.com/seknox/trasa/server/api/providers/vault"
 	"github.com/seknox/trasa/server/api/providers/vault/tsxvault"
 	"github.com/seknox/trasa/server/api/redis"
 	"github.com/seknox/trasa/server/api/services"
@@ -156,6 +159,9 @@ func setupTestEnv() *global.State {
 	stats.InitStore(state)
 	users.InitStore(state)
 	ca.InitStore(state)
+	sidp.InitStore(state)
+	uidp.InitStore(state)
+	vault.InitStore(state)
 
 	initdb.InitDB()
 

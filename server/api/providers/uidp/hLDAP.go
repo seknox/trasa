@@ -162,7 +162,7 @@ func bindSearchImportLdapUsers(uc models.UserContext, uname, pass, domain, searc
 
 			sr, err := searchLdap(l, k, []string{"objectGUID", "sAMAccountName", "userPrincipalName", "name"})
 			if err != nil {
-				fmt.Println(err)
+				logrus.Error(err)
 			}
 			for _, u := range sr.Entries {
 				guid := u.GetRawAttributeValue("objectGUID")
