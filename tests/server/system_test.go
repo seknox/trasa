@@ -10,4 +10,6 @@ func TestSystemSettings(t *testing.T) {
 	vault.InitVault(t)
 	system.UpdateSettings(t)
 	system.SystemStatus(t)
+	system.UpdateSecurityRules(t)
+	system.GetSecurityRules(t)
 }
