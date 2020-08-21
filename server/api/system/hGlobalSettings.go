@@ -12,7 +12,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type globalSettings struct {
+type GlobalSettingsResp struct {
 	DynamicAccess  models.GlobalSettings `json:"dynamicAccess"`
 	SSHCertSetting models.GlobalSettings `json:"sshCertSetting"`
 	PasswordPolicy models.GlobalSettings `json:"passPolicy"`
@@ -24,7 +24,7 @@ type globalSettings struct {
 func GlobalSettings(w http.ResponseWriter, r *http.Request) {
 	logrus.Trace("request received")
 	userContext := r.Context().Value("user").(models.UserContext)
-	var resp globalSettings
+	var resp GlobalSettingsResp
 
 	passPolicy, err := Store.GetGlobalSetting(userContext.User.OrgID, consts.GLOBAL_PASSWORD_CONFIG)
 	if err != nil {
@@ -99,40 +99,6 @@ func UpdatePasswordPolicy(w http.ResponseWriter, r *http.Request) {
 
 	utils.TrasaResponse(w, 200, "success", reason, "Password policy updated", nil, nil)
 
-}
-
-//UpdateSSHCertSetting updates ssh cert settings  in global settings
-func UpdateSSHCertSetting(w http.ResponseWriter, r *http.Request) {
-	//mandatoryCert
-
-	uc := r.Context().Value("user").(models.UserContext)
-	var req struct {
-		MandatoryCert bool `json:"mandatoryCert"`
-	}
-
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "error parsing request", "Password policy not updated", nil, nil)
-		return
-	}
-
-	err := Store.UpdateGlobalSetting(models.GlobalSettings{
-		SettingID:    utils.GetUUID(),
-		OrgID:        uc.Org.ID,
-		Status:       req.MandatoryCert,
-		SettingType:  consts.GLOBAL_TRASA_SSH_CERT_ENFORCE,
-		SettingValue: "{}",
-		UpdatedBy:    "",
-		UpdatedOn:    time.Now().Unix(),
-	})
-
-	if err != nil {
-		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "Could not update  setting", "SSH certificate policy not updated", nil, nil)
-		return
-	}
-
-	utils.TrasaResponse(w, 200, "success", "Setting updated", "SSH certificate policy updated", nil, nil)
 }
 
 //UpdateDeviceHygieneSetting updates device hygiene enforce settings

@@ -288,7 +288,6 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		r.Post("/system/settings/passwordpolicy/update", system.UpdatePasswordPolicy)
 		r.Get("/system/settings/passwordpolicy/enforce", passwordpolicy.EnforcePasswordPolicyNow)
 		r.Post("/system/settings/email/update", system.UpdateEmailSetting)
-		r.Post("/system/settings/sshcert/update", system.UpdateSSHCertSetting)
 		r.Post("/system/settings/devicehygienecheck/update", system.UpdateDeviceHygieneSetting)
 		r.Post("/system/settings/dynamicaccess/update", system.UpdateDynamicAccessSetting)
 

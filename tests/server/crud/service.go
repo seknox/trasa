@@ -3,7 +3,6 @@ package crud
 import (
 	"encoding/json"
 	"github.com/seknox/trasa/server/api/services"
-	"github.com/seknox/trasa/server/api/system"
 	"github.com/seknox/trasa/server/models"
 	"github.com/seknox/trasa/tests/server/testutils"
 	"net/http"
@@ -34,7 +33,6 @@ func CreateService(t *testing.T) {
 
 	var resp struct {
 		models.TrasaResponseStruct
-		Data []system.VaultInitResp `json:"data"`
 	}
 
 	err := json.Unmarshal(rr.Body.Bytes(), &resp)
