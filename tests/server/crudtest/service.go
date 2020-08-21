@@ -119,7 +119,6 @@ func GetService(t *testing.T) (serviceID string) {
 
 	exists := false
 	for _, s := range resp.Data[0].SSH {
-		t.Log(s.Name, s.Hostname)
 		if s.Name == "some service" && s.Hostname == "some.host" {
 			exists = true
 			serviceID = s.ID
