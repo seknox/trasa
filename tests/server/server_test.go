@@ -14,16 +14,30 @@ func TestServer(t *testing.T) {
 	})
 
 	t.Run("crud and accessmap ", func(t *testing.T) {
+
 		crudtest.CreateService(t)
 		serviceID := crudtest.GetService(t)
 		crudtest.UpdateService(t, serviceID)
-		crudtest.DeleteService(t, serviceID)
 
 		p := crudtest.CreatePolicy(t)
 		crudtest.GetPolicy(t, p)
 		crudtest.GetPolicies(t, p)
 		crudtest.UpdatePolicy(t, p.PolicyID)
+
+		user := crudtest.CreateUser(t)
+		crudtest.GetUser(t, user)
+		crudtest.GetAllUsers(t, user)
+		crudtest.UpdateUser(t, user.ID)
+
+		groupID := crudtest.CreateGroup(t)
+		crudtest.UpdateGroup(t, groupID)
+		crudtest.AddServiceToGroup(t, serviceID, groupID)
+
+		//Delete
+		crudtest.DeleteService(t, serviceID)
 		crudtest.DeletePolicy(t, p.PolicyID)
+		crudtest.DeleteGroup(t, groupID)
+		crudtest.DeleteUser(t, user.ID)
 
 	})
 

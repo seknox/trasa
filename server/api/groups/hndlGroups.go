@@ -177,7 +177,7 @@ type groupApps struct {
 func UpdateServiceGroup(w http.ResponseWriter, r *http.Request) {
 	userContext := r.Context().Value("user").(models.UserContext)
 
-	var req updateServiceGroup
+	var req UpdateServiceGroupReq
 
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		http.Error(w, http.StatusText(400), 400)
@@ -243,13 +243,13 @@ func UpdateServiceGroup(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-type updateServiceGroup struct {
+type UpdateServiceGroupReq struct {
 	GroupID    string   `json:"groupID"`
 	UpdateType string   `json:"updateType"` // add or delete
 	ServiceIDs []string `json:"serviceIDs"`
 }
 
-type updateUsersGroup struct {
+type UpdateUsersGroupReq struct {
 	GroupID    string   `json:"groupID"`
 	UpdateType string   `json:"updateType"` // add or delete
 	UserIDs    []string `json:"userIDs",validate:"min=1"`
@@ -259,7 +259,7 @@ func UpdateUsersGroup(w http.ResponseWriter, r *http.Request) {
 	logrus.Trace("request received")
 	userContext := r.Context().Value("user").(models.UserContext)
 
-	var req updateUsersGroup
+	var req UpdateUsersGroupReq
 
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logrus.Error(err)
