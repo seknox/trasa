@@ -15,6 +15,9 @@ func TestServer(t *testing.T) {
 
 	t.Run("crud and accessmap ", func(t *testing.T) {
 
+		org := crudtest.UpdateOrg(t)
+		crudtest.GetOrg(t, org)
+
 		crudtest.CreateService(t)
 		serviceID := crudtest.GetService(t)
 		crudtest.UpdateService(t, serviceID)

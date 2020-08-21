@@ -104,7 +104,6 @@ func UpdateUser(t *testing.T, userID string) models.User {
 		t.Fatal(resp.Reason)
 	}
 
-	t.Log(rr.Body.String())
 	if len(resp.Data) == 0 {
 		t.Fatal(resp.Reason)
 	}
