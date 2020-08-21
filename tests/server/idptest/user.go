@@ -1,4 +1,4 @@
-package idp
+package idptest
 
 import (
 	"encoding/json"

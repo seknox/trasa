@@ -1,13 +1,13 @@
 package server_test
 
 import (
-	"github.com/seknox/trasa/tests/server/crud"
+	"github.com/seknox/trasa/tests/server/crudtest"
 	"testing"
 )
 
 func TestCRUD(t *testing.T) {
-	crud.CreateService(t)
-	serviceID := crud.GetService(t)
-	crud.UpdateService(t, serviceID)
-	crud.DeleteService(t, serviceID)
+	crudtest.CreateService(t)
+	serviceID := crudtest.GetService(t)
+	crudtest.UpdateService(t, serviceID)
+	crudtest.DeleteService(t, serviceID)
 }

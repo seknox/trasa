@@ -1,4 +1,4 @@
-package crud
+package crudtest
 
 import (
 	"encoding/json"

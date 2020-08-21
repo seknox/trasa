@@ -1,16 +1,16 @@
 package server
 
 import (
-	"github.com/seknox/trasa/tests/server/idp"
+	"github.com/seknox/trasa/tests/server/idptest"
 	"testing"
 )
 
 func TestProvides(t *testing.T) {
-	idp.CreateIdp(t)
+	idptest.CreateIdp(t)
 
 	//dial tcp :636: connect: connection refused
 	//TODO mock ldap server
 
-	idp.UpdateIdp(t)
+	idptest.UpdateIdp(t)
 
 }

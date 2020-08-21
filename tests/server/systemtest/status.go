@@ -1,4 +1,4 @@
-package system
+package systemtest
 
 import (
 	"encoding/json"

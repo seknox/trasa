@@ -1,15 +1,15 @@
 package server
 
 import (
-	"github.com/seknox/trasa/tests/server/system"
-	"github.com/seknox/trasa/tests/server/vault"
+	"github.com/seknox/trasa/tests/server/systemtest"
+	"github.com/seknox/trasa/tests/server/vaulttest"
 	"testing"
 )
 
 func TestSystemSettings(t *testing.T) {
-	vault.InitVault(t)
-	system.UpdateSettings(t)
-	system.SystemStatus(t)
-	system.UpdateSecurityRules(t)
-	system.GetSecurityRules(t)
+	vaulttest.InitVault(t)
+	systemtest.UpdateSettings(t)
+	systemtest.SystemStatus(t)
+	systemtest.UpdateSecurityRules(t)
+	systemtest.GetSecurityRules(t)
 }

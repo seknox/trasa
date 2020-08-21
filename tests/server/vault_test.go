@@ -1,18 +1,18 @@
 package server_test
 
 import (
-	"github.com/seknox/trasa/tests/server/vault"
+	"github.com/seknox/trasa/tests/server/vaulttest"
 	"testing"
 )
 
 func TestVault(t *testing.T) {
-	vault.InitVault(t)
-	vault.GetStatus(t)
-	vault.StoreVault(t)
-	vault.GetKey(t)
-	vault.StoreSecret(t)
-	vault.GetSecret(t)
-	vault.GetUpstreamCredsTest(t)
-	vault.DeleteSecret(t)
+	vaulttest.InitVault(t)
+	vaulttest.GetStatus(t)
+	vaulttest.StoreVault(t)
+	vaulttest.GetKey(t)
+	vaulttest.StoreSecret(t)
+	vaulttest.GetSecret(t)
+	vaulttest.GetUpstreamCredsTest(t)
+	vaulttest.DeleteSecret(t)
 
 }
