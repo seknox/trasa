@@ -7,6 +7,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/seknox/trasa/server/api/my"
 	"github.com/seknox/trasa/server/models"
+	"github.com/seknox/trasa/tests/server/testutils"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -24,7 +25,7 @@ func TestGetMyServicesDetail(t *testing.T) {
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(AddTestUserContext(my.GetMyServicesDetail))
+	handler := http.HandlerFunc(testutils.AddTestUserContext(my.GetMyServicesDetail))
 
 	// directly and pass in our Request and ResponseRecorder.
 	handler.ServeHTTP(rr, req)
@@ -106,7 +107,7 @@ func fileUpload(t *testing.T) {
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(AddTestUserContext(my.FileUploadHandler))
+	handler := http.HandlerFunc(testutils.AddTestUserContext(my.FileUploadHandler))
 
 	// directly and pass in our Request and ResponseRecorder.
 	handler.ServeHTTP(rr, req)
@@ -140,7 +141,7 @@ func fileDownloadList(t *testing.T, wantLen int) {
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(AddTestUserContext(my.GetDownloadableFileList))
+	handler := http.HandlerFunc(testutils.AddTestUserContext(my.GetDownloadableFileList))
 
 	// directly and pass in our Request and ResponseRecorder.
 	handler.ServeHTTP(rr, req)
@@ -184,7 +185,7 @@ func getFileDownloadToken(t *testing.T) string {
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(AddTestUserContext(my.GetFileDownloadToken))
+	handler := http.HandlerFunc(testutils.AddTestUserContext(my.GetFileDownloadToken))
 
 	// directly and pass in our Request and ResponseRecorder.
 	handler.ServeHTTP(rr, req)
@@ -228,7 +229,7 @@ func fileDownload(t *testing.T, token string) {
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(AddTestUserContext(my.FileDownloadHandler))
+	handler := http.HandlerFunc(testutils.AddTestUserContext(my.FileDownloadHandler))
 
 	// directly and pass in our Request and ResponseRecorder.
 	handler.ServeHTTP(rr, req)
@@ -260,7 +261,7 @@ func fileDelete(t *testing.T) {
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(AddTestUserContext(my.FileDeleteHandler))
+	handler := http.HandlerFunc(testutils.AddTestUserContext(my.FileDeleteHandler))
 
 	// directly and pass in our Request and ResponseRecorder.
 	handler.ServeHTTP(rr, req)

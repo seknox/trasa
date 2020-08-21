@@ -7,6 +7,7 @@ import (
 	"github.com/seknox/trasa/server/api/crypt"
 	"github.com/seknox/trasa/server/models"
 	"github.com/seknox/trasa/server/utils"
+	"github.com/seknox/trasa/tests/server/testutils"
 	"github.com/sirupsen/logrus"
 	"net/http"
 	"net/http/httptest"
@@ -91,18 +92,18 @@ func deviceRegisterReq(t *testing.T, key []byte) {
 
 	enrolReq := auth.RegisterDeviceReq{
 		TfaMethod:     "totp",
-		TotpCode:      getTotpCode(totpSEC),
-		TrasaID:       trasaEmail,
-		OrgID:         trasaOrgID,
+		TotpCode:      testutils.GetTotpCode(testutils.MocktotpSEC),
+		TrasaID:       testutils.MockTrasaID,
+		OrgID:         testutils.MockOrgID,
 		DeviceName:    "Some device name",
 		DeviceHygiene: hex.EncodeToString(encdh),
 	}
 
-	req := getreqWithBody(t, enrolReq)
+	req := testutils.GetReqWithBody(t, enrolReq)
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(AddTestUserContext(auth.RegisterUserDevice))
+	handler := http.HandlerFunc(testutils.AddTestUserContext(auth.RegisterUserDevice))
 
 	handler.ServeHTTP(rr, req)
 
@@ -143,16 +144,16 @@ func trasadaKex(t *testing.T, intent string) []byte {
 	}
 	enrolReq := crypt.KexRequest{
 		Intent:    intent,
-		IntentID:  trasaEmail,
+		IntentID:  testutils.MockTrasaID,
 		DeviceID:  "",
 		PublicKey: hex.EncodeToString(pub[:]),
 	}
 
-	req := getreqWithBody(t, enrolReq)
+	req := testutils.GetReqWithBody(t, enrolReq)
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(AddTestUserContext(crypt.Kex))
+	handler := http.HandlerFunc(testutils.AddTestUserContext(crypt.Kex))
 
 	handler.ServeHTTP(rr, req)
 

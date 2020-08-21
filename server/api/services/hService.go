@@ -26,7 +26,7 @@ func GetServiceDetail(w http.ResponseWriter, r *http.Request) {
 
 }
 
-type allServicesByType struct {
+type AllServicesByType struct {
 	SSH    []models.Service `json:"ssh"`
 	RDP    []models.Service `json:"rdp"`
 	HTTP   []models.Service `json:"http"`
@@ -38,7 +38,7 @@ type allServicesByType struct {
 func GetAllServices(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
 
-	var resp allServicesByType
+	var resp AllServicesByType
 	var err error
 	resp.SSH, err = Store.GetAllByType("ssh", uc.Org.ID)
 	if err != nil {
@@ -134,7 +134,7 @@ func UpdateService(w http.ResponseWriter, r *http.Request) {
 	var req models.Service
 
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
-		utils.TrasaResponse(w, 200, "failed", "invalid request", "service not failed", nil, nil)
+		utils.TrasaResponse(w, 200, "failed", "invalid request", "service not updated", nil, nil)
 		return
 	}
 

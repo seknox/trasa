@@ -6,6 +6,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/seknox/trasa/server/api/stats"
 	"github.com/seknox/trasa/server/models"
+	"github.com/seknox/trasa/tests/server/testutils"
 
 	"net/http"
 	"net/http/httptest"
@@ -22,7 +23,7 @@ func TestGetAggregatedUsers(t *testing.T) {
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(AddTestUserContext(stats.GetAggregatedUsers))
+	handler := http.HandlerFunc(testutils.AddTestUserContext(stats.GetAggregatedUsers))
 
 	// Our handlers satisfy http.Handler, so we can call their ServeHTTP method
 	// directly and pass in our Request and ResponseRecorder.
@@ -78,7 +79,7 @@ func TestGetAggregatedDevices(t *testing.T) {
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(AddTestUserContext(stats.GetAggregatedDevices))
+	handler := http.HandlerFunc(testutils.AddTestUserContext(stats.GetAggregatedDevices))
 
 	// directly and pass in our Request and ResponseRecorder.
 	handler.ServeHTTP(rr, req)
@@ -135,7 +136,7 @@ func TestGetAggregatedFailedReasons(t *testing.T) {
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(AddTestUserContext(stats.GetAggregatedFailedReasons))
+	handler := http.HandlerFunc(testutils.AddTestUserContext(stats.GetAggregatedFailedReasons))
 
 	// directly and pass in our Request and ResponseRecorder.
 	handler.ServeHTTP(rr, req)
@@ -183,7 +184,7 @@ func TestGetAggregatedServices(t *testing.T) {
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(AddTestUserContext(stats.GetAggregatedServices))
+	handler := http.HandlerFunc(testutils.AddTestUserContext(stats.GetAggregatedServices))
 
 	// directly and pass in our Request and ResponseRecorder.
 	handler.ServeHTTP(rr, req)
@@ -238,7 +239,7 @@ func TestGetAggregatedLoginHours(t *testing.T) {
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(AddTestUserContext(stats.GetAggregatedLoginHours))
+	handler := http.HandlerFunc(testutils.AddTestUserContext(stats.GetAggregatedLoginHours))
 
 	// directly and pass in our Request and ResponseRecorder.
 	handler.ServeHTTP(rr, req)
@@ -285,7 +286,7 @@ func TestGetTotalManagedUsers(t *testing.T) {
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(AddTestUserContext(stats.GetTotalManagedUsers))
+	handler := http.HandlerFunc(testutils.AddTestUserContext(stats.GetTotalManagedUsers))
 
 	rctx := chi.NewRouteContext()
 	rctx.URLParams.Add("entityid", "2fef188a-cc13-438b-8564-2803a072f650")
@@ -335,7 +336,7 @@ func TestGetServicePermStats(t *testing.T) {
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(AddTestUserContext(stats.GetServicePermStats))
+	handler := http.HandlerFunc(testutils.AddTestUserContext(stats.GetServicePermStats))
 
 	rctx := chi.NewRouteContext()
 	rctx.URLParams.Add("serviceID", "2fef188a-cc13-438b-8564-2803a072f650")
@@ -396,7 +397,7 @@ func TestGetIPAggs(t *testing.T) {
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(AddTestUserContext(stats.GetIPAggs))
+	handler := http.HandlerFunc(testutils.AddTestUserContext(stats.GetIPAggs))
 
 	///stats/ips/{entitytype}/{entityid}/{timeFilter}/{statusFilter}
 	rctx := chi.NewRouteContext()

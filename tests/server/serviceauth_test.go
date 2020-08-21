@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/seknox/trasa/server/api/auth/serviceauth"
 	"github.com/seknox/trasa/server/models"
+	"github.com/seknox/trasa/tests/server/testutils"
 	"layeh.com/radius"
 	"layeh.com/radius/rfc2865"
 	"net"
@@ -23,7 +24,7 @@ func TestAgentAuth(t *testing.T) {
 	}{
 		{
 			"should fail when serviceID/service Key is incorrect",
-			args{getreqWithBody(t, serviceauth.ServiceAgentLogin{
+			args{testutils.GetReqWithBody(t, serviceauth.ServiceAgentLogin{
 				ServiceID:  "2fef188a-cc12-438b-8564-2803a072f650",
 				ServiceKey: "sasd76asd67asd67asgd7asnskadasd",
 				User:       "admin",
@@ -37,7 +38,7 @@ func TestAgentAuth(t *testing.T) {
 
 		{
 			"should fail when trasaID is incorrect",
-			args{getreqWithBody(t, serviceauth.ServiceAgentLogin{
+			args{testutils.GetReqWithBody(t, serviceauth.ServiceAgentLogin{
 				ServiceID:  "2fef188a-cc13-438b-8564-2803a072f650",
 				ServiceKey: "d9ef5359f13f6f6f6c89b4a9be9958ed13",
 				User:       "admin",
@@ -51,7 +52,7 @@ func TestAgentAuth(t *testing.T) {
 
 		{
 			"should fail when privilege is incorrect",
-			args{getreqWithBody(t, serviceauth.ServiceAgentLogin{
+			args{testutils.GetReqWithBody(t, serviceauth.ServiceAgentLogin{
 				ServiceID:  "2fef188a-cc13-438b-8564-2803a072f650",
 				ServiceKey: "d9ef5359f13f6f6f6c89b4a9be9958ed13",
 				User:       "admin",
@@ -64,7 +65,7 @@ func TestAgentAuth(t *testing.T) {
 		},
 		{
 			"should fail when totp code is incorrect",
-			args{getreqWithBody(t, serviceauth.ServiceAgentLogin{
+			args{testutils.GetReqWithBody(t, serviceauth.ServiceAgentLogin{
 				ServiceID:  "2fef188a-cc13-438b-8564-2803a072f650",
 				ServiceKey: "d9ef5359f13f6f6f6c89b4a9be9958ed13",
 				User:       "bhrg3se",
@@ -77,11 +78,11 @@ func TestAgentAuth(t *testing.T) {
 
 		{
 			"should fail when ip is invalid",
-			args{getreqWithBody(t, serviceauth.ServiceAgentLogin{
+			args{testutils.GetReqWithBody(t, serviceauth.ServiceAgentLogin{
 				ServiceID:  "2fef188a-cc13-438b-8564-2803a072f650",
 				ServiceKey: "d9ef5359f13f6f6f6c89b4a9be9958ed13",
 				User:       "bhrg3se",
-				TotpCode:   getTotpCode(totpSEC),
+				TotpCode:   testutils.GetTotpCode(testutils.MocktotpSEC),
 				UserIP:     "",
 				TrasaID:    "root",
 			})},
@@ -89,11 +90,11 @@ func TestAgentAuth(t *testing.T) {
 		},
 		{
 			"should fail when adhoc is enabled",
-			args{getreqWithBody(t, serviceauth.ServiceAgentLogin{
+			args{testutils.GetReqWithBody(t, serviceauth.ServiceAgentLogin{
 				ServiceID:  "08d97469-4a2f-46d3-86bc-3005b4c99c6c",
 				ServiceKey: "2a094b1fba624b26eaa02f5e2b9f5755ea",
 				User:       "sakshyam",
-				TotpCode:   getTotpCode(totpSEC),
+				TotpCode:   testutils.GetTotpCode(testutils.MocktotpSEC),
 				UserIP:     "",
 				TrasaID:    "root",
 			})},
@@ -101,11 +102,11 @@ func TestAgentAuth(t *testing.T) {
 		},
 		{
 			"should pass",
-			args{getreqWithBody(t, serviceauth.ServiceAgentLogin{
+			args{testutils.GetReqWithBody(t, serviceauth.ServiceAgentLogin{
 				ServiceID:  "2fef188a-cc13-438b-8564-2803a072f650",
 				ServiceKey: "d9ef5359f13f6f6f6c89b4a9be9958ed13",
 				User:       "bhrg3se",
-				TotpCode:   getTotpCode(totpSEC),
+				TotpCode:   testutils.GetTotpCode(testutils.MocktotpSEC),
 				UserIP:     "127.0.0.1",
 				TrasaID:    "root",
 			})},
@@ -212,7 +213,7 @@ func TestRadiusAuth(t *testing.T) {
 				ServiceSecret: "3a094b1fba624b26eaa02f5e2b9f5755ea",
 
 				Privilege: "bhrg3se",
-				TotpCode:  getTotpCode(totpSEC),
+				TotpCode:  testutils.GetTotpCode(testutils.MocktotpSEC),
 				UserIP:    "",
 				TrasaID:   "root",
 			})},
@@ -223,7 +224,7 @@ func TestRadiusAuth(t *testing.T) {
 			args{getradiusClient(t, &models.ConnectionParams{
 				ServiceID: "08d97469-4a2f-46d3-86bc-3005b4c99c6c",
 				Privilege: "sakshyam",
-				TotpCode:  getTotpCode(totpSEC),
+				TotpCode:  testutils.GetTotpCode(testutils.MocktotpSEC),
 				UserIP:    "",
 				TrasaID:   "root",
 			})},
@@ -234,7 +235,7 @@ func TestRadiusAuth(t *testing.T) {
 		//	args{getradiusClient(t, &models.ConnectionParams{
 		//		ServiceSecret: "3a094b1fba624b26eaa02f5e2b9f5755ea",
 		//		Privilege:     "bhrg3se",
-		//		TotpCode:      getTotpCode(totpSEC),
+		//		TotpCode:      GetTotpCode(MocktotpSEC),
 		//		UserIP:        "127.0.0.1",
 		//		TrasaID:       "root",
 		//	})},

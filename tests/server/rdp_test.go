@@ -6,6 +6,7 @@ import (
 	"github.com/seknox/guacamole"
 	"github.com/seknox/trasa/server/accessproxy/rdpproxy"
 	"github.com/seknox/trasa/server/models"
+	"github.com/seknox/trasa/tests/server/testutils"
 	"net/http/httptest"
 	"strings"
 	"testing"
@@ -41,7 +42,7 @@ func TestServeWS(t *testing.T) {
 		//{
 		//	name: "should pass",
 		//	args: args{models.ConnectionParams{
-		//		TotpCode:  getTotpCode(totpSEC),
+		//		TotpCode:  GetTotpCode(MocktotpSEC),
 		//		Privilege: "root",
 		//		Password:  "Docker",
 		//		OptHeight: 1500,
@@ -79,7 +80,7 @@ func TestServeWS(t *testing.T) {
 func connectGuac(t *testing.T, params *models.ConnectionParams) (err_code, err_msg string, status bool) {
 	rdpProxy := rdpproxy.NewProxy()
 
-	s := httptest.NewServer(AddTestUserContextWS(rdpProxy.ServeWS))
+	s := httptest.NewServer(testutils.AddTestUserContextWS(rdpProxy.ServeWS))
 	defer s.Close()
 
 	// Convert http://127.0.0.1 to ws://127.0.0.

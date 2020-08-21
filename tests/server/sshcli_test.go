@@ -3,6 +3,7 @@ package server_test
 import (
 	"github.com/seknox/trasa/server/accessproxy/sshproxy"
 	"github.com/seknox/trasa/server/utils"
+	"github.com/seknox/trasa/tests/server/testutils"
 	"golang.org/x/crypto/ssh"
 	"net"
 	"strings"
@@ -19,7 +20,7 @@ func TestSSHAuthWithoutPublicKey(t *testing.T) {
 	time.Sleep(time.Second * 2)
 
 	cconf := ssh.ClientConfig{
-		User: upstreamUser,
+		User: testutils.MockupstreamUser,
 		Auth: []ssh.AuthMethod{
 			handleKBAuth(t),
 		},
@@ -56,13 +57,13 @@ func TestSSHAuthWithPublicKey(t *testing.T) {
 
 	time.Sleep(time.Second * 2)
 
-	pk, err := ssh.ParsePrivateKey([]byte(testPrivateKey))
+	pk, err := ssh.ParsePrivateKey([]byte(testutils.MockPrivateKey))
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	cconf := ssh.ClientConfig{
-		User: upstreamUser,
+		User: testutils.MockupstreamUser,
 		Auth: []ssh.AuthMethod{
 			ssh.PublicKeys(pk),
 			handleKBAuth(t),
@@ -100,13 +101,13 @@ func TestSSHAuthWithAuthorisedPublicKey(t *testing.T) {
 
 	time.Sleep(time.Second * 2)
 
-	pk, err := ssh.ParsePrivateKey([]byte(testPrivateKey2))
+	pk, err := ssh.ParsePrivateKey([]byte(testutils.MockPrivateKey2))
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	cconf := ssh.ClientConfig{
-		User: upstreamUser,
+		User: testutils.MockupstreamUser,
 		Auth: []ssh.AuthMethod{
 			ssh.PublicKeys(pk),
 			handleKBAuth(t),
@@ -151,7 +152,7 @@ func handleKBAuth(t *testing.T) ssh.AuthMethod {
 			}
 			//t.Log("Enter TRASA credentials")
 
-			return []string{trasaEmail, trasaPass}, nil
+			return []string{testutils.MockTrasaID, testutils.MocktrasaPass}, nil
 
 		case strings.Contains(instruction, "Choose Service"):
 			if len(questions) != 1 {
@@ -165,7 +166,7 @@ func handleKBAuth(t *testing.T) ssh.AuthMethod {
 			if len(questions) != 1 {
 				t.Fatalf(`incorrect number of question, want: %d got: %d`, 1, len(questions))
 			}
-			_, totp, _ := utils.CalculateTotp(totpSEC)
+			_, totp, _ := utils.CalculateTotp(testutils.MocktotpSEC)
 			//t.Log("Second factor authentication " + totp)
 			return []string{totp}, nil
 
@@ -179,7 +180,7 @@ func handleKBAuth(t *testing.T) ssh.AuthMethod {
 			if len(questions) != 1 {
 				t.Fatalf(`incorrect number of question, want: %d got: %d`, 1, len(questions))
 			}
-			return []string{upstreamPass}, nil
+			return []string{testutils.MockupstreamPass}, nil
 
 		default:
 			if len(questions) != 0 {

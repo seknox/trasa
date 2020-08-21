@@ -6,6 +6,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/seknox/trasa/server/api/logs"
 	"github.com/seknox/trasa/server/models"
+	"github.com/seknox/trasa/tests/server/testutils"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -26,7 +27,7 @@ func TestAuthLogs(t *testing.T) {
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(AddTestUserContext(logs.GetLoginEvents))
+	handler := http.HandlerFunc(testutils.AddTestUserContext(logs.GetLoginEvents))
 
 	handler.ServeHTTP(rr, req)
 
@@ -145,7 +146,7 @@ func testAuthLog(t *testing.T, entityType, entityID, from, to, page, size string
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(AddTestUserContext(logs.GetLoginEventsByPage))
+	handler := http.HandlerFunc(testutils.AddTestUserContext(logs.GetLoginEventsByPage))
 
 	handler.ServeHTTP(rr, req)
 
@@ -244,7 +245,7 @@ func testInAppTrail(t *testing.T, from, to, page, size string) []models.InAppTra
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(AddTestUserContext(logs.GetAllInAppTrails))
+	handler := http.HandlerFunc(testutils.AddTestUserContext(logs.GetAllInAppTrails))
 
 	handler.ServeHTTP(rr, req)
 

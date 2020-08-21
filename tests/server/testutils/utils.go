@@ -1,69 +1,18 @@
-package server_test
+package testutils
 
 import (
 	"bytes"
 	"context"
-	"crypto/rand"
 	"encoding/json"
-	"fmt"
 	"github.com/gorilla/websocket"
 	"github.com/seknox/trasa/server/models"
 	"github.com/seknox/trasa/server/utils"
 	"github.com/sirupsen/logrus"
-	"golang.org/x/crypto/ssh"
-	"golang.org/x/crypto/ssh/testdata"
 	"net/http"
 	"testing"
 )
 
-var (
-	testPrivateKeys map[string]interface{}
-	testSigners     map[string]ssh.Signer
-	testPublicKeys  map[string]ssh.PublicKey
-)
-
-func init() {
-	var err error
-
-	n := len(testdata.PEMBytes)
-	testPrivateKeys = make(map[string]interface{}, n)
-	testSigners = make(map[string]ssh.Signer, n)
-	testPublicKeys = make(map[string]ssh.PublicKey, n)
-	for t, k := range testdata.PEMBytes {
-		testPrivateKeys[t], err = ssh.ParseRawPrivateKey(k)
-		if err != nil {
-			panic(fmt.Sprintf("Unable to parse test key %s: %v", t, err))
-		}
-		testSigners[t], err = ssh.NewSignerFromKey(testPrivateKeys[t])
-		if err != nil {
-			panic(fmt.Sprintf("Unable to create signer for test key %s: %v", t, err))
-		}
-		testPublicKeys[t] = testSigners[t].PublicKey()
-	}
-
-	// Create a cert and sign it for use in tests.
-	testCert := &ssh.Certificate{
-		Nonce:           []byte{},                       // To pass reflect.DeepEqual after marshal & parse, this must be non-nil
-		ValidPrincipals: []string{"gopher1", "gopher2"}, // increases test coverage
-		ValidAfter:      0,                              // unix epoch
-		ValidBefore:     ssh.CertTimeInfinity,           // The end of currently representable time.
-		Reserved:        []byte{},                       // To pass reflect.DeepEqual after marshal & parse, this must be non-nil
-		Key:             testPublicKeys["ecdsa"],
-		SignatureKey:    testPublicKeys["rsa"],
-		Permissions: ssh.Permissions{
-			CriticalOptions: map[string]string{},
-			Extensions:      map[string]string{},
-		},
-	}
-	testCert.SignCert(rand.Reader, testSigners["rsa"])
-	testPrivateKeys["cert"] = testPrivateKeys["ecdsa"]
-	testSigners["cert"], err = ssh.NewCertSigner(testCert, testSigners["ecdsa"])
-	if err != nil {
-		panic(fmt.Sprintf("Unable to create certificate signer: %v", err))
-	}
-}
-
-func getTotpCode(secret string) string {
+func GetTotpCode(secret string) string {
 	_, t, _ := utils.CalculateTotp(secret)
 	return t
 }
@@ -111,7 +60,7 @@ func AddTestUserContext(next http.HandlerFunc) http.HandlerFunc {
 func AddTestUserContextWS(next func(params models.ConnectionParams, uc models.UserContext, ws *websocket.Conn)) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		conn, err := upgrader.Upgrade(w, r, nil)
+		conn, err := Mockupgrader.Upgrade(w, r, nil)
 		if err != nil {
 			logrus.Error(err)
 			return
@@ -165,7 +114,7 @@ func AddTestUserContextWS(next func(params models.ConnectionParams, uc models.Us
 
 }
 
-func getreqWithBody(t *testing.T, body interface{}) *http.Request {
+func GetReqWithBody(t *testing.T, body interface{}) *http.Request {
 	bodyBytes, err := json.Marshal(body)
 	if err != nil {
 		t.Fatal(err)

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/seknox/trasa/server/api/auth/serviceauth"
 	"github.com/seknox/trasa/server/models"
+	"github.com/seknox/trasa/tests/server/testutils"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -20,10 +21,10 @@ func TestAuthHTTPAccessProxy(t *testing.T) {
 	}{
 		{
 			"should fail when hostname is incorrect",
-			args{getreqWithBody(t, serviceauth.NewSession{
+			args{testutils.GetReqWithBody(t, serviceauth.NewSession{
 				HostName:  "gitlab01.trasa.io",
 				TfaMethod: "",
-				TotpCode:  getTotpCode(totpSEC),
+				TotpCode:  testutils.GetTotpCode(testutils.MocktotpSEC),
 				ExtToken:  "cb6dd3f6-54c2-4cb0-b294-e22c2aa708e4",
 			})},
 			false,
@@ -31,10 +32,10 @@ func TestAuthHTTPAccessProxy(t *testing.T) {
 
 		{
 			"should fail when ext token is incorrect",
-			args{getreqWithBody(t, serviceauth.NewSession{
+			args{testutils.GetReqWithBody(t, serviceauth.NewSession{
 				HostName:  "gitlab01.trasa.io",
 				TfaMethod: "",
-				TotpCode:  getTotpCode(totpSEC),
+				TotpCode:  testutils.GetTotpCode(testutils.MocktotpSEC),
 				ExtToken:  "db6dd3f6-54c2-4cb0-b294-e22c2aa708e4",
 			})},
 			false,
@@ -42,7 +43,7 @@ func TestAuthHTTPAccessProxy(t *testing.T) {
 
 		{
 			"should fail when totp is incorrect",
-			args{getreqWithBody(t, serviceauth.NewSession{
+			args{testutils.GetReqWithBody(t, serviceauth.NewSession{
 				HostName:  "gitlab01.trasa.io",
 				TfaMethod: "",
 				TotpCode:  "123456",
@@ -53,10 +54,10 @@ func TestAuthHTTPAccessProxy(t *testing.T) {
 
 		{
 			"should fail if service is not authorised",
-			args{getreqWithBody(t, serviceauth.NewSession{
+			args{testutils.GetReqWithBody(t, serviceauth.NewSession{
 				HostName:  "test00.trasa.io",
 				TfaMethod: "",
-				TotpCode:  getTotpCode(totpSEC),
+				TotpCode:  testutils.GetTotpCode(testutils.MocktotpSEC),
 				ExtToken:  "cb6dd3f6-54c2-4cb0-b294-e22c2aa708e4",
 			})},
 			false,
@@ -64,7 +65,7 @@ func TestAuthHTTPAccessProxy(t *testing.T) {
 
 		{
 			"should pass",
-			args{getreqWithBody(t, serviceauth.NewSession{
+			args{testutils.GetReqWithBody(t, serviceauth.NewSession{
 				HostName:  "gitlab01.trasa.io",
 				TfaMethod: "U2F",
 				TotpCode:  "",

@@ -5,6 +5,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/seknox/trasa/server/accessproxy/sshproxy"
 	"github.com/seknox/trasa/server/models"
+	"github.com/seknox/trasa/tests/server/testutils"
 	"net/http/httptest"
 	"strings"
 	"testing"
@@ -25,7 +26,7 @@ func TestConnectNewSSH(t *testing.T) {
 		{
 			name: "should fail when hostname is incorrect",
 			args: args{models.ConnectionParams{
-				TotpCode:  getTotpCode(totpSEC),
+				TotpCode:  testutils.GetTotpCode(testutils.MocktotpSEC),
 				TfaMethod: "totp",
 				Privilege: "root",
 				Password:  "root",
@@ -39,7 +40,7 @@ func TestConnectNewSSH(t *testing.T) {
 		{
 			name: "should pass",
 			args: args{models.ConnectionParams{
-				TotpCode:  getTotpCode(totpSEC),
+				TotpCode:  testutils.GetTotpCode(testutils.MocktotpSEC),
 				TfaMethod: "totp",
 				Privilege: "root",
 				Password:  "root",
@@ -69,7 +70,7 @@ func TestConnectNewSSH(t *testing.T) {
 }
 
 func connectSSHWS(t *testing.T, params *models.ConnectionParams) (string, bool) {
-	s := httptest.NewServer(AddTestUserContextWS(sshproxy.ConnectNewSSH))
+	s := httptest.NewServer(testutils.AddTestUserContextWS(sshproxy.ConnectNewSSH))
 	defer s.Close()
 
 	// Convert http://127.0.0.1 to ws://127.0.0.

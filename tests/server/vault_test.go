@@ -7,6 +7,7 @@ import (
 	"github.com/seknox/trasa/server/api/services"
 	"github.com/seknox/trasa/server/api/system"
 	"github.com/seknox/trasa/server/models"
+	"github.com/seknox/trasa/tests/server/testutils"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -20,19 +21,20 @@ func TestVault(t *testing.T) {
 	storeSecret(t)
 	getSecret(t)
 	getUpstreamCredsTest(t)
+	deleteSecret(t)
 
 }
 
 func initVault(t *testing.T) {
 
-	req := getreqWithBody(t, system.VaultInit{
+	req := testutils.GetReqWithBody(t, system.VaultInit{
 		SecretShares:    5,
 		SecretThreshold: 3,
 	})
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(AddTestUserContext(system.TsxvaultInit))
+	handler := http.HandlerFunc(testutils.AddTestUserContext(system.TsxvaultInit))
 
 	// directly and pass in our Request and ResponseRecorder.
 	handler.ServeHTTP(rr, req)
@@ -75,11 +77,11 @@ func testStoreVault(t *testing.T) {
 		KeyVal:  "someKeyValue",
 	}
 
-	req := getreqWithBody(t, reqdata)
+	req := testutils.GetReqWithBody(t, reqdata)
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(AddTestUserContext(system.StoreKey))
+	handler := http.HandlerFunc(testutils.AddTestUserContext(system.StoreKey))
 
 	// directly and pass in our Request and ResponseRecorder.
 	handler.ServeHTTP(rr, req)
@@ -115,7 +117,7 @@ func testGetKey(t *testing.T) {
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(AddTestUserContext(system.Getkey))
+	handler := http.HandlerFunc(testutils.AddTestUserContext(system.Getkey))
 
 	rctx := chi.NewRouteContext()
 	rctx.URLParams.Add("vendorID", "someKeyName")
@@ -181,7 +183,7 @@ func getStatus(t *testing.T) {
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(AddTestUserContext(system.Status))
+	handler := http.HandlerFunc(testutils.AddTestUserContext(system.Status))
 
 	// directly and pass in our Request and ResponseRecorder.
 	handler.ServeHTTP(rr, req)
@@ -225,11 +227,11 @@ func storeSecret(t *testing.T) {
 		Type:       "password",
 	}
 
-	req := getreqWithBody(t, reqdata)
+	req := testutils.GetReqWithBody(t, reqdata)
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(AddTestUserContext(services.StoreServiceCredentials))
+	handler := http.HandlerFunc(testutils.AddTestUserContext(services.StoreServiceCredentials))
 
 	// directly and pass in our Request and ResponseRecorder.
 	handler.ServeHTTP(rr, req)
@@ -271,11 +273,11 @@ func getSecret(t *testing.T) {
 		Type:      "password",
 	}
 
-	req := getreqWithBody(t, reqdata)
+	req := testutils.GetReqWithBody(t, reqdata)
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(AddTestUserContext(services.ViewCreds))
+	handler := http.HandlerFunc(testutils.AddTestUserContext(services.ViewCreds))
 
 	// directly and pass in our Request and ResponseRecorder.
 	handler.ServeHTTP(rr, req)
@@ -316,6 +318,45 @@ func getSecret(t *testing.T) {
 	}
 	if data.Type != "password" {
 		t.Errorf(`data.Type got:%s want:%s`, data.Type, "password")
+	}
+
+}
+
+func deleteSecret(t *testing.T) {
+
+	reqdata := services.ServiceCreds{
+		Username:  "root",
+		ServiceID: "4ea851b8-6299-4c61-8137-58771aaa8899",
+		Type:      "password",
+	}
+
+	req := testutils.GetReqWithBody(t, reqdata)
+
+	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(testutils.AddTestUserContext(services.DeleteCreds))
+
+	// directly and pass in our Request and ResponseRecorder.
+	handler.ServeHTTP(rr, req)
+
+	// Check the status code is what we expect.
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	var resp struct {
+		models.TrasaResponseStruct
+		Data []services.ServiceCreds `json:"data"`
+	}
+
+	err := json.Unmarshal(rr.Body.Bytes(), &resp)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if resp.Status != "success" {
+		t.Fatal(resp.Reason)
 	}
 
 }

@@ -1,4 +1,4 @@
-package server_test
+package testutils
 
 import (
 	"github.com/gorilla/websocket"
@@ -6,16 +6,16 @@ import (
 )
 
 const (
-	trasaOrgID  = "153f7582-5ae2-46ba-8c1c-79ef73fe296e"
-	trasaUserID = "13c45cfb-72ca-4177-b968-03604cab6a27"
+	MockOrgID  = "153f7582-5ae2-46ba-8c1c-79ef73fe296e"
+	MockUserID = "13c45cfb-72ca-4177-b968-03604cab6a27"
 
-	trasaEmail   = "root"
-	trasaPass    = "changeme"
-	totpSEC      = "AV2COXZHVG4OAFSF"
-	upstreamUser = "root"
-	upstreamPass = "root"
+	MockTrasaID      = "root"
+	MocktrasaPass    = "changeme"
+	MocktotpSEC      = "AV2COXZHVG4OAFSF"
+	MockupstreamUser = "root"
+	MockupstreamPass = "root"
 
-	testPrivateKey = `-----BEGIN OPENSSH PRIVATE KEY-----
+	MockPrivateKey = `-----BEGIN OPENSSH PRIVATE KEY-----
 b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAABlwAAAAdzc2gtcn
 NhAAAAAwEAAQAAAYEArLShu9zqfvahOONl9nziHCew23RF89SqjB/E1i6H4E/5aFsGfoGV
 g5HEvTCdKNQTZdp3xW5sNDvsp9kEoykkiBlknbR+bNfkq8hTKG+CU8VK8jCmZLqjLa7qhK
@@ -54,7 +54,7 @@ JX0dcGsOPgrCEt37wAAWhDjbUE3dxamnC+Cr7dMVy7AgguSQgkXBMoGsleTuB1PXOusn9z
 ABz8oYP1eawwEAAAAiYmhyZzNzZUBCaGFyZ2Ficy1NYWNCb29rLVByby5sb2NhbAE=
 -----END OPENSSH PRIVATE KEY-----`
 
-	testPrivateKey2 = `-----BEGIN OPENSSH PRIVATE KEY-----
+	MockPrivateKey2 = `-----BEGIN OPENSSH PRIVATE KEY-----
 b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAABlwAAAAdzc2gtcn
 NhAAAAAwEAAQAAAYEAw3n9pCbQr0hUuIH2zzHadFZjMNVZweHMQa1vBqsJs8awQxAZMwGS
 XT1sX0Z8/KosLC0lgtkvmign/pnQlZadUlmnPdhrfjmcSQMkumHEShkVC4g7aEmpxNv27b
@@ -94,7 +94,7 @@ bWMYt/XNfb7wipAAAAImJocmczc2VAQmhhcmdhYnMtTWFjQm9vay1Qcm8ubG9jYWw=
 -----END OPENSSH PRIVATE KEY-----`
 )
 
-var upgrader = websocket.Upgrader{
+var Mockupgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		//TODO
 		return true
