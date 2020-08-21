@@ -341,7 +341,7 @@ func decryptAndUpdateDH(ourPriv, clientPub, clientDH, extID string) (string, err
 
 	plainText, err := utils.AESDecrypt(sec, dhBytes)
 
-	var dh deviceDetail
+	var dh DeviceDetail
 	err = json.Unmarshal(plainText, &dh)
 	if err != nil {
 		return "", fmt.Errorf("json.Unmarshal(plainText, &dh): %v ", err)

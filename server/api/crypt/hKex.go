@@ -10,7 +10,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type kexRequest struct {
+type KexRequest struct {
 	// Intent of kex, example - KEX_EXPORT_DH, KEX_ENROL_DEVICE, KEX_HTTP_SR
 	Intent string `json:"intent"`
 	// IntentID is unique identifier for key exchange process. Should be trasaID in KEX_ENROL_DEVICE and sessionID in case of other intents
@@ -26,7 +26,7 @@ type kexRequest struct {
 func Kex(w http.ResponseWriter, r *http.Request) {
 
 	logrus.Trace("kex request received")
-	var req kexRequest
+	var req KexRequest
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "success", "invalid request", "Kex", nil)

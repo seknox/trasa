@@ -6,6 +6,9 @@ import (
 )
 
 const (
+	trasaOrgID  = "153f7582-5ae2-46ba-8c1c-79ef73fe296e"
+	trasaUserID = "13c45cfb-72ca-4177-b968-03604cab6a27"
+
 	trasaEmail   = "root"
 	trasaPass    = "changeme"
 	totpSEC      = "AV2COXZHVG4OAFSF"

@@ -26,6 +26,7 @@ func TestConnectNewSSH(t *testing.T) {
 			name: "should fail when hostname is incorrect",
 			args: args{models.ConnectionParams{
 				TotpCode:  getTotpCode(totpSEC),
+				TfaMethod: "totp",
 				Privilege: "root",
 				Password:  "root",
 				OptHeight: 1500,
@@ -39,6 +40,7 @@ func TestConnectNewSSH(t *testing.T) {
 			name: "should pass",
 			args: args{models.ConnectionParams{
 				TotpCode:  getTotpCode(totpSEC),
+				TfaMethod: "totp",
 				Privilege: "root",
 				Password:  "root",
 				OptHeight: 1500,

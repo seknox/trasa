@@ -20,7 +20,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type registerDeviceReq struct {
+type RegisterDeviceReq struct {
 	TfaMethod string `json:"tfaMethod"`
 	TotpCode  string `json:"totpCode"`
 	TrasaID   string `json:"trasaID"`
@@ -30,7 +30,7 @@ type registerDeviceReq struct {
 	DeviceHygiene string `json:"deviceHygiene"`
 }
 
-type deviceDetail struct {
+type DeviceDetail struct {
 	DeviceBrowser     models.DeviceBrowser       `json:"deviceBrowser"`
 	BrowserExtensions []models.BrowserExtensions `json:"browserExtensions"`
 	DeviceHygiene     models.DeviceHygiene       `json:"deviceHygiene"`
@@ -40,7 +40,7 @@ type deviceDetail struct {
 func RegisterUserDevice(w http.ResponseWriter, r *http.Request) {
 	logrus.Trace("RegisterUserDevice request received")
 
-	var req registerDeviceReq
+	var req RegisterDeviceReq
 	err := utils.ParseAndValidateRequest(r, &req)
 	if err != nil {
 		logrus.Error(err)
@@ -83,7 +83,7 @@ func RegisterUserDevice(w http.ResponseWriter, r *http.Request) {
 	//  retrieve secret key for this request.
 	secretKeyFromKex, ok := global.ECDHKexDerivedKey[req.TrasaID]
 	if !ok {
-		logrus.Trace("key not found in Kex store")
+		logrus.Tracef("key not found in Kex store for %s ", req.TrasaID)
 		utils.TrasaResponse(w, 200, "failed", "key not found in Kex store", "Device registration", nil)
 		return
 	}
@@ -109,7 +109,7 @@ func RegisterUserDevice(w http.ResponseWriter, r *http.Request) {
 	delete(global.ECDHKexDerivedKey, req.TrasaID)
 
 	// unmarshall decryptedBytes to deviceDetail struct
-	var dh deviceDetail
+	var dh DeviceDetail
 	err = json.Unmarshal(decryptedBytes, &dh)
 	if err != nil {
 		//TODO return error here??
