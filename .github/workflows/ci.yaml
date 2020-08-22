@@ -3,9 +3,12 @@ name: CICD
 on :
   push:
     branches:
-      - ci-setup
+      - master
       - dev
-
+  pull_request:
+    branches:
+      - master
+      - dev
 jobs:
   test:
     name: Test
