@@ -31,7 +31,7 @@ type Store struct {
 
 type Adapter interface {
 	checkPolicy(params *models.ConnectionParams) (*models.Policy, consts.FailedReason, error)
-	getUserFromPublicKey(publicKey ssh.PublicKey, orgID string) (*models.User, error)
+	GetUserFromPublicKey(publicKey ssh.PublicKey, orgID string) (*models.User, error)
 	validateTempCert(publicKey ssh.PublicKey, privilege string, orgID string) error
 	tfaCert(publicKey ssh.PublicKey) (*models.AccessMapDetail, error)
 

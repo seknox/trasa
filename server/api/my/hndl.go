@@ -161,6 +161,12 @@ func GetMyEventsByPage(w http.ResponseWriter, r *http.Request) {
 
 }
 
+type AuthMetaResp struct {
+	IsPasswordRequired     bool   `json:"isPasswordRequired"`
+	IsDeviceHygeneRequired bool   `json:"isDeviceHygeneRequired"`
+	TrasaID                string `json:"trasaID"`
+}
+
 //Get authentication metada like isPasswordRequired, isDeviceHygeneRequired etc
 //They should be verified later when user authenticate
 //This API is called just for the UI
@@ -169,11 +175,7 @@ func GetAuthMeta(w http.ResponseWriter, r *http.Request) {
 	username := chi.URLParam(r, "username")
 	appID := chi.URLParam(r, "appID")
 
-	var resp struct {
-		IsPasswordRequired     bool   `json:"isPasswordRequired"`
-		IsDeviceHygeneRequired bool   `json:"isDeviceHygeneRequired"`
-		TrasaID                string `json:"trasaID"`
-	}
+	var resp AuthMetaResp
 
 	//TODO remove trasaID if not required
 	resp.TrasaID = userContext.User.Email
@@ -183,7 +185,7 @@ func GetAuthMeta(w http.ResponseWriter, r *http.Request) {
 	app1, err := services.Store.GetFromID(appID)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "failed to get app", "", resp)
+		utils.TrasaResponse(w, 200, "failed", "failed to get service", "", resp)
 		return
 	}
 
