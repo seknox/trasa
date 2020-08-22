@@ -143,7 +143,7 @@ export default function CA(props: any) {
       },
     };
     axios
-      .get(`${Constants.TRASA_HOSTNAME}/api/v1/system/ca/all`, config)
+      .get(`${Constants.TRASA_HOSTNAME}/api/v1/providers/ca/tsxca/all`, config)
       .then((response) => {
         if (response.data.status === 'success') {
           // console.log(response.data.data[0].cert)

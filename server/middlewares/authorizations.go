@@ -54,7 +54,7 @@ func permissionChecker(assignedRole string, requestEndpoint string, method strin
 	//userRole.userManager = true
 
 	//requestEndpoint :=  requestEndpoint  //urlParser(r.URL)
-	endpoints := []string{"services", "stats", "user", "my", "iam", "gateway", "crypto", "org", "system", "groups", "globalsettings", "idp", "logs", "accessmap", "devices", "trasagw"}
+	endpoints := []string{"services", "stats", "user", "my", "iam", "gateway", "crypto", "org", "system", "groups", "globalsettings", "idp", "logs", "accessmap", "devices", "trasagw", "providers"}
 	if validateEndpoint(requestEndpoint, endpoints) == true {
 		switch {
 		case switchUserRole.orgAdmin:

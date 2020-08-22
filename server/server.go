@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/kabukky/httpscerts"
 	"github.com/seknox/trasa/server/initdb"
 
 	"github.com/seknox/trasa/server/api/my"
@@ -22,16 +23,18 @@ import (
 	"github.com/seknox/trasa/server/accessproxy/sshproxy"
 	"github.com/seknox/trasa/server/api/accessmap"
 	"github.com/seknox/trasa/server/api/auth"
-	"github.com/seknox/trasa/server/api/crypt"
-	"github.com/seknox/trasa/server/api/crypt/vault"
 	"github.com/seknox/trasa/server/api/devices"
 	"github.com/seknox/trasa/server/api/groups"
-	"github.com/seknox/trasa/server/api/idps"
 	"github.com/seknox/trasa/server/api/logs"
 	"github.com/seknox/trasa/server/api/misc"
 	"github.com/seknox/trasa/server/api/notif"
 	"github.com/seknox/trasa/server/api/orgs"
 	"github.com/seknox/trasa/server/api/policies"
+	"github.com/seknox/trasa/server/api/providers/ca"
+	"github.com/seknox/trasa/server/api/providers/sidp"
+	"github.com/seknox/trasa/server/api/providers/uidp"
+	"github.com/seknox/trasa/server/api/providers/vault"
+	"github.com/seknox/trasa/server/api/providers/vault/tsxvault"
 	"github.com/seknox/trasa/server/api/redis"
 	"github.com/seknox/trasa/server/api/services"
 	"github.com/seknox/trasa/server/api/stats"
@@ -54,11 +57,11 @@ func StartServr() {
 	accessmap.InitStore(state)
 
 	auth.InitStore(state)
-
-	crypt.InitStore(state)
+	vault.InitStore(state)
+	tsxvault.InitStore(state)
 	devices.InitStore(state)
 	groups.InitStore(state)
-	idps.InitStore(state)
+	uidp.InitStore(state)
 	logs.InitStore(state)
 	misc.InitStore(state)
 	my.InitStore(state)
@@ -70,12 +73,24 @@ func StartServr() {
 	system.InitStore(state)
 	stats.InitStore(state)
 	users.InitStore(state)
-	vault.InitStore(state)
+
+	uidp.InitStore(state)
+
+	sidp.InitStore(state)
+	ca.InitStore(state)
 
 	initdb.InitDB()
 
 	logrus.Trace("Starting API Server...")
-	go sshproxy.ListenSSH()
+
+	closeChan := make(chan bool, 1)
+	go func() {
+		err := sshproxy.ListenSSH(closeChan)
+		if err != nil {
+			logrus.Error(err)
+		}
+		closeChan <- true
+	}()
 
 	webproxy.PrepareProxyConfig()
 
@@ -95,9 +110,21 @@ func StartServr() {
 
 	go http.ListenAndServe(":80", http.HandlerFunc(redirect))
 
-	go startRadiusServer()
+	go StartRadiusServer(closeChan)
 
-	err := http.ListenAndServeTLS(":443", "/etc/trasa/certs/trasa-server-dev.crt", "/etc/trasa/certs/trasa-server-dev.key", r)
+	err := httpscerts.Check("/etc/trasa/certs/trasa-server.crt", "/etc/trasa/certs/trasa-server.key")
+	// If they are not available, generate new ones.
+	if err != nil {
+		err = httpscerts.Generate("/etc/trasa/certs/trasa-server.crt", "/etc/trasa/certs/trasa-server.key", trasaListenAddr)
+		if err != nil {
+			logrus.Fatal("Error: Couldn't create https certs.")
+		}
+	}
+
+	err = http.ListenAndServeTLS(":443",
+		"/etc/trasa/certs/trasa-server.crt",
+		"/etc/trasa/certs/trasa-server.key",
+		r)
 	if err != nil {
 		fmt.Println(err)
 		logrus.Error(err)

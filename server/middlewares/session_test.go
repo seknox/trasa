@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"database/sql"
 	"reflect"
 	"testing"
 
@@ -11,39 +12,50 @@ import (
 	"github.com/seknox/trasa/server/models"
 )
 
+//TODO move this test to integration-tests
+//Use real database and redis
+
 func Test_getUserContext(t *testing.T) {
 	userstore := users.InitStoreMock()
 	orgstore := orgs.InitStoreMock()
 	_ = redis.InitStoreMock()
+	//
+	//mockUser := models.User{
+	//	ID:         "someUserID",
+	//	OrgID:      "someOrgID",
+	//	UserName:   "testUname",
+	//	FirstName:  "Bha",
+	//	MiddleName: "",
+	//	LastName:   "Ach",
+	//	Email:      "user@example.com",
+	//	UserRole:   "orgAdmin",
+	//	Status:     true,
+	//	IdpName:    "trasa",
+	//}
+	//mockOrg := models.Org{
+	//	ID:             "someOrgID",
+	//	OrgName:        "testOrg",
+	//	Domain:         "example.com",
+	//	PrimaryContact: "user@example.com",
+	//	Timezone:       "Asia/Kathmandu",
+	//	PhoneNumber:    "12345678",
+	//}
 
-	mockUser := models.User{
-		ID:         "someUserID",
-		OrgID:      "someOrgID",
-		UserName:   "testUname",
-		FirstName:  "Bha",
-		MiddleName: "",
-		LastName:   "Ach",
-		Email:      "user@example.com",
-		UserRole:   "orgAdmin",
-		Status:     true,
-		IdpName:    "trasa",
-	}
-	mockOrg := models.Org{
-		ID:             "someOrgID",
-		OrgName:        "testOrg",
-		Domain:         "example.com",
-		PrimaryContact: "user@example.com",
-		Timezone:       "Asia/Kathmandu",
-		PhoneNumber:    "12345678",
-	}
+	//userstore.
+	//	On("GetFromID", "someUserID", "someOrgID").
+	//	Return(&mockUser, nil)
+	//
+	//orgstore.
+	//	On("Get", "someOrgID").
+	//	Return(mockOrg, nil)
 
 	userstore.
-		On("GetFromID", "someUserID", "someOrgID").
-		Return(&mockUser, nil).Times(2)
+		On("GetFromID", "", "").
+		Return(&models.User{}, sql.ErrNoRows)
 
 	orgstore.
-		On("Get", "someOrgID").
-		Return(mockOrg, nil).Times(2)
+		On("Get", "").
+		Return(&models.Org{}, sql.ErrNoRows)
 
 	var nulUC models.UserContext
 
@@ -63,12 +75,12 @@ func Test_getUserContext(t *testing.T) {
 			want:    nulUC,
 			wantErr: true,
 		},
-		{
-			name:    "with valid userID orgID",
-			args:    args{"someOrgID", "someUserID"},
-			want:    models.UserContext{&mockUser, mockOrg, "", ""},
-			wantErr: false,
-		},
+		//{
+		//	name:    "with valid userID orgID",
+		//	args:    args{"someOrgID", "someUserID"},
+		//	want:    models.UserContext{&mockUser, mockOrg, "", ""},
+		//	wantErr: false,
+		//},
 		// TODO: Add test cases.
 	}
 

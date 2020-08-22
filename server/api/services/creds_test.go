@@ -5,17 +5,17 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/seknox/trasa/server/api/crypt"
-	"github.com/seknox/trasa/server/api/crypt/vault"
+	"github.com/seknox/trasa/server/api/providers/ca"
+	"github.com/seknox/trasa/server/api/providers/vault/tsxvault"
 	"github.com/seknox/trasa/server/api/system"
 	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/models"
 )
 
 func TestGetUpstreamCreds(t *testing.T) {
-	cryptstore := crypt.InitStoreMock()
+	cryptstore := ca.InitStoreMock()
 	systemstore := system.InitStoreMock()
-	vaultstore := vault.InitStoreMock()
+	vaultstore := tsxvault.InitStoreMock()
 
 	type args struct {
 		user        string

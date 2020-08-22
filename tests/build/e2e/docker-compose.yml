@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  trasa-server:
+    build:
+      context: ../..
+      dockerfile: tests/build/end-to-end/Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8022:8022"
+    links:
+      - redis
+      - db
+      - ssh-test-server
+    depends_on:
+      - redis
+      - db
+  redis:
+    image: redis
+  ssh-test-server:
+    image: rastasheep/ubuntu-sshd
+  db:
+    image: postgres
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+

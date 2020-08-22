@@ -174,7 +174,7 @@ export default function CreateIdpDrawer(props: any) {
     updateActionStatus({ ...actionStatus, respStatus: false, statusMsg: '', loader: true });
 
     axios
-      .post(`${Constants.TRASA_HOSTNAME}/api/v1/idp/external/create`, idp)
+      .post(`${Constants.TRASA_HOSTNAME}/api/v1/providers/uidp/create`, idp)
       .then((r) => {
         updateActionStatus({ ...actionStatus, loader: false });
         if (r.data.status === 'success') {

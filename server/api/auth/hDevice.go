@@ -9,7 +9,6 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/mssola/user_agent"
 	"github.com/seknox/trasa/server/api/auth/tfa"
 	"github.com/seknox/trasa/server/api/devices"
 	"github.com/seknox/trasa/server/api/services"
@@ -21,7 +20,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type registerDeviceReq struct {
+type RegisterDeviceReq struct {
 	TfaMethod string `json:"tfaMethod"`
 	TotpCode  string `json:"totpCode"`
 	TrasaID   string `json:"trasaID"`
@@ -31,7 +30,7 @@ type registerDeviceReq struct {
 	DeviceHygiene string `json:"deviceHygiene"`
 }
 
-type deviceDetail struct {
+type DeviceDetail struct {
 	DeviceBrowser     models.DeviceBrowser       `json:"deviceBrowser"`
 	BrowserExtensions []models.BrowserExtensions `json:"browserExtensions"`
 	DeviceHygiene     models.DeviceHygiene       `json:"deviceHygiene"`
@@ -41,7 +40,7 @@ type deviceDetail struct {
 func RegisterUserDevice(w http.ResponseWriter, r *http.Request) {
 	logrus.Trace("RegisterUserDevice request received")
 
-	var req registerDeviceReq
+	var req RegisterDeviceReq
 	err := utils.ParseAndValidateRequest(r, &req)
 	if err != nil {
 		logrus.Error(err)
@@ -84,7 +83,7 @@ func RegisterUserDevice(w http.ResponseWriter, r *http.Request) {
 	//  retrieve secret key for this request.
 	secretKeyFromKex, ok := global.ECDHKexDerivedKey[req.TrasaID]
 	if !ok {
-		logrus.Trace("key not found in Kex store")
+		logrus.Tracef("key not found in Kex store for %s ", req.TrasaID)
 		utils.TrasaResponse(w, 200, "failed", "key not found in Kex store", "Device registration", nil)
 		return
 	}
@@ -110,7 +109,7 @@ func RegisterUserDevice(w http.ResponseWriter, r *http.Request) {
 	delete(global.ECDHKexDerivedKey, req.TrasaID)
 
 	// unmarshall decryptedBytes to deviceDetail struct
-	var dh deviceDetail
+	var dh DeviceDetail
 	err = json.Unmarshal(decryptedBytes, &dh)
 	if err != nil {
 		//TODO return error here??
@@ -306,149 +305,4 @@ type enrolExt struct {
 	BrowserVersion string `json:"browserVersion"`
 	OSName         string `json:"osName"`
 	OSVersion      string `json:"osVersion"`
-}
-
-//Deprecated
-// EnrolBrowserExtension is used to enrol web browser (via web extension)
-func EnrolBrowserExtension(w http.ResponseWriter, r *http.Request) {
-
-	var extLogin enrolExt
-	var registerDevice models.UserDevice
-
-	if err := json.NewDecoder(r.Body).Decode(&extLogin); err != nil {
-		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "invalid request format", "ExtLogin", nil)
-		return
-	}
-
-	// get user info from database
-	userDetailFromDB, err := Store.GetLoginDetails(extLogin.Email, extLogin.OrgID)
-	if err != nil {
-		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "User not found", "Ext login", nil)
-		return
-	}
-
-	//if len(userArr) > 1 {
-	//	var tempOrgs []models.Org = make([]models.Org, 0)
-	//	for _, tempUser := range userArr {
-	//		var tempOrg models.Org
-	//		tempOrg.ID = tempUser.OrgID
-	//		tempOrg.OrgName = tempUser.OrgName
-	//		tempOrgs = append(tempOrgs, tempOrg)
-	//	}
-	//	utils.TrasaResponse(w, 200, "selectOrg", "got multiple accounts", "Ext login", nil, tempOrgs)
-	//	return
-	//}
-	//
-	//userDetailFromDB := userArr[0]
-
-	switch extLogin.TfaMethod {
-	case "totp":
-		check, _, err := tfa.VerifyTotpCode(extLogin.TotpCode, userDetailFromDB.ID, userDetailFromDB.OrgID)
-		if err != nil || !check {
-			// TODO @bhrg3se auth log?
-			//err := logs.Store.LogLogin(authlog, consts.REASON_INVALID_TOTP, false)
-			utils.TrasaResponse(w, 200, "failed", "totp failed", "Browser registration", nil)
-			return
-		}
-	default:
-		status, msg := tfa.SendU2F(userDetailFromDB.ID, userDetailFromDB.OrgID, fmt.Sprintf("Browser registration: %s", extLogin.BrowserName), utils.GetIp(r))
-		if !status {
-			// TODO @bhrg3se auth log?
-			//err := logs.Store.LogLogin(authlog, consts.REASON_U2F_FAILED, false)
-			utils.TrasaResponse(w, 200, "failed", msg, "Browser registration", nil)
-			return
-		}
-	}
-
-	//var uaFields utils.DeviceFinger
-	//TODO ua fields are empty
-	ua := user_agent.New(extLogin.UA)
-
-	// brsrName, brsrVer := ua.Browser()
-
-	// ngn, ngnVer := ua.Engine()
-
-	registerDevice.DeviceID = utils.GetUUID()
-	registerDevice.UserID = userDetailFromDB.ID
-	registerDevice.OrgID = userDetailFromDB.OrgID
-	registerDevice.DeviceType = "browser"
-	registerDevice.FcmToken = ""
-	registerDevice.PublicKey = ""
-	registerDevice.DeviceFinger = "{}"
-	registerDevice.DeviceHygiene = models.DeviceHygiene{
-		DeviceInfo: models.DeviceInfo{},
-		DeviceOS: models.DeviceOS{
-			OSName:     ua.OSInfo().Name,
-			OSVersion:  ua.OSInfo().Version,
-			KernelType: "",
-		},
-		// DeviceBrowser: models.DeviceBrowser{
-		// 	BrowserName:    brsrName,
-		// 	BrowserVersion: brsrVer,
-		// 	EngineName:     ngn,
-		// 	EngineVersion:  ngnVer,
-		// 	IsBot:          ua.Bot(),
-		// 	UserAgent:      extLogin.UA,
-		// },
-		LoginSecurity: models.LoginSecurity{},
-		NetworkInfo: models.NetworkInfo{
-			IPAddress: utils.GetIp(r),
-		},
-		EndpointSecurity: models.EndpointSecurity{},
-		LastCheckedTime:  time.Now().Unix(),
-	}
-	//registerDevice.Brand = extLogin.BrowserName
-	//registerDevice.OsName = ua.OSInfo().Name
-	//registerDevice.OsVersion = ua.OSInfo().Version
-	registerDevice.AddedAt = time.Now().Unix() //.In(nep).String()
-
-	err = devices.Store.Register(registerDevice)
-	if err != nil {
-		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "Could not register device", "ExtLogin", nil)
-		return
-	}
-
-	type extResponse struct {
-		Token      string   `json:"token"`
-		RootDomain string   `json:"rootDomain"`
-		SsoDomain  string   `json:"ssoDomain"`
-		WSPath     string   `json:"wsPath"`
-		Hosts      []string `json:"hosts"`
-		TrasaDACom bool     `json:"trasaDACom"`
-	}
-
-	var resp extResponse
-	resp.Token = registerDevice.DeviceID
-	resp.RootDomain = global.GetConfig().Trasa.Rootdomain
-	resp.SsoDomain = global.GetConfig().Trasa.Ssodomain
-	u, err := url.Parse(global.GetConfig().Trasa.Dashboard)
-	if err != nil {
-		logrus.Error(err)
-	}
-	resp.WSPath = fmt.Sprintf("wss://%s", u.Host)
-
-	allservices, err := services.Store.GetAllByType("http", userDetailFromDB.OrgID)
-	if err != nil {
-		utils.TrasaResponse(w, 200, "failed", "No http services available", "SyncExtension", nil)
-		return
-	}
-
-	for _, v := range allservices {
-		resp.Hosts = append(resp.Hosts, v.Hostname)
-	}
-
-	globalDeviceCheck, err := system.Store.GetGlobalSetting(userDetailFromDB.OrgID, consts.GLOBAL_DEVICE_HYGIENE_CHECK)
-	if err != nil {
-		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "error fetching global settings", "GlobalSettings", nil)
-		return
-	}
-
-	resp.TrasaDACom = globalDeviceCheck.Status
-
-	utils.TrasaResponse(w, 200, "success", "authorized and token garnted", "ExtLogin", resp)
-
 }

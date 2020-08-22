@@ -2,7 +2,6 @@ package policies
 
 import (
 	"encoding/json"
-
 	"github.com/seknox/trasa/server/models"
 )
 
@@ -161,8 +160,8 @@ func (s policyStore) getUserGroupAccessPolicy(userID, serviceID, privilege, orgI
 					join policies p on ag_ug.policy_id=p.id
 					join user_group_maps ug on ug.group_id=ag_ug.usergroup_id  
 					) as gappusersv1  
-						 JOIN services ON gappusersv1.servicegroup_id=services.id AND gappusersv1.org_id=services.org_id 
-					WHERE gappusersv1.user_id= $1 AND gappusersv1.servicegroup_id= $2 AND gappusersv1.privilege=$3 AND  gappusersv1.org_id=$4  AND gappusersv1.map_type='service';`, userID, serviceID, privilege, orgID).
+						 JOIN services ON gappusersv1.servicegroup_id=services.id
+					WHERE gappusersv1.user_id= $1 AND gappusersv1.servicegroup_id= $2 AND gappusersv1.privilege=$3 AND  services.org_id=$4  AND gappusersv1.map_type='service';`, userID, serviceID, privilege, orgID).
 		Scan(&dayTime, &adhoc, &policy.TfaRequired, &policy.RecordSession, &policy.FileTransfer, &policy.IPSource, &policy.RiskThreshold, &policy.Expiry, &policy.AllowedCountries, &policy.DevicePolicy)
 	if err != nil {
 		return
@@ -195,8 +194,8 @@ FROM (usergroup_accessmaps ag_ug
 		join user_group_maps ug on ug.group_id=ag_ug.usergroup_id 
 		join service_group_maps ag on ag.group_id=ag_ug.servicegroup_id 
 		) as gappusersv1  
-			 JOIN services ON gappusersv1.service_id=services.id AND gappusersv1.org_id=services.org_id
-		WHERE gappusersv1.user_id= $1 AND gappusersv1.service_id= $2 AND gappusersv1.privilege=$3 AND gappusersv1.org_id=$4 AND gappusersv1.map_type='servicegroup';`, userID, serviceID, privilege, orgID).
+			 JOIN services ON gappusersv1.service_id=services.id
+		WHERE gappusersv1.user_id= $1 AND gappusersv1.service_id= $2 AND gappusersv1.privilege=$3 AND services.org_id=$4 AND gappusersv1.map_type='servicegroup';`, userID, serviceID, privilege, orgID).
 		Scan(&dayTime, &adhoc, &policy.TfaRequired, &policy.RecordSession, &policy.FileTransfer, &policy.IPSource, &policy.RiskThreshold, &policy.Expiry, &policy.AllowedCountries, &policy.DevicePolicy)
 	if err != nil {
 		return

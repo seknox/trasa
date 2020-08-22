@@ -24,7 +24,6 @@ import (
 
 	"github.com/seknox/ssh"
 
-	"strconv"
 	"strings"
 	"time"
 )
@@ -106,7 +105,7 @@ func handleUpstreamPasswordAndKey(username, serviceID, hostname string, challeng
 	}
 
 	var hostConfirmFunc = func(message string) bool {
-		ans, err := challengeUser("user", "",
+		ans, err := challengeUser("user", "Host key verify",
 			[]string{message + "\n\rType \"yes\" to ignore and save host key:\n"},
 			[]bool{true})
 		if err != nil || len(ans) != 1 {
@@ -145,7 +144,7 @@ func handleUpstreamPasswordAndKey(username, serviceID, hostname string, challeng
 
 		var ans []string
 		if creds.Password == "" {
-			ans, err = challengeUser("user", "",
+			ans, err = challengeUser("user", "Upstream password",
 				[]string{"\n\rEnter Password(Upstream Server): "},
 				[]bool{false})
 			if err != nil {
@@ -191,7 +190,7 @@ func handleUpstreamPasswordAndKey(username, serviceID, hostname string, challeng
 func authenticateTRASA(conn ssh.ConnMetadata, challengeUser ssh.KeyboardInteractiveChallenge) (models.User, error) {
 	user := models.User{}
 	creds, err := challengeUser("user",
-		"",
+		"Enter TRASA credentials",
 		[]string{"\n\rEnter Email (TRASA): ", "\n\rEnter Password (TRASA): "},
 		[]bool{true, false})
 
@@ -242,7 +241,7 @@ func chooseService(privilege, userID, userEmail string, challengeUser ssh.Keyboa
 	for isHostDown {
 
 		ans, err := challengeUser("user",
-			"",
+			"Choose Service",
 			[]string{"\n\r_____________________________________________________________________________________\n\rEnter Service IP : \n\r"}, []bool{true})
 		if len(ans) != 1 || err != nil {
 			logrus.Debug("User canceled")
@@ -489,37 +488,37 @@ func updateSessionCredentials(sess *Session, signer ssh.Signer, hostkeyCallback 
 // Returns index of app list.
 // Returns -1 if dynamic ip is entered.
 // Returns -2 if input is invalid.
-func searchAppName(input string, appUsers []models.AccessMapDetail) int {
-	input = strings.Trim(input, "")
-	for i, app := range appUsers {
-		if strings.EqualFold(input, app.ServiceName) {
-			return i
-		} else if input == app.Hostname {
-			return i
-		}
-	}
-
-	splittedInput := strings.Split(input, ":")
-	//If port is included
-	if (len(splittedInput) == 2) && splittedInput[0] != "" && splittedInput[1] != "" {
-		ip := net.ParseIP(splittedInput[0])
-		if ip != nil {
-			return -1
-		}
-	} else if len(splittedInput) == 1 {
-		ip := net.ParseIP(input)
-		if ip != nil {
-			return -1
-		}
-	}
-
-	index, err := strconv.Atoi(input)
-
-	//appNum, errStrConv = strconv.Atoi(ans[0])
-	//Check if choice is out of index
-	if err != nil || index > len(appUsers) || index < 1 {
-		return -2
-	}
-	return index - 1
-
-}
+//func searchAppName(input string, appUsers []models.AccessMapDetail) int {
+//	input = strings.Trim(input, "")
+//	for i, app := range appUsers {
+//		if strings.EqualFold(input, app.ServiceName) {
+//			return i
+//		} else if input == app.Hostname {
+//			return i
+//		}
+//	}
+//
+//	splittedInput := strings.Split(input, ":")
+//	//If port is included
+//	if (len(splittedInput) == 2) && splittedInput[0] != "" && splittedInput[1] != "" {
+//		ip := net.ParseIP(splittedInput[0])
+//		if ip != nil {
+//			return -1
+//		}
+//	} else if len(splittedInput) == 1 {
+//		ip := net.ParseIP(input)
+//		if ip != nil {
+//			return -1
+//		}
+//	}
+//
+//	index, err := strconv.Atoi(input)
+//
+//	//appNum, errStrConv = strconv.Atoi(ans[0])
+//	//Check if choice is out of index
+//	if err != nil || index > len(appUsers) || index < 1 {
+//		return -2
+//	}
+//	return index - 1
+//
+//}

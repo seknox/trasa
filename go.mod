@@ -20,9 +20,9 @@ require (
 	github.com/hashicorp/vault/api v1.0.5-0.20200317185738-82f498082f02
 	github.com/huandu/go-sqlbuilder v1.8.0
 	github.com/jinzhu/now v1.1.1
+	github.com/kabukky/httpscerts v0.0.0-20150320125433-617593d7dcb3
 	github.com/lib/pq v1.8.0
 	github.com/minio/minio-go v6.0.14+incompatible
-	github.com/mssola/user_agent v0.5.2
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/oschwald/geoip2-golang v1.4.0
 	github.com/phuslu/iploc v1.0.20200808
@@ -42,6 +42,7 @@ require (
 	golang.org/x/crypto v0.0.0-20200728195943-123391ffb6de
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
 	google.golang.org/api v0.29.0
+	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df
 	gopkg.in/ldap.v2 v2.5.1

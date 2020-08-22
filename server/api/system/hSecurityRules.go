@@ -24,7 +24,7 @@ func SecurityRules(w http.ResponseWriter, r *http.Request) {
 
 }
 
-type updateSecurityRulesReq struct {
+type UpdateSecurityRulesReq struct {
 	Status string `json:"status"`
 	RuleID string `json:"ruleID"`
 }
@@ -34,7 +34,7 @@ func UpdateSecurityRule(w http.ResponseWriter, r *http.Request) {
 	logrus.Trace("request received UpdateSecurityRule")
 	uc := r.Context().Value("user").(models.UserContext)
 
-	var req updateSecurityRulesReq
+	var req UpdateSecurityRulesReq
 
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logrus.Error(err)

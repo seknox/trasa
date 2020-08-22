@@ -24,7 +24,7 @@ import (
 	"github.com/seknox/trasa/server/utils"
 )
 
-type singleUserDetailV2 struct {
+type SingleUserDetailV2 struct {
 	User             models.User         `json:"user"`
 	AssignedServices []models.Service    `json:"userAccessMaps"`
 	UserDevices      []models.UserDevice `json:"userDevices"`
@@ -34,7 +34,7 @@ type singleUserDetailV2 struct {
 func MyAccountDetails(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
 
-	var user singleUserDetailV2
+	var user SingleUserDetailV2
 
 	user.User = *uc.User
 
@@ -161,6 +161,12 @@ func GetMyEventsByPage(w http.ResponseWriter, r *http.Request) {
 
 }
 
+type AuthMetaResp struct {
+	IsPasswordRequired     bool   `json:"isPasswordRequired"`
+	IsDeviceHygeneRequired bool   `json:"isDeviceHygeneRequired"`
+	TrasaID                string `json:"trasaID"`
+}
+
 //Get authentication metada like isPasswordRequired, isDeviceHygeneRequired etc
 //They should be verified later when user authenticate
 //This API is called just for the UI
@@ -169,11 +175,7 @@ func GetAuthMeta(w http.ResponseWriter, r *http.Request) {
 	username := chi.URLParam(r, "username")
 	appID := chi.URLParam(r, "appID")
 
-	var resp struct {
-		IsPasswordRequired     bool   `json:"isPasswordRequired"`
-		IsDeviceHygeneRequired bool   `json:"isDeviceHygeneRequired"`
-		TrasaID                string `json:"trasaID"`
-	}
+	var resp AuthMetaResp
 
 	//TODO remove trasaID if not required
 	resp.TrasaID = userContext.User.Email
@@ -183,7 +185,7 @@ func GetAuthMeta(w http.ResponseWriter, r *http.Request) {
 	app1, err := services.Store.GetFromID(appID)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "failed to get app", "", resp)
+		utils.TrasaResponse(w, 200, "failed", "failed to get service", "", resp)
 		return
 	}
 
@@ -209,7 +211,7 @@ func GetAuthMeta(w http.ResponseWriter, r *http.Request) {
 
 }
 
-type getMyAppDetail struct {
+type MyServiceDetail struct {
 	User       models.User               `json:"user"`
 	MyServices []models.MyServiceDetails `json:"myServices"`
 }
@@ -217,7 +219,7 @@ type getMyAppDetail struct {
 // GetMyServicesDetail retrieves services assigned to current user including permission/policy details
 func GetMyServicesDetail(w http.ResponseWriter, r *http.Request) {
 	userContext := r.Context().Value("user").(models.UserContext)
-	var response = getMyAppDetail{
+	var response = MyServiceDetail{
 		User:       models.User{},
 		MyServices: make([]models.MyServiceDetails, 0),
 	}

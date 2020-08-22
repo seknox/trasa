@@ -41,7 +41,7 @@ func (d DevicePolicy) Value() (driver.Value, error) {
 	if err != nil {
 		return nil, err
 	}
-	logrus.Debug(string(devicePerm))
+	//logrus.Debug(string(devicePerm))
 	return string(devicePerm), nil
 }
 func (d *DevicePolicy) Scan(src interface{}) error {

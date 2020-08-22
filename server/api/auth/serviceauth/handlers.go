@@ -40,9 +40,8 @@ type appLoginLegacy struct {
 	//DeviceHygiene   DeviceHygiene    `json:"deviceHygiene"`
 }
 
-type serviceAgentLogin struct {
+type ServiceAgentLogin struct {
 	ServiceID       string `json:"serviceID"`
-	DynamicAuthApp  bool   `json:"dynamicAuthApp"`
 	ServiceKey      string `json:"serviceKey"`
 	User            string `json:"user"`
 	Password        string `json:"password"`
@@ -64,7 +63,7 @@ type serviceAgentLogin struct {
 func AgentLogin(w http.ResponseWriter, r *http.Request) {
 	logrus.Trace("Agent request received")
 
-	var remoteLogin serviceAgentLogin
+	var remoteLogin ServiceAgentLogin
 
 	if err := json.NewDecoder(r.Body).Decode(&remoteLogin); err != nil {
 		utils.TrasaResponse(w, 200, "failed", "invalid request", "AgentLogin", nil)

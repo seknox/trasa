@@ -72,7 +72,7 @@ export default function VaultStats() {
   const [vaultStatus, setVaultStatus] = useState({ tsxVault: false });
 
   useEffect(() => {
-    const reqPath = `${Constants.TRASA_HOSTNAME}/api/v1/crypto/vault/status`;
+    const reqPath = `${Constants.TRASA_HOSTNAME}/api/v1/providers/vault/tsxvault/status`;
 
     axios
       .get(reqPath)

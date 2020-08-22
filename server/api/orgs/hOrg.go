@@ -47,6 +47,6 @@ func Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.TrasaResponse(w, 200, "success", "", "Update", nil)
+	utils.TrasaResponse(w, 200, "success", "", "Update", req)
 
 }

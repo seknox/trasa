@@ -30,7 +30,7 @@ import (
 	"golang.org/x/crypto/nacl/secretbox"
 )
 
-type newSession struct {
+type NewSession struct {
 	ExtToken  string `json:"extToken"`
 	HostName  string `json:"hostName"`
 	TfaMethod string `json:"tfaMethod"`
@@ -58,7 +58,7 @@ type http2faCache struct {
 // AuthHTTPAccessProxy initiates http access proxy session. Intent should be 'AUTH_HTTP_ACCESS_PROXY'
 func AuthHTTPAccessProxy(w http.ResponseWriter, r *http.Request) {
 	logger.Trace("AuthHTTPAccessProxy request")
-	var req newSession
+	var req NewSession
 
 	authlog := logs.NewLog(r, "http")
 

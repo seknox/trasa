@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/seknox/trasa/server/api/crypt"
+	"github.com/seknox/trasa/server/api/providers/vault"
 	"github.com/seknox/trasa/server/api/system"
 	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/global"
@@ -119,7 +119,7 @@ func (s notifStore) SendEmail(orgID string, emailType consts.EmailType, emailTem
 	}
 
 	// get key ct from database.
-	key, err := crypt.Store.GetKeyOrTokenWithKeyval(orgID, consts.GLOBAL_EMAIL_CONFIG_SECRET)
+	key, err := vault.Store.GetKeyOrTokenWithKeyval(orgID, consts.GLOBAL_EMAIL_CONFIG_SECRET)
 	if err != nil {
 		return fmt.Errorf("eailed to retrieve cipher text.")
 	}

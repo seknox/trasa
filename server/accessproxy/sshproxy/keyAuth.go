@@ -24,7 +24,7 @@ func publicKeyCallbackHandler(conn ssh.ConnMetadata, key ssh.PublicKey) (*ssh.Pe
 	//	}
 
 	//If its just a notmarlk certificate without tfa
-	user, err := SSHStore.getUserFromPublicKey(key, global.GetConfig().Trasa.OrgId)
+	user, err := SSHStore.GetUserFromPublicKey(key, global.GetConfig().Trasa.OrgId)
 	if err != nil {
 		logrus.Debug(err)
 		//Try again with next key

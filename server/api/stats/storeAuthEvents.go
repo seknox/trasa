@@ -17,8 +17,8 @@ import (
 
 //select sum(array_length(string_to_array(managed_accounts,','),1)) from servicesv1;
 
-func (s statStore) GetAggregatedLoginFails(entityType, entityID, orgID, timezone, timeFilter string) (reasons []failedReasonsByType, err error) {
-	reasons = make([]failedReasonsByType, 0)
+func (s statStore) GetAggregatedLoginFails(entityType, entityID, orgID, timezone, timeFilter string) (reasons []FailedReasonsByType, err error) {
+	reasons = make([]FailedReasonsByType, 0)
 
 	loc, err := time.LoadLocation(timezone)
 	if err != nil {
@@ -52,7 +52,7 @@ func (s statStore) GetAggregatedLoginFails(entityType, entityID, orgID, timezone
 		return reasons, err
 	}
 	for rows.Next() {
-		var reason failedReasonsByType
+		var reason FailedReasonsByType
 		err = rows.Scan(&reason.Value, &reason.Name)
 		reason.Label = reason.Name
 		if err != nil {
@@ -63,8 +63,8 @@ func (s statStore) GetAggregatedLoginFails(entityType, entityID, orgID, timezone
 	return reasons, err
 }
 
-func (s statStore) GetAggregatedLoginHours(entityType, entityID, timezone, orgID, timeFilter, statusFilter string) (logins []loginsByHour, err error) {
-	logins = make([]loginsByHour, 0)
+func (s statStore) GetAggregatedLoginHours(entityType, entityID, timezone, orgID, timeFilter, statusFilter string) (logins []LoginsByHour, err error) {
+	logins = make([]LoginsByHour, 0)
 	loc, err := time.LoadLocation(timezone)
 	if err != nil {
 		return logins, err
@@ -109,7 +109,7 @@ func (s statStore) GetAggregatedLoginHours(entityType, entityID, timezone, orgID
 	for rows.Next() {
 
 		//TODO break the logic into new function
-		var login loginsByHour
+		var login LoginsByHour
 		err = rows.Scan(&login.Hour, &login.Count)
 		if err != nil {
 			return logins, err
@@ -117,7 +117,7 @@ func (s statStore) GetAggregatedLoginHours(entityType, entityID, timezone, orgID
 		logins = append(logins, login)
 	}
 out:
-	for i := 0; i < 24; i++ {
+	for i := 0; i < 23; i++ {
 
 		for j := i; j >= 0; j-- {
 			if len(logins) < i+1 {
@@ -128,9 +128,9 @@ out:
 			}
 		}
 
-		temp1 := make([]loginsByHour, len(logins[:i]))
+		temp1 := make([]LoginsByHour, len(logins[:i]))
 		copy(temp1, logins[:i])
-		temp := append(temp1, loginsByHour{Hour: strconv.Itoa(i), Count: "0"})
+		temp := append(temp1, LoginsByHour{Hour: strconv.Itoa(i), Count: "0"})
 
 		logins = append(temp, logins[i:]...)
 
@@ -139,9 +139,9 @@ out:
 	return logins, err
 }
 
-func (s statStore) GetAggregatedIPs(entityType, entityID, orgID, timezone, timeFilter, statusFilter string) (aggIps, error) {
+func (s statStore) GetAggregatedIPs(entityType, entityID, orgID, timezone, timeFilter, statusFilter string) (AggIps, error) {
 
-	var ippool aggIps
+	var ippool AggIps
 
 	loc, err := time.LoadLocation(timezone)
 	if err != nil {

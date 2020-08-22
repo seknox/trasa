@@ -5,26 +5,26 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/seknox/trasa/server/api/crypt/vault"
+	"github.com/seknox/trasa/server/api/providers/vault/tsxvault"
 	"github.com/seknox/trasa/server/models"
 	"github.com/seknox/trasa/server/utils"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/ssh"
 )
 
-type creds struct {
+type ServiceCreds struct {
 	Username   string `json:"username"`
 	Credential string `json:"credential"`
 	ServiceID  string `json:"serviceID"`
 	Type       string `json:"type"`
 }
 
-// StoreServiceCredentials takes username password from client (trasa-dashboard for now) and stores it in vault.
+// StoreServiceCredentials takes username password from client (trasa-dashboard for now) and stores it in tsxvault.
 // It will also store the event in trasadb. This will come handy for in-app audit logs.
 // storing it separate will also decouples our core dependency in vault
 func StoreServiceCredentials(w http.ResponseWriter, r *http.Request) {
 	userContext := r.Context().Value("user").(models.UserContext)
-	var req creds
+	var req ServiceCreds
 
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logrus.Error(err)
@@ -52,7 +52,7 @@ func StoreServiceCredentials(w http.ResponseWriter, r *http.Request) {
 	s.AddedAt = time.Now().Unix()
 	s.LastUpdated = time.Now().Unix()
 
-	err := vault.Store.StoreSecret(s)
+	err := tsxvault.Store.StoreSecret(s)
 	if err != nil {
 		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "Could not save password", "Could not save password")
@@ -76,7 +76,7 @@ func StoreServiceCredentials(w http.ResponseWriter, r *http.Request) {
 func ViewCreds(w http.ResponseWriter, r *http.Request) {
 	//fmt.Println("Got GetPassword")
 	userContext := r.Context().Value("user").(models.UserContext)
-	var req creds
+	var req ServiceCreds
 
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logrus.Error(err)
@@ -84,7 +84,7 @@ func ViewCreds(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	passCred, err1 := vault.Store.GetSecret(userContext.User.OrgID, req.ServiceID, req.Type, req.Username)
+	passCred, err1 := tsxvault.Store.GetSecret(userContext.User.OrgID, req.ServiceID, req.Type, req.Username)
 	if err1 != nil {
 		logrus.Error(err1)
 		utils.TrasaResponse(w, 200, "failed", "Could not view password", "Could not view password", nil, nil)
@@ -104,11 +104,11 @@ func ViewCreds(w http.ResponseWriter, r *http.Request) {
 	utils.TrasaResponse(w, 200, "success", "creds fetched", fmt.Sprintf(`Viewed password for "%s" user in "%s" app`, req.Username, service.Name), req)
 }
 
-// DeleteCreds deletes stored creds from both database and vault.
+// DeleteCreds deletes stored creds from both database and tsxvault.
 func DeleteCreds(w http.ResponseWriter, r *http.Request) {
 	userContext := r.Context().Value("user").(models.UserContext)
 	//	fmt.Println("Got deletepass")
-	var req creds
+	var req ServiceCreds
 
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logrus.Error(err)
@@ -116,14 +116,14 @@ func DeleteCreds(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := vault.Store.TsxvDeleteSecret(userContext.User.OrgID, req.ServiceID, "password", req.Username)
+	err := tsxvault.Store.TsxvDeleteSecret(userContext.User.OrgID, req.ServiceID, "password", req.Username)
 	if err != nil {
 		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "DeleteCreds", "Could not delete password")
 		return
 	}
 
-	err = vault.Store.TsxvDeleteSecret(userContext.User.OrgID, req.ServiceID, "key", req.Username)
+	err = tsxvault.Store.TsxvDeleteSecret(userContext.User.OrgID, req.ServiceID, "key", req.Username)
 	if err != nil {
 		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "DeleteCreds", "Could not delete password")

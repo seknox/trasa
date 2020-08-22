@@ -73,8 +73,13 @@ type KexDerivedKey struct {
 }
 
 func InitDBSTORE() *State {
-	//checkInitDirsAndFiles()
 	config = parseConfig()
+	return InitDBSTOREWithConfig(config)
+}
+
+func InitDBSTOREWithConfig(config Config) *State {
+	//checkInitDirsAndFiles()
+
 	level, _ := logrus.ParseLevel(config.Logging.Level)
 	logOutputToFile := flag.Bool("f", false, "Write to file")
 
@@ -122,12 +127,13 @@ func InitDBSTORE() *State {
 	}
 	absPath, err = filepath.Abs("/etc/trasa/config/key.json")
 	if err != nil {
-		panic("firebase key not found: " + err.Error())
+		logrus.Errorf("firebase key not found: %v", err)
 	}
 	opt := option.WithCredentialsFile(absPath)
 	app, err := firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {
-		panic(err)
+		logrus.Errorf("firebase key not found: %v", err)
+		//panic(err)
 	}
 
 	var minioClient *minio.Client
