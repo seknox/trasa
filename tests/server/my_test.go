@@ -113,7 +113,7 @@ func TestMyAccountDetails(t *testing.T) {
 		t.Errorf(`MyAccountDetails returned incorrect number of services. want: %d got: %d`, 3, len(data.AssignedServices))
 	}
 
-	if len(data.UserDevices) != 3 {
+	if len(data.UserDevices) < 3 {
 		t.Errorf(`MyAccountDetails returned incorrect number of devices. want: %d got: %d`, 3, len(data.UserDevices))
 	}
 

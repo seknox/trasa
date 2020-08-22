@@ -80,18 +80,25 @@ func GetSecurityRules(t *testing.T) {
 		t.Fatalf(`response data is blank, resp: %s`, string(rr.Body.Bytes()))
 	}
 
-	found := false
 	for _, rule := range resp.Data[0] {
-		//t.Log(rule.RuleID,rule.ConstName)
-		if rule.RuleID == "someRuleID" {
-			if !rule.Status {
-				t.Error(`sec rule expected to be enabled`)
+		if rule.ConstName == "REVOKE_ADMIN_PRIVILEGE" {
+			if rule.Status {
+				t.Error(`sec rule expected to be disabled`)
 			}
-			found = true
 		}
+
+		if rule.ConstName == "CREATE_USER" {
+			if rule.Status {
+				t.Error(`sec rule expected to be disabled`)
+			}
+		}
+
+		if rule.ConstName == "DELETE_ADMIN_USER" {
+			if rule.Status {
+				t.Error(`sec rule expected to be disabled`)
+			}
+		}
+
 	}
 
-	if !found {
-		t.Error("someRuleID not found")
-	}
 }
