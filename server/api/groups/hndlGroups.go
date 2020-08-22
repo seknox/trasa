@@ -100,7 +100,7 @@ func GetUserGroup(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
 	groupID := chi.URLParam(r, "groupid")
 
-	var resp groupUsers
+	var resp GroupUsers
 
 	group, err := Store.Get(groupID, uc.User.OrgID)
 	if err != nil {
@@ -130,7 +130,7 @@ func GetUserGroup(w http.ResponseWriter, r *http.Request) {
 
 }
 
-type groupUsers struct {
+type GroupUsers struct {
 	GroupMeta    models.Group  `json:"groupMeta"`
 	AddedUsers   []models.User `json:"addedUsers"`
 	UnaddedUsers []models.User `json:"unaddedUsers"`
@@ -140,7 +140,7 @@ func GetServiceGroup(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
 	groupID := chi.URLParam(r, "groupID")
 
-	var resp groupApps
+	var resp GroupApps
 
 	group, err := Store.Get(groupID, uc.User.OrgID)
 	if err != nil {
@@ -168,7 +168,7 @@ func GetServiceGroup(w http.ResponseWriter, r *http.Request) {
 
 }
 
-type groupApps struct {
+type GroupApps struct {
 	GroupMeta       models.Group     `json:"groupMeta"`
 	AddedServices   []models.Service `json:"addedServices"`
 	UnaddedServices []models.Service `json:"unaddedServices"`

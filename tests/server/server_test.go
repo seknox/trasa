@@ -32,14 +32,26 @@ func TestServer(t *testing.T) {
 		crudtest.GetAllUsers(t, user)
 		crudtest.UpdateUser(t, user.ID)
 
-		groupID := crudtest.CreateGroup(t)
-		crudtest.UpdateGroup(t, groupID)
-		crudtest.AddServiceToGroup(t, serviceID, groupID)
+		userGroupID := crudtest.CreateGroup(t, "usergroup")
+		serviceGroupID := crudtest.CreateGroup(t, "servicegroup")
+
+		crudtest.GetAllGroups(t, "user", userGroupID)
+		crudtest.GetAllGroups(t, "service", serviceGroupID)
+
+		crudtest.UpdateGroup(t, userGroupID)
+		crudtest.UpdateServiceGroup(t, serviceID, serviceGroupID, "add")
+		crudtest.GetServiceGroupDetail(t, serviceID, serviceGroupID)
+		crudtest.UpdateServiceGroup(t, serviceID, serviceGroupID, "remove")
+
+		crudtest.UpdateUserGroup(t, user.ID, userGroupID, "add")
+		crudtest.GetUserGroupDetail(t, user.ID, userGroupID)
+		crudtest.UpdateUserGroup(t, user.ID, userGroupID, "remove")
 
 		//Delete
 		crudtest.DeleteService(t, serviceID)
 		crudtest.DeletePolicy(t, p.PolicyID)
-		crudtest.DeleteGroup(t, groupID)
+		crudtest.DeleteGroup(t, userGroupID)
+		crudtest.DeleteGroup(t, serviceGroupID)
 		crudtest.DeleteUser(t, user.ID)
 
 	})

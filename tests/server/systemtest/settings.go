@@ -93,7 +93,7 @@ func UpdateSettings(t *testing.T) {
 			}
 
 			if tt.wantErr != (resp.Status != "success") {
-				t.Fatalf(`  wantErr=%s gotStatus=%s  gotReason=%s`, tt.wantErr, resp.Status, resp.Reason)
+				t.Fatalf(`  wantErr=%t gotStatus=%s  gotReason=%s`, tt.wantErr, resp.Status, resp.Reason)
 			}
 
 		})

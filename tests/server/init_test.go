@@ -28,12 +28,14 @@ import (
 	"github.com/seknox/trasa/server/api/users"
 	"github.com/seknox/trasa/server/global"
 	"github.com/seknox/trasa/server/initdb"
+	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"testing"
 )
 
 func TestMain(m *testing.M) {
 	state := setupTestEnv()
+	logrus.SetLevel(logrus.ErrorLevel)
 	m.Run()
 	tearDown(state)
 }
