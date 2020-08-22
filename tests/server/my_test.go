@@ -66,6 +66,63 @@ func TestGetMyServicesDetail(t *testing.T) {
 
 }
 
+func TestMyAccountDetails(t *testing.T) {
+	req, err := http.NewRequest("GET", "", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(testutils.AddTestUserContext(my.MyAccountDetails))
+
+	// directly and pass in our Request and ResponseRecorder.
+	handler.ServeHTTP(rr, req)
+
+	// Check the status code is what we expect.
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	var resp struct {
+		models.TrasaResponseStruct
+		Data []my.SingleUserDetailV2 `json:"data"`
+	}
+
+	err = json.Unmarshal(rr.Body.Bytes(), &resp)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if resp.Status != "success" {
+		t.Fatal(resp.Reason)
+	}
+
+	data := resp.Data[0]
+
+	if data.User.ID != "13c45cfb-72ca-4177-b968-03604cab6a27" {
+		t.Errorf(`MyAccountDetails returned incorrect userID. want: %s got: %s`, "13c45cfb-72ca-4177-b968-03604cab6a27", data.User.ID)
+	}
+
+	myServices := data.AssignedServices
+
+	if len(myServices) != 3 {
+		t.Errorf(`MyAccountDetails returned incorrect number of services. want: %d got: %d`, 3, len(data.AssignedServices))
+	}
+
+	if len(data.UserDevices) != 3 {
+		t.Errorf(`MyAccountDetails returned incorrect number of devices. want: %d got: %d`, 3, len(data.UserDevices))
+	}
+
+	if len(data.UserGroups) != 1 {
+		t.Errorf(`MyAccountDetails returned incorrect number of groups. want: %d got: %d`, 1, len(data.UserGroups))
+	}
+
+	//TODO add more expectations
+
+}
+
 func TestMyFiles(t *testing.T) {
 
 	fileUpload(t)

@@ -24,7 +24,7 @@ import (
 	"github.com/seknox/trasa/server/utils"
 )
 
-type singleUserDetailV2 struct {
+type SingleUserDetailV2 struct {
 	User             models.User         `json:"user"`
 	AssignedServices []models.Service    `json:"userAccessMaps"`
 	UserDevices      []models.UserDevice `json:"userDevices"`
@@ -34,7 +34,7 @@ type singleUserDetailV2 struct {
 func MyAccountDetails(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
 
-	var user singleUserDetailV2
+	var user SingleUserDetailV2
 
 	user.User = *uc.User
 
