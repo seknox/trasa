@@ -1,4 +1,4 @@
-package idptest
+package providerstest
 
 import (
 	"encoding/json"

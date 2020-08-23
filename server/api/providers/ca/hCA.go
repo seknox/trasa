@@ -67,7 +67,7 @@ func InitCA(w http.ResponseWriter, r *http.Request) {
 	req := new(csr.CertificateRequest)
 	req.KeyRequest = csr.NewKeyRequest()
 
-	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
+	if err := utils.ParseAndValidateRequest(r, req); err != nil {
 		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "invalid request", "failed to save password")
 		return
@@ -115,7 +115,7 @@ func InitCA(w http.ResponseWriter, r *http.Request) {
 func GetHttpCADetail(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
 	logrus.Trace("request received")
-	cert, err := Store.GetCertDetail(uc.User.OrgID, "ca", consts.CERT_TYPE_HTTP_CA)
+	cert, err := Store.GetCertDetail(uc.User.OrgID, "HTTP_CA", consts.CERT_TYPE_HTTP_CA)
 	if err != nil {
 		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "failed to fetch data", "GetCADetail-GetCertDetail", nil, nil)
@@ -129,12 +129,13 @@ func GetHttpCADetail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var certResp certHolderResponse
+	var certResp CertHolderResponse
 	certResp.CreatedAt = cert.CreatedAt
 	certResp.LastUpdated = cert.LastUpdated
 	certResp.Cert = certDetail
 	certResp.CertID = cert.CertID
 	certResp.CertType = cert.CertType
+	certResp.OrgID = cert.OrgID
 
 	utils.TrasaResponse(w, 200, "success", "CA created", "GetCADetail", certResp)
 
@@ -147,12 +148,12 @@ func GetAllCAs(w http.ResponseWriter, r *http.Request) {
 	cas, err := Store.GetAllCAs(uc.User.OrgID)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "failed to fetch data", "GetAllCA-GetCertDetail", nil, nil)
+		utils.TrasaResponse(w, 200, "failed", "failed to fetch data", "GetAllCA-GetCertDetail")
 		return
 	}
-	var certList []certHolderResponse
+	var certList []CertHolderResponse
 	for _, cert := range cas {
-		var certResp certHolderResponse
+		var certResp CertHolderResponse
 		if cert.CertType == consts.CERT_TYPE_HTTP_CA {
 			certDetail, err := certinfo.ParseCertificatePEM(cert.Cert)
 			if err != nil {
@@ -169,6 +170,7 @@ func GetAllCAs(w http.ResponseWriter, r *http.Request) {
 
 		}
 
+		certResp.OrgID = cert.OrgID
 		certResp.CreatedAt = cert.CreatedAt
 		certResp.LastUpdated = cert.LastUpdated
 		certResp.CertID = cert.CertID
@@ -202,7 +204,7 @@ func DownloadSshCA(w http.ResponseWriter, r *http.Request) {
 
 }
 
-type certHolderResponse struct {
+type CertHolderResponse struct {
 	CertID   string                `json:"certID"`
 	OrgID    string                `json:"orgID"`
 	EntityID string                `json:"entityID"`

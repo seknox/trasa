@@ -3,6 +3,7 @@ package server
 import (
 	"github.com/seknox/trasa/tests/server/crudtest"
 	"github.com/seknox/trasa/tests/server/notiftest"
+	"github.com/seknox/trasa/tests/server/providerstest"
 	"github.com/seknox/trasa/tests/server/testutils"
 	"testing"
 )
@@ -12,6 +13,16 @@ func TestServer(t *testing.T) {
 		n := notiftest.AddNotif(t)
 		notiftest.GetPendingNotif(t, n)
 		notiftest.ResolvNotif(t, n.NotificationID)
+	})
+
+	t.Run("test user idps", func(t *testing.T) {
+		providerstest.CreateIdp(t)
+	})
+	t.Run("test certificate authotity", func(t *testing.T) {
+		providerstest.CreateHTTPCA(t)
+		providerstest.CreateSSHCA(t)
+		providerstest.GetAllCAs(t)
+		providerstest.GetHttpCADetail(t)
 	})
 
 	t.Run("crud and accessmap ", func(t *testing.T) {
