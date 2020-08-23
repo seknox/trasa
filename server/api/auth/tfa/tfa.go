@@ -426,46 +426,46 @@ func rsaVerify(signedChallenge string, originalChallenge string, publicKeyPEM st
 
 }
 
-//CheckDeviceEnroll checks newly enrolled device via U2F or TOTP
-func CheckDeviceEnroll(deviceID, clientIP, orgName, timezone, orgID string) (bool, error) {
-	deviceDetail, err := devices.Store.GetFromID(deviceID)
-	if err != nil {
-		return false, err
-	}
-
-	loc, err := time.LoadLocation(timezone)
-	if err != nil {
-		logrus.Error(err)
-		return false, err
-	}
-	now := time.Now().In(loc)
-
-	if global.GetConfig().Platform.Base == "private" {
-		tfaResp, err := sendNotificationThroughCloudProxy([]string{deviceDetail.FcmToken}, orgName, "Test", clientIP, now.String())
-		if err != nil || tfaResp.Answer != "YES" {
-			return false, err
-		}
-	} else {
-		challenge := utils.GetRandomString(5)
-		err := notif.Store.SendPushNotification(deviceDetail.FcmToken, orgName, "Test", clientIP, now.String(), challenge)
-		if err != nil {
-			return false, err
-		}
-
-		//TODO for ugly workaround, we have escaped setting device id this time.
-		err = redis.Store.Set(challenge, time.Second*400, "status", "false")
-		if err != nil {
-			return false, err
-		}
-
-		// Wait and verify U2f challenge
-		checkU2FChallenge, _ := redis.Store.WaitForStatusAndGet(challenge, "device")
-
-		if checkU2FChallenge == false {
-			return false, nil
-		}
-
-		return true, nil
-	}
-	return false, nil
-}
+////CheckDeviceEnroll checks newly enrolled device via U2F or TOTP
+//func CheckDeviceEnroll(deviceID, clientIP, orgName, timezone, orgID string) (bool, error) {
+//	deviceDetail, err := devices.Store.GetFromID(deviceID)
+//	if err != nil {
+//		return false, err
+//	}
+//
+//	loc, err := time.LoadLocation(timezone)
+//	if err != nil {
+//		logrus.Error(err)
+//		return false, err
+//	}
+//	now := time.Now().In(loc)
+//
+//	if global.GetConfig().Platform.Base == "private" {
+//		tfaResp, err := sendNotificationThroughCloudProxy([]string{deviceDetail.FcmToken}, orgName, "Test", clientIP, now.String())
+//		if err != nil || tfaResp.Answer != "YES" {
+//			return false, err
+//		}
+//	} else {
+//		challenge := utils.GetRandomString(5)
+//		err := notif.Store.SendPushNotification(deviceDetail.FcmToken, orgName, "Test", clientIP, now.String(), challenge)
+//		if err != nil {
+//			return false, err
+//		}
+//
+//		//TODO for ugly workaround, we have escaped setting device id this time.
+//		err = redis.Store.Set(challenge, time.Second*400, "status", "false")
+//		if err != nil {
+//			return false, err
+//		}
+//
+//		// Wait and verify U2f challenge
+//		checkU2FChallenge, _ := redis.Store.WaitForStatusAndGet(challenge, "device")
+//
+//		if checkU2FChallenge == false {
+//			return false, nil
+//		}
+//
+//		return true, nil
+//	}
+//	return false, nil
+//}

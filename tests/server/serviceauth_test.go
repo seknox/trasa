@@ -3,6 +3,7 @@ package server_test
 import (
 	"encoding/json"
 	"github.com/seknox/trasa/server/api/auth/serviceauth"
+	"github.com/seknox/trasa/server/api/services"
 	"github.com/seknox/trasa/server/models"
 	"github.com/seknox/trasa/tests/server/testutils"
 	"layeh.com/radius"
@@ -118,6 +119,62 @@ func TestAgentAuth(t *testing.T) {
 
 			rr := httptest.NewRecorder()
 			handler := http.HandlerFunc(serviceauth.AgentLogin)
+
+			handler.ServeHTTP(rr, tt.args.req)
+
+			if status := rr.Code; status != http.StatusOK {
+				t.Errorf("handler returned wrong status code: got %v want %v",
+					status, http.StatusOK)
+			}
+
+			var resp models.TrasaResponseStruct
+			err := json.Unmarshal(rr.Body.Bytes(), &resp)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			if tt.wantSuccess && resp.Status != "success" {
+				t.Errorf("AgentLogin() wanted success, got:%s reason %s", resp.Status, resp.Reason)
+				return
+			}
+
+		})
+	}
+
+}
+
+func TestAgentConfig(t *testing.T) {
+	type args struct {
+		req *http.Request
+	}
+	tests := []struct {
+		name        string
+		args        args
+		wantSuccess bool
+	}{
+		{
+			"should fail when serviceID/service Key is incorrect",
+			args{testutils.GetReqWithBody(t, models.ServiceLogin{
+				ServiceID:  "2fef188a-cc12-438b-8564-2803a072f650",
+				ServiceKey: "sasd76asd67asd67asgd7asnskadasd",
+			})},
+			false,
+		},
+
+		{
+			"should pass",
+			args{testutils.GetReqWithBody(t, models.ServiceLogin{
+				ServiceID:  "2fef188a-cc13-438b-8564-2803a072f650",
+				ServiceKey: "d9ef5359f13f6f6f6c89b4a9be9958ed13",
+			})},
+			true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			rr := httptest.NewRecorder()
+			handler := http.HandlerFunc(services.CheckAppConfigs)
 
 			handler.ServeHTTP(rr, tt.args.req)
 
