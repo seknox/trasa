@@ -27,12 +27,13 @@ func TestServeWS(t *testing.T) {
 		{
 			name: "should fail when hostname is incorrect",
 			args: args{models.ConnectionParams{
-				TotpCode:  "",
-				Privilege: "root",
-				Password:  "root",
-				OptHeight: 1500,
-				OptWidth:  1500,
-				Hostname:  "127.0.3.1",
+				RdpProtocol: "rdp",
+				TotpCode:    testutils.GetTotpCode(testutils.MocktotpSEC),
+				Privilege:   "root",
+				Password:    "root",
+				OptHeight:   1500,
+				OptWidth:    1500,
+				Hostname:    "127.0.3.1",
 			}},
 			wantErrMsg:  "",
 			wantErrCode: "3339",
@@ -40,14 +41,31 @@ func TestServeWS(t *testing.T) {
 		},
 
 		{
+			name: "should fail when totp is incorrect",
+			args: args{models.ConnectionParams{
+				RdpProtocol: "rdp",
+				TotpCode:    "123456",
+				Privilege:   "root",
+				Password:    "Docker",
+				OptHeight:   1500,
+				OptWidth:    1500,
+				Hostname:    "rdp-test-server",
+			}},
+			wantErrMsg:  "TFA Failed",
+			wantErrCode: "3339",
+			wantStatus:  false,
+		},
+
+		{
 			name: "should pass",
 			args: args{models.ConnectionParams{
-				TotpCode:  testutils.GetTotpCode(testutils.MocktotpSEC),
-				Privilege: "root",
-				Password:  "Docker",
-				OptHeight: 1500,
-				OptWidth:  1500,
-				Hostname:  "rdp-test-server",
+				TotpCode:    testutils.GetTotpCode(testutils.MocktotpSEC),
+				RdpProtocol: "rdp",
+				Privilege:   "root",
+				Password:    "Docker",
+				OptHeight:   1500,
+				OptWidth:    1500,
+				Hostname:    "rdp-test-server",
 			}},
 			wantErrMsg:  "",
 			wantErrCode: "",
@@ -58,7 +76,7 @@ func TestServeWS(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			gotErrCode, _, gotStatus := connectGuac(t, &tt.args.params)
 			if tt.wantStatus != gotStatus {
-				t.Errorf("connectGuac() status = %t, wantErr %t", gotStatus, tt.wantStatus)
+				t.Errorf("connectGuac() status = %t, wantStatus= %t", gotStatus, tt.wantStatus)
 				return
 			}
 			if tt.wantErrCode != gotErrCode {
@@ -141,7 +159,7 @@ func connectGuac(t *testing.T, params *models.ConnectionParams) (err_code, err_m
 		if len(inst.Args) != 2 {
 			t.Fatalf(`invalid guacamole error instruction: %s`, inst.String())
 		}
-		return inst.Args[0], inst.Args[1], false
+		return inst.Args[1], inst.Args[0], false
 	}
 
 	t.Fatalf(`unexpected response: %s`, inst.String())
@@ -152,18 +170,7 @@ func connectGuac(t *testing.T, params *models.ConnectionParams) (err_code, err_m
 func waitForErrorOrTFA(t *testing.T, ws *websocket.Conn) *guacamole.Instruction {
 	//Wait for tfa response
 
-	done := false
-
-	go func() {
-		for i := 0; i < 100 && !done; i++ {
-			err := ws.WriteMessage(websocket.TextMessage, guacamole.NewInstruction("nop").Byte())
-			if err != nil {
-				t.Fatalf(`cannot write to server: %v`, err)
-			}
-		}
-	}()
-
-	for i := 0; i < 50 && !done; i++ {
+	for i := 0; i < 50; i++ {
 		_, b, err := ws.ReadMessage()
 		if err != nil {
 			t.Fatal(err)
@@ -177,7 +184,6 @@ func waitForErrorOrTFA(t *testing.T, ws *websocket.Conn) *guacamole.Instruction 
 		t.Log(inst.String())
 
 		if inst.Opcode == guacamole.TfaOpcode || inst.Opcode == "error" {
-			done = true
 			return inst
 		}
 		err = ws.WriteMessage(websocket.TextMessage, guacamole.NewInstruction("ack", "3", "OK", "0").Byte())
@@ -188,6 +194,5 @@ func waitForErrorOrTFA(t *testing.T, ws *websocket.Conn) *guacamole.Instruction 
 		}
 
 	}
-	done = true
 	return nil
 }

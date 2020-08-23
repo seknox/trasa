@@ -12,6 +12,8 @@ services:
     image: guacamole/guacd
     ports:
     - "4822:4822"
+    environment:
+       GUACD_LOG_LEVEL : trace
     links:
       - rdp-test-server
 
