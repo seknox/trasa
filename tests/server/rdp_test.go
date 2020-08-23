@@ -39,20 +39,20 @@ func TestServeWS(t *testing.T) {
 			wantStatus:  false,
 		},
 
-		//{
-		//	name: "should pass",
-		//	args: args{models.ConnectionParams{
-		//		TotpCode:  GetTotpCode(MocktotpSEC),
-		//		Privilege: "root",
-		//		Password:  "Docker",
-		//		OptHeight: 1500,
-		//		OptWidth:  1500,
-		//		Hostname:  "172.16.238.12",
-		//	}},
-		//	wantErrMsg:  "",
-		//	wantErrCode: "",
-		//	wantStatus:  true,
-		//},
+		{
+			name: "should pass",
+			args: args{models.ConnectionParams{
+				TotpCode:  testutils.GetTotpCode(testutils.MocktotpSEC),
+				Privilege: "root",
+				Password:  "Docker",
+				OptHeight: 1500,
+				OptWidth:  1500,
+				Hostname:  "172.16.238.12",
+			}},
+			wantErrMsg:  "",
+			wantErrCode: "",
+			wantStatus:  true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

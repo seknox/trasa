@@ -23,7 +23,7 @@ func TestAuthHTTPAccessProxy(t *testing.T) {
 			"should fail when hostname is incorrect",
 			args{testutils.GetReqWithBody(t, serviceauth.NewSession{
 				HostName:  "gitlab01.trasa.io",
-				TfaMethod: "",
+				TfaMethod: "totp",
 				TotpCode:  testutils.GetTotpCode(testutils.MocktotpSEC),
 				ExtToken:  "cb6dd3f6-54c2-4cb0-b294-e22c2aa708e4",
 			})},
@@ -34,7 +34,7 @@ func TestAuthHTTPAccessProxy(t *testing.T) {
 			"should fail when ext token is incorrect",
 			args{testutils.GetReqWithBody(t, serviceauth.NewSession{
 				HostName:  "gitlab01.trasa.io",
-				TfaMethod: "",
+				TfaMethod: "totp",
 				TotpCode:  testutils.GetTotpCode(testutils.MocktotpSEC),
 				ExtToken:  "db6dd3f6-54c2-4cb0-b294-e22c2aa708e4",
 			})},
@@ -45,7 +45,7 @@ func TestAuthHTTPAccessProxy(t *testing.T) {
 			"should fail when totp is incorrect",
 			args{testutils.GetReqWithBody(t, serviceauth.NewSession{
 				HostName:  "gitlab01.trasa.io",
-				TfaMethod: "",
+				TfaMethod: "totp",
 				TotpCode:  "123456",
 				ExtToken:  "cb6dd3f6-54c2-4cb0-b294-e22c2aa708e4",
 			})},
@@ -56,7 +56,7 @@ func TestAuthHTTPAccessProxy(t *testing.T) {
 			"should fail if service is not authorised",
 			args{testutils.GetReqWithBody(t, serviceauth.NewSession{
 				HostName:  "test00.trasa.io",
-				TfaMethod: "",
+				TfaMethod: "totp",
 				TotpCode:  testutils.GetTotpCode(testutils.MocktotpSEC),
 				ExtToken:  "cb6dd3f6-54c2-4cb0-b294-e22c2aa708e4",
 			})},
@@ -67,18 +67,18 @@ func TestAuthHTTPAccessProxy(t *testing.T) {
 			"should pass",
 			args{testutils.GetReqWithBody(t, serviceauth.NewSession{
 				HostName:  "gitlab01.trasa.io",
-				TfaMethod: "U2F",
-				TotpCode:  "",
+				TfaMethod: "totp",
+				TotpCode:  testutils.GetTotpCode(testutils.MocktotpSEC),
 				ExtToken:  "cb6dd3f6-54c2-4cb0-b294-e22c2aa708e4",
 			})},
-			false,
+			true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
 			rr := httptest.NewRecorder()
-			handler := http.HandlerFunc(serviceauth.AgentLogin)
+			handler := http.HandlerFunc(serviceauth.AuthHTTPAccessProxy)
 
 			handler.ServeHTTP(rr, tt.args.req)
 
