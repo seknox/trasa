@@ -15,6 +15,8 @@ const (
 	MockupstreamUser = "root"
 	MockupstreamPass = "root"
 
+	MockHostCert = `ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBGAawajB0kLn5QKDC4KBxS8SBxJMzw6Hu+54Yw6O7vylfLXat3hmg/xo5VzRk/zpVLZ5ZG9FzX2TemmdvQC7aIY=`
+
 	MockPrivateKey = `-----BEGIN OPENSSH PRIVATE KEY-----
 b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAABlwAAAAdzc2gtcn
 NhAAAAAwEAAQAAAYEArLShu9zqfvahOONl9nziHCew23RF89SqjB/E1i6H4E/5aFsGfoGV

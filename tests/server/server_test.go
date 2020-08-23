@@ -3,6 +3,7 @@ package server
 import (
 	"github.com/seknox/trasa/tests/server/crudtest"
 	"github.com/seknox/trasa/tests/server/notiftest"
+	"github.com/seknox/trasa/tests/server/testutils"
 	"testing"
 )
 
@@ -20,8 +21,14 @@ func TestServer(t *testing.T) {
 
 		//create service
 		crudtest.CreateService(t)
-		serviceID := crudtest.GetService(t)
+		serviceID := crudtest.GetAllServices(t)
 		crudtest.UpdateService(t, serviceID)
+		crudtest.UpdateHTTPConfig(t, serviceID)
+		crudtest.UpdateHostCerts(t, serviceID, testutils.MockHostCert)
+		crudtest.UpdateHostCerts(t, serviceID, "")
+		crudtest.UpdateSSLCerts(t, serviceID, "")
+		crudtest.DownloadHostCerts(t, serviceID)
+		crudtest.GetService(t, serviceID)
 
 		//create policy
 		policy := crudtest.CreatePolicy(t)

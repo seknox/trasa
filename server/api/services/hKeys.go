@@ -16,13 +16,15 @@ import (
 	"golang.org/x/crypto/ssh"
 )
 
+type UpdateSSLCertsReq struct {
+	SslKey  string `json:"sslKey"`
+	SslCert string `json:"sslCert"`
+	CaCert  string `json:"caCert"`
+}
+
 func UpdateSSLCerts(w http.ResponseWriter, r *http.Request) {
 	userContext := r.Context().Value("user").(models.UserContext)
-	var req struct {
-		SslKey  string `json:"sslKey"`
-		SslCert string `json:"sslCert"`
-		CaCert  string `json:"caCert"`
-	}
+	var req UpdateSSLCertsReq
 	err := utils.ParseAndValidateRequest(r, &req)
 	if err != nil {
 		logrus.Error(err)
@@ -48,13 +50,15 @@ func UpdateSSLCerts(w http.ResponseWriter, r *http.Request) {
 
 }
 
+type UpdateHostCertsReq struct {
+	CertVal   string `json:"certVal"`
+	ServiceID string `json:"serviceID" validate:"required"`
+}
+
 func UpdateHostCerts(w http.ResponseWriter, r *http.Request) {
 	userContext := r.Context().Value("user").(models.UserContext)
 
-	var req struct {
-		CertVal   string `json:"certVal"`
-		ServiceID string `json:"serviceID" validate:"required"`
-	}
+	var req UpdateHostCertsReq
 
 	err := utils.ParseAndValidateRequest(r, &req)
 	if err != nil {
