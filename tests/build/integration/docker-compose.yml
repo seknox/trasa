@@ -12,14 +12,14 @@ services:
     image: guacamole/guacd
     ports:
     - "4822:4822"
+    links:
+      - rdp-test-server
 
   rdp-test-server:
     image: umis/xubuntu-office-xrdp-desktop:v1.0
     ports:
     - "3389:3389"
-    networks:
-      test_network:
-        ipv4_address: 172.16.238.12
+
   db:
     image: postgres
     ports:
@@ -30,12 +30,6 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
 
-networks:
-  test_network:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.16.238.0/24
+
 
 

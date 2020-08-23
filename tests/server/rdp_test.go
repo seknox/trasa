@@ -47,7 +47,7 @@ func TestServeWS(t *testing.T) {
 				Password:  "Docker",
 				OptHeight: 1500,
 				OptWidth:  1500,
-				Hostname:  "172.16.238.12",
+				Hostname:  "rdp-test-server",
 			}},
 			wantErrMsg:  "",
 			wantErrCode: "",
@@ -156,7 +156,7 @@ func waitForErrorOrTFA(t *testing.T, ws *websocket.Conn) *guacamole.Instruction 
 
 	go func() {
 		for i := 0; i < 100 && !done; i++ {
-			err := ws.WriteMessage(websocket.TextMessage, guacamole.NewInstruction("ack", "3", "OK", "0").Byte())
+			err := ws.WriteMessage(websocket.TextMessage, guacamole.NewInstruction("nop").Byte())
 			if err != nil {
 				t.Fatalf(`cannot write to server: %v`, err)
 			}
@@ -179,6 +179,12 @@ func waitForErrorOrTFA(t *testing.T, ws *websocket.Conn) *guacamole.Instruction 
 		if inst.Opcode == guacamole.TfaOpcode || inst.Opcode == "error" {
 			done = true
 			return inst
+		}
+		err = ws.WriteMessage(websocket.TextMessage, guacamole.NewInstruction("ack", "3", "OK", "0").Byte())
+		if err != nil {
+			if err != nil {
+				t.Fatalf(`cannot write to server: %v`, err)
+			}
 		}
 
 	}
