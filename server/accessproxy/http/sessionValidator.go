@@ -59,7 +59,11 @@ func tokenValidator(r *http.Request, userName string, isSSO bool) error {
 
 	_ = decrypted
 
-	passwordManAndLogger(r, sessionToken, csrfToken, userName, isSSO, sRecord)
+	err = passwordManAndLogger(r, sessionToken, csrfToken, userName, isSSO, sRecord)
+	//TODO @sshah check if returning here will break anything
+	if err != nil {
+		return err
+	}
 
 	// If session validation is Okay, we remove these headers before sending to upstream server.
 	for header := range r.Header {
