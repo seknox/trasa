@@ -66,7 +66,7 @@ func TestAuthHTTPAccessProxy(t *testing.T) {
 		{
 			"should pass",
 			args{testutils.GetReqWithBody(t, serviceauth.NewSession{
-				HostName:  "gitlab01.trasa.io",
+				HostName:  "localhost:3389",
 				TfaMethod: "totp",
 				TotpCode:  testutils.GetTotpCode(testutils.MocktotpSEC),
 				ExtToken:  "cb6dd3f6-54c2-4cb0-b294-e22c2aa708e4",

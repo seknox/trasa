@@ -63,7 +63,7 @@ func prepareUpstream(t *testing.T, done chan bool) {
 	go func() {
 		err := s.ListenAndServe()
 		if err != nil {
-			t.Error(err)
+			t.Log(err)
 		}
 	}()
 
@@ -86,8 +86,8 @@ func TestHTTPProxy(t *testing.T) {
 	}
 
 	req.Header.Set("Host", "localhost:3339")
-	req.Header.Set("X-CSRF", sess.CsrfToken)
-	req.Header.Set("X-SESSION", sess.SessionID)
+	req.Header.Set("TRASA-X-CSRF", sess.CsrfToken)
+	req.Header.Set("TRASA-X-SESSION", sess.SessionID)
 
 	cl := http.Client{}
 
@@ -110,6 +110,10 @@ func TestHTTPProxy(t *testing.T) {
 		t.Errorf("respBody got=%v want=%v", string(respBody), "Hello")
 	}
 
+	if hVal := resp.Header.Get("someKey"); hVal != "someValue" {
+		t.Errorf("headers.someKey got=%v want=%v", hVal, "someValue")
+	}
+
 }
 
 func auth(t *testing.T) serviceauth.Session {
@@ -117,7 +121,7 @@ func auth(t *testing.T) serviceauth.Session {
 	handler := http.HandlerFunc(serviceauth.AuthHTTPAccessProxy)
 
 	handler.ServeHTTP(rr, testutils.GetReqWithBody(t, serviceauth.NewSession{
-		HostName:  "localhost:3389",
+		HostName:  "localhost:3339",
 		TfaMethod: "totp",
 		TotpCode:  testutils.GetTotpCode(testutils.MocktotpSEC),
 		ExtToken:  "cb6dd3f6-54c2-4cb0-b294-e22c2aa708e4",

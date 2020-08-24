@@ -181,7 +181,7 @@ func waitForErrorOrTFA(t *testing.T, ws *websocket.Conn) *guacamole.Instruction 
 			t.Fatalf(`guacamole instruction parse error: %v`, err)
 		}
 
-		t.Log(inst.String())
+		//		t.Log(inst.String())
 
 		if inst.Opcode == guacamole.TfaOpcode || inst.Opcode == "error" {
 			return inst

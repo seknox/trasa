@@ -36,7 +36,7 @@ import (
 
 func TestMain(m *testing.M) {
 	state := setupTestEnv()
-	logrus.SetLevel(logrus.ErrorLevel)
+	logrus.SetLevel(logrus.TraceLevel)
 	m.Run()
 	tearDown(state)
 }
@@ -124,7 +124,7 @@ func setupTestEnv() *global.State {
 			Trasacore   string `toml:"trasacore"`
 			Rootdir     string `toml:"rootdir"`
 			OrgId       string `toml:"orgID"`
-		}{"localhost:3339", "https://localhost", "", "https://u2fproxy.trasa.io", "", "", "", testutils.MockOrgID},
+		}{"localhost", "https://localhost", "", "https://u2fproxy.trasa.io", "", "", "", testutils.MockOrgID},
 		SSHProxy: struct {
 			ListenAddr string `toml:"listenAddr"`
 		}{":8022"},
