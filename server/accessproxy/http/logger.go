@@ -76,11 +76,6 @@ func passwordManAndLogger(r *http.Request, sessionID, csrfToken, userName string
 	return nil
 }
 
-type rawSession struct {
-	Time string
-	Data string
-}
-
 func createDirIfNotExist(dir string) error {
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
 		err = os.MkdirAll(dir, 0755)
@@ -90,20 +85,4 @@ func createDirIfNotExist(dir string) error {
 		}
 	}
 	return nil
-}
-
-func createFile(path string) {
-	// detect if file exists
-	_, err := os.Stat(path)
-
-	// create file if not exists
-	if os.IsNotExist(err) {
-		file, err := os.Create(path)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		defer file.Close()
-	}
-
 }
