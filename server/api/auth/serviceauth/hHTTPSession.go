@@ -176,8 +176,8 @@ func AuthHTTPAccessProxy(w http.ResponseWriter, r *http.Request) {
 	sessionStore[encodedSession] = authlog
 	// sessionStoreMutex.Unlock()
 
-	logger.Trace(authlog.SessionID)
-	logger.Trace(encodedSession)
+	//logger.Trace(authlog.SessionID)
+	//logger.Trace(encodedSession)
 
 	// create csrf token
 	var encryptionKey [32]byte
@@ -207,7 +207,7 @@ func AuthHTTPAccessProxy(w http.ResponseWriter, r *http.Request) {
 	if !policy.RecordSession {
 		sessionRec = "false"
 	}
-	logger.Trace(encodedSession)
+	//logger.Trace(encodedSession)
 	err = redis.Store.SetHTTPGatewaySession(encodedSession, orgusr, authData, sessionRec)
 	if err != nil {
 		logger.Errorf("setting session in redis: %v", err)
@@ -219,7 +219,7 @@ func AuthHTTPAccessProxy(w http.ResponseWriter, r *http.Request) {
 		logger.Errorf("add active session: %v", err)
 	}
 
-	var sessionIdentifiers session
+	var sessionIdentifiers Session
 	sessionIdentifiers.SessionID = encodedSession
 	sessionIdentifiers.CsrfToken = base64.StdEncoding.EncodeToString(csrfToken)
 	sessionIdentifiers.SessionRecord = policy.RecordSession
@@ -269,7 +269,7 @@ func DestroyHttpSession(w http.ResponseWriter, r *http.Request) {
 	utils.TrasaResponse(w, http.StatusOK, "success", "session destroyed", "Destroy session", nil)
 }
 
-type session struct {
+type Session struct {
 	SessionID     string `json:"sessionID"`
 	CsrfToken     string `json:"csrfToken"`
 	SessionRecord bool   `json:"sessionRecord"`

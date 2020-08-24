@@ -28,6 +28,7 @@ import (
 	"github.com/seknox/trasa/server/api/users"
 	"github.com/seknox/trasa/server/global"
 	"github.com/seknox/trasa/server/initdb"
+	"github.com/seknox/trasa/tests/server/testutils"
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"testing"
@@ -123,7 +124,7 @@ func setupTestEnv() *global.State {
 			Trasacore   string `toml:"trasacore"`
 			Rootdir     string `toml:"rootdir"`
 			OrgId       string `toml:"orgID"`
-		}{"localhost", "https://localhost", "", "https://u2fproxy.trasa.io", "", "", "", ""},
+		}{"localhost:3339", "https://localhost", "", "https://u2fproxy.trasa.io", "", "", "", testutils.MockOrgID},
 		SSHProxy: struct {
 			ListenAddr string `toml:"listenAddr"`
 		}{":8022"},

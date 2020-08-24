@@ -94,7 +94,7 @@ func TestAuthHTTPAccessProxy(t *testing.T) {
 			}
 
 			if tt.wantSuccess && resp.Status != "success" {
-				t.Errorf("AgentLogin() wanted success, got:%s reason %s", resp.Status, resp.Reason)
+				t.Errorf("AuthHTTPAccessProxy() wanted success, got:%s reason %s", resp.Status, resp.Reason)
 				return
 			}
 

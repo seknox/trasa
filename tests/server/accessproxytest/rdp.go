@@ -1,4 +1,4 @@
-package server_test
+package accessproxytest
 
 import (
 	"encoding/json"
@@ -12,7 +12,7 @@ import (
 	"testing"
 )
 
-func TestServeWS(t *testing.T) {
+func RDPProxy(t *testing.T) {
 
 	type args struct {
 		params models.ConnectionParams

@@ -1,4 +1,4 @@
-package server_test
+package accessproxytest
 
 import (
 	"encoding/json"

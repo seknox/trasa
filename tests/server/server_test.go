@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/seknox/trasa/tests/server/accessproxytest"
 	"github.com/seknox/trasa/tests/server/crudtest"
 	"github.com/seknox/trasa/tests/server/notiftest"
 	"github.com/seknox/trasa/tests/server/providerstest"
@@ -15,10 +16,33 @@ func TestServer(t *testing.T) {
 		notiftest.ResolvNotif(t, n.NotificationID)
 	})
 
+	t.Run("rdp proxy", func(t *testing.T) {
+		accessproxytest.RDPProxy(t)
+	})
+
+	t.Run("ssh web proxy", func(t *testing.T) {
+		accessproxytest.TestConnectNewSSH(t)
+	})
+
+	t.Run("ssh cli proxy with authorised  key", func(t *testing.T) {
+		accessproxytest.TestSSHAuthWithAuthorisedPublicKey(t)
+	})
+
+	t.Run("ssh cli proxy without public key", func(t *testing.T) {
+		accessproxytest.TestSSHAuthWithoutPublicKey(t)
+	})
+	t.Run("ssh cli proxy with public key", func(t *testing.T) {
+		accessproxytest.TestSSHAuthWithPublicKey(t)
+	})
+
+	t.Run("http proxy test", func(t *testing.T) {
+		accessproxytest.TestHTTPProxy(t)
+	})
+
 	t.Run("test user idps", func(t *testing.T) {
 		providerstest.CreateIdp(t)
 	})
-	t.Run("test certificate authotity", func(t *testing.T) {
+	t.Run("test certificate authority", func(t *testing.T) {
 		providerstest.CreateHTTPCA(t)
 		providerstest.CreateSSHCA(t)
 		providerstest.GetAllCAs(t)

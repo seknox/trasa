@@ -1,4 +1,4 @@
-package server_test
+package accessproxytest
 
 import (
 	"github.com/seknox/trasa/server/accessproxy/sshproxy"
