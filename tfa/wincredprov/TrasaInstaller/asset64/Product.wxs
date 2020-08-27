@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="6EB4E9DD-D590-4372-937B-A70C49A05836" Name="inst2" Language="1033" Version="1.0.0.0" Manufacturer="SEKNOX CYBERSECURITY" UpgradeCode="0ee58904-b8e0-408b-b6ea-4f29c007c11e">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+    <!-- WIX config vars -->
+    <Icon Id="icon.ico" SourceFile="assets\img\info.ico"/>
+<Property Id="ARPPRODUCTICON" Value="icon.ico" />
+    <Property Id="WIXUI_EXITDIALOGOPTIONALTEXT" Value="!!! IMPORTANT !!! PLEASE CONFIGURE TRASA AP BEFORE RESTARTING YOUR COMPUTER." />
+    <WixVariable Id="WixUILicenseRtf" Value="assets\License.rtf" />
+    <WixVariable Id="WixUIBannerBmp" Value="assets\img\bannerimage.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="assets\img\dialogue.bmp" />
+    <WixVariable Id="WixUIExclamationIco" Value="assets\img\info.ico" />
+    <WixVariable Id="WixUIInfoIco" Value="assets\img\info.ico" />
+    <WixVariable Id="WixUINewIco" Value="assets\img\new.ico" />
+    <WixVariable Id="WixUIUpIco" Value="assets\img\new.ico" />
+    
+    <UI>
+      <UIRef Id="WixUI_Minimal" />
+    <Publish Dialog="ExitDialog" 
+            Control="Finish" 
+            Event="DoAction" 
+            Value="LaunchApplication">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed</Publish>
+    </UI>
+    
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+    
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch inst2 to configure now." />
+    
+    <!-- Step 3: Include the custom action -->
+    <Property Id="WixShellExecTarget" Value="[#FILE_TracaConfigFile]" />
+    <CustomAction Id="LaunchApplication" 
+        BinaryKey="WixCA" 
+        DllEntry="WixShellExec"
+        Impersonate="yes" />
+    
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    
+		<MediaTemplate EmbedCab="yes" />
+
+		<Feature Id="ProductFeature" Title="inst2" Level="1">
+			<ComponentGroupRef Id="ProductComponents" />
+   <ComponentGroupRef Id="CPFiles" />
+    <ComponentGroupRef Id="RegComponents" />
+    <ComponentRef Id="ApplicationShortcut" />
+		</Feature>
+	</Product>
+  
+  <Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+				<Directory Id="INSTALLFOLDER" Name="inst2" />
+			</Directory>
+      
+       <!-- Step 1: Define the directory structure -->
+            <Directory Id="ProgramMenuFolder">
+                <Directory Id="ApplicationProgramsFolder" Name="inst2"/>
+            </Directory>
+    
+   <Directory Id="SystemFolder">
+				<Directory Id="DLLENTRY" />
+			</Directory>
+    
+		</Directory>
+	</Fragment>
+
+
+	<Fragment>
+		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <Component Id="FILE_TracaConfigFile" Guid="84E38FA4-A37E-4825-AE5E-29F1EC536D50">
+        <File Id="FILE_TracaConfigFile" Source="TrasaConfig.exe" KeyPath="yes"/>
+      </Component>
+    <Component Id="NEWTON_JSON_DLL" Guid="F421888F-56BD-4F6A-9226-7C2042BED5D8">
+        <File Id="NEWTON_JSON_DLL" Source="Newtonsoft.Json.dll" KeyPath="yes"/>
+      </Component>
+  <Component Id="NEWTON_JSON_XML" Guid="BA8F9D8C-25F5-4FE7-9ACA-AC33624C01D2">
+        <File Id="NEWTON_JSON_XML" Source="Newtonsoft.Json.xml" KeyPath="yes"/>
+      </Component>
+		</ComponentGroup>
+	</Fragment>
+  
+
+
+<Fragment>
+		<ComponentGroup Id="CPFiles" Directory="DLLENTRY">
+
+       <Component Id="CP_install" Guid="DBE59944-2AE8-4A96-8FC0-1FA56584A84D">
+        <File Id="FILE_DLLCP" Source="TrasaCP.dll" KeyPath="yes"/>
+      </Component>
+      
+       <Component Id="AUTH_PKG_install" Guid="346319C5-7CDB-443F-BB08-FE27EF2D0364">
+        <File Id="FILE_AUTH" Source="TrasaAuth.dll" KeyPath="yes"/>
+      </Component>
+      
+   
+         
+		</ComponentGroup>
+	</Fragment>
+  
+  
+ 
+  
+<Fragment>
+		<ComponentGroup Id="RegComponents" Directory="TARGETDIR">
+        <Component Id="cmp7ED0BD002C58324B65ECDE6C08911DEF" Guid="{1E3821DB-8019-4BA3-8891-7B65411D7BA3}" KeyPath="yes">
+                <RegistryKey Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\Credential Providers\{00D69BAA-FF93-4223-BB5F-0E48E9B65606}" Root="HKLM">
+                    <RegistryValue Value="TrasaCP" Type="string" />
+                </RegistryKey>
+            </Component>
+            <Component Id="cmp391BA468AD98202460F7FDB4AF3B860E" Guid="{8CA6FF29-1E1C-4E82-8FE5-28AABB4B7B3C}" KeyPath="yes">
+                <RegistryKey Key="CLSID\{00D69BAA-FF93-4223-BB5F-0E48E9B65606}" Root="HKCR">
+                    <RegistryValue Value="TrasaCP" Type="string" />
+                </RegistryKey>
+            </Component>
+            <Component Id="cmp8A65B5A502102C55FCD763D25F33E2F3" Guid="{DF9810CD-FE75-4FB2-9DF0-9C7663C6F6E1}" KeyPath="yes">
+                <RegistryKey Key="CLSID\{00D69BAA-FF93-4223-BB5F-0E48E9B65606}\InprocServer32" Root="HKCR">
+                    <RegistryValue Value="TrasaCP.dll" Type="string" />
+                    <RegistryValue Name="ThreadingModel" Value="Apartment" Type="string" />
+                </RegistryKey>
+            </Component>
+    
+            <Component Id="cmp79ABB5A502102C55FCD763D25738DIEU" Guid="{E3B8CBD4-608B-4178-80FD-C21D9096BAE4}" KeyPath="yes">
+                <RegistryKey Key="SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0" Root="HKLM">
+                    <RegistryValue Name="Auth0" Value="TrasaAuth" Type="string" />
+                </RegistryKey>
+            </Component>
+		</ComponentGroup>
+	</Fragment> 
+  
+  
+
+  <Fragment>
+      <DirectoryRef Id="ApplicationProgramsFolder">
+    <Component Id="ApplicationShortcut" Guid="3888951C-5AED-4DBC-B1AB-20610CCD12C6">
+        <Shortcut Id="ApplicationStartMenuShortcut" 
+                  Name="inst2"
+                  Description="test app"
+                  Target="[#FILE_TracaConfigFile]"
+                  WorkingDirectory="INSTALLFOLDER"/>
+        <RemoveFolder Id="CleanUpShortCut" Directory="ApplicationProgramsFolder" On="uninstall"/>
+        <RegistryValue Root="HKCU" Key="Software\Microsoft\inst2" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+    </Component>
+</DirectoryRef>
+  </Fragment>
+   
+
+
+</Wix>
