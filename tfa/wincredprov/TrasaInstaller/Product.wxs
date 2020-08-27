@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="6EB4E9DD-D590-4372-937B-A70C49A05836" Name="TrasaWin" Language="1033" Version="08.06.2020" Manufacturer="SEKNOX CYBERSECURITY" UpgradeCode="0ee58904-b8e0-408b-b6ea-4f29c007c11e">
+		<Package InstallerVersion="305" Compressed="yes" InstallPrivileges="elevated" InstallScope="perMachine" Platform="x64"  />
+
+    <!-- WIX config vars -->
+    <Icon Id="icon.ico" SourceFile="assets\img\info.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="icon.ico" />
+    <Property Id="WIXUI_EXITDIALOGOPTIONALTEXT" Value="!!! IMPORTANT !!! PLEASE CONFIGURE TRASA APP (TrasaWIN) BEFORE SIGNING OUT FROM WINDOWS" />
+    <WixVariable Id="WixUILicenseRtf" Value="asset64\License.rtf" />
+    <WixVariable Id="WixUIBannerBmp" Value="asset64\img\nbannerimage.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="asset64\img\ndialogue.bmp" />
+    <WixVariable Id="WixUIExclamationIco" Value="asset64\img\info.ico" />
+    <WixVariable Id="WixUIInfoIco" Value="asset64\img\info.ico" />
+    <WixVariable Id="WixUINewIco" Value="asset64\img\new.ico" />
+    <WixVariable Id="WixUIUpIco" Value="asset64\img\new.ico" />
+    
+    <UI>
+      <UIRef Id="WixUI_FeatureTree" />
+    <Publish Dialog="ExitDialog" 
+            Control="Finish" 
+            Event="DoAction" 
+            Value="LaunchApplication">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed</Publish>
+    </UI>
+    
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+    
+ 
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch TrasaWin to configure now." />
+    
+    <!-- Step 3: Include the custom action -->
+    <Property Id="WixShellExecTarget" Value="[#FILE_TracaConfigFile]"  />
+    <CustomAction Id="LaunchApplication" 
+        BinaryKey="WixCA" 
+        DllEntry="WixShellExec"
+        Impersonate="no"  Execute="immediate"  />
+    
+    
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    
+		<MediaTemplate EmbedCab="yes" />
+
+		<Feature Id="ProductFeature" Title="TrasaWin" Level="1">
+			<ComponentGroupRef Id="ProductComponents" />
+      <ComponentGroupRef Id="CPFiles" />
+      <ComponentGroupRef Id="RegComponents" />
+      <ComponentRef Id="ApplicationShortcut" />
+      <MergeRef Id="VCRedist"/>
+		</Feature>
+
+    <Feature Id="VCRedist" Title="Visual C++ 19 Runtime"  Level="1">
+      <MergeRef Id="VCRedist"/>
+    </Feature>
+	</Product>
+
+ <!-- adding visual c++ redistributable -->
+  <Fragment>
+    <DirectoryRef Id="TARGETDIR">
+      <Merge Id="VCRedist" SourceFile="asset64\Microsoft_VC142_CRT_x64.msm" DiskId="1" Language="0"/>
+    </DirectoryRef>
+  </Fragment>
+  
+   <!-- Step 1: Define the directory structure -->
+  <Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFiles64Folder">
+				<Directory Id="INSTALLFOLDER" Name="TrasaWin" />
+			</Directory>
+      
+      
+            <Directory Id="ProgramMenuFolder">
+                <Directory Id="ApplicationProgramsFolder" Name="TrasaWin"/>
+            </Directory>
+    
+   <Directory Id="System64Folder">
+				<Directory Id="DLLENTRY" />
+			</Directory>
+    
+		</Directory>
+	</Fragment>
+
+<!-- Configuration winEXE and json utility file that needs to be copied to INSTALLFOLDER @program files\TrasaWin -->
+	<Fragment>
+		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER" >
+      <Component Id="FILE_TracaConfigFile" Guid="84E38FA4-A37E-4825-AE5E-29F1EC536D50" Win64="yes"  >
+        <File Id="FILE_TracaConfigFile" Source="asset64\TrasaConfig.exe" KeyPath="yes" ProcessorArchitecture="x64" />
+      </Component>
+    <Component Id="NEWTON_JSON_DLL" Guid="F421888F-56BD-4F6A-9226-7C2042BED5D8" Win64="yes">
+        <File Id="NEWTON_JSON_DLL" Source="asset64\Newtonsoft.Json.dll" KeyPath="yes" ProcessorArchitecture="x64" />
+      </Component>
+  <Component Id="NEWTON_JSON_XML" Guid="BA8F9D8C-25F5-4FE7-9ACA-AC33624C01D2" Win64="yes">
+        <File Id="NEWTON_JSON_XML" Source="asset64\Newtonsoft.Json.xml" KeyPath="yes" ProcessorArchitecture="x64" />
+      </Component>
+		</ComponentGroup>
+	</Fragment>
+  
+
+<!-- Credential Provider files that needs to be copied to DLLENTRY -->
+<Fragment>
+		<ComponentGroup Id="CPFiles" Directory="DLLENTRY">
+
+       <Component Id="CP_install" Guid="DBE59944-2AE8-4A96-8FC0-1FA56584A84D" Win64="yes">
+        <File Id="FILE_DLLCP" Source="asset64\TrasaCP.dll" KeyPath="yes" ProcessorArchitecture="x64" />
+      </Component>
+      
+       <!-- <Component Id="AUTH_PKG_install" Guid="346319C5-7CDB-443F-BB08-FE27EF2D0364" Win64="yes">
+        <File Id="FILE_AUTH" Source="asset64\TrasaAuth.dll" KeyPath="yes" ProcessorArchitecture="x64" />
+      </Component> -->
+      
+   <Component Id="CPFilter_install" Guid="29D6C95E-6CE3-4352-84F4-CF1F02B80BA1" Win64="yes">
+        <File Id="FILE_CPFilter" Source="asset64\TrasaCPFilter.dll" KeyPath="yes" ProcessorArchitecture="x64" />
+      </Component>
+         
+         <Component Id="TfaPrompt" Guid="A2D56616-6272-4BD6-A196-D732BC9297BF" Win64="yes">
+        <File Id="FILE_TfaPrompt" Source="asset64\TrasaTfaPrompt.dll" KeyPath="yes" ProcessorArchitecture="x64" />
+      </Component>
+    
+    <Component Id="NEWTON_JSON_DLL_SYS" Guid="81C4EC5E-FCE8-4374-AD1C-9FB4CF78C924" Win64="yes">
+        <File Id="NEWTON_JSON_DLL_SYS" Source="asset64\Newtonsoft.Json.dll" KeyPath="yes" ProcessorArchitecture="x64" />
+      </Component>
+  <Component Id="NEWTON_JSON_XML_SYS" Guid="E3170A60-D4E6-4E1D-A2AF-6787F33E8D07" Win64="yes">
+        <File Id="NEWTON_JSON_XML_SYS" Source="asset64\Newtonsoft.Json.xml" KeyPath="yes" ProcessorArchitecture="x64" />
+      </Component>
+		</ComponentGroup>
+	</Fragment>
+  
+  
+ 
+  <!-- TRASA registry components -->
+<Fragment>
+		<ComponentGroup Id="RegComponents" Directory="TARGETDIR">
+      <!-- registering TrasaCP -->
+        <Component Id="cmp7ED0BD002C58324B65ECDE6C08911DEF" Guid="{1E3821DB-8019-4BA3-8891-7B65411D7BA3}" KeyPath="yes" Win64="yes">
+                <RegistryKey Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\Credential Providers\{00D69BAA-FF93-4223-BB5F-0E48E9B65606}" Root="HKLM">
+                    <RegistryValue Value="TrasaCP" Type="string" />
+                </RegistryKey>
+            </Component>
+            <Component Id="cmp391BA468AD98202460F7FDB4AF3B860E" Guid="{8CA6FF29-1E1C-4E82-8FE5-28AABB4B7B3C}" KeyPath="yes" Win64="yes">
+                <RegistryKey Key="CLSID\{00D69BAA-FF93-4223-BB5F-0E48E9B65606}" Root="HKCR">
+                    <RegistryValue Value="TrasaCP" Type="string" />
+                </RegistryKey>
+            </Component>
+            <Component Id="cmp8A65B5A502102C55FCD763D25F33E2F3" Guid="{DF9810CD-FE75-4FB2-9DF0-9C7663C6F6E1}" KeyPath="yes" Win64="yes">
+                <RegistryKey Key="CLSID\{00D69BAA-FF93-4223-BB5F-0E48E9B65606}\InprocServer32" Root="HKCR">
+                    <RegistryValue Value="TrasaCP.dll" Type="string" />
+                    <RegistryValue Name="ThreadingModel" Value="Apartment" Type="string" />
+                </RegistryKey>
+            </Component>
+    
+      <!-- registering TrasaCPFilter -->
+        <Component Id="cmp8496B3B9C16748BE9CD48E49B01C3EB8" Guid="{55964669-CDDF-4DB8-93C8-2ADD1654F771}" KeyPath="yes" Win64="yes">
+                <RegistryKey Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\Credential Provider Filters\{BFFD0624-4BA4-4578-9FBD-9FE5A21D3446}" Root="HKLM">
+                    <RegistryValue Value="TrasaCPFilter" Type="string" />
+                </RegistryKey>
+            </Component>
+        <Component Id="cmp8EDDD5076AB7428AB866A42F16EB3375" Guid="{CE26032E-046A-4C12-BA8B-210B7457DB40}" KeyPath="yes" Win64="yes">
+                <RegistryKey Key="CLSID\{BFFD0624-4BA4-4578-9FBD-9FE5A21D3446}" Root="HKCR">
+                    <RegistryValue Value="TrasaCPFilter" Type="string" />
+                </RegistryKey>
+            </Component>
+       <Component Id="cmpECAE154EC38C4401B882B377E939F001" Guid="{2E609B00-1775-450C-BF5D-2FC369955AE5}" KeyPath="yes" Win64="yes">
+                <RegistryKey Key="CLSID\{BFFD0624-4BA4-4578-9FBD-9FE5A21D3446}\InprocServer32" Root="HKCR">
+                    <RegistryValue Value="TrasaCPFilter.dll" Type="string" />
+                    <RegistryValue Name="ThreadingModel" Value="Apartment" Type="string" />
+                </RegistryKey>
+            </Component>
+            <!--<Component Id="cmp79ABB5A502102C55FCD763D25738DIEU" Guid="{E3B8CBD4-608B-4178-80FD-C21D9096BAE4}" KeyPath="yes" Win64="yes">
+                <RegistryKey Key="SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0" Root="HKLM">
+                    <RegistryValue Name="Auth0" Value="TrasaAuth" Type="string" />
+                </RegistryKey>
+            </Component>-->
+		</ComponentGroup>
+	</Fragment> 
+  
+  
+<!-- On uninstall -->
+  <Fragment>
+      <DirectoryRef Id="ApplicationProgramsFolder">
+    <Component Id="ApplicationShortcut" Guid="3888951C-5AED-4DBC-B1AB-20610CCD12C6" Win64="yes">
+        <Shortcut Id="ApplicationStartMenuShortcut" 
+                  Name="TrasaWin"
+                  Description="TrasaWIN adds second step verification to local and remote windows logins."
+                  Target="[#FILE_TracaConfigFile]"
+                  WorkingDirectory="INSTALLFOLDER"/>
+        <RemoveFolder Id="CleanUpShortCut" Directory="ApplicationProgramsFolder" On="uninstall"/>
+        <RemoveFolder Id="rmTrasaWINDir" Directory="ApplicationProgramsFolder" On="uninstall"/>
+        <RemoveFile Id="rmCPFilter" Directory="DLLENTRY" Name="TrasaCPFilter.dll" On="uninstall"/>
+        <RemoveFile Id="rmCPTfaPRompt" Directory="DLLENTRY" Name="TrasaTfaPrompt.dll" On="uninstall"/>
+      <RemoveFile Id="rmNewtonSoft" Directory="DLLENTRY" Name="Newtonsoft.Json.dll" On="uninstall"/>
+      <RemoveFile Id="rmNewtonSoftJsonXML" Directory="DLLENTRY" Name="Newtonsoft.Json.xml" On="uninstall"/>
+   
+        <RegistryValue Root="HKCU" Key="Software\Microsoft\TrasaWin" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+    </Component>
+</DirectoryRef>
+  </Fragment>
+   
+
+
+</Wix>
