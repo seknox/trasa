@@ -1,0 +1,7 @@
+[trasaPAM]
+trasaServerURL = "https://app.trasa"
+serviceID = "bef57548-dfdd-4aba-a545-50aa9e4f50db"
+serviceKey = "7ba94fcbac95b794fc6efc25e1c23f0d6b"
+offlineUsers = ""
+insecureSkipVerify = false
+debug = false

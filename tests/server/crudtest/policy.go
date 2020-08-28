@@ -122,8 +122,6 @@ func GetPolicy(t *testing.T, expected models.Policy) {
 	rctx.URLParams.Add("policyID", expected.PolicyID)
 	req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, rctx))
 
-	t.Log(expected.PolicyID)
-
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
 	handler := http.HandlerFunc(testutils.AddTestUserContext(policies.GetPolicy))

@@ -207,7 +207,7 @@ func GetAllGroups(t *testing.T, gType, expectedID string) {
 
 	found := false
 	for _, gr := range resp.Data[0] {
-		t.Log(gr.GroupID, ":", expectedID)
+		//	t.Log(gr.GroupID, ":", expectedID)
 		if gr.GroupID == expectedID {
 			found = true
 		}

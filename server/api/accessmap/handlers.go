@@ -44,7 +44,7 @@ func GetUserGroupServiceGroupAccessMaps(w http.ResponseWriter, r *http.Request) 
 	utils.TrasaResponse(w, 200, "success", "", "AllAddedUserGroups", userGroups)
 }
 
-type assignUserToApp struct {
+type AssignUserToApp struct {
 	ServiceID string   `json:"serviceID"`
 	OrgID     string   `json:"orgID"`
 	Privilege string   `json:"privilege"`
@@ -62,7 +62,7 @@ type assignUserToApp struct {
 func CreateServiceUserMap(w http.ResponseWriter, r *http.Request) {
 	userContext := r.Context().Value("user").(models.UserContext)
 
-	var request assignUserToApp
+	var request AssignUserToApp
 
 	if err := utils.ParseAndValidateRequest(r, &request); err != nil {
 		logrus.Error(err)
@@ -108,12 +108,12 @@ func CreateServiceUserMap(w http.ResponseWriter, r *http.Request) {
 
 }
 
-type deleteServiceUserMap struct {
+type DeleteServiceUserMapReq struct {
 	MapIDs []string `json:"mapIDs"`
 }
 
 func DeleteServiceUserMap(w http.ResponseWriter, r *http.Request) {
-	var req deleteServiceUserMap
+	var req DeleteServiceUserMapReq
 
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		utils.TrasaResponse(w, 200, "failed", "invalid request", "could not remove user from Service")
@@ -141,7 +141,7 @@ func DeleteServiceUserMap(w http.ResponseWriter, r *http.Request) {
 
 //Groups
 
-type serviceGroupUserGroupMapRequest struct {
+type ServiceGroupUserGroupMapRequest struct {
 	MapID          string   `json:"mapID"`
 	ServiceGroupID string   `json:"serviceGroupID"`
 	MapType        string   `json:"mapType"`
@@ -155,7 +155,7 @@ type serviceGroupUserGroupMapRequest struct {
 func CreateServiceGroupUserGroupMap(w http.ResponseWriter, r *http.Request) {
 	logrus.Trace("request received")
 	userContext := r.Context().Value("user").(models.UserContext)
-	var req serviceGroupUserGroupMapRequest
+	var req ServiceGroupUserGroupMapRequest
 
 	var store models.ServiceGroupUserGroupMap
 
@@ -227,7 +227,7 @@ func CreateServiceGroupUserGroupMap(w http.ResponseWriter, r *http.Request) {
 	utils.TrasaResponse(w, 200, "success", "group mapping successful", fmt.Sprintf(`user groups %s assigned to servicegroup "%s"`, strings.Join(addedGroups, ","), serviceGroup.GroupName), addedGroups)
 }
 
-type rmGroupMap struct {
+type RmGroupMap struct {
 	MapID []string `json:"mapID"`
 }
 
@@ -235,11 +235,11 @@ func DeleteServiceGroupUserGroupMap(w http.ResponseWriter, r *http.Request) {
 	logrus.Trace("request received")
 	userContext := r.Context().Value("user").(models.UserContext)
 
-	var req rmGroupMap
+	var req RmGroupMap
 
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "policy not created", "RemoveUsergroupsFromGroupMap")
+		utils.TrasaResponse(w, 200, "failed", "access map not deleted", "RemoveUsergroupsFromGroupMap")
 		return
 	}
 
@@ -257,7 +257,7 @@ func DeleteServiceGroupUserGroupMap(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	utils.TrasaResponse(w, 200, "success", "group removed", fmt.Sprintf(`user groups "%s" removed from appgroup %s`, strings.Join(removedUserGroups, ","), appGroupName))
+	utils.TrasaResponse(w, 200, "success", "access map removed", fmt.Sprintf(`user groups "%s" removed from appgroup %s`, strings.Join(removedUserGroups, ","), appGroupName))
 }
 
 func GetUserGroupsAssignedToServiceGroups(w http.ResponseWriter, r *http.Request) {
@@ -268,14 +268,14 @@ func GetUserGroupsAssignedToServiceGroups(w http.ResponseWriter, r *http.Request
 	userGroups, err := Store.GetAssignedUserGroupsWithPolicies(groupID, userContext.User.OrgID)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "group not created", "AllUsergroupAndPoliciesToAdd")
+		utils.TrasaResponse(w, 200, "failed", "could not get access map", "AllUsergroupAndPoliciesToAdd")
 		return
 	}
 
-	utils.TrasaResponse(w, 200, "success", "group details fetched", "AllAddedUserGroups", userGroups)
+	utils.TrasaResponse(w, 200, "success", "access map fetched", "AllAddedUserGroups", userGroups)
 }
 
-type updatePrivilege struct {
+type UpdatePrivilege struct {
 	MapID     string `json:"mapID"`
 	Privilege string `json:"privilege"`
 }
@@ -283,7 +283,7 @@ type updatePrivilege struct {
 func UpdateServiceUserMap(w http.ResponseWriter, r *http.Request) {
 	userContext := r.Context().Value("user").(models.UserContext)
 
-	var req updatePrivilege
+	var req UpdatePrivilege
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "invalid request", "Privilege not updated")
@@ -304,7 +304,7 @@ func UpdateServiceUserMap(w http.ResponseWriter, r *http.Request) {
 func UpdateServiceGroupUserGroup(w http.ResponseWriter, r *http.Request) {
 	userContext := r.Context().Value("user").(models.UserContext)
 
-	var req updatePrivilege
+	var req UpdatePrivilege
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "invalid request", "privilege not updated", nil, nil)
@@ -337,7 +337,7 @@ func UserGroupsToAdd(w http.ResponseWriter, r *http.Request) {
 	utils.TrasaResponse(w, 200, "success", "group details fetched", "AllUsergroupAndPoliciesToAdd", userGroups)
 }
 
-type userGroupOfServiceGroup struct {
+type UserGroupOfServiceGroup struct {
 	MapID         string `json:"mapID"`
 	UsergroupID   string `json:"usergroupID"`
 	UsergroupName string `json:"userGroupName"`

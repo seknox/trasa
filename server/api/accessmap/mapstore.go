@@ -139,8 +139,8 @@ func (s accessMapStore) GetUserGroupsToAddInServiceGroup(orgID string) ([]models
 	return userGroups, err
 }
 
-func (s accessMapStore) GetAssignedUserGroupsWithPolicies(groupID, orgID string) ([]userGroupOfServiceGroup, error) {
-	var userGroups = make([]userGroupOfServiceGroup, 0)
+func (s accessMapStore) GetAssignedUserGroupsWithPolicies(groupID, orgID string) ([]UserGroupOfServiceGroup, error) {
+	var userGroups = make([]UserGroupOfServiceGroup, 0)
 
 	rows, err := s.DB.Query(`
 							select ag_ug.id, usergroup_id, g.name , ag_ug.policy_id ,p.name, ag_ug.privilege, ag_ug.created_at FROM 
@@ -153,7 +153,7 @@ func (s accessMapStore) GetAssignedUserGroupsWithPolicies(groupID, orgID string)
 		return userGroups, err
 	}
 	for rows.Next() {
-		var userGroup userGroupOfServiceGroup
+		var userGroup UserGroupOfServiceGroup
 		err := rows.Scan(&userGroup.MapID, &userGroup.UsergroupID, &userGroup.UsergroupName, &userGroup.PolicyID, &userGroup.PolicyName, &userGroup.Privilege, &userGroup.AddedAt)
 		if err != nil {
 			return userGroups, err

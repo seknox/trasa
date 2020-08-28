@@ -14,13 +14,6 @@ func InitStore(con *global.State) {
 
 }
 
-//func InitServiceStoreMock() *servicemocks.ServiceStoreMock {
-//	// initialize local state
-//	mockApp := new(servicemocks.ServiceStoreMock)
-//	Store = mockApp
-//	return mockApp
-//}
-
 //Store is the package state variable which contains database connections
 var Store adapter
 

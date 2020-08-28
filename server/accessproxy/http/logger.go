@@ -2,6 +2,7 @@ package http
 
 import (
 	"fmt"
+	"github.com/sirupsen/logrus"
 
 	"net/http"
 	"net/http/httputil"
@@ -9,9 +10,9 @@ import (
 	"time"
 )
 
-func passwordManAndLogger(r *http.Request, sessionID, csrfToken, userName string, isSSO bool, sessionRecord string) {
+func passwordManAndLogger(r *http.Request, sessionID, csrfToken, userName string, isSSO bool, sessionRecord string) error {
 	if sessionRecord != "true" {
-		return
+		return nil
 	}
 
 	var buf []byte
@@ -22,18 +23,22 @@ func passwordManAndLogger(r *http.Request, sessionID, csrfToken, userName string
 
 	dump, err := httputil.DumpRequest(r, false)
 	if err != nil {
-		fmt.Println(err)
-		return
+		logrus.Error(err)
+		return err
 	}
 
 	directoryBuilder := fmt.Sprintf("/var/trasa/thg/logs/%s", sessionID)
 
-	createDirIfNotExist(directoryBuilder)
+	err = createDirIfNotExist(directoryBuilder)
+	if err != nil {
+		return err
+	}
 
 	logPath := fmt.Sprintf("%s/%s.http-raw", directoryBuilder, sessionID)
 	file, err := os.OpenFile(logPath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0755)
 	if err != nil {
-		fmt.Println(err)
+		logrus.Error(err)
+		return err
 	}
 	defer file.Close()
 
@@ -65,36 +70,19 @@ func passwordManAndLogger(r *http.Request, sessionID, csrfToken, userName string
 
 	_, err = file.Write(buf)
 	if err != nil {
-		fmt.Println(err)
+		logrus.Error(err)
+		return err
 	}
+	return nil
 }
 
-type rawSession struct {
-	Time string
-	Data string
-}
-
-func createDirIfNotExist(dir string) {
+func createDirIfNotExist(dir string) error {
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
 		err = os.MkdirAll(dir, 0755)
 		if err != nil {
-			panic(err)
+			logrus.Error(err)
+			return err
 		}
 	}
-}
-
-func createFile(path string) {
-	// detect if file exists
-	_, err := os.Stat(path)
-
-	// create file if not exists
-	if os.IsNotExist(err) {
-		file, err := os.Create(path)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		defer file.Close()
-	}
-
+	return nil
 }

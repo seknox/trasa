@@ -155,7 +155,7 @@ func UpdateService(w http.ResponseWriter, r *http.Request) {
 
 }
 
-type reverseProxyReq struct {
+type ReverseProxyReq struct {
 	ServiceID string              `json:"serviceID"`
 	Name      string              `json:"name"`
 	Proxy     models.ReverseProxy `json:"proxy"`
@@ -165,7 +165,7 @@ type reverseProxyReq struct {
 func UpdateHTTPProxy(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
 
-	var req reverseProxyReq
+	var req ReverseProxyReq
 
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logrus.Error(err)

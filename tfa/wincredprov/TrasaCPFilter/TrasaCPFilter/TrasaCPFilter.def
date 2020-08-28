@@ -1,0 +1,5 @@
+LIBRARY TrasaCPFilter.DLL
+
+EXPORTS
+    DllCanUnloadNow                                 PRIVATE
+    DllGetClassObject                               PRIVATE

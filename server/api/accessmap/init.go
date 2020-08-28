@@ -30,6 +30,6 @@ type accessMapAdapter interface {
 	UpdateServiceGroupUserGroupMap(mapID, orgID, privilege string) error
 	DeleteServiceGroupUserGroupMap(mapID, orgID string) (string, string, error)
 
-	GetAssignedUserGroupsWithPolicies(serviceGroupID, orgID string) ([]userGroupOfServiceGroup, error)
+	GetAssignedUserGroupsWithPolicies(serviceGroupID, orgID string) ([]UserGroupOfServiceGroup, error)
 	GetUserGroupsToAddInServiceGroup(orgID string) ([]models.Group, error)
 }

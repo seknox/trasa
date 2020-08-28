@@ -143,7 +143,7 @@ func DeletePolicies(w http.ResponseWriter, r *http.Request) {
 		err := Store.DeletePolicy(v, userContext.User.OrgID)
 		if err != nil {
 			logrus.Error(err)
-			utils.TrasaResponse(w, 200, "failed", "error fetching group detail", "Policy not deleted")
+			utils.TrasaResponse(w, 200, "failed", "Could not delete policy", "Policy not deleted")
 			return
 		}
 		deletedNum = deletedNum + 1
