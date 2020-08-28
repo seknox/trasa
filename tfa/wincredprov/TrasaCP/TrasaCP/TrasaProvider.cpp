@@ -1,11 +1,4 @@
-//
-// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-// ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-// PARTICULAR PURPOSE.
-//
-// Copyright (c) 2006 Microsoft Corporation. All rights reserved.
-//
+ 
 // TrasaProvider implements ICredentialProvider, which is the main
 // interface that logonUI uses to decide which tiles to display.
 // In this sample, we have decided to show two tiles, one for

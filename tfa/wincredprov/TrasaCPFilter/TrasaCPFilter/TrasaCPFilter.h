@@ -1,4 +1,3 @@
-#pragma once
 /* * * * * * * * * * * * * * * * * * * * *
 **
 ** Copyright 2012 Dominik Pretzsch
