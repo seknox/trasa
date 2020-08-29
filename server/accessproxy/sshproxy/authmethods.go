@@ -327,7 +327,7 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 		SSHStore.UpdateSessionUser(conn.RemoteAddr(), &userDetails)
 		sessionMeta.params.UserID = userDetails.ID
 		sessionMeta.params.OrgID = userDetails.OrgID
-		sessionMeta.params.Email = userDetails.Email
+		sessionMeta.params.TrasaID = userDetails.Email
 
 	}
 
@@ -340,20 +340,17 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 	//	return nil, fmt.Errorf("get access map: %v", err)
 	//}
 
-	//if service is not chosen (not embedded in ssh certificate)
-	if sessionMeta.AuthType == consts.SSH_AUTH_TYPE_PUB || sessionMeta.AuthType == consts.SSH_AUTH_TYPE_PASSWORD {
-		service, err := chooseService(conn.User(), sessionMeta.params.UserID, sessionMeta.params.Email, challengeUser)
-		if err != nil {
-			logrus.Error(err)
-			challengeUser("", "Cannot access this service", nil, nil)
-			return nil, err
-		}
-		sessionMeta.UpdateService(service)
-		//sessionMeta.params.ServiceName = params.ServiceName
-		//sessionMeta.params.ServiceID = params.ServiceID
-		//sessionMeta.params.Hostname = params.Hostname
-		//sessionMeta.params.Policy=params.Policy
+	service, err := chooseService(conn.User(), sessionMeta.params.UserID, sessionMeta.params.TrasaID, challengeUser)
+	if err != nil {
+		logrus.Error(err)
+		challengeUser("", "Cannot access this service", nil, nil)
+		return nil, err
 	}
+	sessionMeta.UpdateService(service)
+	//sessionMeta.params.ServiceName = params.ServiceName
+	//sessionMeta.params.ServiceID = params.ServiceID
+	//sessionMeta.params.Hostname = params.Hostname
+	//sessionMeta.params.Policy=params.Policy
 
 	sessionMeta.params.Privilege = conn.User()
 	policy, reason, err := SSHStore.checkPolicy(&models.ConnectionParams{
@@ -372,60 +369,56 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 		challengeUser("", string(reason), nil, nil)
 		return nil, err
 	}
-	sessionMeta.params.Policy = *policy
+	sessionMeta.policy = policy
 	sessionMeta.log.SessionRecord = policy.RecordSession
 
 	totp := ""
 
-	if sessionMeta.AuthType != consts.SSH_AUTH_TYPE_DACERT {
+	ans, _ := challengeUser("user",
+		"Second factor authentication",
+		[]string{"\n\rEnter OTP(Blank for U2F): "},
+		[]bool{true})
 
-		ans, _ := challengeUser("user",
-			"Second factor authentication",
-			[]string{"\n\rEnter OTP(Blank for U2F): "},
-			[]bool{true})
+	if len(ans) != 1 {
+		logrus.Debug("User canceled")
+		return nil, ssh.ErrNoAuth
+	}
 
-		if len(ans) != 1 {
-			logrus.Debug("User canceled")
-			return nil, ssh.ErrNoAuth
+	totp = ans[0]
+	tfaMethod := "u2f"
+	if totp != "" {
+		tfaMethod = "totp"
+	}
+
+	//logrus.Debug(sessionMeta.params.Hostname)
+	//logrus.Debug(sessionMeta.params.ServiceID)
+	//logrus.Debug(sessionMeta.params.ServiceName)
+
+	//logrus.Debug(utils.MarshallStruct(sessionMeta.params))
+
+	if sessionMeta.policy.TfaRequired {
+		orgDetail, err := orgs.Store.Get(sessionMeta.params.OrgID)
+		if err != nil {
+			logrus.Error(err)
 		}
 
-		totp = ans[0]
-		tfaMethod := "u2f"
-		if totp != "" {
-			tfaMethod = "totp"
+		deviceID, reason, ok := tfa.HandleTfaAndGetDeviceID(nil,
+			tfaMethod,
+			totp, sessionMeta.params.UserID,
+			sessionMeta.log.UserIP,
+			sessionMeta.params.ServiceName,
+			orgDetail.Timezone,
+			orgDetail.OrgName,
+			sessionMeta.params.OrgID)
+
+		if !ok {
+			logrus.Trace("tfa failed ", reason)
+			sessionMeta.log.FailedReason = reason
+			sessionMeta.log.TfaDeviceID = deviceID
+			sessionMeta.log.Status = false
+			challengeUser("", string(reason), nil, nil)
+			return nil, errors.New("tfa failed")
 		}
-
-		//logrus.Debug(sessionMeta.params.Hostname)
-		//logrus.Debug(sessionMeta.params.ServiceID)
-		//logrus.Debug(sessionMeta.params.ServiceName)
-
-		//logrus.Debug(utils.MarshallStruct(sessionMeta.params))
-
-		if sessionMeta.params.Policy.TfaRequired {
-			orgDetail, err := orgs.Store.Get(sessionMeta.params.OrgID)
-			if err != nil {
-				logrus.Error(err)
-			}
-
-			deviceID, reason, ok := tfa.HandleTfaAndGetDeviceID(nil,
-				tfaMethod,
-				totp, sessionMeta.params.UserID,
-				sessionMeta.log.UserIP,
-				sessionMeta.params.ServiceName,
-				orgDetail.Timezone,
-				orgDetail.OrgName,
-				sessionMeta.params.OrgID)
-
-			if !ok {
-				logrus.Trace("tfa failed ", reason)
-				sessionMeta.log.FailedReason = reason
-				sessionMeta.log.TfaDeviceID = deviceID
-				sessionMeta.log.Status = false
-				challengeUser("", string(reason), nil, nil)
-				return nil, errors.New("tfa failed")
-			}
-		}
-
 	}
 
 	challengeUser("", "Checking host key", nil, nil)
@@ -467,7 +460,7 @@ func updateSessionCredentials(sess *Session, signer ssh.Signer, hostkeyCallback 
 					answers[0] = password
 					return answers, nil
 				} else if strings.Contains(questions[0], "email") {
-					answers[0] = sess.params.Email
+					answers[0] = sess.params.TrasaID
 					return answers, nil
 				} else if strings.Contains(questions[0], "totp") {
 					answers[0] = totp
