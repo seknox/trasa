@@ -33,15 +33,22 @@ func Auth(trasaID string, newTrasaID bool) (certPath string) {
 		return
 	}
 
-	extCommCmd := exec.Command("/Users/bhrg3se/seknox/code/trasa/trasada/trasaExtNative/trasaExtNative", "get")
+	pubKey, _, err := api.Auth(trasaID, pass)
+	if err != nil {
+		logger.Debug(err)
+		fmt.Println("Login failed")
+		return
+	}
+
+	extCommCmd := exec.Command("/Users/bhrg3se/seknox/code/trasa/trasada/trasaExtNative/trasaExtNative", "get", pubKey, trasaID, config.Context.TRASA_URL)
 	out, err := extCommCmd.CombinedOutput()
 	if err != nil {
 		logger.Debug(err)
 		fmt.Println("Could not get device hygiene trasaExtComm")
 		return
 	}
-	fmt.Println(string(out))
-	fmt.Println(trasaID, ":", pass)
+	fmt.Println(":" + string(out) + ":")
+	//fmt.Println(trasaID, ":", pass)
 	sshCertBytes, err := api.SendHygiene(trasaID, pass, string(out))
 	if err != nil {
 		fmt.Println("Could not update device hygiene")

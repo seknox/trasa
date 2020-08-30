@@ -305,7 +305,6 @@ func SyncExtension(w http.ResponseWriter, r *http.Request) {
 
 type UpdateHygienereq struct {
 	TrasaID       string `json:"trasaID"`
-	Password      string `json:"password"`
 	DeviceHygiene string `json:"deviceHygiene"`
 }
 
