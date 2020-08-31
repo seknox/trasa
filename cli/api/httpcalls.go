@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/tls"
 	"encoding/json"
+	"fmt"
 	"github.com/seknox/trasa/cli/config"
 	"github.com/seknox/trasa/server/api/auth"
 	"github.com/seknox/trasa/server/consts"
@@ -16,10 +17,25 @@ import (
 )
 
 // TrasaAuth gets apps assigned to user
-func SendHygiene(email, pass, hygiene string) ([]byte, error) {
+func SendHygiene(email, pass string, hygiene []byte, pubKey string) ([]byte, error) {
+
+	var hygieneWithKey struct {
+		ClientPubKey string `json:"clientPubKey"`
+		EncryptedDH  string `json:"encryptedDH"`
+	}
+
+	err := json.Unmarshal(hygiene, &hygieneWithKey)
+	if err != nil {
+		logger.Debug(err)
+		fmt.Println("Invalid device hygiene from trasaExtComm")
+		return nil, err
+	}
+
 	var reqBody auth.UpdateHygienereq
 	reqBody.TrasaID = email
-	reqBody.DeviceHygiene = hygiene
+	reqBody.DeviceHygiene = hygieneWithKey.EncryptedDH
+	reqBody.ClientKey = hygieneWithKey.ClientPubKey
+	reqBody.Token = pubKey
 
 	url := config.Context.TRASA_URL + "/auth/device/cli/updatehygiene"
 	//logger.Debug((reqBody.PublicKey))

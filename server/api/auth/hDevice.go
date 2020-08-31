@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"github.com/seknox/trasa/server/api/logs"
 	"github.com/seknox/trasa/server/api/providers/ca"
+	"github.com/seknox/trasa/server/api/redis"
 	"github.com/seknox/trasa/server/api/users"
 	"golang.org/x/crypto/ssh"
 	"io"
@@ -306,6 +307,8 @@ func SyncExtension(w http.ResponseWriter, r *http.Request) {
 type UpdateHygienereq struct {
 	TrasaID       string `json:"trasaID"`
 	DeviceHygiene string `json:"deviceHygiene"`
+	ClientKey     string `json:"clientKey"`
+	Token         string `json:"token"`
 }
 
 func UpdateHygiene(w http.ResponseWriter, r *http.Request) {
@@ -317,18 +320,12 @@ func UpdateHygiene(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	authlog := logs.NewLog(r, "updateHyg")
+
 	userDetailFromDB, err := Store.GetLoginDetails(req.TrasaID, "")
 	if err != nil {
 		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "User not found", "Ext login", nil)
-		return
-	}
-
-	////  retrieve secret key for this request.
-	secretKeyFromKex, ok := global.ECDHKexDerivedKey[req.TrasaID]
-	if !ok {
-		logrus.Tracef("key not found in Kex store for %s ", req.TrasaID)
-		utils.TrasaResponse(w, 200, "failed", "key not found in Kex store", "Device hygiene update", nil)
 		return
 	}
 
@@ -339,23 +336,56 @@ func UpdateHygiene(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// decrypt the device details.
-	decryptedBytes, err := utils.AESDecrypt(secretKeyFromKex.Secretkey[:], dhBytes)
-	if err != nil {
-		logrus.Debug(err)
-		utils.TrasaResponse(w, 200, "failed", "failed to decrypt data", "Device hygiene update", nil)
+	logrus.Info(req.Token, "+")
+
+	privKey, err := redis.Store.Get(req.Token, "priv")
+
+	if err != nil || privKey == "" {
+		err := logs.Store.LogLogin(&authlog, consts.REASON_INVALID_TOKEN, false)
+		if err != nil {
+			logrus.Error(err)
+		}
+
+		utils.TrasaResponse(w, 200, "failed", "invalid token", "Device hygiene update", nil)
 		return
 	}
 
-	//delete secret key from store
-	delete(global.ECDHKexDerivedKey, req.TrasaID)
-
-	// unmarshall decryptedBytes to deviceDetail struct
-	var dh DeviceDetail
-	err = json.Unmarshal(decryptedBytes, &dh)
+	privFromHexStr, err := hex.DecodeString(privKey)
 	if err != nil {
-		logrus.Debug("cannot unmarshall decrypted Device Hygiene", err)
-		utils.TrasaResponse(w, 200, "failed", "failed to unmarshall device hygiene", "Device hygiene update", nil)
+		logrus.Errorf("privFromHexStr: %v ", err)
+		utils.TrasaResponse(w, 200, "failed", "could not decode private key", "Device hygiene update", nil)
+		return
+	}
+
+	pubFromHexStr, err := hex.DecodeString(req.ClientKey)
+	if err != nil {
+		logrus.Errorf("pubFromHexStr: %v ", err)
+		utils.TrasaResponse(w, 200, "failed", "could not decode public key", "Device hygiene update", nil)
+		return
+	}
+
+	var privBytes [32]byte
+	var pubBytes [32]byte
+
+	copy(privBytes[:], privFromHexStr)
+	copy(pubBytes[:], pubFromHexStr)
+
+	dhBytes, err = hex.DecodeString(req.DeviceHygiene)
+	if err != nil {
+		logrus.Errorf("dhBytes: %v ", err)
+		utils.TrasaResponse(w, 200, "failed", "could not decode string", "Device hygiene update", nil)
+		return
+	}
+
+	sec := utils.ECDHComputeSecret(&privBytes, &pubBytes)
+
+	plainText, err := utils.AESDecrypt(sec, dhBytes)
+
+	var dh DeviceDetail
+	err = json.Unmarshal(plainText, &dh)
+	if err != nil {
+		logrus.Errorf("json.Unmarshal(plainText, &dh): %v ", err)
+		utils.TrasaResponse(w, 200, "failed", "could not unmarshall", "Device hygiene update", nil)
 		return
 	}
 

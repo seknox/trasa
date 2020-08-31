@@ -47,9 +47,8 @@ func Auth(trasaID string, newTrasaID bool) (certPath string) {
 		fmt.Println("Could not get device hygiene trasaExtComm")
 		return
 	}
-	fmt.Println(":" + string(out) + ":")
-	//fmt.Println(trasaID, ":", pass)
-	sshCertBytes, err := api.SendHygiene(trasaID, pass, string(out))
+	//fmt.Println(trasaID, ":", pubKey)
+	sshCertBytes, err := api.SendHygiene(trasaID, pass, out, pubKey)
 	if err != nil {
 		fmt.Println("Could not update device hygiene")
 		logger.Debug(err)
