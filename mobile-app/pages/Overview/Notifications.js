@@ -79,7 +79,7 @@ export class ViewNotification extends Component {
             </CardItem>
 
             <CardItem header>
-              <Text>App Name</Text>
+              <Text>Service Name</Text>
             </CardItem>
             <CardItem>
               <Text>{appName}</Text>

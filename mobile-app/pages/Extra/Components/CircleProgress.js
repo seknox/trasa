@@ -70,7 +70,7 @@ export class CircleProgress extends Component {
   }
 
   render() {
-    const { percent, degree, color } = this.compute(this.props.percent);
+    const { degree, color } = this.compute(this.props.percent);
     return (
       <View
         style={[

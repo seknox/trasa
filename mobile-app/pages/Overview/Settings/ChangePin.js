@@ -38,7 +38,7 @@ const ChangePin = (props) => {
     switch (step) {
       case 0:
         const pin = await SecureStore.getItemAsync('APP_PIN');
-        if (value == pin) {
+        if (value === pin) {
           setNewPin(value);
           setStep(1);
           setInstruction('Enter New Pin');
