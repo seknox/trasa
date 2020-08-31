@@ -10,3 +10,59 @@ server/server
 
 build/etc/trasa/certs/
 build/etc/trasa/static/
+
+
+
+#############################
+#       mobile-app      #####
+#############################
+GoogleService-Info.plist
+google-services.json
+mobile-app/android/build/
+mobile-app/android/.gradle
+mobile-app/android/local.properties
+mobile-app/android/gradle.properties
+mobile-app/android/app/release
+mobile-app/android/app/build
+
+# OSX
+#
+.DS_Store
+
+# Xcode
+#
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+*.xccheckout
+*.moved-aside
+DerivedData
+*.hmap
+*.ipa
+*.xcuserstate
+project.xcworkspace
+
+# Android/IntelliJ
+#
+.idea
+local.properties
+*.iml
+
+# node.js
+#
+mobile-app/node_modules/
+mobile-app/package-lock.json # include if you are using npm - don't use both yarn and npm
+mobile-app/npm-debug.log
+mobile-app/yarn-error.log
+mobile-app/yarn.lock # include if you are using yarn - don't use both npm and yarn
+
+# BUCK
+mobile-app/buck-out/
+\.buckd/
+*.keystore
