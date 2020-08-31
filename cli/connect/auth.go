@@ -40,7 +40,7 @@ func Auth(trasaID string, newTrasaID bool) (certPath string) {
 		return
 	}
 
-	extCommCmd := exec.Command("/Users/bhrg3se/seknox/code/trasa/trasada/trasaExtNative/trasaExtNative", "get", pubKey, trasaID, config.Context.TRASA_URL)
+	extCommCmd := exec.Command("/usr/local/bin/trasaExtNative", "get", pubKey, trasaID, config.Context.TRASA_URL)
 	out, err := extCommCmd.CombinedOutput()
 	if err != nil {
 		logger.Debug(err)
