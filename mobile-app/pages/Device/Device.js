@@ -3,7 +3,7 @@ import DeviceInfo from 'react-native-device-info';
 import JailMonkey from 'jail-monkey';
 import Permissions from 'react-native-permissions';
 // import AppList from 'react-native-installed-apps';
-import NetInfo, {NetInfoStateType} from '@react-native-community/netinfo';
+import NetInfo, { NetInfoStateType } from '@react-native-community/netinfo';
 // import RNAndroidInstalledApps from 'react-native-android-installed-apps';
 
 const getDeviceInfo = async () => {
@@ -33,7 +33,7 @@ const getDeviceInfo = async () => {
   //
   // }
 
-  let deviceInfo = {
+  const deviceInfo = {
     deviceName: await DeviceInfo.getDeviceName(),
     machineID: await DeviceInfo.getUniqueId(),
     brand: await DeviceInfo.getBrand(),
@@ -41,7 +41,7 @@ const getDeviceInfo = async () => {
     deviceModel: await DeviceInfo.getModel(),
   };
 
-  let deviceOS = {
+  const deviceOS = {
     osName: await DeviceInfo.getSystemName(),
     osVersion: await DeviceInfo.getSystemVersion(),
     kernelType: '',
@@ -49,14 +49,11 @@ const getDeviceInfo = async () => {
     latestSecurityPatch: await DeviceInfo.getSecurityPatch(),
     autoUpdate: true,
     jailBroken: await JailMonkey.isJailBroken(),
-    debugModeEnabled: JailMonkey.isDebugged
-      ? await JailMonkey.isDebugged()
-      : false,
+    debugModeEnabled: JailMonkey.isDebugged ? await JailMonkey.isDebugged() : false,
     isEmulator: await DeviceInfo.isEmulator(),
   };
 
-
-  let loginSecurity = {
+  const loginSecurity = {
     deviceAutologinDisabled: await DeviceInfo.isPinOrFingerprintSet(),
     deviceLoginMethod: '',
     idleDeviceScreenLockTime: '',
@@ -65,7 +62,7 @@ const getDeviceInfo = async () => {
 
   const netInfo = await NetInfo.fetch();
 
-  let networkInfo = {
+  const networkInfo = {
     hostname: await DeviceInfo.getHost(),
     interfaceName: netInfo.type || '',
     ipAddress: netInfo.details.ipAddress || '',
@@ -75,20 +72,13 @@ const getDeviceInfo = async () => {
     networkSecurity: '',
   };
 
-  let deviceHygine = {
-    deviceInfo: deviceInfo,
-    deviceOS: deviceOS,
-    loginSecurity: loginSecurity,
-    networkInfo: networkInfo,
+  const deviceHygine = {
+    deviceInfo,
+    deviceOS,
+    loginSecurity,
+    networkInfo,
     endpointSecurity: {},
   };
-
-
-
-
-
-
-
 
   // // //
   // console.log(AppList)

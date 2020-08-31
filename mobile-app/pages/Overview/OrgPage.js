@@ -32,8 +32,7 @@ export default class OrgPage extends Component {
     this.state = {
       apps: [],
       notifs: [
-        {appName: 'win32-A6', username: 'bhrg3se'},
-        {appName: 'ununtu45-A6', username: 'haxor66'},
+
       ],
       info: '{}',
     };
@@ -57,7 +56,7 @@ export default class OrgPage extends Component {
           text: 'Yes',
           onPress: () => {
             // console.log(totpList);
-            totpList = totpList.filter((item) => secret != item.secret);
+            totpList = totpList.filter((item) => secret !== item.secret);
             AsyncStorage.setItem('TOTPlist', JSON.stringify(totpList)).then(
               (r) => {
                 this.props.navigation.navigate('Home',{updated:totpList});
@@ -115,7 +114,7 @@ export default class OrgPage extends Component {
             <View>
               <Body>
                 {/*{this.props.navigation.getParam("floCodes")?<FlotingCodes secret={secret}/>:<NonFloatingCodes secret={secret}/>}*/}
-                <NonFloatingCodes secret={secret} />
+                <TOTPCodeComponent secret={secret} />
               </Body>
             </View>
 
@@ -159,7 +158,7 @@ export default class OrgPage extends Component {
   }
 }
 
-class NonFloatingCodes extends Component {
+class TOTPCodeComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {otp: generateTOTP(props.secret), time: this.second()};

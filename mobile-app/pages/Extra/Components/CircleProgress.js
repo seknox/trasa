@@ -1,9 +1,8 @@
-import React, {Component} from 'react';
-import {StyleSheet, View, Clipboard, TouchableOpacity} from 'react-native';
-import {Text, Toast} from 'native-base';
-import {AnimatedCircularProgress} from 'react-native-circular-progress';
-import {Circle, Text as SVGText, Svg, TSpan} from 'react-native-svg';
-import generateTOTP from '../../../utils/totpGenerate';
+import React, { Component } from 'react';
+import { StyleSheet, View, Clipboard, TouchableOpacity } from 'react-native';
+import { Text } from 'native-base';
+import { AnimatedCircularProgress } from 'react-native-circular-progress';
+import { Circle, Svg } from 'react-native-svg';
 
 const styles = StyleSheet.create({
   circle: {
@@ -18,50 +17,32 @@ const styles = StyleSheet.create({
   },
 });
 
-//Toast.show({text:"Copied",buttonText: 'Okay'})
-
-export default class CircularProgress extends React.Component {
-  render():
-    | React.ReactElement<any>
-    | string
-    | number
-    | {}
-    | React.ReactNodeArray
-    | React.ReactPortal
-    | boolean
-    | null
-    | undefined {
-    return (
-      <AnimatedCircularProgress
-        size={300}
-        width={16}
-        fill={this.props.percent}
-        tintColor="#00e0ff"
-        backgroundColor="#3d5875"
-        padding={0}
-        children={() => (
-          <TouchableOpacity
-            onPress={() => {
-              Clipboard.setString(this.props.otp);
-            }}>
-            <Text style={{fontSize: 50}}>{this.props.otp}</Text>
-          </TouchableOpacity>
-        )}
-        renderCap={({center}) => (
-          <Svg>
-            <Circle
-              cx={center.x}
-              cy={center.y}
-              r="8"
-              fill="#00e0ff"
-              height={'10'}
-            />
-          </Svg>
-        )}
-        // dashedBackground={{ width: 10, gap: 20 }}
-      />
-    );
-  }
+export default function CircularProgress(props) {
+  return (
+    <AnimatedCircularProgress
+      size={300}
+      width={16}
+      fill={props.percent}
+      tintColor="#00e0ff"
+      backgroundColor="#3d5875"
+      padding={0}
+      children={() => (
+        <TouchableOpacity
+          onPress={() => {
+            Clipboard.setString(props.otp);
+          }}
+        >
+          <Text style={{ fontSize: 50 }}>{props.otp}</Text>
+        </TouchableOpacity>
+      )}
+      renderCap={({ center }) => (
+        <Svg>
+          <Circle cx={center.x} cy={center.y} r="8" fill="#00e0ff" height="10" />
+        </Svg>
+      )}
+      // dashedBackground={{ width: 10, gap: 20 }}
+    />
+  );
 }
 
 export class CircleProgress extends Component {
@@ -79,16 +60,17 @@ export class CircleProgress extends Component {
   //   this.setState(this.compute(nextProps.percent));
   // }
   compute(percent) {
-    let degree = percent * 3.6 + 'deg';
-    let color = this.props.color;
+    let degree = `${percent * 3.6}deg`;
+    let { color } = this.props;
     if (percent >= 50) {
       color = this.props.bgcolor;
-      degree = (percent - 50) * 3.6 + 'deg';
+      degree = `${(percent - 50) * 3.6}deg`;
     }
-    return {percent, degree, color};
+    return { percent, degree, color };
   }
+
   render() {
-    let {percent, degree, color} = this.compute(this.props.percent);
+    const { percent, degree, color } = this.compute(this.props.percent);
     return (
       <View
         style={[
@@ -99,7 +81,8 @@ export class CircleProgress extends Component {
             borderRadius: this.props.radius,
             backgroundColor: this.props.bgcolor,
           },
-        ]}>
+        ]}
+      >
         <View
           style={[
             styles.loader,
