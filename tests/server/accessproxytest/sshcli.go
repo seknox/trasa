@@ -186,6 +186,8 @@ func handleKBAuth(t *testing.T) ssh.AuthMethod {
 			if len(questions) != 0 {
 				t.Fatalf(`incorrect number of question, %v want: %d got: %d`, questions, 0, len(questions))
 			}
+			t.Logf("default %s  %v", instruction, questions)
+
 			return nil, nil
 		}
 

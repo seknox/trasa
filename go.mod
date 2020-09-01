@@ -15,6 +15,7 @@ require (
 	github.com/go-ini/ini v1.57.0 // indirect
 	github.com/go-playground/validator/v10 v10.3.0
 	github.com/go-redis/redis/v8 v8.0.0-beta.7
+	github.com/google/goexpect v0.0.0-20200816234442-b5b77125c2c5
 	github.com/gorilla/websocket v1.4.2
 	github.com/hashicorp/vault v1.4.2
 	github.com/hashicorp/vault/api v1.0.5-0.20200317185738-82f498082f02
