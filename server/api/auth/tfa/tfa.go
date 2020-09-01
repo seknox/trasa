@@ -163,16 +163,16 @@ func SendU2F(userID, orgID, appName, ip string) (bool, string) {
 ////////////////////////////
 //TODO check and rename fields
 type notifFederation struct {
-	serviceID string `json:"serviceID"`
-	AppName   string `json:"appSecret"`
-	OrgName   string `json:"orgName"`
-	IpAddress string `json:"IPAddress"`
-	Time      string `json:"time"`
+	ServiceID   string `json:"serviceID"`
+	ServiceName string `json:"serviceName"`
+	OrgName     string `json:"orgName"`
+	IPAddress   string `json:"IPAddress"`
+	Time        string `json:"time"`
 	//DeviceID  string   `json:"deviceId"`
 	FcmTokens []string `json:"fcmTokens"`
 }
 
-func sendNotificationThroughCloudProxy(fcmTokens []string, orgName, appName, ipAddr, time string) (U2f, error) {
+func sendNotificationThroughCloudProxy(fcmTokens []string, orgName, serviceName, ipAddr, time string) (U2f, error) {
 	var requestConfig notifFederation
 	requestConfig.FcmTokens = fcmTokens
 
@@ -180,16 +180,16 @@ func sendNotificationThroughCloudProxy(fcmTokens []string, orgName, appName, ipA
 
 	//requestConfig.DeviceID = deviceID
 	requestConfig.OrgName = orgName
-	requestConfig.AppName = appName
+	requestConfig.ServiceName = serviceName
 	requestConfig.Time = time
-	requestConfig.IpAddress = ipAddr
+	requestConfig.IPAddress = ipAddr
 
 	//urlPath := "https:///onprem2fa"
-	urlPath := global.GetConfig().Trasa.CloudServer + "/api/v3/onprem2fa"
+	urlPath := global.GetConfig().Trasa.CloudServer + "/api/v1/onprem2fa"
 	//urlPath := "http://localhost:3339" + "/api/v1/onprem2fa"
 
 	insecureSkip := global.GetConfig().Security.InsecureSkipVerify
-	result, err := utils.CallTrasaAPI(urlPath, requestConfig, insecureSkip)
+	result, err := notif.Store.CallTrasaCloudProxy(urlPath, requestConfig, insecureSkip)
 	if err != nil {
 		return U2f{}, err
 	}

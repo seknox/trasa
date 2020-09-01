@@ -5,6 +5,7 @@ import Constants from '../../../Constants';
 import EmailSetting from './Emails';
 import OrgAccountSetting from './OrgAccount';
 import PasswordSettings from './PasswordPolicy';
+import FcmConfig from './FCMConfig';
 
 export type PassPolicyProps = {};
 
@@ -39,16 +40,40 @@ export default function SystemStatus() {
       });
   }, []);
 
+  const [orgData, setOrgSetting] = useState({
+    orgName: '',
+    domain: '',
+    primaryContact: '',
+    timezone: '',
+  });
+
+  React.useEffect(() => {
+    axios
+      .get(`${Constants.TRASA_HOSTNAME}/api/v1/org/detail`)
+      .then((r) => {
+        if (r.data.status === 'success') {
+          console.debug('orgData: ', r.data.data[0]);
+          setOrgSetting(r.data.data[0]);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
+
   return (
     <Grid container spacing={2} direction="row" alignItems="center" justify="center">
       <Grid item xs={9}>
-        <OrgAccountSetting />
+        <OrgAccountSetting orgData={orgData} />
       </Grid>
       <Grid item xs={9}>
         <EmailSetting
           emailSetting={emailSetting}
           handleEmailConfigChange={handleEmailConfigChange}
         />
+      </Grid>
+      <Grid item xs={9}>
+        <FcmConfig orgData={orgData} />
       </Grid>
       <Grid item xs={9}>
         <PasswordSettings />

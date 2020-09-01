@@ -93,3 +93,17 @@ func (v *vaultMock) GetTsxVaultKey() (*[32]byte, bool) {
 func (v *vaultMock) SetTsxVaultKey(key *[32]byte, status bool) {
 	panic("implement me")
 }
+
+// SetTsxCPxyKey assigns retreived cloud prxy api key in global state
+func (v *vaultMock) SetTsxCPxyKey(key string) {
+
+	panic("implement me")
+
+}
+
+// GetTsxCPxyKey retreives cloud prxy api key from global state
+func (v *vaultMock) GetTsxCPxyKey() string {
+
+	panic("implement me")
+
+}

@@ -1,0 +1,5 @@
+LIBRARY TrasaCP.DLL
+
+EXPORTS
+    DllCanUnloadNow                                 PRIVATE
+    DllGetClassObject                               PRIVATE

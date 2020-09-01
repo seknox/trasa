@@ -3,10 +3,12 @@ package global
 import (
 	"path/filepath"
 
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
-func parseConfig() (config Config) {
+// ParseConfig uses viper to parse TRASA config file.
+func ParseConfig() (config Config) {
 	absPath, err := filepath.Abs("/etc/trasa/config")
 	if err != nil {
 		panic("config file not found in /etc/trasa/config")
@@ -104,4 +106,37 @@ type Config struct {
 	InternalHosts struct {
 		Hosts string `toml:"hosts"`
 	} `toml:"internalHosts"`
+}
+
+// UpdateTRASACPxyAddr updates TRASA cloud proxy server address.
+func UpdateTRASACPxyAddr(serverAddr string) {
+	absPath, err := filepath.Abs("/etc/trasa/config")
+	if err != nil {
+		logrus.Error(err)
+	}
+	//viper.SetConfigType("toml")
+	viper.SetConfigName("config")
+	viper.AddConfigPath(absPath)
+	if err := viper.ReadInConfig(); err != nil {
+		logrus.Error(err)
+	}
+	err = viper.Unmarshal(&config)
+	if err != nil {
+		logrus.Error(err)
+	}
+
+	viper.Set("trasa.cloudServer", serverAddr)
+
+	config.Trasa.CloudServer = serverAddr
+
+	err = viper.WriteConfig()
+	if err != nil {
+		logrus.Error(err)
+		return
+	}
+
+	// update global config val
+	// config = ParseConfig()
+
+	return
 }

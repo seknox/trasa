@@ -155,6 +155,7 @@ func CallTrasaAPI(path string, reqBody interface{}, insecure bool) (resp models.
 	}
 
 	var req *http.Request
+
 	req, err = http.NewRequest("POST", path, bytes.NewBuffer(reqBodyBytes))
 	if err != nil {
 		return

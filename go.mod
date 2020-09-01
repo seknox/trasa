@@ -4,6 +4,8 @@ go 1.14
 
 require (
 	firebase.google.com/go v3.13.0+incompatible
+	github.com/BurntSushi/toml v0.3.1
+	github.com/andelf/go-curl v0.0.0-20200630032108-fd49ff24ed97
 	github.com/cloudflare/cfssl v1.4.1
 	github.com/digitalocean/godo v1.42.0
 	github.com/dlclark/regexp2 v1.2.0 // indirect

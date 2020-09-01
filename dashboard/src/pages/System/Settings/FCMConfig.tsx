@@ -80,32 +80,50 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function InternalHosts() {
+export default function TsxCloudProxyAccess(props: any) {
   const classes = useStyles();
   const [reqStatus, setReqStatus] = useState(false);
 
-  const [internalHosts, setHosts] = useState('');
+  const [data, setData] = useState({ email: '', cpxy: '' });
+  const [APIKey, setAPIKey] = useState('');
 
-  useEffect(() => {
-    axios.get(`${Constants.TRASA_HOSTNAME}/api/v1/gateway/internalhosts`).then((response) => {
-      if (response.data.status === 'success') {
-        const data = response.data.data[0];
-        setHosts(data);
-      }
-    });
-  }, []);
-
-  function hostChange(e: any) {
-    setHosts(e.target.value);
+  function handlechange(e: any) {
+    setData({ ...data, [e.target.name]: e.target.value });
   }
 
   const submitInternalHosts = () => {
     setReqStatus(true);
-    const req = { internalHosts };
-    axios.post(`${Constants.TRASA_HOSTNAME}/api/v1/gateway/updateinternalhosts`, req).then(() => {
+    // const req = {
+    //   intent: 'REQ_TRASACPXY_ACCESS',
+    //   reqData: { email: data.email, orgid: props.orgData.ID, orgname: props.orgData.orgName },
+    // };
+    const req = { email: data.email, orgid: props.orgData.ID, orgname: props.orgData.orgName };
+    axios.post(`${data.cpxy}/api/v1/reqtrasacpxyaccess`, req).then((r) => {
       setReqStatus(false);
+      if (r.data.status === 'success') {
+        setAPIKey(r.data.data[0]);
+      }
     });
   };
+
+  function obtainKey() {
+    setReqStatus(true);
+
+    const req = { key: APIKey };
+    axios.post(`${data.cpxy}/api/v1/obtaintrasacpxyaccess`, req).then((r) => {
+      setReqStatus(false);
+      if (r.data.status === 'success') {
+        // setAPIKey(r.data.data[0]);
+        // send request to trasacore to store this key.
+        axios
+          .post(`${Constants.TRASA_HOSTNAME}/api/v1/system/settings/cloudproxy/access`, {
+            apiKey: r.data.data[0],
+            tsxCPxyAddr: data.cpxy,
+          })
+          .then(() => {});
+      }
+    });
+  }
 
   return (
     <div className={classes.root}>
@@ -118,7 +136,7 @@ export default function InternalHosts() {
             id="panel1a-header"
           >
             <Typography component="h4" variant="h3">
-              <b>FCM Server Config</b>
+              <b>TRASA Cloud Proxy Access</b>
             </Typography>
           </ExpansionPanelSummary>
         </Grid>
@@ -129,16 +147,37 @@ export default function InternalHosts() {
         <Grid item xs={12} sm={12}>
           <ExpansionPanelDetails>
             <Grid container spacing={2} alignItems="center" justify="center">
-              <Grid item xs={1}>
-                <Typography variant="h4">Hosts : </Typography>
+              <Grid item xs={4}>
+                <Typography variant="h4">Enter TRASA cloud proxy address : </Typography>
               </Grid>
-              <Grid item xs={11}>
+              <Grid item xs={6}>
                 <TextField
                   fullWidth
-                  onChange={hostChange}
-                  name="internalHosts"
-                  value={internalHosts}
-                  defaultValue={internalHosts}
+                  onChange={handlechange}
+                  name="cpxy"
+                  value={data.cpxy}
+                  variant="outlined"
+                  size="small"
+                />
+              </Grid>
+            </Grid>
+          </ExpansionPanelDetails>
+        </Grid>
+
+        <Grid item xs={12} sm={12}>
+          <ExpansionPanelDetails>
+            <Grid container spacing={2} alignItems="center" justify="center">
+              <Grid item xs={4}>
+                <Typography variant="h4">Enter your email : </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  onChange={handlechange}
+                  name="email"
+                  value={data.email}
+                  variant="outlined"
+                  size="small"
                 />
               </Grid>
             </Grid>
@@ -150,10 +189,15 @@ export default function InternalHosts() {
           </div>
         ) : null}
         <ExpansionPanelActions>
-          <Button variant={reqStatus ? 'text' : 'contained'} onClick={submitInternalHosts}>
-            {' '}
-            Save{' '}
-          </Button>
+          {APIKey === '' ? (
+            <Button variant={reqStatus ? 'text' : 'contained'} onClick={submitInternalHosts}>
+              Request Access
+            </Button>
+          ) : (
+            <Button variant={reqStatus ? 'text' : 'contained'} onClick={obtainKey}>
+              Obtain Key
+            </Button>
+          )}
         </ExpansionPanelActions>
       </ExpansionPanel>
       {/* </Grid> */}

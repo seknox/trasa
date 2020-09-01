@@ -6,7 +6,9 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/seknox/trasa/server/api/providers/vault/tsxvault"
 	"github.com/seknox/trasa/server/consts"
+	"github.com/seknox/trasa/server/global"
 	"github.com/seknox/trasa/server/models"
 	"github.com/seknox/trasa/server/utils"
 	"github.com/sirupsen/logrus"
@@ -111,7 +113,7 @@ func UpdateDeviceHygieneSetting(w http.ResponseWriter, r *http.Request) {
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "error parsing request", "Password policy not updated", nil, nil)
+		utils.TrasaResponse(w, 200, "failed", "error parsing request", "device hygiene setting not updated", nil, nil)
 		return
 	}
 
@@ -177,7 +179,7 @@ func UpdateEmailSetting(w http.ResponseWriter, r *http.Request) {
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "error parsing request", "Password policy not updated", nil, nil)
+		utils.TrasaResponse(w, 200, "failed", "error parsing request", "Email setting not updated", nil, nil)
 		return
 	}
 
@@ -231,5 +233,75 @@ func UpdateEmailSetting(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.TrasaResponse(w, 200, "success", "successfully updated email setting", "Password policy updated", nil, nil)
+
+}
+
+// StoreCloudProxyKey handles signed TRASA cloud proxy access key storage.
+func StoreCloudProxyKey(w http.ResponseWriter, r *http.Request) {
+	uc := r.Context().Value("user").(models.UserContext)
+
+	type storekey struct {
+		TsxCPxyAddr string `json:"tsxCPxyAddr"`
+		APIKey      string `json:"apiKey"`
+	}
+
+	var req storekey
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "error parsing request", "StoreCloudProxyKey", nil, nil)
+		return
+	}
+
+	var key models.KeysHolder
+
+	start := ""
+	if len(req.APIKey) > 4 {
+		start = req.APIKey[0:4]
+	}
+
+	key.OrgID = uc.User.OrgID
+	key.KeyID = utils.GetRandomString(5)
+	key.KeyTag = fmt.Sprintf("%sxxxx-xxxx...", start)
+	key.AddedBy = uc.User.ID
+	key.AddedAt = time.Now().Unix()
+	key.KeyName = consts.GLOBAL_CLOUDPROXY_APIKEY
+	key.KeyVal = []byte(req.APIKey)
+	_, err := EncryptAndStoreKeyOrToken(key)
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "failed to encrypt key", "CloudProxyKey not updated")
+		return
+	}
+
+	// update config
+	global.UpdateTRASACPxyAddr(req.TsxCPxyAddr)
+	tsxvault.Store.SetTsxCPxyKey(req.APIKey)
+
+	// proceed updating global setting
+	req.APIKey = key.KeyTag
+	j, err := json.Marshal(req)
+	if err != nil {
+		logrus.Error(err)
+	}
+
+	var store models.GlobalSettings
+	store.SettingValue = string(j)
+	store.Status = true
+	store.OrgID = uc.User.OrgID
+	store.SettingType = consts.GLOBAL_CLOUDPROXY_APIKEY
+	store.UpdatedBy = uc.User.ID
+	store.UpdatedOn = time.Now().Unix()
+
+	err = Store.UpdateGlobalSetting(store)
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "failed to store key", "CloudProxyKey not updated", nil, nil)
+		return
+	}
+
+	logrus.Trace("CLOUDPROXYADDR: ", global.GetConfig().Trasa.CloudServer)
+
+	utils.TrasaResponse(w, 200, "success", "key stored", "CloudProxyKey updated", nil, nil)
 
 }
