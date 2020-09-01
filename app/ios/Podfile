@@ -1,0 +1,59 @@
+require_relative '../node_modules/react-native/scripts/react_native_pods'
+require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+require_relative '../node_modules/react-native-unimodules/cocoapods.rb'
+
+platform :ios, '10.0'
+
+target 'mobileapp' do
+  use_unimodules!
+  config = use_native_modules!
+
+  use_react_native!(:path => config["reactNativePath"])
+
+  target 'mobileappTests' do
+    inherit! :complete
+    # Pods for testing
+  end
+
+  # Enables Flipper.
+  #
+  # Note that if you have use_frameworks! enabled, Flipper will not work and
+  # you should disable these next few lines.
+  use_flipper!
+  post_install do |installer|
+    flipper_post_install(installer)
+  end
+
+
+
+
+
+
+
+
+  permissions_path = '../node_modules/react-native-permissions/ios'
+
+    pod 'Permission-Camera', :path => "#{permissions_path}/Camera.podspec"
+    pod 'Permission-Notifications', :path => "#{permissions_path}/Notifications.podspec"
+
+
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+
+
+  pod 'react-native-camera', path: '../node_modules/react-native-camera', subspecs: [
+  'FaceDetectorMLKit',
+    'BarcodeDetectorMLKit'
+  ]
+
+
+
+end
+
+target 'mobileapp-tvOS' do
+  # Pods for mobileapp-tvOS
+
+  target 'mobileapp-tvOSTests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+end

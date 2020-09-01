@@ -14,36 +14,36 @@ build/etc/trasa/static/
 
 
 #############################
-#       mobile-app      #####
+#       app      #####
 #############################
 GoogleService-Info.plist
 google-services.json
-mobile-app/android/build/
-mobile-app/android/.gradle
-mobile-app/android/local.properties
-mobile-app/android/gradle.properties
-mobile-app/android/app/release
-mobile-app/android/app/build
+app/android/build/
+app/android/.gradle
+app/android/local.properties
+app/android/gradle.properties
+app/android/app/release
+app/android/app/build
 
 # Bundle artifact
 *.jsbundle
 
 # CocoaPods
-mobile-app/ios/Pods/
+app/ios/Pods/
 
 # BUCK
-mobile-app/buck-out/
+app/buck-out/
 \.buckd/
 *.keystore
 !debug.keystore
 
 # node.js
 #
-mobile-app/node_modules/
-mobile-app/package-lock.json # include if you are using npm - don't use both yarn and npm
-mobile-app/npm-debug.log
-mobile-app/yarn-error.log
-mobile-app/yarn.lock # include if you are using yarn - don't use both npm and yarn
+app/node_modules/
+app/package-lock.json # include if you are using npm - don't use both yarn and npm
+app/npm-debug.log
+app/yarn-error.log
+app/yarn.lock # include if you are using yarn - don't use both npm and yarn
 
 
 
