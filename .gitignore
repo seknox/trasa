@@ -1,8 +1,8 @@
+##########################
 # TRASA server binary
+########################
 trasa-server
-
 trasa
-
 server/server
 
 .vscode/
@@ -24,6 +24,64 @@ mobile-app/android/local.properties
 mobile-app/android/gradle.properties
 mobile-app/android/app/release
 mobile-app/android/app/build
+
+# Bundle artifact
+*.jsbundle
+
+# CocoaPods
+mobile-app/ios/Pods/
+
+# BUCK
+mobile-app/buck-out/
+\.buckd/
+*.keystore
+!debug.keystore
+
+# node.js
+#
+mobile-app/node_modules/
+mobile-app/package-lock.json # include if you are using npm - don't use both yarn and npm
+mobile-app/npm-debug.log
+mobile-app/yarn-error.log
+mobile-app/yarn.lock # include if you are using yarn - don't use both npm and yarn
+
+
+
+
+
+##############################
+########   Dashboard ###########
+################################
+
+# node.js
+#
+dashboard/node_modules/
+dashboard/package-lock.json # include if you are using npm - don't use both yarn and npm
+dashboard/npm-debug.log
+dashboard/yarn-error.log
+dashboard/yarn.lock # include if you are using yarn - don't use both npm and yarn
+dashboard/build
+
+
+
+
+
+
+
+
+
+
+# fastlane
+#
+# It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
+# screenshots whenever they are needed.
+# For more information about the recommended setup visit:
+# https://docs.fastlane.tools/best-practices/source-control/
+
+*/fastlane/report.xml
+*/fastlane/Preview.html
+*/fastlane/screenshots
+
 
 # OSX
 #
@@ -51,18 +109,6 @@ project.xcworkspace
 # Android/IntelliJ
 #
 .idea
+.gradle
 local.properties
 *.iml
-
-# node.js
-#
-mobile-app/node_modules/
-mobile-app/package-lock.json # include if you are using npm - don't use both yarn and npm
-mobile-app/npm-debug.log
-mobile-app/yarn-error.log
-mobile-app/yarn.lock # include if you are using yarn - don't use both npm and yarn
-
-# BUCK
-mobile-app/buck-out/
-\.buckd/
-*.keystore
