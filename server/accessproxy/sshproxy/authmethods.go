@@ -2,6 +2,7 @@ package sshproxy
 
 import (
 	"database/sql"
+	"github.com/seknox/trasa/server/api/accesscontrol"
 
 	"github.com/pkg/errors"
 	"github.com/seknox/trasa/server/api/accessmap"
@@ -31,7 +32,8 @@ import (
 const (
 	gotoKeyboardInteractive = "trasa: goto_keyboard_interactive"
 	gotoPublicKey           = "trasa: goto_public_key"
-	failNow                 = "trasa: fail_now"
+	//gotoPublicKeyOrKeyboardInteractive           = "trasa: goto_public_key_or_kb_interactive"
+	failNow = "trasa: fail_now"
 )
 
 //Decides which auth method to use next from previous error
@@ -331,7 +333,7 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 
 	}
 
-	logrus.Debug(sessionMeta.params.UserID, sessionMeta.params.OrgID)
+	//logrus.Debug(sessionMeta.params.UserID, sessionMeta.params.OrgID)
 	//call api to authenticate and  enumerate accessible servers
 	//accessableServiceDetails, err = users.Store.GetAccessMapDetails(sessionMeta.params.UserID, sessionMeta.params.OrgID)
 	//if err != nil {
@@ -419,6 +421,16 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 			challengeUser("", string(reason), nil, nil)
 			return nil, errors.New("tfa failed")
 		}
+	}
+
+	logrus.Trace(sessionMeta.params.AccessDeviceID)
+	reason, ok, err := accesscontrol.CheckDevicePolicy(policy.DevicePolicy, sessionMeta.params.AccessDeviceID, sessionMeta.log.TfaDeviceID, sessionMeta.params.OrgID)
+	if err != nil {
+		logrus.Error(err)
+	}
+
+	if !ok {
+		return nil, errors.Errorf("device policy failed: %s", reason)
 	}
 
 	challengeUser("", "Checking host key", nil, nil)

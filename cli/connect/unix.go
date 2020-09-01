@@ -40,6 +40,8 @@ func connectUnix(cmdType, user, port, certPath string, otherArgs ...string) {
 	//sshCmd := exec.Command(`ssh`, "-l", utils.Context.SSH_USERNAME, "-i", certPath, "localhost", "-p", "8022")
 	c := exec.Command(cmdType, sshArgs...)
 
+	fmt.Println(c.String())
+
 	c.Stdin = os.Stdin
 	c.Stdout = os.Stdout
 	c.Stderr = os.Stderr

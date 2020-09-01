@@ -404,7 +404,7 @@ func UpdateHygiene(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = users.Store.UpdatePublicKey(userDetailFromDB.ID, strings.TrimSpace(string(publicKeyBytes)))
+	err = users.Store.UpdatePublicKey(userDetailFromDB.ID, strings.TrimSpace(string(certBytes)))
 	if err != nil {
 		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "could not update public key", "Update hygiene", nil)
@@ -493,8 +493,8 @@ func generateTempCertificateForDeviceAgent(deviceID, orgID string) (privateKeyBy
 	}
 	serial := binary.LittleEndian.Uint64(buf)
 
-	extentions := make(map[string]string)
-	extentions = map[string]string{
+	//extentions := make(map[string]string)
+	extentions := map[string]string{
 		"permit-X11-forwarding":   "",
 		"permit-agent-forwarding": "",
 		"permit-port-forwarding":  "",
@@ -504,14 +504,14 @@ func generateTempCertificateForDeviceAgent(deviceID, orgID string) (privateKeyBy
 		"trasa-device-id":         deviceID,
 	}
 
-	principals := []string{"*"}
+	//principals := []string{}
 
 	cert := ssh.Certificate{
 		Key:             publicKeySSH,
 		Serial:          serial,
 		CertType:        ssh.UserCert,
 		KeyId:           utils.GetRandomString(10),
-		ValidPrincipals: principals,
+		ValidPrincipals: nil,
 		ValidAfter:      uint64(time.Now().UTC().Unix()),
 		ValidBefore:     uint64(time.Now().UTC().Add(time.Minute * 5).Unix()),
 		Permissions: ssh.Permissions{

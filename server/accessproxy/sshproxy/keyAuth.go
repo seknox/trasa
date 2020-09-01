@@ -43,11 +43,10 @@ func publicKeyCallbackHandler(conn ssh.ConnMetadata, key ssh.PublicKey) (*ssh.Pe
 		return nil, errors.New(gotoPublicKey)
 	}
 
-	//tfa already done from device agent
-	//parse and validate connection params embedded in ssh certificate
+	//parse and validate connection deviceID embedded in ssh certificate
 	err = SSHStore.parseSSHCert(conn.RemoteAddr(), key)
 	if err != nil {
-		return nil, errors.New(gotoKeyboardInteractive)
+		return nil, errors.New(gotoPublicKey)
 	}
 
 	return nil, errors.New(gotoKeyboardInteractive)

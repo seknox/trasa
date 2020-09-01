@@ -37,7 +37,6 @@ var runFuncGenerate = func(cmdType string) func(cmd *cobra.Command, args []strin
 		}
 		connect.ConnectRemote(cmdType, *config.Context.SSH_USERNAME, "8022", certPath, args...)
 
-		// Do Stuff Here
 	}
 
 }

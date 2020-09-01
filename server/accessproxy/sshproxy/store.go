@@ -239,13 +239,6 @@ func (s Store) GetGuestChannel(sessionID string) (chan GuestClient, error) {
 
 func (s Store) checkPolicy(params *models.ConnectionParams) (*models.Policy, consts.FailedReason, error) {
 
-	//TODO support device hygiene check for cli access
-	//fail if setting is enabled
-	//sett, err := system.Store.GetGlobalSetting(params.OrgID, consts.GLOBAL_DEVICE_HYGIENE_CHECK)
-	//if err != nil || sett.Status {
-	//	return nil, consts.REASON_DEVICE_POLICY_FAILED, err
-	//}
-
 	policy, adhoc, err := policies.Store.GetAccessPolicy(params.UserID, params.ServiceID, params.Privilege, params.OrgID)
 
 	if errors.Is(err, sql.ErrNoRows) {
