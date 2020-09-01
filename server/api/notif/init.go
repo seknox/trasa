@@ -34,4 +34,5 @@ type adapter interface {
 	SendEmail(orgID string, emailType consts.EmailType, emailTemplate interface{}) error
 
 	SendPushNotification(fcmToken, orgName, appName, ipAddr, time, challenge string) error
+	CallTrasaCloudProxy(path string, reqBody interface{}, insecure bool) (resp models.TrasaResponseStruct, err error)
 }

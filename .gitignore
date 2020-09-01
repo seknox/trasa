@@ -11,6 +11,11 @@ server/server
 build/etc/trasa/certs/
 build/etc/trasa/static/
 
+##########################
+# Jest files
+###########################
+dashboard/coverage
+
 ###################################
 # visual studio and win project
 ###################################

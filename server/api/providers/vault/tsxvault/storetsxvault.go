@@ -408,3 +408,17 @@ func (s vaultStore) SetTsxVaultKey(key *[32]byte, status bool) {
 	s.TsxvKey.Key = key
 	s.TsxvKey.State = status
 }
+
+// SetTsxCPxyKey assigns retreived cloud prxy api key in global state
+func (s vaultStore) SetTsxCPxyKey(key string) {
+
+	s.TsxCPxyKey = key
+
+}
+
+// GetTsxCPxyKey retreives cloud prxy api key from global state
+func (s vaultStore) GetTsxCPxyKey() string {
+
+	return s.TsxCPxyKey
+
+}

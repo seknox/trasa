@@ -74,17 +74,8 @@ export default function OrgAccountSetting(props: any) {
   }
 
   React.useEffect(() => {
-    axios
-      .get(`${Constants.TRASA_HOSTNAME}/api/v1/org/detail`)
-      .then((r) => {
-        if (r.data.status === 'success') {
-          setOrgSetting(r.data.data[0]);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, []);
+    setOrgSetting(props.orgData);
+  }, [props.orgData]);
 
   const [reqStatus, setReqStatus] = useState(false);
 

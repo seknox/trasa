@@ -290,6 +290,7 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		r.Post("/system/settings/email/update", system.UpdateEmailSetting)
 		r.Post("/system/settings/devicehygienecheck/update", system.UpdateDeviceHygieneSetting)
 		r.Post("/system/settings/dynamicaccess/update", system.UpdateDynamicAccessSetting)
+		r.Post("/system/settings/cloudproxy/access", system.StoreCloudProxyKey)
 
 		// Identity Providers
 		r.Post("/providers/uidp/create", uidp.CreateIdp)

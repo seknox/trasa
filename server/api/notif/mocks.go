@@ -38,3 +38,7 @@ func (n *notifMock) SendEmail(orgID string, emailType consts.EmailType, emailTem
 func (n *notifMock) SendPushNotification(fcmToken, orgName, appName, ipAddr, time, challenge string) error {
 	panic("implement me")
 }
+
+func (n *notifMock) CallTrasaCloudProxy(path string, reqBody interface{}, insecure bool) (resp models.TrasaResponseStruct, err error) {
+	panic("implement me")
+}
