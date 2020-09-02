@@ -65,6 +65,7 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		r.Post("/crypto/kex", crypt.Kex)
 		r.Post("/device/register", auth.RegisterUserDevice)
 		r.Post("/device/ext/sync", auth.SyncExtension)
+		r.Post("/device/cli/updatehygiene", auth.UpdateHygiene)
 
 		r.Post("/agent/nix", serviceauth.AgentLogin)
 		r.Post("/agent/win", serviceauth.AgentLogin)
@@ -290,6 +291,7 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		r.Post("/system/settings/email/update", system.UpdateEmailSetting)
 		r.Post("/system/settings/devicehygienecheck/update", system.UpdateDeviceHygieneSetting)
 		r.Post("/system/settings/dynamicaccess/update", system.UpdateDynamicAccessSetting)
+		r.Post("/system/settings/cloudproxy/access", system.StoreCloudProxyKey)
 
 		// Identity Providers
 		r.Post("/providers/uidp/create", uidp.CreateIdp)

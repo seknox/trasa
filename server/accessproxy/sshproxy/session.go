@@ -25,7 +25,8 @@ type Session struct {
 	AuthType        consts.SSH_AUTH_TYPE
 	log             *logs.AuthLog
 	tempSessionFile *os.File
-	params          *models.AccessMapDetail
+	params          *models.ConnectionParams
+	policy          *models.Policy
 	Conn            *net.Conn
 	clientConfig    *ssh.ClientConfig
 	sshClient       *ssh.Client
@@ -85,7 +86,7 @@ func NewSession(serverConn *net.Conn) *Session {
 	authlog.UpdateAddr((*serverConn).RemoteAddr())
 
 	logrus.Debug((*serverConn).RemoteAddr())
-	params := models.AccessMapDetail{
+	params := models.ConnectionParams{
 		//TODO
 		OrgID: global.GetConfig().Trasa.OrgId,
 		//User:            serverConn.User(),
@@ -223,7 +224,7 @@ func start(conn net.Conn, serverConf *ssh.ServerConfig) error {
 				case "subsystem":
 					//If file transfer is not allowed close the connection
 					//TODO skip session log for sftp
-					if !session.params.Policy.FileTransfer {
+					if !session.policy.FileTransfer {
 						logs.Store.LogLogin(session.log, consts.REASON_FILE_TRANSFER_NOT_ALLOWED, false)
 						close(isSubSystem)
 						break r
@@ -254,7 +255,7 @@ func start(conn net.Conn, serverConf *ssh.ServerConfig) error {
 			//wrappedFrontEndChannel, err = p.wrapFn(serverConn,acceptedChannel)
 			wrappedBackendChannel, err = NewWrappedTunnel(
 				session.log.SessionID,
-				session.params.Policy.RecordSession,
+				session.policy.RecordSession,
 				backEndChannel,
 				backEndChannel,
 				session.guestChan)

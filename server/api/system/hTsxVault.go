@@ -14,6 +14,7 @@ import (
 	"github.com/go-chi/chi"
 	hashicorpVault "github.com/hashicorp/vault/api"
 	"github.com/seknox/trasa/server/api/orgs"
+	"github.com/seknox/trasa/server/api/providers/vault"
 	"github.com/seknox/trasa/server/api/providers/vault/tsxvault"
 	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/global"
@@ -334,6 +335,21 @@ func DecryptKey(w http.ResponseWriter, r *http.Request) {
 
 	resp.Sealed = false
 	resp.Progress = len(HoldDecryptShard)
+
+	// retreive trasaCPxy api key here
+
+	// get key ct from database.
+	apikey, err := vault.Store.GetKeyOrTokenWithKeyval(uc.User.OrgID, consts.GLOBAL_CLOUDPROXY_APIKEY)
+	if err != nil {
+		logger.Error(err)
+	}
+
+	pt, err := utils.AESDecrypt(nkey[:], apikey.KeyVal)
+	if err != nil {
+		logger.Error(err)
+	}
+
+	tsxvault.Store.SetTsxCPxyKey(string(pt))
 
 	utils.TrasaResponse(w, 200, "success", "token retrieved", "Vault decrypted", resp)
 

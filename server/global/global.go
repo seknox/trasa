@@ -33,6 +33,7 @@ var config Config
 func GetConfig() Config {
 	return config
 }
+
 func SetOrgID(orgID string) {
 	config.Trasa.OrgId = orgID
 }
@@ -48,6 +49,7 @@ type State struct {
 	RedisClient    *redis.Client
 	VaultRootToken string
 	TsxvKey        tsxKey
+	TsxCPxyKey     string
 }
 
 type tsxKey struct {
@@ -73,7 +75,7 @@ type KexDerivedKey struct {
 }
 
 func InitDBSTORE() *State {
-	conf := parseConfig()
+	conf := ParseConfig()
 	return InitDBSTOREWithConfig(conf)
 }
 

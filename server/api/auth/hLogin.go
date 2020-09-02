@@ -24,7 +24,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type loginRequest struct {
+type LoginRequest struct {
 	OrgID     string `json:"orgId"`
 	UserID    string `json:"userId"`
 	Email     string `json:"email"`
@@ -42,7 +42,7 @@ type loginRequest struct {
 // successful authentication should respond with tfarequired intent. If user has not enrolled any 2fa device,
 // this handler should respond with enroll device intent.
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
-	var loginRequest loginRequest
+	var loginRequest LoginRequest
 
 	if err := utils.ParseAndValidateRequest(r, &loginRequest); err != nil {
 		http.Error(w, http.StatusText(400), 200)
@@ -147,6 +147,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	logrus.Info(hex.EncodeToString(pub[:]), "-")
+
 	respIntent := consts.AUTH_RESP_TFA_REQUIRED
 	globalDeviceCheck, err := system.Store.GetGlobalSetting(userDetails.OrgID, consts.GLOBAL_DEVICE_HYGIENE_CHECK)
 	if err != nil {
@@ -176,7 +178,7 @@ type EnrolDeviceStruct struct {
 // This is a Four step process. 1) handle user login, 2) generate device, get totpssc ID 3) send GetDeviceDetail Request to trasa cloud 4) respond with device ID and otpauth url.
 func Enrol2FADevice(w http.ResponseWriter, r *http.Request) {
 	// remote auth request
-	var req loginRequest
+	var req LoginRequest
 	// user struct
 	var getUser models.User
 

@@ -10,6 +10,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// Set implements reis HSet
 func (s redisStore) Set(key string, expiry time.Duration, val ...string) error {
 	client := s.RedisClient
 	ctx := context.Background()
@@ -21,7 +22,7 @@ func (s redisStore) Set(key string, expiry time.Duration, val ...string) error {
 	return client.Expire(ctx, key, expiry).Err()
 }
 
-// RedisGenericStore can be used to store any key value. Main key should be unique value while value key name will be "data" and value should be json encoded byte.
+// Get implements redis HMGet
 func (s redisStore) Get(key string, field string) (string, error) {
 	client := s.RedisClient
 	vals, err := client.HMGet(context.Background(), key, field).Result()
@@ -36,7 +37,7 @@ func (s redisStore) Get(key string, field string) (string, error) {
 	return strVals[0], nil
 }
 
-// RedisGenericStore can be used to store any key value. Main key should be unique value while value key name will be "data" and value should be json encoded byte.
+// MGet implements redis HMGet with multiple fields
 func (s redisStore) MGet(key string, field ...string) ([]string, error) {
 	client := s.RedisClient
 	vals, err := client.HMGet(context.Background(), key, field...).Result()
