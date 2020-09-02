@@ -183,49 +183,9 @@ export default class SplashScreenPage extends Component {
    // console.info('close');
     SplashScreen.hide();
 
-    /*let deviceId = RNSecureKeyStore.get("deviceId").then(did=>{
-            if(!did)
-            {
-                this.props.navigation.navigate("Auth")
-            }
-            else
-            {
-                this.props.navigation.navigate("Overview")
-            }
 
-            SplashScreen.close({
-                animationType: SplashScreen.animationType.scale,
-                duration: 800,
-                delay: 0,
-            })
-
-
-
-        }).catch(reason=>{
-            this.props.navigation.navigate("Auth")
-            SplashScreen.close({
-                animationType: SplashScreen.animationType.scale,
-                duration: 0,
-                delay: 0,
-            })
-
-
-
-        })
-
-
-    */
-
-    //SplashScreen.close(SplashScreen.animationType.scale, 850, 500)
   }
 
-  // closeSplashScreen() {
-  //   SmartSplashScreen.close({
-  //     animationType: SmartSplashScreen.animationType.scale,
-  //     duration: 850,
-  //     delay: 0,
-  //   });
-  // }
 
   fcmUpdate(token) {
     SecureStore.getItemAsync('deviceId').then((deviceId) => {

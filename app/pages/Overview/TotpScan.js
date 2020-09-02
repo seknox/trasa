@@ -63,7 +63,7 @@ class TotpScan extends Component {
     this.state = {loading: false,done:false};
   }
 
-  componentWillUnmount(): void {
+  componentWillUnmount() {
     this.setState({done:false});
   }
 

@@ -30,7 +30,7 @@ export class ViewNotification extends Component {
     this.setState({chosenDate: newDate});
   }
   render() {
-    const appName = this.props.route.params?.appName || 'Test App';
+    const appName = this.props.route.params?.appName || '';
     const requester = this.props.route.params?.requester;
     const reason = this.props.route.params?.reason;
     const time = this.props.route.params?.time;
@@ -79,7 +79,7 @@ export class ViewNotification extends Component {
             </CardItem>
 
             <CardItem header>
-              <Text>App Name</Text>
+              <Text>Service Name</Text>
             </CardItem>
             <CardItem>
               <Text>{appName}</Text>
