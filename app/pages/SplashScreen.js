@@ -48,7 +48,15 @@ export default class SplashScreenPage extends Component {
   }
 
   async initializeFirebase() {
+    //await messaging().registerDeviceForRemoteMessages();
+  // console.info("2222222")
 
+    //this.generateToken();
+    // const channel = new firebase.notifications.Android.Channel('2fa', '2fa', firebase.notifications.Android.Importance.Max)
+    //     .setDescription('My apps test channel');
+    //
+    // // Create the channel
+    // firebase.notifications().android.createChannel(channel);
 
     const authStatus = await messaging().requestPermission();
     const enabled =
@@ -109,8 +117,6 @@ export default class SplashScreenPage extends Component {
     */
 
 
-
-  //generate rsa key pair for U2F
   async generateKeypair(){
     const check=await SecureStore.getItemAsync("PRIVATE_KEY")
    // console.log("check if already generated",check)
@@ -133,15 +139,14 @@ export default class SplashScreenPage extends Component {
     this.generateKeypair()
 
 
-    //If Constants.hostname is not set, set the default "https://api.trasa.seknox.com"
     Constants.hostname = await AsyncStorage.getItem('TRASA_URL');
     if(!Constants.hostname){
       Constants.hostname="https://api.trasa.seknox.com"
     }
-
-
+    // Constants.hostname= "http://192.168.100.91"
 
     let pinEnabled = await AsyncStorage.getItem('TRASA_PIN_ENABLED');
+
     if (pinEnabled === 'TRUE') {
       await this.setState({unlocked: false});
     } else {
@@ -178,9 +183,89 @@ export default class SplashScreenPage extends Component {
    // console.info('close');
     SplashScreen.hide();
 
+    /*let deviceId = RNSecureKeyStore.get("deviceId").then(did=>{
+            if(!did)
+            {
+                this.props.navigation.navigate("Auth")
+            }
+            else
+            {
+                this.props.navigation.navigate("Overview")
+            }
 
+            SplashScreen.close({
+                animationType: SplashScreen.animationType.scale,
+                duration: 800,
+                delay: 0,
+            })
+
+
+
+        }).catch(reason=>{
+            this.props.navigation.navigate("Auth")
+            SplashScreen.close({
+                animationType: SplashScreen.animationType.scale,
+                duration: 0,
+                delay: 0,
+            })
+
+
+
+        })
+
+
+    */
+
+    //SplashScreen.close(SplashScreen.animationType.scale, 850, 500)
   }
 
+  // closeSplashScreen() {
+  //   SmartSplashScreen.close({
+  //     animationType: SmartSplashScreen.animationType.scale,
+  //     duration: 850,
+  //     delay: 0,
+  //   });
+  // }
+
+  fcmUpdate(token) {
+    SecureStore.getItemAsync('deviceId').then((deviceId) => {
+      axios({
+        method: 'post',
+        //TODO maybe chage this
+        url: Constants.hostname + '/api/v1/remote/auth/fcmupdate',
+        data: {
+          token: token,
+          deviceId: deviceId,
+        },
+      })
+        .then((value) => {
+          if (value.data.success === 'true') {
+            AsyncStorage.setItem('FCMTokenSync', 'TRUE');
+          }
+        })
+        .catch((reason) => Alert.alert('FCM sync error ' + reason));
+    });
+  }
+
+  syncAccount(list) {
+    SecureStore.getItemAsync('deviceId').then((deviceId) => {
+      axios({
+        method: 'post',
+        //TODO maybe change this
+        url: Constants.hostname + '/api/v1/remote/auth/synctoken',
+        data: {
+          list: list,
+          deviceId: deviceId,
+        },
+      })
+        .then((value) => {
+          if (value.data.success === 'true') {
+            AsyncStorage.setItem('accSynced', 'TRUE');
+          }
+        })
+        .catch((reason) => Alert.alert('Account sync error ' + reason));
+    });
+  }
 
   goTo = (page, params) => {
     this.setState({page: page, params: params});

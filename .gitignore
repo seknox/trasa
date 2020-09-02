@@ -2,7 +2,6 @@
 # TRASA server binary
 ########################
 trasa-server
-trasa
 server/server
 
 .vscode/
@@ -24,6 +23,7 @@ app/android/local.properties
 app/android/gradle.properties
 app/android/app/release
 app/android/app/build
+Upload.jks
 
 # Bundle artifact
 *.jsbundle
@@ -81,6 +81,11 @@ dashboard/build
 */fastlane/report.xml
 */fastlane/Preview.html
 */fastlane/screenshots
+
+#
+*.pem
+*.key
+id_rsa
 
 
 # OSX

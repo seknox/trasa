@@ -63,7 +63,7 @@ class TotpScan extends Component {
     this.state = {loading: false,done:false};
   }
 
-  componentWillUnmount() {
+  componentWillUnmount(): void {
     this.setState({done:false});
   }
 
@@ -91,8 +91,6 @@ class TotpScan extends Component {
 
   };
 
-
-  //callback function to be called if barcode is detected by camera
   barCodeRead = (d) => {
 
     try {
@@ -296,25 +294,17 @@ export class CodeInput extends Component {
     this.state = {issuer: '', account: '', secret: ''};
   }
 
-
-  //save  totp secret
   update = async (
-    item,
+    item, //Callback function when barcode is read from ScanPage
   ) => {
-    //get current list
     let totpList = JSON.parse(await AsyncStorage.getItem('TOTPlist'));
     totpList = totpList || [];
-
-    //check if it is new secret
     var newItem = true;
     totpList.forEach((it) => {
       if (it.secret === item.secret) {
         newItem = false;
       }
     });
-
-
-
     if (newItem) {
       totpList = totpList.concat(item);
       AsyncStorage.setItem('TOTPlist', JSON.stringify(totpList))

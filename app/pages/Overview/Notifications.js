@@ -79,7 +79,7 @@ export class ViewNotification extends Component {
             </CardItem>
 
             <CardItem header>
-              <Text>Service Name</Text>
+              <Text>App Name</Text>
             </CardItem>
             <CardItem>
               <Text>{appName}</Text>
@@ -111,7 +111,7 @@ export class Notifications extends React.Component {
     this.state = {notifs: []};
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     getStoredNotifications((notifs) => {
       this.setState({notifs: notifs});
     });
@@ -130,7 +130,16 @@ export class Notifications extends React.Component {
     }
   };
 
-  render() {
+  render():
+    | React.ReactElement<any>
+    | string
+    | number
+    | {}
+    | React.ReactNodeArray
+    | React.ReactPortal
+    | boolean
+    | null
+    | undefined {
     return (
       <Container>
         <Header>
