@@ -111,7 +111,7 @@ export class Notifications extends React.Component {
     this.state = {notifs: []};
   }
 
-  componentDidMount(): void {
+  componentDidMount() {
     getStoredNotifications((notifs) => {
       this.setState({notifs: notifs});
     });
@@ -130,16 +130,7 @@ export class Notifications extends React.Component {
     }
   };
 
-  render():
-    | React.ReactElement<any>
-    | string
-    | number
-    | {}
-    | React.ReactNodeArray
-    | React.ReactPortal
-    | boolean
-    | null
-    | undefined {
+  render(){
     return (
       <Container>
         <Header>
