@@ -29,7 +29,7 @@ jobs:
         run: sudo cp -r tests/build/etc/trasa /etc/trasa
 
       - name: Create necessary directories
-        run: mkdir -p /var/trasa/minio && mkdir -p /tmp/trasa/trasagw
+        run: sudo mkdir -p /var/trasa/minio && sudo chmod 777 /var/trasa/minio && sudo mkdir -p /tmp/trasa/trasagw && sudo chmod 777 /tmp/trasa/trasagw
 
       - name: Unit Test
         working-directory: ./tests
