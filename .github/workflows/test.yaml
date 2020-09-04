@@ -28,6 +28,9 @@ jobs:
       - name: Setup config for test
         run: sudo cp -r tests/build/etc/trasa /etc/trasa
 
+      - name: Create necessary directories
+        run: mkdir -p /var/trasa/minio && mkdir -p /tmp/trasa/trasagw
+
       - name: Unit Test
         working-directory: ./tests
         run: make unit-test
