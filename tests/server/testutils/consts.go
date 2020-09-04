@@ -55,8 +55,9 @@ EGs/Ni79R+wfaaUg8CmcoVwkcxfrFUxlszksNrws+/JvjHyMlg5S6t4VPxWO64XIcvor9O
 JX0dcGsOPgrCEt37wAAWhDjbUE3dxamnC+Cr7dMVy7AgguSQgkXBMoGsleTuB1PXOusn9z
 ABz8oYP1eawwEAAAAiYmhyZzNzZUBCaGFyZ2Ficy1NYWNCb29rLVByby5sb2NhbAE=
 -----END OPENSSH PRIVATE KEY-----`
+)
 
-	MockPrivateKey2 = `-----BEGIN OPENSSH PRIVATE KEY-----
+var MockPrivateKey2 = `-----BEGIN OPENSSH PRIVATE KEY-----
 b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAABlwAAAAdzc2gtcn
 NhAAAAAwEAAQAAAYEAw3n9pCbQr0hUuIH2zzHadFZjMNVZweHMQa1vBqsJs8awQxAZMwGS
 XT1sX0Z8/KosLC0lgtkvmign/pnQlZadUlmnPdhrfjmcSQMkumHEShkVC4g7aEmpxNv27b
@@ -94,7 +95,6 @@ KwKUYS05A1gD6nLC0um4F0heHvsNRXOJHBOGoaP2FfuyyyFY+Cblnu9dvTCQoEnL5wKlYF
 gsI7QAV0OFMtepdlWq3xnWI+Qucuqcelw7Vd+7707tAdzwG4eb1XK6GDipuulhPgKPqURY
 bWMYt/XNfb7wipAAAAImJocmczc2VAQmhhcmdhYnMtTWFjQm9vay1Qcm8ubG9jYWw=
 -----END OPENSSH PRIVATE KEY-----`
-)
 
 var Mockupgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {

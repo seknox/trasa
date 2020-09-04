@@ -193,6 +193,7 @@ func TestDownloadKey(t *testing.T) {
 		t.Errorf("handler returned wrong status code: got %v want %v",
 			status, http.StatusOK)
 	}
+	testutils.MockPrivateKey2 = string(rr.Body.Bytes())
 
 	k, err := ssh.ParsePrivateKey(rr.Body.Bytes())
 	if err != nil {

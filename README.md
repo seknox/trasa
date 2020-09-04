@@ -6,7 +6,7 @@
     <img alt="TRASA" width='400' src="https://storage.googleapis.com/trasa-website-static/branding/trasa.png">
   </a>
 
-  <h1 align="center"></h3>
+  <h1 align="center"></h1>
 
   <h2 align="center">
    secure remote access to ssh, rdp, web and database services
@@ -24,8 +24,8 @@
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/seknox/trasa)](https://goreportcard.com/report/github.com/seknox/trasa)
 [![License: MPL 2.0](https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg)](https://github.com/seknox/trasa/blob/master/LICENSE)
-[![Actions Status](https://github.com/seknox/trasa/workflows/Build/badge.svg)](https://github.com/seknox/trasa/actions)
-[![Actions Status](https://github.com/seknox/trasa/workflows/Test/badge.svg)](https://github.com/seknox/trasa/actions)
+[![Actions Status](https://github.com/seknox/trasa/workflows/Build/badge.svg?branch=master)](https://github.com/seknox/trasa/actions)
+[![Actions Status](https://github.com/seknox/trasa/workflows/Test/badge.svg?branch=master)](https://github.com/seknox/trasa/actions)
 
 
 <!-- TABLE OF CONTENTS -->
