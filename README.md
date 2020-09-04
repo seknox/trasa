@@ -22,6 +22,10 @@
   </h2>
 </div>
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/seknox/trasa)](https://goreportcard.com/report/github.com/seknox/trasa)
+[![License: MPL 2.0](https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg)](https://github.com/seknox/trasa/blob/master/LICENSE)
+[![Actions Status](https://github.com/seknox/trasa/workflows/Build/badge.svg)](https://github.com/seknox/trasa/actions)
+[![Actions Status](https://github.com/seknox/trasa/workflows/Test/badge.svg)](https://github.com/seknox/trasa/actions)
 
 
 <!-- TABLE OF CONTENTS -->

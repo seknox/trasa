@@ -109,22 +109,20 @@ func setupTestEnv() *global.State {
 			Userkey    string   `toml:"userkey"`
 			Cacert     string   `toml:"cacert"`
 		}{"", []string{"127.0.0.1:16379"}, false, "", "", ""},
-		Timezone: struct {
-			Location string `toml:"location"`
-		}{"Asia/Kathmandu"},
+
 		Security: struct {
 			InsecureSkipVerify bool `toml:"insecureSkipVerify"`
 		}{true},
 		Trasa: struct {
+			AutoCert    bool   `json:"autoCert"`
 			ListenAddr  string `toml:"listenAddr"`
-			Dashboard   string `toml:"dashboard"`
+			Email       string `toml:"email"`
 			Rootdomain  string `toml:"rootdomain"`
 			CloudServer string `toml:"cloudServer"`
 			Ssodomain   string `toml:"ssodomain"`
-			Trasacore   string `toml:"trasacore"`
 			Rootdir     string `toml:"rootdir"`
 			OrgId       string `toml:"orgID"`
-		}{"localhost", "https://localhost", "", "https://u2fproxy.trasa.io", "", "", "", testutils.MockOrgID},
+		}{false, "localhost", "", "", "https://u2fproxy.trasa.io", "", "", testutils.MockOrgID},
 		SSHProxy: struct {
 			ListenAddr string `toml:"listenAddr"`
 		}{":8022"},
