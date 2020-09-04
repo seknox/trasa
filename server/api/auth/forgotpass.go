@@ -18,7 +18,7 @@ import (
 func forgotPassTfaResp(userDetails models.User) (err error) {
 	normalizedEmail := strings.ToLower(userDetails.Email)
 
-	dashboardPath := global.GetConfig().Trasa.Dashboard
+	dashboardPath := "https://" + global.GetConfig().Trasa.ListenAddr
 
 	// while previously we created temporary password for users and send it to them via email,
 	// we now will generate a short lived token which will be presented in a link.

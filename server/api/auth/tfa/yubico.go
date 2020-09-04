@@ -9,7 +9,7 @@ import (
 )
 
 //TODO @sshah appID??
-var appID = global.GetConfig().Trasa.Dashboard
+var appID = global.GetConfig().Trasa.ListenAddr
 
 var trustedFacets = []string{appID}
 

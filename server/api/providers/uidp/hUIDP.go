@@ -154,11 +154,11 @@ func PreConfiguredIdps(idp models.IdentityProvider, uc models.UserContext) model
 		v.IdpType = "saml"
 		v.IntegrationType = "scim"
 		v.ApiKey = ""
-		v.SCIMEndpoint = fmt.Sprintf("https://%s/scim/v2", global.GetConfig().Trasa.Trasacore)
+		v.SCIMEndpoint = fmt.Sprintf("https://%s/scim/v2", global.GetConfig().Trasa.ListenAddr)
 		v.ClientID = ""
 		v.ClientSecret = ""
 		v.AudienceURI = utils.GetRandomString(7)
-		v.RedirectURL = fmt.Sprintf("https://%s/auth/external/saml/%s/%s", global.GetConfig().Trasa.Trasacore, uc.User.OrgID, v.IdpName)
+		v.RedirectURL = fmt.Sprintf("https://%s/auth/external/saml/%s/%s", global.GetConfig().Trasa.ListenAddr, uc.User.OrgID, v.IdpName)
 		v.OrgID = uc.User.OrgID
 		v.CreatedBy = uc.User.ID
 		v.LastUpdated = time.Now().Unix()
@@ -174,7 +174,7 @@ func PreConfiguredIdps(idp models.IdentityProvider, uc models.UserContext) model
 		v.ClientID = ""
 		v.ClientSecret = ""
 		v.AudienceURI = utils.GetRandomString(7)
-		v.RedirectURL = fmt.Sprintf("https://%s/auth/external/saml/%s/%s", global.GetConfig().Trasa.Trasacore, uc.User.OrgID, v.IdpName)
+		v.RedirectURL = fmt.Sprintf("https://%s/auth/external/saml/%s/%s", global.GetConfig().Trasa.ListenAddr, uc.User.OrgID, v.IdpName)
 		v.OrgID = uc.User.OrgID
 		v.CreatedBy = uc.User.ID
 		v.LastUpdated = time.Now().Unix()
