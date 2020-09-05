@@ -5,7 +5,6 @@ on :
     branches:
       - master
       - dev
-      - integration-test-fix
   pull_request:
     branches:
       - master
