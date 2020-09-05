@@ -71,6 +71,7 @@ func tearDown(state *global.State) {
 func setupTestEnv() *global.State {
 	testConfig := global.Config{
 		Database: struct {
+			Dbtype     string `toml:"dbname"`
 			Dbname     string `toml:"dbname"`
 			Dbuser     string `toml:"dbuser"`
 			Port       string `toml:"port"`
@@ -80,6 +81,7 @@ func setupTestEnv() *global.State {
 			Userkey    string `toml:"userkey"`
 			Cacert     string `toml:"cacert"`
 		}{
+			"postgres",
 			"trasadb",
 			"trasauser",
 			"54321",

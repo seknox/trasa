@@ -41,6 +41,7 @@ type Config struct {
 		Backupdir string `toml:"backupdir"`
 	} `toml:"backup"`
 	Database struct {
+		Dbtype     string `toml:"dbname"`
 		Dbname     string `toml:"dbname"`
 		Dbuser     string `toml:"dbuser"`
 		Port       string `toml:"port"`
