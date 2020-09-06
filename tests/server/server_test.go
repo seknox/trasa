@@ -35,6 +35,10 @@ func TestServer(t *testing.T) {
 		accessproxytest.TestSSHAuthWithPublicKey(t)
 	})
 
+	//t.Run("ssh cli proxy with trasacli", func(t *testing.T) {
+	//	accessproxytest.TestSSHCLI(t)
+	//})
+
 	t.Run("http proxy test", func(t *testing.T) {
 		accessproxytest.TestHTTPProxy(t)
 	})

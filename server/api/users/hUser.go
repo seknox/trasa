@@ -248,7 +248,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func newUserEmailTemplate(user *models.UserWithPass, token string) models.EmailUserCrud {
-	dashboardPath := global.GetConfig().Trasa.Dashboard
+	dashboardPath := "https://" + global.GetConfig().Trasa.ListenAddr
 	verifyURL := fmt.Sprintf("%s/woa/verify#token=%s", dashboardPath, token)
 	var tmplt models.EmailUserCrud
 	tmplt.ReceiverEmail = user.Email

@@ -16,11 +16,6 @@
 [logging]
   level = "ERROR"
 
-[minio]
-  key="minioadmin"
-  secret="minioadmin"
-  server = "127.0.0.1:9000"
-  usessl = false
 
 [platform]
   base = "public"
@@ -37,13 +32,13 @@
 
 
 [trasa]
-  dashboard = "https://app.trasa"
   cloudServer = "https://u2fproxy.trasa.io"
   listenAddr = "app.trasa"
 
 
-[sshproxy]
- listenAddr="0.0.0.0:8022"
+[proxy]
+ sshListenAddr="0.0.0.0:8022"
+ guacdPath=""
 
 [dbproxy]
   listenAddr="127.0.0.1:8023"

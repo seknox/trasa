@@ -37,10 +37,30 @@ func (s Store) GetUserFromPublicKey(publicKey ssh.PublicKey, orgID string) (*mod
 
 //tfaCert
 //Is tfa already done from device agent
-func (s Store) tfaCert(publicKey ssh.PublicKey) (*models.AccessMapDetail, error) {
+func (s Store) parseSSHCert(addr net.Addr, publicKey ssh.PublicKey) error {
 	//TODO
+	cert, ok := publicKey.(*ssh.Certificate)
+	if !ok {
+		return errors.New("invalid ssh certificate")
+	}
+	deviceID, ok := cert.Extensions["trasa-device-id"]
+	if !ok {
+		return errors.New("device ID not found in ssh certificate")
+	}
 
-	return nil, errors.New("not implemented yet")
+	if s.sessions == nil {
+		return errors.New("session map not initialised")
+	}
+
+	sess, ok := s.sessions[addr]
+	if !ok {
+		return errors.New("session not found")
+	}
+
+	sess.log.AccessDeviceID = deviceID
+	sess.params.AccessDeviceID = deviceID
+
+	return errors.New("not implemented yet")
 }
 
 //validateTempCert
@@ -129,30 +149,30 @@ func (s Store) UpdateSessionMeta(addr net.Addr, connMeta ssh.ConnMetadata) error
 	return nil
 }
 
-func (s Store) UpdateSessionParams(addr net.Addr, params *models.AccessMapDetail) error {
-	if s.sessions == nil {
-		return errors.New("session map not initialised")
-	}
-
-	if params == nil {
-		return errors.New("params is nil")
-	}
-
-	sess, ok := s.sessions[addr]
-	if !ok {
-		return errors.New("session not found")
-	}
-
-	sess.params = params
-
-	sess.log.OrgID = params.OrgID
-
-	sess.log.ServiceType = "ssh"
-	sess.log.Email = params.Email
-	sess.log.LoginTime = time.Now().UnixNano()
-	s.sessions[addr] = sess
-	return nil
-}
+//func (s Store) UpdateSessionParams(addr net.Addr, params *models.AccessMapDetail) error {
+//	if s.sessions == nil {
+//		return errors.New("session map not initialised")
+//	}
+//
+//	if params == nil {
+//		return errors.New("params is nil")
+//	}
+//
+//	sess, ok := s.sessions[addr]
+//	if !ok {
+//		return errors.New("session not found")
+//	}
+//
+//	sess.params = params
+//
+//	sess.log.OrgID = params.OrgID
+//
+//	sess.log.ServiceType = "ssh"
+//	sess.log.Email = params.Email
+//	sess.log.LoginTime = time.Now().UnixNano()
+//	s.sessions[addr] = sess
+//	return nil
+//}
 
 func (s Store) UpdateSessionUser(addr net.Addr, user *models.User) error {
 	if s.sessions == nil {
@@ -173,7 +193,7 @@ func (s Store) UpdateSessionUser(addr net.Addr, user *models.User) error {
 	}
 
 	sess.params.UserID = user.ID
-	sess.params.Email = user.Email
+	sess.params.TrasaID = user.Email
 	sess.params.OrgID = user.OrgID
 
 	sess.log.OrgID = user.OrgID
@@ -218,13 +238,6 @@ func (s Store) GetGuestChannel(sessionID string) (chan GuestClient, error) {
 }
 
 func (s Store) checkPolicy(params *models.ConnectionParams) (*models.Policy, consts.FailedReason, error) {
-
-	//TODO support device hygiene check for cli access
-	//fail if setting is enabled
-	//sett, err := system.Store.GetGlobalSetting(params.OrgID, consts.GLOBAL_DEVICE_HYGIENE_CHECK)
-	//if err != nil || sett.Status {
-	//	return nil, consts.REASON_DEVICE_POLICY_FAILED, err
-	//}
 
 	policy, adhoc, err := policies.Store.GetAccessPolicy(params.UserID, params.ServiceID, params.Privilege, params.OrgID)
 
@@ -280,7 +293,7 @@ func (s Store) deleteGuestChannel(sessionID string) {
 
 func (s Store) uploadSessionLog(authlog *logs.AuthLog) error {
 
-	tempFileDir := "/tmp/trasa/trasagw"
+	tempFileDir := "/tmp/trasa/accessproxy/ssh"
 	bucketName := "trasa-ssh-logs"
 	sessionID := authlog.SessionID
 

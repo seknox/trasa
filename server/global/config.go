@@ -41,6 +41,7 @@ type Config struct {
 		Backupdir string `toml:"backupdir"`
 	} `toml:"backup"`
 	Database struct {
+		Dbtype     string `toml:"dbname"`
 		Dbname     string `toml:"dbname"`
 		Dbuser     string `toml:"dbuser"`
 		Port       string `toml:"port"`
@@ -78,34 +79,31 @@ type Config struct {
 		Userkey    string   `toml:"userkey"`
 		Cacert     string   `toml:"cacert"`
 	} `toml:"redis"`
-	Timezone struct {
-		Location string `toml:"location"`
-	} `toml:"timezone"`
+
 	Security struct {
 		InsecureSkipVerify bool `toml:"insecureSkipVerify"`
 	} `toml:"security"`
 	Trasa struct {
+		AutoCert    bool   `json:"autoCert"`
 		ListenAddr  string `toml:"listenAddr"`
-		Dashboard   string `toml:"dashboard"`
+		Email       string `toml:"email"`
 		Rootdomain  string `toml:"rootdomain"`
 		CloudServer string `toml:"cloudServer"`
 		Ssodomain   string `toml:"ssodomain"`
-		Trasacore   string `toml:"trasacore"`
 		Rootdir     string `toml:"rootdir"`
 		OrgId       string `toml:"orgID"`
 	} `toml:"trasa"`
-	SSHProxy struct {
-		ListenAddr string `toml:"listenAddr"`
-	} `toml:"sshProxy"`
+	Proxy struct {
+		SSHListenAddr string `toml:"sshlistenAddr"`
+		GuacdAddr     string `toml:"guacdAddr"`
+		GuacdEnabled  bool   `toml:"guacdEnabled"`
+	} `toml:"proxy"`
 	Vault struct {
 		Tsxvault bool   `toml:"tsxvault"`
 		Port     string `toml:"port"`
 		Server   string `toml:"server"`
 		Token    string `toml:"token"`
 	} `toml:"vault"`
-	InternalHosts struct {
-		Hosts string `toml:"hosts"`
-	} `toml:"internalHosts"`
 }
 
 // UpdateTRASACPxyAddr updates TRASA cloud proxy server address.

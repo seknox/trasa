@@ -78,13 +78,13 @@ func TestLoginHandler(t *testing.T) {
 	handler := http.HandlerFunc(LoginHandler)
 
 	tests := []struct {
-		arg          loginRequest
+		arg          LoginRequest
 		wantedStatus string
 		wantedIntent string
 		wantedData   []interface{}
 	}{
 		{
-			arg: loginRequest{
+			arg: LoginRequest{
 				Email:    "user@example.com",
 				Password: "testpass@123",
 			},
@@ -94,7 +94,7 @@ func TestLoginHandler(t *testing.T) {
 		},
 
 		{
-			arg: loginRequest{
+			arg: LoginRequest{
 				Email:    "user@example.com",
 				Password: "wrongpass",
 			},

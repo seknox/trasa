@@ -3,6 +3,7 @@ package rdpproxy
 import (
 	"bytes"
 	"database/sql"
+	"github.com/seknox/trasa/server/global"
 	"io"
 	"net"
 	"sync"
@@ -122,8 +123,12 @@ func NewSession(params *models.ConnectionParams, authlog *logs.AuthLog) (*Sessio
 		config.ConnectionID = params.ConnID
 	}
 
-	//todo read guacd address from config
-	addr, err := net.ResolveTCPAddr("tcp", "127.0.0.1:4822")
+	guacdAddr := global.GetConfig().Proxy.GuacdAddr
+	if guacdAddr == "" {
+		guacdAddr = "127.0.0.1:4822"
+	}
+
+	addr, err := net.ResolveTCPAddr("tcp", guacdAddr)
 	if err != nil {
 		logrus.Error(err)
 		return nil, err

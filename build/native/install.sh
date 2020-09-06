@@ -48,7 +48,7 @@ sudo ssh-keygen -t rsa -b 4096 -f /etc/trasa/certs/id_rsa -q -N ""
 #copy binaries to binchow
 chmod +x bins/* && \
 sudo cp bins/* /usr/local/bin/ && \
-sudo cp -r  dashboard /etc/trasa/build
+sudo cp -r  dashboard /var/trasa/dashboard
 
 
 sudo cp -r config /etc/trasa/config && \

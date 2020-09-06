@@ -1,12 +1,22 @@
 package auth
 
 import (
+	"archive/zip"
+	"bytes"
+	"crypto/rand"
+	"encoding/binary"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/seknox/trasa/server/api/logs"
+	"github.com/seknox/trasa/server/api/providers/ca"
+	"github.com/seknox/trasa/server/api/redis"
+	"github.com/seknox/trasa/server/api/users"
+	"golang.org/x/crypto/ssh"
+	"io"
 	"net/http"
-	"net/url"
+	"strings"
 	"time"
 
 	"github.com/seknox/trasa/server/api/auth/tfa"
@@ -204,11 +214,11 @@ func regDeviceRes(w http.ResponseWriter, orgID, deviceID string) {
 	resp.ExtID = deviceID
 	resp.RootDomain = global.GetConfig().Trasa.Rootdomain
 	resp.SsoDomain = global.GetConfig().Trasa.Ssodomain
-	u, err := url.Parse(global.GetConfig().Trasa.Dashboard)
-	if err != nil {
-		logrus.Error(err)
-	}
-	resp.WSPath = fmt.Sprintf("wss://%s", u.Host)
+	//u, err := url.Parse(global.GetConfig().Trasa.Dashboard)
+	//if err != nil {
+	//	logrus.Error(err)
+	//}
+	resp.WSPath = fmt.Sprintf("wss://%s", global.GetConfig().Trasa.ListenAddr)
 
 	allservices, err := services.Store.GetAllByType("http", orgID)
 	if err != nil {
@@ -264,11 +274,11 @@ func SyncExtension(w http.ResponseWriter, r *http.Request) {
 	resp.ExtID = req.ExtID
 	resp.RootDomain = global.GetConfig().Trasa.Rootdomain
 	resp.SsoDomain = global.GetConfig().Trasa.Ssodomain
-	u, err := url.Parse(global.GetConfig().Trasa.Dashboard)
-	if err != nil {
-		logrus.Error(err)
-	}
-	resp.WSPath = fmt.Sprintf("wss://%s", u.Host)
+	//u, err := url.Parse(global.GetConfig().Trasa.Dashboard)
+	//if err != nil {
+	//	logrus.Error(err)
+	//}
+	resp.WSPath = fmt.Sprintf("wss://%s", global.GetConfig().Trasa.ListenAddr)
 
 	allservices, err := services.Store.GetAllByType("http", orgID)
 	if err != nil {
@@ -293,16 +303,244 @@ func SyncExtension(w http.ResponseWriter, r *http.Request) {
 	utils.TrasaResponse(w, 200, "success", "ext synced", "SyncExtension", resp)
 }
 
-type enrolExt struct {
-	Email          string `json:"email"`
-	TfaMethod      string `json:"tfaMethod"`
-	TotpCode       string `json:"totpCode"`
-	UA             string `json:"UA"`
-	IP             string `json:"IP"`
-	AddedAt        string `json:"addedAt"`
-	OrgID          string `json:"orgID"`
-	BrowserName    string `json:"browserName"`
-	BrowserVersion string `json:"browserVersion"`
-	OSName         string `json:"osName"`
-	OSVersion      string `json:"osVersion"`
+type UpdateHygienereq struct {
+	TrasaID       string `json:"trasaID"`
+	DeviceHygiene string `json:"deviceHygiene"`
+	ClientKey     string `json:"clientKey"`
+	Token         string `json:"token"`
+}
+
+func UpdateHygiene(w http.ResponseWriter, r *http.Request) {
+	var req UpdateHygienereq
+	err := utils.ParseAndValidateRequest(r, &req)
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "invalid request", "Update hygiene", nil)
+		return
+	}
+
+	authlog := logs.NewLog(r, "updateHyg")
+
+	userDetailFromDB, err := Store.GetLoginDetails(req.TrasaID, "")
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "User not found", "Ext login", nil)
+		return
+	}
+
+	dhBytes, err := hex.DecodeString(req.DeviceHygiene)
+	if err != nil {
+		logrus.Debug("cannot decode hex string", err)
+		utils.TrasaResponse(w, 200, "failed", "failed to decrypt data", "Device hygiene update", nil)
+		return
+	}
+
+	logrus.Info(req.Token, "+")
+
+	privKey, err := redis.Store.Get(req.Token, "priv")
+
+	if err != nil || privKey == "" {
+		err := logs.Store.LogLogin(&authlog, consts.REASON_INVALID_TOKEN, false)
+		if err != nil {
+			logrus.Error(err)
+		}
+
+		utils.TrasaResponse(w, 200, "failed", "invalid token", "Device hygiene update", nil)
+		return
+	}
+
+	privFromHexStr, err := hex.DecodeString(privKey)
+	if err != nil {
+		logrus.Errorf("privFromHexStr: %v ", err)
+		utils.TrasaResponse(w, 200, "failed", "could not decode private key", "Device hygiene update", nil)
+		return
+	}
+
+	pubFromHexStr, err := hex.DecodeString(req.ClientKey)
+	if err != nil {
+		logrus.Errorf("pubFromHexStr: %v ", err)
+		utils.TrasaResponse(w, 200, "failed", "could not decode public key", "Device hygiene update", nil)
+		return
+	}
+
+	var privBytes [32]byte
+	var pubBytes [32]byte
+
+	copy(privBytes[:], privFromHexStr)
+	copy(pubBytes[:], pubFromHexStr)
+
+	dhBytes, err = hex.DecodeString(req.DeviceHygiene)
+	if err != nil {
+		logrus.Errorf("dhBytes: %v ", err)
+		utils.TrasaResponse(w, 200, "failed", "could not decode string", "Device hygiene update", nil)
+		return
+	}
+
+	sec := utils.ECDHComputeSecret(&privBytes, &pubBytes)
+
+	plainText, err := utils.AESDecrypt(sec, dhBytes)
+
+	var dh DeviceDetail
+	err = json.Unmarshal(plainText, &dh)
+	if err != nil {
+		logrus.Errorf("json.Unmarshal(plainText, &dh): %v ", err)
+		utils.TrasaResponse(w, 200, "failed", "could not unmarshall", "Device hygiene update", nil)
+		return
+	}
+
+	deviceID, err := devices.Store.UpdateDeviceHygiene(dh.DeviceHygiene, userDetailFromDB.OrgID)
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "could not update device hygiene", "Update hygiene", nil)
+		return
+	}
+
+	//pass userID in context
+	privateKeyBytes, publicKeyBytes, certBytes, err := generateTempCertificateForDeviceAgent(deviceID, userDetailFromDB.OrgID)
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "could not generate TempCertificate ForDeviceAgent", "Update hygiene", nil)
+		return
+	}
+
+	err = users.Store.UpdatePublicKey(userDetailFromDB.ID, strings.TrimSpace(string(certBytes)))
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "could not update public key", "Update hygiene", nil)
+		return
+	}
+
+	// Create a new zip archive.
+	buff := &bytes.Buffer{}
+	zipWriter := zip.NewWriter(buff)
+
+	// Add some files to the archive.
+	var files = []struct {
+		Name string
+		Body []byte
+	}{
+		{"id_rsa", privateKeyBytes},
+		{"id_rsa.pub", publicKeyBytes},
+		{"id_rsa-cert.pub", certBytes},
+	}
+	for _, file := range files {
+
+		var zipFile io.Writer
+		zipFile, err = zipWriter.Create(file.Name)
+		if err != nil {
+			logrus.Error(err)
+			utils.TrasaResponse(w, 200, "failed", "could not generate zipWriter.Create", "Update hygiene", nil)
+			return
+		}
+		_, err = zipFile.Write(file.Body)
+		if err != nil {
+			logrus.Error(err)
+			utils.TrasaResponse(w, 200, "failed", "could not generate zipWriter.Create", "Update hygiene", nil)
+			return
+		}
+
+	}
+
+	// Make sure to check the error on Close.
+	err = zipWriter.Close()
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "could not generate zipWriter.Create", "Update hygiene", nil)
+		return
+	}
+
+	utils.TrasaResponse(w, 200, "success", "", "Update hygiene", buff.Bytes())
+	return
+
+}
+
+func generateTempCertificateForDeviceAgent(deviceID, orgID string) (privateKeyBytes, publicKeyBytes, certBytes []byte, err error) {
+
+	bitSize := 4096
+	privateKey, err := utils.GeneratePrivateKey(bitSize)
+	if err != nil {
+		logrus.Errorf(`could not generate private key: %v`, err)
+		return
+	}
+
+	certHolder, err := ca.Store.GetCertHolder(consts.CERT_TYPE_SSH_CA, "system", orgID)
+	if err != nil {
+		logrus.Debugf(`could not get CA key: %v`, err)
+		return
+	}
+
+	publicKeySSH, err := ssh.NewPublicKey(&privateKey.PublicKey)
+	if err != nil {
+		logrus.Errorf(`could not generate public key: %v`, err)
+		return
+	}
+
+	publicKeyBytes = ssh.MarshalAuthorizedKey(publicKeySSH)
+
+	caKey, err := ssh.ParsePrivateKey(certHolder.Key)
+	if err != nil {
+		logrus.Errorf(`Could not parse CA private key: %v`, err)
+		return
+	}
+
+	buf := make([]byte, 8)
+	_, err = rand.Read(buf)
+	if err != nil {
+		logrus.Errorf("failed to read random bytes: %v", err)
+
+		return
+	}
+	serial := binary.LittleEndian.Uint64(buf)
+
+	//extentions := make(map[string]string)
+	extentions := map[string]string{
+		"permit-X11-forwarding":   "",
+		"permit-agent-forwarding": "",
+		"permit-port-forwarding":  "",
+		"permit-pty":              "",
+		"permit-user-rc":          "",
+		"trasa-hygiene":           "true",
+		"trasa-device-id":         deviceID,
+	}
+
+	//principals := []string{}
+
+	cert := ssh.Certificate{
+		Key:             publicKeySSH,
+		Serial:          serial,
+		CertType:        ssh.UserCert,
+		KeyId:           utils.GetRandomString(10),
+		ValidPrincipals: nil,
+		ValidAfter:      uint64(time.Now().UTC().Unix()),
+		ValidBefore:     uint64(time.Now().UTC().Add(time.Minute * 5).Unix()),
+		Permissions: ssh.Permissions{
+			Extensions: extentions,
+		},
+	}
+
+	err = cert.SignCert(rand.Reader, caKey)
+	if err != nil {
+		logrus.Errorf(`could not sign public key: %v`, err)
+		return
+	}
+	//
+	//err = dbstore.Connect.SavePublicKey(userID, strings.TrimSpace(string(publicKeyBytes)))
+	//if err != nil {
+	//	logrus.Errorf(`could not save public key: %v`, err)
+	//	return
+	//}
+
+	privateKeyBytes = utils.EncodePrivateKeyToPEM(privateKey)
+	certBytes = ssh.MarshalAuthorizedKey(&cert)
+	if len(certBytes) == 0 {
+		logrus.Errorf("failed to marshal signed certificate, empty result")
+		err = errors.New("failed to marshal signed certificate, empty result")
+		return
+	}
+
+	// Create a buffer to write our archive to.
+	//buffer := new(bytes.Buffer)
+
+	return privateKeyBytes, publicKeyBytes, certBytes, nil
+
 }

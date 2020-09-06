@@ -2,6 +2,7 @@ package devices
 
 import (
 	"encoding/json"
+	"github.com/pkg/errors"
 	"time"
 
 	"github.com/lib/pq"
@@ -86,7 +87,7 @@ func (s deviceStore) UpdateDeviceHygiene(deviceHyg models.DeviceHygiene, orgID s
 		deviceHyg.DeviceInfo.MachineID, orgID).
 		Scan(&deviceID)
 	if err != nil {
-		return "", err
+		return "", errors.Errorf(`device not registered with this machine id: %v`, err)
 	}
 
 	_, err = s.DB.Exec(`UPDATE devices SET device_hygiene=$1,deleted = false 
