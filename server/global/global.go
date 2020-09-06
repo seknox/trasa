@@ -318,7 +318,7 @@ func checkInitDirsAndFiles() {
 	if err != nil {
 		panic(err)
 	}
-	err = os.MkdirAll("/var/tmp/trasa/trasagw/shared", 0600)
+	err = os.MkdirAll("/var/tmp/trasa/accessproxy/guac/shared", 0600)
 	if err != nil {
 		panic(err)
 	}
