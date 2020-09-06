@@ -125,9 +125,11 @@ func setupTestEnv() *global.State {
 			Rootdir     string `toml:"rootdir"`
 			OrgId       string `toml:"orgID"`
 		}{false, "localhost", "", "", "https://u2fproxy.trasa.io", "", "", testutils.MockOrgID},
-		SSHProxy: struct {
-			ListenAddr string `toml:"listenAddr"`
-		}{":8022"},
+		Proxy: struct {
+			SSHListenAddr string `toml:"sshlistenAddr"`
+			GuacdAddr     string `toml:"guacdAddr"`
+			GuacdEnabled  bool   `toml:"guacdEnabled"`
+		}{":8022", "127.0.0.1:4822", true},
 	}
 
 	state := global.InitDBSTOREWithConfig(testConfig)

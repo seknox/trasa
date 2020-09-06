@@ -31,10 +31,8 @@ jobs:
         run: |
           sudo mkdir -p /var/trasa/minio
           sudo chmod 777 /var/trasa/minio
-          sudo mkdir -p /var/trasa/thg
-          sudo chmod 777 /var/trasa/thg
-          sudo mkdir -p /tmp/trasa/trasagw
-          sudo chmod 777 /tmp/trasa/trasagw
+          sudo mkdir -p /tmp/trasa/accessproxy
+          sudo chmod 777 /tmp/trasa/accessproxy
 
       - name: Unit Test
         working-directory: ./tests

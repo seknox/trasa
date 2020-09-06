@@ -18,9 +18,7 @@ import (
 
 // GetAllIdps retrieves all idps configured for organization
 func GetAllIdps(w http.ResponseWriter, r *http.Request) {
-	uc := r.Context().Value("user").(models.UserContext)
-
-	storedIdp, err := Store.GetAllIdps(uc.User.OrgID)
+	storedIdp, err := Store.GetAllIdps(global.GetConfig().Trasa.OrgId)
 	if err != nil {
 		logger.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "failed to fetch IDP", "GetExternalIdpsForLogin-storedIdp", nil)

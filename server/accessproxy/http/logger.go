@@ -27,7 +27,7 @@ func passwordManAndLogger(r *http.Request, sessionID, csrfToken, userName string
 		return err
 	}
 
-	directoryBuilder := fmt.Sprintf("/var/trasa/thg/logs/%s", sessionID)
+	directoryBuilder := fmt.Sprintf("/tmp/trasa/accessproxy/http/%s", sessionID)
 
 	err = createDirIfNotExist(directoryBuilder)
 	if err != nil {

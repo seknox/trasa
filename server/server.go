@@ -233,25 +233,25 @@ func CoreAPIRouter(r *chi.Mux) chi.Router {
 	r.Get("/", func(w http.ResponseWriter, req *http.Request) {
 		logrus.Trace("Not Found ROOT URL: serving ROOT: ", req.URL.Path)
 		w.Header().Set("Cache-Control", "public, max-age=8176000")
-		http.FileServer(http.Dir("/etc/trasa/build")).ServeHTTP(w, req)
+		http.FileServer(http.Dir("/var/trasa/dashboard")).ServeHTTP(w, req)
 	})
 
 	r.Get("/static*", func(w http.ResponseWriter, req *http.Request) {
 		logrus.Trace("Found static URL: serving STATIC : ", req.URL.Path)
 		w.Header().Set("Cache-Control", "public, max-age=8176000")
-		http.FileServer(http.Dir("/etc/trasa/build")).ServeHTTP(w, req)
+		http.FileServer(http.Dir("/var/trasa/dashboard")).ServeHTTP(w, req)
 	})
 
 	r.Get("/assets*", func(w http.ResponseWriter, req *http.Request) {
 		logrus.Trace("Found static URL: serving ASSETS : ", req.URL.Path)
 		w.Header().Set("Cache-Control", "public, max-age=8176000")
-		http.FileServer(http.Dir("/etc/trasa/build")).ServeHTTP(w, req)
+		http.FileServer(http.Dir("/var/trasa/dashboard")).ServeHTTP(w, req)
 	})
 
 	r.NotFound(func(w http.ResponseWriter, req *http.Request) {
 		logrus.Trace("Not Found URL: serving Index File : ", req.URL.Path)
 		w.Header().Set("Cache-Control", "no-store")
-		http.ServeFile(w, req, "/etc/trasa/build/index.html")
+		http.ServeFile(w, req, "/var/trasa/dashboard/index.html")
 
 	})
 
@@ -276,7 +276,7 @@ func FileServer(r chi.Router, path string) {
 	r.NotFound(func(w http.ResponseWriter, req *http.Request) {
 		fmt.Println("Reached not found in File server ")
 		fmt.Println(req.URL)
-		http.ServeFile(w, req, "/etc/trasa/build/index.html")
+		http.ServeFile(w, req, "/var/trasa/dashboard/index.html")
 	})
 }
 
@@ -285,12 +285,12 @@ func serveFile(w http.ResponseWriter, r *http.Request) {
 
 	//workDir, _ := os.Getwd()
 
-	// filesDir := http.Dir(filepath.Join(workDir, "/etc/trasa/build"))
+	// filesDir := http.Dir(filepath.Join(workDir, "/var/trasa/dashboard"))
 
 	//fmt.Println("context: ", rctx.RoutePattern())
 	pathPrefix := strings.TrimSuffix(rctx.RoutePattern(), "/*")
 	// fmt.Println("serving: ", pathPrefix)
-	fs := http.StripPrefix(pathPrefix, http.FileServer(http.Dir("/etc/trasa/build")))
+	fs := http.StripPrefix(pathPrefix, http.FileServer(http.Dir("/var/trasa/dashboard")))
 
 	fs.ServeHTTP(w, r)
 }
