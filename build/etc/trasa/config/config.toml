@@ -36,8 +36,9 @@
   listenAddr = "app.trasa"
 
 
-[sshproxy]
- listenAddr="0.0.0.0:8022"
+[proxy]
+ sshListenAddr="0.0.0.0:8022"
+ guacdPath=""
 
 [dbproxy]
   listenAddr="127.0.0.1:8023"
