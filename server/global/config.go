@@ -93,9 +93,11 @@ type Config struct {
 		Rootdir     string `toml:"rootdir"`
 		OrgId       string `toml:"orgID"`
 	} `toml:"trasa"`
-	SSHProxy struct {
-		ListenAddr string `toml:"listenAddr"`
-	} `toml:"sshProxy"`
+	Proxy struct {
+		SSHListenAddr string `toml:"sshlistenAddr"`
+		GuacdAddr     string `toml:"guacdAddr"`
+		GuacdEnabled  bool   `toml:"guacdEnabled"`
+	} `toml:"proxy"`
 	Vault struct {
 		Tsxvault bool   `toml:"tsxvault"`
 		Port     string `toml:"port"`

@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
+	"net"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -161,6 +162,18 @@ func InitDBSTOREWithConfig(conf Config) *State {
 	if err != nil {
 		//fmt.Println(err)
 		panic(err)
+	}
+
+	if config.Proxy.GuacdEnabled {
+		guacdAddr := config.Proxy.GuacdAddr
+		if guacdAddr == "" {
+			guacdAddr = "127.0.0.1:4822"
+		}
+		c, err := net.Dial("tcp", guacdAddr)
+		if err != nil {
+			panic("guacd is down")
+		}
+		c.Close()
 	}
 
 	return &State{
