@@ -1,11 +1,14 @@
 package accessproxytest
 
 import (
+	"github.com/seknox/ssh"
 	"github.com/seknox/trasa/server/accessproxy/sshproxy"
+	"github.com/seknox/trasa/server/api/my"
 	"github.com/seknox/trasa/server/utils"
 	"github.com/seknox/trasa/tests/server/testutils"
-	"golang.org/x/crypto/ssh"
 	"net"
+	"net/http"
+	"net/http/httptest"
 	"strings"
 	"testing"
 	"time"
@@ -101,7 +104,9 @@ func TestSSHAuthWithAuthorisedPublicKey(t *testing.T) {
 
 	time.Sleep(time.Second * 2)
 
-	pk, err := ssh.ParsePrivateKey([]byte(testutils.MockPrivateKey2))
+	key := downloadKey(t)
+
+	pk, err := ssh.ParsePrivateKey(key)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -192,4 +197,40 @@ func handleKBAuth(t *testing.T) ssh.AuthMethod {
 		}
 
 	})
+}
+
+func downloadKey(t *testing.T) []byte {
+	req, err := http.NewRequest("GET", "", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(testutils.AddTestUserContext(my.GenerateKeyPair))
+
+	// directly and pass in our Request and ResponseRecorder.
+	handler.ServeHTTP(rr, req)
+
+	// Check the status code is what we expect.
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	k, err := ssh.ParsePrivateKey(rr.Body.Bytes())
+	if err != nil {
+		t.Errorf(`invalid user key`)
+	}
+
+	user, err := sshproxy.SSHStore.GetUserFromPublicKey(k.PublicKey(), testutils.MockOrgID)
+	if err != nil {
+		t.Errorf(`incorrect user key`)
+	}
+
+	if user.ID != testutils.MockUserID {
+		t.Errorf(`incorrect user ID, want=%v got=%v`, testutils.MockUserID, user.ID)
+	}
+	return rr.Body.Bytes()
+
 }

@@ -1,12 +1,15 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"net/http"
-	"strings"
-
-	"github.com/kabukky/httpscerts"
 	"github.com/seknox/trasa/server/initdb"
+	"golang.org/x/crypto/acme/autocert"
+	"net/http"
+	"os"
+	"os/signal"
+	"strings"
+	"time"
 
 	"github.com/seknox/trasa/server/api/my"
 
@@ -112,19 +115,42 @@ func StartServr() {
 
 	go StartRadiusServer(closeChan)
 
-	err := httpscerts.Check("/etc/trasa/certs/trasa-server.crt", "/etc/trasa/certs/trasa-server.key")
-	// If they are not available, generate new ones.
-	if err != nil {
-		err = httpscerts.Generate("/etc/trasa/certs/trasa-server.crt", "/etc/trasa/certs/trasa-server.key", trasaListenAddr)
-		if err != nil {
-			logrus.Fatal("Error: Couldn't create https certs.")
-		}
+	s := http.Server{
+		Addr:    ":443",
+		Handler: r,
 	}
 
-	err = http.ListenAndServeTLS(":443",
-		"/etc/trasa/certs/trasa-server.crt",
-		"/etc/trasa/certs/trasa-server.key",
-		r)
+	done := make(chan struct{})
+	go func() {
+		quit := make(chan os.Signal, 1)
+		signal.Notify(quit, os.Interrupt, os.Kill)
+		sig := <-quit
+		logrus.Infof("trasa-server: shutting down ... %v", sig)
+		logs.Store.RemoveAllActiveSessions()
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		if err := s.Shutdown(ctx); err != nil {
+			logrus.Infof("trasa-server: server shutdown with error: %v", err)
+		}
+		cancel()
+		done <- struct{}{}
+	}()
+
+	var err error
+	if global.GetConfig().Trasa.AutoCert {
+		err = s.Serve(autocert.NewListener(trasaListenAddr))
+	} else {
+		err = checkIfCertExists("/etc/trasa/certs/trasa-server.crt", "/etc/trasa/certs/trasa-server.key")
+		// If they are not available, generate new ones.
+		if err != nil {
+			err = generateCerts("/etc/trasa/certs/trasa-server.crt", "/etc/trasa/certs/trasa-server.key", trasaListenAddr)
+			if err != nil {
+				logrus.Fatal("Error: Couldn't create https certs.")
+			}
+		}
+
+		err = s.ListenAndServeTLS("/etc/trasa/certs/trasa-server.crt", "/etc/trasa/certs/trasa-server.key")
+	}
+
 	if err != nil {
 		fmt.Println(err)
 		logrus.Error(err)
@@ -134,16 +160,16 @@ func StartServr() {
 	// if err != nil {
 	// 	logrus.Error(err)
 	// }
-
+	//
 	// tlsKeypair, err := tls.LoadX509KeyPair("/etc/trasa/certs/trasa-server-dev.crt", "/etc/trasa/certs/trasa-server-dev.key")
 	// if err != nil {
 	// 	log.Println(err)
 	// 	return
 	// }
-
+	//
 	// TODO @bhrg3se commenting out your graceful shutdown code coz for some reason, setting up server this way is causing ssl error (SSL_ERROR_RX_RECORD_TOO_LONG).
 	// Feel free to change this if you can figure out the solution.
-
+	//
 	// trasaTLSServer := http.Server{
 	// 	Addr:      ":443",
 	// 	Handler:   r,
@@ -155,21 +181,7 @@ func StartServr() {
 	// 	//MaxHeaderBytes:    0,
 	// 	//
 	// }
-
-	// done := make(chan struct{})
-	// go func() {
-	// 	quit := make(chan os.Signal, 1)
-	// 	signal.Notify(quit, os.Interrupt, os.Kill)
-	// 	sig := <-quit
-	// 	logrus.Errorf("trasa-server: shutting down ... %v", sig)
-	// 	logs.Store.RemoveAllActiveSessions()
-	// 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	// 	if err := trasaTLSServer.Shutdown(ctx); err != nil {
-	// 		logrus.Errorf("trasa-server: server shutdown with error: %v", err)
-	// 	}
-	// 	cancel()
-	// 	done <- struct{}{}
-	// }()
+	//
 
 	//err = trasaTLSServer.ListenAndServe()
 

@@ -11,14 +11,11 @@ services:
     links:
       - redis
       - db
-      - ssh-test-server
     depends_on:
       - redis
       - db
   redis:
     image: redis
-  ssh-test-server:
-    image: rastasheep/ubuntu-sshd
   db:
     image: postgres
     environment:
