@@ -3,6 +3,7 @@ package stats
 import (
 	"database/sql"
 	"fmt"
+	"github.com/seknox/trasa/server/global"
 	"net"
 	"strconv"
 	"strings"
@@ -84,8 +85,13 @@ func (s statStore) GetAggregatedLoginHours(entityType, entityID, timezone, orgID
 	}
 	sb.Where(sb.Equal(`org_id`, orgID))
 
-	sb.Select(sb.As(fmt.Sprintf(`((login_time/3600000000000)%%24)::int + %d`, tzOffset/3600), `hour`), sb.As(`count(*)`, `c`))
-	//sb.Select(sb.As(`EXTRACT('hour',(login_time/1000000000)::int::timestamp)`, `hour `), sb.As(`count(*)`, `c`))
+	if global.GetConfig().Database.Dbtype == "postgres" {
+		sb.Select(sb.As(fmt.Sprintf(`extract(HOURS FROM (to_timestamp(login_time/1000000000) at time zone %s))`, sb.Var(timezone)), `hour`), sb.As(`count(*)`, `c`))
+	} else {
+		//cockroachdb
+		sb.Select(sb.As(fmt.Sprintf(`EXTRACT('hour',timezone(timezone((login_time/1000000000)::int::timestamp,'UTC'),%s))`, sb.Var(timezone)), `hour `), sb.As(`count(*)`, `c`))
+	}
+
 	sb.GroupBy(`hour`)
 	sb.OrderBy(`hour`)
 
@@ -117,7 +123,7 @@ func (s statStore) GetAggregatedLoginHours(entityType, entityID, timezone, orgID
 		logins = append(logins, login)
 	}
 out:
-	for i := 0; i < 23; i++ {
+	for i := 0; i < 24; i++ {
 
 		for j := i; j >= 0; j-- {
 			if len(logins) < i+1 {

@@ -16,7 +16,6 @@ import (
 	"golang.org/x/crypto/ssh"
 	"io"
 	"net/http"
-	"net/url"
 	"strings"
 	"time"
 
@@ -215,11 +214,11 @@ func regDeviceRes(w http.ResponseWriter, orgID, deviceID string) {
 	resp.ExtID = deviceID
 	resp.RootDomain = global.GetConfig().Trasa.Rootdomain
 	resp.SsoDomain = global.GetConfig().Trasa.Ssodomain
-	u, err := url.Parse(global.GetConfig().Trasa.Dashboard)
-	if err != nil {
-		logrus.Error(err)
-	}
-	resp.WSPath = fmt.Sprintf("wss://%s", u.Host)
+	//u, err := url.Parse(global.GetConfig().Trasa.Dashboard)
+	//if err != nil {
+	//	logrus.Error(err)
+	//}
+	resp.WSPath = fmt.Sprintf("wss://%s", global.GetConfig().Trasa.ListenAddr)
 
 	allservices, err := services.Store.GetAllByType("http", orgID)
 	if err != nil {
@@ -275,11 +274,11 @@ func SyncExtension(w http.ResponseWriter, r *http.Request) {
 	resp.ExtID = req.ExtID
 	resp.RootDomain = global.GetConfig().Trasa.Rootdomain
 	resp.SsoDomain = global.GetConfig().Trasa.Ssodomain
-	u, err := url.Parse(global.GetConfig().Trasa.Dashboard)
-	if err != nil {
-		logrus.Error(err)
-	}
-	resp.WSPath = fmt.Sprintf("wss://%s", u.Host)
+	//u, err := url.Parse(global.GetConfig().Trasa.Dashboard)
+	//if err != nil {
+	//	logrus.Error(err)
+	//}
+	resp.WSPath = fmt.Sprintf("wss://%s", global.GetConfig().Trasa.ListenAddr)
 
 	allservices, err := services.Store.GetAllByType("http", orgID)
 	if err != nil {
