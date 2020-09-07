@@ -3,7 +3,11 @@ services:
   trasa-server:
     build:
       context: ../..
-      dockerfile: Dockerfile
+      dockerfile: build/docker/Dockerfile
+    volumes:
+    - ../../devenv/etc/trasa:/etc/trasa
+    - ../../devenv/var/logs/trasa.log:/var/logs/trasa.log
+
     ports:
       - "80:80"
       - "443:443"
@@ -20,6 +24,8 @@ services:
     image: postgres
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
+      PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ../../devenv/var/trasa/crdb:/var/lib/postgresql/data
 

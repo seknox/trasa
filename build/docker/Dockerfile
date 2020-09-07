@@ -36,5 +36,6 @@ RUN update-ca-certificates
 COPY --from=gobuilder /go/src/seknox/trasa/server/server .
 COPY --from=dashbuilder /trasa/build /var/trasa/dashboard
 COPY build/etc/trasa /etc/trasa
-COPY build/test/wait-for-it.sh .
+COPY build/docker/wait-for-it.sh .
+
 CMD ["/trasa/wait-for-it.sh","db:5432", "--","/trasa/server"]
