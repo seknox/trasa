@@ -1,6 +1,7 @@
 package global
 
 import (
+	"github.com/seknox/trasa/server/utils"
 	"path/filepath"
 
 	"github.com/sirupsen/logrus"
@@ -9,9 +10,9 @@ import (
 
 // ParseConfig uses viper to parse TRASA config file.
 func ParseConfig() (config Config) {
-	absPath, err := filepath.Abs("/etc/trasa/config")
+	absPath, err := filepath.Abs(filepath.Join(utils.GetETCDir(), "trasa", "config"))
 	if err != nil {
-		panic("config file not found in /etc/trasa/config")
+		panic("config file not found in " + filepath.Join(utils.GetETCDir(), "trasa", "config"))
 	}
 	//viper.SetConfigType("toml")
 	viper.SetConfigName("config")
@@ -108,7 +109,7 @@ type Config struct {
 
 // UpdateTRASACPxyAddr updates TRASA cloud proxy server address.
 func UpdateTRASACPxyAddr(serverAddr string) {
-	absPath, err := filepath.Abs("/etc/trasa/config")
+	absPath, err := filepath.Abs(filepath.Join(utils.GetETCDir(), "trasa", "config"))
 	if err != nil {
 		logrus.Error(err)
 	}

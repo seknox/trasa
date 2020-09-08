@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -293,15 +294,15 @@ func (s Store) deleteGuestChannel(sessionID string) {
 
 func (s Store) uploadSessionLog(authlog *logs.AuthLog) error {
 
-	tempFileDir := "/tmp/trasa/accessproxy/ssh"
+	tempFileDir := filepath.Join(utils.GetTmpDir(), "trasa", "accessproxy", "ssh")
 	bucketName := "trasa-ssh-logs"
 	sessionID := authlog.SessionID
 
 	loginTime := time.Unix(0, authlog.LoginTime)
 	authlog.LogoutTime = time.Now().UnixNano()
 
-	objectName := fmt.Sprintf("%s/%d/%d/%d/%s.session", authlog.OrgID, loginTime.Year(), int(loginTime.Month()), loginTime.Day(), sessionID)
-	filePath := fmt.Sprintf("%s/%s.session", tempFileDir, sessionID)
+	objectName := filepath.Join(authlog.OrgID, string(loginTime.Year()), string(int(loginTime.Month())), string(loginTime.Day()), fmt.Sprintf("%s.session", sessionID))
+	filePath := filepath.Join(tempFileDir, fmt.Sprintf("%s.session", sessionID))
 
 	// Upload log file to minio
 	uploadErr := logs.Store.PutIntoMinio(objectName, filePath, bucketName)

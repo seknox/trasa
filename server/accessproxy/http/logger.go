@@ -2,11 +2,12 @@ package http
 
 import (
 	"fmt"
+	"github.com/seknox/trasa/server/utils"
 	"github.com/sirupsen/logrus"
-
 	"net/http"
 	"net/http/httputil"
 	"os"
+	"path/filepath"
 	"time"
 )
 
@@ -27,14 +28,14 @@ func passwordManAndLogger(r *http.Request, sessionID, csrfToken, userName string
 		return err
 	}
 
-	directoryBuilder := fmt.Sprintf("/tmp/trasa/accessproxy/http/%s", sessionID)
+	directoryBuilder := fmt.Sprintf(filepath.Join(utils.GetTmpDir(), "trasa", "accessproxy", "http", sessionID))
 
 	err = createDirIfNotExist(directoryBuilder)
 	if err != nil {
 		return err
 	}
 
-	logPath := fmt.Sprintf("%s/%s.http-raw", directoryBuilder, sessionID)
+	logPath := filepath.Join(directoryBuilder, fmt.Sprintf("%s.http-raw", sessionID))
 	file, err := os.OpenFile(logPath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0755)
 	if err != nil {
 		logrus.Error(err)

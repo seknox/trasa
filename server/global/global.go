@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
+	"github.com/seknox/trasa/server/utils"
 	"net"
 	"net/http"
 	"os"
@@ -89,8 +90,7 @@ func InitDBSTOREWithConfig(conf Config) *State {
 
 	flag.Parse()
 	if *logOutputToFile {
-
-		f, err := os.OpenFile("/var/log/trasa.log", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+		f, err := os.OpenFile(filepath.Join(utils.GetVarDir(), "log", "trasa.log"), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 		if err != nil {
 			panic(err)
 		}
@@ -121,7 +121,7 @@ func InitDBSTOREWithConfig(conf Config) *State {
 	//elasticUrl, authUser, authPass := elasticon()
 
 	// initialize geoIP connection
-	absPath, err := filepath.Abs("/etc/trasa/static/GeoLite2-City.mmdb")
+	absPath, err := filepath.Abs(filepath.Join(utils.GetETCDir(), "trasa", "static", "GeoLite2-City.mmdb"))
 	if err != nil {
 		panic("geodb file not found: " + err.Error())
 	}
@@ -129,7 +129,7 @@ func InitDBSTOREWithConfig(conf Config) *State {
 	if err != nil {
 		panic(err)
 	}
-	absPath, err = filepath.Abs("/etc/trasa/config/key.json")
+	absPath, err = filepath.Abs(filepath.Join(utils.GetETCDir(), "trasa", "config", "key.json"))
 	if err != nil {
 		logrus.Errorf("firebase key not found: %v", err)
 	}
@@ -322,30 +322,40 @@ func newRedisClient(config Config) *redis.Client {
 
 }
 
-func checkInitDirsAndFiles() {
-	err := os.MkdirAll("/var/trasa/trasagw/log/", 0600)
-	if err != nil {
-		panic(err)
-	}
-	err = os.MkdirAll("/var/trasa/trasagw/shared", 0600)
-	if err != nil {
-		panic(err)
-	}
-	err = os.MkdirAll("/var/tmp/trasa/accessproxy/guac/shared", 0600)
-	if err != nil {
-		panic(err)
-	}
-	err = os.MkdirAll("/var/trasa/trasacore/log/", 0600)
-	if err != nil {
-		panic(err)
-	}
-	err = os.MkdirAll("/etc/trasa/certs", 0600)
-	if err != nil {
-		panic(err)
-	}
-	err = os.MkdirAll("/etc/trasa/static", 0600)
-	if err != nil {
-		panic(err)
-	}
+//func checkInitDirsAndFiles() {
+//	err := os.MkdirAll("/var/trasa/trasagw/log/", 0600)
+//	if err != nil {
+//		panic(err)
+//	}
+//	err = os.MkdirAll("/var/trasa/trasagw/shared", 0600)
+//	if err != nil {
+//		panic(err)
+//	}
+//	err = os.MkdirAll("/var/tmp/trasa/accessproxy/guac/shared", 0600)
+//	if err != nil {
+//		panic(err)
+//	}
+//	err = os.MkdirAll("/var/trasa/trasacore/log/", 0600)
+//	if err != nil {
+//		panic(err)
+//	}
+//	err = os.MkdirAll("/etc/trasa/certs", 0600)
+//	if err != nil {
+//		panic(err)
+//	}
+//	err = os.MkdirAll("/etc/trasa/static", 0600)
+//	if err != nil {
+//		panic(err)
+//	}
+//
+//}
 
+//Gstate is a global state struct which contains database connections, configurations etc
+type Gstate struct {
+	db             *sql.DB
+	geoip          *geoip2.Reader
+	firebaseClient *firebase.App
+	minioClient    *minio.Client
+	config         Config
+	redisClient    *redis.Client
 }

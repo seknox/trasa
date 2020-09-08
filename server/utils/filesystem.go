@@ -2,6 +2,7 @@ package utils
 
 import (
 	"os"
+	"runtime"
 
 	logger "github.com/sirupsen/logrus"
 )
@@ -13,5 +14,33 @@ func CreateDirIfNotExist(dir string) {
 		if err != nil {
 			logger.Error(err)
 		}
+	}
+}
+
+func GetETCDir() string {
+	switch runtime.GOOS {
+	case "windows":
+		//TODO @sshahcodes
+		return ""
+	default:
+		return "/etc"
+	}
+}
+
+func GetVarDir() string {
+	switch runtime.GOOS {
+	case "windows":
+		return `%APPDATA%\`
+	default:
+		return "/var"
+	}
+}
+
+func GetTmpDir() string {
+	switch runtime.GOOS {
+	case "windows":
+		return `C:\\Windows\TEMP`
+	default:
+		return "/var"
 	}
 }

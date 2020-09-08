@@ -2,6 +2,7 @@ package rdpproxy
 
 import (
 	"fmt"
+	"github.com/seknox/trasa/server/utils"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -20,12 +21,17 @@ func (s GWStore) CheckPolicy(params *models.ConnectionParams, policy *models.Pol
 
 func (s GWStore) uploadSessionLog(authlog *logs.AuthLog) error {
 
-	tempFileDir := "/tmp/trasa/accessproxy/guac"
+	tempFileDir := filepath.Join(utils.GetTmpDir(), "trasa", "accessproxy", "guac")
 	bucketName := "trasa-guac-logs"
 	sessionID := authlog.SessionID
 	logrus.Debugf("sessionID is %s", sessionID)
 
 	loginTime := time.Unix(0, authlog.LoginTime)
+
+	//TODO @sshahcodes
+
+	//sudo docker exec  guacd /usr/local/guacamole/bin/guacenc -f /tmp/trasa/accessproxy/guac/%s.guac
+	//here guacd is container name
 
 	guacencCmdStr := fmt.Sprintf("sudo docker exec  guacd /usr/local/guacamole/bin/guacenc -f /tmp/trasa/accessproxy/guac/%s.guac", sessionID)
 	guacenc := exec.Command("/bin/bash", "-c", guacencCmdStr)
@@ -57,6 +63,7 @@ func (s GWStore) uploadSessionLog(authlog *logs.AuthLog) error {
 
 	}
 
+	//don't use fileapth.join in object name
 	objectName := fmt.Sprintf("%s/%d/%d/%d/%s.guac", authlog.OrgID, loginTime.Year(), int(loginTime.Month()), loginTime.Day(), sessionID)
 	filePath := fmt.Sprintf("%s/%s.mp4", tempFileDir, sessionID)
 

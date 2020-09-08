@@ -4,10 +4,12 @@ import (
 	"context"
 	"fmt"
 	"github.com/seknox/trasa/server/initdb"
+	"github.com/seknox/trasa/server/utils"
 	"golang.org/x/crypto/acme/autocert"
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -139,16 +141,19 @@ func StartServr() {
 	if global.GetConfig().Trasa.AutoCert {
 		err = s.Serve(autocert.NewListener(trasaListenAddr))
 	} else {
-		err = checkIfCertExists("/etc/trasa/certs/trasa-server.crt", "/etc/trasa/certs/trasa-server.key")
+		certPath := filepath.Join(utils.GetETCDir(), "trasa", "certs", "trasa-server.crt")
+		keyPath := filepath.Join(utils.GetETCDir(), "trasa", "certs", "trasa-server.key")
+
+		err = checkIfCertExists(certPath, keyPath)
 		// If they are not available, generate new ones.
 		if err != nil {
-			err = generateCerts("/etc/trasa/certs/trasa-server.crt", "/etc/trasa/certs/trasa-server.key", trasaListenAddr)
+			err = generateCerts(certPath, keyPath, trasaListenAddr)
 			if err != nil {
 				logrus.Fatal("Error: Couldn't create https certs.")
 			}
 		}
 
-		err = s.ListenAndServeTLS("/etc/trasa/certs/trasa-server.crt", "/etc/trasa/certs/trasa-server.key")
+		err = s.ListenAndServeTLS(certPath, keyPath)
 	}
 
 	if err != nil {
@@ -230,28 +235,29 @@ func CoreAPIRouter(r *chi.Mux) chi.Router {
 
 	r = CoreAPIRoutes(r)
 
+	filepath.Join(utils.GetVarDir(), "trasa", "dashboard")
 	r.Get("/", func(w http.ResponseWriter, req *http.Request) {
 		logrus.Trace("Not Found ROOT URL: serving ROOT: ", req.URL.Path)
 		w.Header().Set("Cache-Control", "public, max-age=8176000")
-		http.FileServer(http.Dir("/var/trasa/dashboard")).ServeHTTP(w, req)
+		http.FileServer(http.Dir(filepath.Join(utils.GetVarDir(), "trasa", "dashboard"))).ServeHTTP(w, req)
 	})
 
 	r.Get("/static*", func(w http.ResponseWriter, req *http.Request) {
 		logrus.Trace("Found static URL: serving STATIC : ", req.URL.Path)
 		w.Header().Set("Cache-Control", "public, max-age=8176000")
-		http.FileServer(http.Dir("/var/trasa/dashboard")).ServeHTTP(w, req)
+		http.FileServer(http.Dir(filepath.Join(utils.GetVarDir(), "trasa", "dashboard"))).ServeHTTP(w, req)
 	})
 
 	r.Get("/assets*", func(w http.ResponseWriter, req *http.Request) {
 		logrus.Trace("Found static URL: serving ASSETS : ", req.URL.Path)
 		w.Header().Set("Cache-Control", "public, max-age=8176000")
-		http.FileServer(http.Dir("/var/trasa/dashboard")).ServeHTTP(w, req)
+		http.FileServer(http.Dir(filepath.Join(utils.GetVarDir(), "trasa", "dashboard"))).ServeHTTP(w, req)
 	})
 
 	r.NotFound(func(w http.ResponseWriter, req *http.Request) {
 		logrus.Trace("Not Found URL: serving Index File : ", req.URL.Path)
 		w.Header().Set("Cache-Control", "no-store")
-		http.ServeFile(w, req, "/var/trasa/dashboard/index.html")
+		http.ServeFile(w, req, filepath.Join(utils.GetVarDir(), "trasa", "dashboard", "index.html"))
 
 	})
 
@@ -276,7 +282,7 @@ func FileServer(r chi.Router, path string) {
 	r.NotFound(func(w http.ResponseWriter, req *http.Request) {
 		fmt.Println("Reached not found in File server ")
 		fmt.Println(req.URL)
-		http.ServeFile(w, req, "/var/trasa/dashboard/index.html")
+		http.ServeFile(w, req, filepath.Join(utils.GetVarDir(), "trasa", "dashboard", "index.html"))
 	})
 }
 
@@ -285,12 +291,12 @@ func serveFile(w http.ResponseWriter, r *http.Request) {
 
 	//workDir, _ := os.Getwd()
 
-	// filesDir := http.Dir(filepath.Join(workDir, "/var/trasa/dashboard"))
+	// filesDir := http.Dir(filepath.Join(workDir, filepath.Join(utils.GetVarDir(),"trasa","dashboard")))
 
 	//fmt.Println("context: ", rctx.RoutePattern())
 	pathPrefix := strings.TrimSuffix(rctx.RoutePattern(), "/*")
 	// fmt.Println("serving: ", pathPrefix)
-	fs := http.StripPrefix(pathPrefix, http.FileServer(http.Dir("/var/trasa/dashboard")))
+	fs := http.StripPrefix(pathPrefix, http.FileServer(http.Dir(filepath.Join(utils.GetVarDir(), "trasa", "dashboard"))))
 
 	fs.ServeHTTP(w, r)
 }
