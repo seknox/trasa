@@ -30,11 +30,13 @@ RUN yarn run build
 FROM ubuntu:xenial-20200706
 
 WORKDIR /trasa
+ENV GUACENC_INSTALLED=true
 RUN apt-get update
 RUN apt-get install -y --no-install-recommends ca-certificates
 RUN update-ca-certificates
 COPY --from=gobuilder /go/src/seknox/trasa/server/server .
 COPY --from=dashbuilder /trasa/build /var/trasa/dashboard
+COPY --from=docker.pkg.github.com/seknox/guacamole-server/guacd:0.0.1 /usr/local/guacamole/bin/guacenc /usr/local/guacamole/bin/guacenc
 COPY build/etc/trasa /etc/trasa
 COPY build/docker/wait-for-it.sh .
 

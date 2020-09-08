@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"time"
 
 	"github.com/pkg/errors"
@@ -33,8 +34,8 @@ func (s GWStore) uploadSessionLog(authlog *logs.AuthLog) error {
 	//sudo docker exec  guacd /usr/local/guacamole/bin/guacenc -f /tmp/trasa/accessproxy/guac/%s.guac
 	//here guacd is container name
 
-	guacencCmdStr := fmt.Sprintf("sudo docker exec  guacd /usr/local/guacamole/bin/guacenc -f /tmp/trasa/accessproxy/guac/%s.guac", sessionID)
-	guacenc := exec.Command("/bin/bash", "-c", guacencCmdStr)
+	guacenc := getGuacencCmd(sessionID)
+
 	ll, err := guacenc.CombinedOutput()
 	//	logger.Debug(string(ll))
 	if err != nil {
@@ -48,8 +49,7 @@ func (s GWStore) uploadSessionLog(authlog *logs.AuthLog) error {
 
 	}
 
-	ffmpegCmdStr := fmt.Sprintf("sudo ffmpeg -i %s/%s.guac.m4v %s/%s.mp4", tempFileDir, sessionID, tempFileDir, sessionID)
-	ffmpeg := exec.Command("/bin/bash", "-c", ffmpegCmdStr)
+	ffmpeg := getFFMPEGcmd(tempFileDir, sessionID)
 	ll, err = ffmpeg.CombinedOutput()
 	//logger.Debug(string(ll))
 	if err != nil {
@@ -65,7 +65,7 @@ func (s GWStore) uploadSessionLog(authlog *logs.AuthLog) error {
 
 	//don't use fileapth.join in object name
 	objectName := fmt.Sprintf("%s/%d/%d/%d/%s.guac", authlog.OrgID, loginTime.Year(), int(loginTime.Month()), loginTime.Day(), sessionID)
-	filePath := fmt.Sprintf("%s/%s.mp4", tempFileDir, sessionID)
+	filePath := filepath.Join(tempFileDir, fmt.Sprintf("%s.mp4", sessionID))
 
 	// Upload log file to minio
 	uploadErr := logs.Store.PutIntoMinio(objectName, filePath, bucketName)
@@ -83,4 +83,39 @@ func (s GWStore) uploadSessionLog(authlog *logs.AuthLog) error {
 	}
 
 	return uploadErr
+}
+
+func getGuacencCmd(sessionID string) *exec.Cmd {
+	if os.Getenv("GUACENC_INSTALLED") == "true" {
+		guacencCmdStr := fmt.Sprintf(
+			"/usr/local/guacamole/bin/guacenc -f /tmp/trasa/accessproxy/guac/%s.guac", sessionID)
+
+		return exec.Command("/bin/sh", "-c", guacencCmdStr)
+
+	}
+
+	if runtime.GOOS == "windows" {
+		guacencCmdStr := fmt.Sprintf(
+			"docker.exe exec  guacd /usr/local/guacamole/bin/guacenc -f /tmp/trasa/accessproxy/guac/%s.guac", sessionID)
+
+		return exec.Command("powershell", "-c", guacencCmdStr)
+	}
+
+	guacencCmdStr := fmt.Sprintf(
+		"sudo docker exec  guacd /usr/local/guacamole/bin/guacenc -f /tmp/trasa/accessproxy/guac/%s.guac", sessionID)
+	return exec.Command("/bin/bash", "-c", guacencCmdStr)
+
+}
+
+func getFFMPEGcmd(tempFileDir, sessionID string) *exec.Cmd {
+
+	if runtime.GOOS == "windows" {
+		ffmpegCmdStr := fmt.Sprintf(`ffmpeg.exe -i %s\%s.guac.m4v %s\%s.mp4`, tempFileDir, sessionID, tempFileDir, sessionID)
+		return exec.Command("powershell", "-c", ffmpegCmdStr)
+
+	}
+
+	ffmpegCmdStr := fmt.Sprintf("sudo ffmpeg -i %s/%s.guac.m4v %s/%s.mp4", tempFileDir, sessionID, tempFileDir, sessionID)
+	return exec.Command("/bin/bash", "-c", ffmpegCmdStr)
+
 }

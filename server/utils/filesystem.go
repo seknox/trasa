@@ -41,6 +41,6 @@ func GetTmpDir() string {
 	case "windows":
 		return `C:\\Windows\TEMP`
 	default:
-		return "/var"
+		return "/tmp"
 	}
 }
