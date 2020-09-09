@@ -12,7 +12,7 @@ import TabItem from '@theme/TabItem';
   values={[
     {label: 'docker', value: 'docker'},
     {label: 'ubuntu', value: 'linux'},
-    {label: 'kubernetes', value: 'skubernetes'},
+    {label: 'kubernetes', value: 'kubernetes'},
   ]}>
   
   <TabItem value="linux"> coming soon... </TabItem>

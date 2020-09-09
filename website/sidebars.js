@@ -33,7 +33,7 @@ module.exports = {
       ],
       Policies: ['policies/policy-introduction', 'policies/basic-policy', 'policies/device-policy'],
       'Access Map': ['access-map/access-mapping'],
-      'Access Proxy': ['access-proxy/introduction'],
+      'Access Proxy': ['access-proxy/introduction', 'access-proxy/sshproxy'],
       'Two Factor Authentication': [
         'native-tfa/two-factor-authentication',
         'native-tfa/windows/windows-two-factor-authentication',
