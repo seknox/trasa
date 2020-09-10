@@ -369,18 +369,11 @@ function SCIMConfig(props: any) {
 
   const generateKey = () => {
     updateActionStatus({ ...actionStatus, respStatus: false, statusMsg: '', loader: true });
-    const config = {
-      headers: {
-        'X-SESSION': localStorage.getItem('X-SESSION'),
-        'X-CSRF': localStorage.getItem('X-CSRF'),
-      },
-    };
 
     axios
       .post(
         `${Constants.TRASA_HOSTNAME}/api/v1/providers/uidp/generatescimtoken/${props.idp.idpID}`,
-        '',
-        config,
+        ''
       )
       .then((r) => {
         updateActionStatus({ ...actionStatus, loader: false });
@@ -996,13 +989,7 @@ function MigrateUsers(props: any) {
       req.userList = updatedExtIdpUsers;
     }
 
-    const config = {
-      headers: {
-        'X-SESSION': localStorage.getItem('X-SESSION'),
-        'X-CSRF': localStorage.getItem('X-CSRF'),
-      },
-    };
-    axios.post(`${Constants.TRASA_HOSTNAME}/api/v1/providers/uidp/users/transfer`, req, config).then(() => {
+    axios.post(`${Constants.TRASA_HOSTNAME}/api/v1/providers/uidp/users/transfer`, req).then(() => {
       updateActionStatus({ ...actionStatus, loader: false });
     });
   };

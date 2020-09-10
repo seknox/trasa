@@ -248,7 +248,6 @@ export class TrasaGWConsole extends React.Component {
         .post(`${Constants.TRASA_HOSTNAME}/api/v1/my/upload_file`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
-            'X-SESSION': localStorage.getItem('X-SESSION'),
             'X-CSRF': localStorage.getItem('X-CSRF'),
           },
           onUploadProgress: (progressEvent) => {

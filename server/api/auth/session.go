@@ -18,12 +18,13 @@ import (
 
 //LogoutHandler handles logout
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
-	sessionToken := r.Header.Get("X-SESSION")
-	if sessionToken == "" || sessionToken == "null" {
+
+	sessionToken, err := r.Cookie("X-SESSION")
+	if sessionToken.Value == "" || err != nil {
 		return
 	}
 
-	err := Store.Logout(sessionToken)
+	err = Store.Logout(sessionToken.Value)
 	if err != nil {
 		logrus.Error(err)
 		return
@@ -32,31 +33,27 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 type userAuthSessionResp struct {
-	User   models.User `json:"user"`
-	Tokens tokens      `json:"tokens"`
+	User      models.User `json:"user"`
+	CSRFToken string      `json:"CSRFToken"`
 }
 
-type tokens struct {
-	Session string `json:"session"`
-	Csrf    string `json:"csrf"`
-}
+// type tokens struct {
+// 	Session string `json:"session"`
+// 	Csrf    string `json:"csrf"`
+// }
 
-func sessionResponse(userDetails *models.User, deviceID, browserID string) (response userAuthSessionResp, err error) {
+func sessionResponse(userDetails *models.User, deviceID, browserID string) (sessionToken string, response userAuthSessionResp, err error) {
 
-	var sessionToken, csrfToken string
+	var csrfToken string
 	sessionToken, csrfToken, err = SetSession(userDetails.ID, userDetails.OrgID, deviceID, browserID)
 	if err != nil {
 		return
 	}
 
-	var tokenval tokens
-	tokenval.Session = sessionToken
-	tokenval.Csrf = csrfToken
-
 	response.User = *userDetails
-	response.Tokens = tokenval
+	response.CSRFToken = csrfToken
 
-	return response, nil
+	return sessionToken, response, nil
 }
 
 // SetSession sets, encrypts and serializes session cookies and csrf tokens

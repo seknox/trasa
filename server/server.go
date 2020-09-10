@@ -3,13 +3,14 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/seknox/trasa/server/initdb"
-	"golang.org/x/crypto/acme/autocert"
 	"net/http"
 	"os"
 	"os/signal"
 	"strings"
 	"time"
+
+	"github.com/seknox/trasa/server/initdb"
+	"golang.org/x/crypto/acme/autocert"
 
 	"github.com/seknox/trasa/server/api/my"
 

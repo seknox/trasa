@@ -126,15 +126,10 @@ export default function TlsConfig(props: any) {
       formData.keyVal = keyFile;
     }
 
-    const config = {
-      headers: {
-        'X-SESSION': localStorage.getItem('X-SESSION'),
-        'X-CSRF': localStorage.getItem('X-CSRF'),
-      },
-    };
+
 
     axios
-      .post(`${Constants.TRASA_HOSTNAME}/api/v1/gateway/httpproxy/configtls`, formData, config)
+      .post(`${Constants.TRASA_HOSTNAME}/api/v1/gateway/httpproxy/configtls`, formData)
       .then((r) => {
         if (r.data.status === 'success') {
           setLoader(false);

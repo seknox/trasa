@@ -3,6 +3,8 @@ package middlewares
 import (
 	"context"
 	"encoding/base64"
+	"net/http"
+
 	"github.com/gorilla/websocket"
 	"github.com/pkg/errors"
 	"github.com/seknox/trasa/server/api/orgs"
@@ -13,7 +15,6 @@ import (
 	"github.com/seknox/trasa/server/utils"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/nacl/secretbox"
-	"net/http"
 )
 
 // SessionValidator is a middleware that checks for csrf tokens and session cookies
@@ -21,10 +22,15 @@ func SessionValidator(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		//get session cookie and csrf tokens
-		sessionToken := r.Header.Get("X-SESSION")
+		sessionToken, err := r.Cookie("X-SESSION")
+		if err != nil {
+			logrus.Error(err)
+			utils.TrasaResponse(w, 403, "failed", "failed to verify token", "SessionValidator", nil, nil)
+			return
+		}
 		csrfToken := r.Header.Get("X-CSRF")
 
-		userContext, err := getUserContext(sessionToken, csrfToken)
+		userContext, err := validateAndGetUserContext(sessionToken.Value, csrfToken)
 		if err != nil {
 			logrus.Error(err)
 			utils.TrasaResponse(w, 403, "failed", "failed to verify token", "SessionValidator", nil, nil)
@@ -67,7 +73,7 @@ func SessionValidatorWS(next func(params models.ConnectionParams, uc models.User
 		}
 
 		//uc := r.Context().Value("user").(models.UserContext)
-		uc, err := getUserContext(params.SESSION, params.CSRF)
+		uc, err := validateAndGetUserContext(params.SESSION, params.CSRF)
 		if err != nil {
 			logrus.Debug(err)
 			conn.WriteMessage(1, []byte("Invalid session. Try logging in again."))
@@ -84,7 +90,7 @@ func SessionValidatorWS(next func(params models.ConnectionParams, uc models.User
 
 }
 
-func getUserContext(sessionToken, csrfToken string) (models.UserContext, error) {
+func validateAndGetUserContext(sessionToken, csrfToken string) (models.UserContext, error) {
 	var userContext models.UserContext
 
 	if sessionToken == "" || sessionToken == "null" {
