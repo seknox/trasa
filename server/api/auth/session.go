@@ -29,6 +29,18 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 		logrus.Error(err)
 		return
 	}
+
+	xSESSION := http.Cookie{
+		Name:     "X-SESSION",
+		Value:    "",
+		HttpOnly: true,
+		SameSite: http.SameSiteStrictMode,
+		Secure:   true,
+		Path:     "/",
+	}
+
+	http.SetCookie(w, &xSESSION)
+
 	utils.TrasaResponse(w, http.StatusOK, "success", "", "")
 }
 
