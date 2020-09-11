@@ -2,14 +2,17 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
 	"net/http"
+	"net/url"
 	"os"
 	"os/signal"
 	"strings"
 	"time"
 
 	"github.com/seknox/trasa/server/initdb"
+	"github.com/vulcand/oxy/forward"
 	"golang.org/x/crypto/acme/autocert"
 
 	"github.com/seknox/trasa/server/api/my"
@@ -230,6 +233,34 @@ func CoreAPIRouter(r *chi.Mux) chi.Router {
 	r.Use(cors.Handler)
 
 	r = CoreAPIRoutes(r)
+
+	logrus.Trace("Proxying dashboard: ", global.GetConfig().Trasa.ProxyDashboard)
+	if global.GetConfig().Trasa.ProxyDashboard == true {
+
+		r.Get("/*", func(w http.ResponseWriter, req *http.Request) {
+			logrus.Trace("Forwarding non api request to dashboard: ", global.GetConfig().Trasa.DashboardAddr)
+			transport := &http.Transport{
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+			}
+
+			url, err := url.ParseRequestURI(global.GetConfig().Trasa.DashboardAddr)
+			if err != nil {
+				logrus.Error(err)
+				// TODO respond with error notification?
+				return
+			}
+			req.URL = url
+			fwd, err := forward.New(forward.RoundTripper(transport))
+
+			if err != nil {
+				logrus.Error(err)
+			}
+			fwd.ServeHTTP(w, req)
+		})
+
+		return r
+
+	}
 
 	r.Get("/", func(w http.ResponseWriter, req *http.Request) {
 		logrus.Trace("Not Found ROOT URL: serving ROOT: ", req.URL.Path)
