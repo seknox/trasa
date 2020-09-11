@@ -108,11 +108,14 @@ func DBLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	creds, err := services.GetUpstreamCreds(remoteLogin.User, service.ID, service.Type, service.OrgID)
-	if err != nil {
-		logrus.Error(err)
-		creds = &models.UpstreamCreds{}
-	}
+	//TODO uncomment this after implementing authentication in this API
+
+	//creds, err := services.GetUpstreamCreds(remoteLogin.User, service.ID, service.Type, service.OrgID)
+	//if err != nil {
+	//	logrus.Error(err)
+	//	creds = &models.UpstreamCreds{}
+	//}
+	creds := models.UpstreamCreds{}
 
 	//}
 	remoteLogin.TfaMethod = "totp"
