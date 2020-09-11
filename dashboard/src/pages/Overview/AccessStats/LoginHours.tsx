@@ -111,17 +111,11 @@ export default function LoginPatternByHour(props: AccessStatsFilterProps) {
   const classes = useStyles();
 
   useEffect(() => {
-    const config = {
-      headers: {
-        'X-SESSION': localStorage.getItem('X-SESSION'),
-        'X-CSRF': localStorage.getItem('X-CSRF'),
-      },
-    };
 
     const reqPath = `${Constants.TRASA_HOSTNAME}/api/v1/stats/loginhours/${props.entityType}/${props.entityID}/${timeFilter}/${statusFilter}`;
 
     axios
-      .get(reqPath, config)
+      .get(reqPath)
       .then((r) => {
         // console.log(r.data.data[0])
         const lopt = OptionBuilder(r.data.data[0]);

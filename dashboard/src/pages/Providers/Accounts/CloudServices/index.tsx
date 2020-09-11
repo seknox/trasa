@@ -407,18 +407,11 @@ function DOConnectAndSync() {
 
   const syncNow = () => {
     updateActionStatus({ ...actionStatus, respStatus: false, statusMsg: '', loader: true });
-    // mixpanel.track('manage-accounts-dointegration');
-    const config = {
-      headers: {
-        'X-SESSION': localStorage.getItem('X-SESSION'),
-        'X-CSRF': localStorage.getItem('X-CSRF'),
-      },
-    };
+
     axios
       .post(
         `${Constants.TRASA_HOSTNAME}/api/v1/providers/sidp/syncnow/do`,
         storedKey,
-        config,
       )
       .then((r: any) => {
         updateActionStatus({ ...actionStatus, loader: false });
@@ -449,14 +442,8 @@ function DOConnectAndSync() {
   };
 
   useEffect(() => {
-    const config = {
-      headers: {
-        'X-SESSION': localStorage.getItem('X-SESSION'),
-        'X-CSRF': localStorage.getItem('X-CSRF'),
-      },
-    };
     axios
-      .get(`${Constants.TRASA_HOSTNAME}/api/v1/providers/vault/key/KEY_DOAPI`, config)
+      .get(`${Constants.TRASA_HOSTNAME}/api/v1/providers/vault/key/KEY_DOAPI`)
 
       .then((response) => {
         // console.log(response.data)

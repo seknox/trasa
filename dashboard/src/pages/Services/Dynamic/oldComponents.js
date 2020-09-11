@@ -273,12 +273,6 @@ class ServicegroupUserGroupMap extends Component {
 
   submitGroupMapRequest = () => {
     this.setState({ progress: true });
-    const config = {
-      headers: {
-        'X-SESSION': localStorage.getItem('X-SESSION'),
-        'X-CSRF': localStorage.getItem('X-CSRF'),
-      },
-    };
 
     const { selectedUserGroups, selectedPolicies, userName } = this.state;
 
@@ -316,7 +310,7 @@ class ServicegroupUserGroupMap extends Component {
 
     this.setState({ error: false, loading: true });
 
-    axios.post(url, req, config).then((response) => {
+    axios.post(url, req).then((response) => {
       this.setState({ progress: false });
       if (response.data.status === 'success') {
         this.setState({ loading: false });

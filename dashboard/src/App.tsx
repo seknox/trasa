@@ -102,7 +102,6 @@ export default class APP extends Component<AppProps, Tstate> {
     );
 
     axios.interceptors.request.use((config) => {
-      config.headers['X-SESSION'] = localStorage.getItem('X-SESSION');
       config.headers['X-CSRF'] = localStorage.getItem('X-CSRF');
       this.setState((prevState) => ({
         actionStatus: { ...prevState.actionStatus, respStatus: false, statusMsg: '', loader: true },
