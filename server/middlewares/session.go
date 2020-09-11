@@ -62,6 +62,14 @@ func SessionValidatorWS(next func(params models.ConnectionParams, uc models.User
 		}
 		//defer conn.Close()
 
+		//get session cookie and csrf tokens
+		sessionToken, err := r.Cookie("X-SESSION")
+		if err != nil {
+			logrus.Error(err)
+			utils.TrasaResponse(w, 403, "failed", "failed to verify token", "SessionValidator", nil, nil)
+			return
+		}
+
 		//TODO use different generic model for session validation
 		var params models.ConnectionParams
 		err = conn.ReadJSON(&params)
@@ -73,7 +81,7 @@ func SessionValidatorWS(next func(params models.ConnectionParams, uc models.User
 		}
 
 		//uc := r.Context().Value("user").(models.UserContext)
-		uc, err := validateAndGetUserContext(params.SESSION, params.CSRF)
+		uc, err := validateAndGetUserContext(sessionToken.Value, params.CSRF)
 		if err != nil {
 			logrus.Debug(err)
 			conn.WriteMessage(1, []byte("Invalid session. Try logging in again."))

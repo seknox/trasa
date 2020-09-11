@@ -62,7 +62,7 @@ export function SSHLiveSession(props: any) {
     wskt.onopen = () => {
       const newReq = {
         connID: props.connID,
-        session: localStorage.getItem('X-SESSION'),
+        //session: localStorage.getItem('X-SESSION'),
         csrf: localStorage.getItem('X-CSRF'),
         serviceID: props.serviceID,
         privilege: props.username,
