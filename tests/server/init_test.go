@@ -116,15 +116,17 @@ func setupTestEnv() *global.State {
 			InsecureSkipVerify bool `toml:"insecureSkipVerify"`
 		}{true},
 		Trasa: struct {
-			AutoCert    bool   `json:"autoCert"`
-			ListenAddr  string `toml:"listenAddr"`
-			Email       string `toml:"email"`
-			Rootdomain  string `toml:"rootdomain"`
-			CloudServer string `toml:"cloudServer"`
-			Ssodomain   string `toml:"ssodomain"`
-			Rootdir     string `toml:"rootdir"`
-			OrgId       string `toml:"orgID"`
-		}{false, "localhost", "", "", "https://u2fproxy.trasa.io", "", "", testutils.MockOrgID},
+			ProxyDashboard bool   `toml:"proxyDashboard"`
+			DashboardAddr  string `toml:"dashboardAddr"`
+			AutoCert       bool   `toml:"autoCert"`
+			ListenAddr     string `toml:"listenAddr"`
+			Email          string `toml:"email"`
+			Rootdomain     string `toml:"rootdomain"`
+			CloudServer    string `toml:"cloudServer"`
+			Ssodomain      string `toml:"ssodomain"`
+			Rootdir        string `toml:"rootdir"`
+			OrgId          string `toml:"orgID"`
+		}{false, "https://localhost", false, "localhost", "", "", "https://u2fproxy.trasa.io", "", "", testutils.MockOrgID},
 		Proxy: struct {
 			SSHListenAddr string `toml:"sshlistenAddr"`
 			GuacdAddr     string `toml:"guacdAddr"`

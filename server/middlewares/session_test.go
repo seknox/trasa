@@ -91,7 +91,7 @@ func Test_getUserContext(t *testing.T) {
 				t.Errorf("failed setting session: %v", err)
 			}
 
-			got, err := getUserContext(setSession, setCsrf)
+			got, err := validateAndGetUserContext(setSession, setCsrf)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("getUserContext() error = %v, wantErr %v", err, tt.wantErr)
 				return

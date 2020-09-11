@@ -81,7 +81,7 @@ export class TrasaGWConsole extends React.Component {
       hostname: this.props.hostname,
       privilege: this.props.username,
       csrf: localStorage.getItem('X-CSRF'),
-      session: localStorage.getItem('X-SESSION'),
+      //session: localStorage.getItem('X-SESSION'),
       email: this.props.email,
       optWidth: window.innerWidth - 10,
       optHeight: window.innerHeight - 20,
