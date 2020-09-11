@@ -123,17 +123,22 @@ func DBLogin(w http.ResponseWriter, r *http.Request) {
 		remoteLogin.TfaMethod = "u2f"
 	}
 
-	tfaDeviceID, reason, ok := tfa.HandleTfaAndGetDeviceID(
-		nil,
-		remoteLogin.TfaMethod,
-		remoteLogin.TotpCode,
-		userDetails.ID,
-		remoteLogin.UserIP,
-		service.Name,
-		orgDetail.Timezone,
-		orgDetail.OrgName,
-		orgDetail.ID,
-	)
+	tfaDeviceID := ""
+
+	if policy.TfaRequired {
+		tfaDeviceID, reason, ok = tfa.HandleTfaAndGetDeviceID(
+			nil,
+			remoteLogin.TfaMethod,
+			remoteLogin.TotpCode,
+			userDetails.ID,
+			remoteLogin.UserIP,
+			service.Name,
+			orgDetail.Timezone,
+			orgDetail.OrgName,
+			orgDetail.ID,
+		)
+
+	}
 
 	authlog.TfaDeviceID = tfaDeviceID
 
