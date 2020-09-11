@@ -17,29 +17,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// AppLogin mocks request structure which ssh logins and rdp logins generates
-//Deprecated
-type appLoginLegacy struct {
-	AppID           string `json:"appID"`
-	DynamicAuthApp  bool   `json:"dynamicAuthApp"`
-	AppSecret       string `json:"appSecret"`
-	User            string `json:"user"`
-	Password        string `json:"password"`
-	PublicKey       []byte `json:"publicKey"`
-	TfaMethod       string `json:"tfaMethod"`
-	TotpCode        string `json:"totpCode"`
-	UserIP          string `json:"userIP"`
-	UserWorkstation string `json:"workstation"`
-	TrasaID         string `json:"trasaID"`
-	SessionID       string `json:"sessionID"`
-	AppType         string `json:"appType"`
-	//RdpProtocol     string           `json:"rdpProto"`
-	OrgID    string `json:"orgID"`
-	Hostname string `json:"hostname"`
-	//SignResponse    u2f.SignResponse `json:"signResponse"`
-	//DeviceHygiene   DeviceHygiene    `json:"deviceHygiene"`
-}
-
 type ServiceAgentLogin struct {
 	ServiceID       string `json:"serviceID"`
 	ServiceKey      string `json:"serviceKey"`
@@ -80,7 +57,7 @@ func AgentLogin(w http.ResponseWriter, r *http.Request) {
 		return nil
 	}
 
-	authlog := logs.NewEmptyLog("rdp")
+	authlog := logs.NewEmptyLog("")
 
 	temp := strings.Split(remoteLogin.User, "\\")
 	if len(temp) > 1 && temp[0] == "" {

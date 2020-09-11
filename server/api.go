@@ -66,6 +66,7 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 
 		r.Post("/agent/nix", serviceauth.AgentLogin)
 		r.Post("/agent/win", serviceauth.AgentLogin)
+		r.Post("/agent/db", serviceauth.DBLogin)
 		r.Post("/agent/checkconfig", services.CheckAppConfigs)
 	})
 
