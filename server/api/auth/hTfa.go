@@ -165,6 +165,9 @@ func TfaHandler(w http.ResponseWriter, r *http.Request) {
 		Name:     "X-SESSION",
 		Value:    sessionToken,
 		HttpOnly: true,
+		SameSite: http.SameSiteStrictMode,
+		Secure:   true,
+		Path:     "/",
 	}
 
 	http.SetCookie(w, &xSESSION)
