@@ -1,0 +1,13 @@
+[Unit]
+Description=Guacd
+Documentation=https://guacamole.apache.org/doc/gug/
+Requires=docker.service
+
+[Service]
+ExecStart=/usr/bin/docker run --rm --name guacd -p 127.0.0.1:4822:4822 -v /tmp/trasa/accessproxy/guac:/tmp/trasa/accessproxy/guac -v /tmp/trasa/accessproxy/guac/shared/:/tmp/trasa/accessproxy/guac/shared/  docker.pkg.github.com/seknox/guacamole-server/guacd:0.0.1
+ExecStop=/usr/bin/docker  container stop guacd
+Restart=always
+
+
+[Install]
+WantedBy=multi-user.target

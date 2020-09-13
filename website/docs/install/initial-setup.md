@@ -17,7 +17,9 @@ So before we begin, the first after installtion is to initialize [TsxVault](docs
 FCM is mobile notification service offered by Google. In order to perform TRASA U2F based 2FA. 
 By default, TRASA proxies U2F request via Seknox's Cloud server. It means that by default, when users chooses to perform U2F via TRASA mobile app, the U2F request is forwarded to Seknox's Cloud server and proxied back when user confirms response (authorize or deny).
 
-If you do not want to route U2F requests via Seknox server, you can configure your own FCM service. 
+If you do not want to route U2F requests via Seknox server, you can configure your own FCM service.
+You need to build mobile app from source. 
+ 
 
 ## Setting up Email
 TRASA supports mailgun and authenticated SMTP protocol to forwarded emails generated within TRASA.

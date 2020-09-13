@@ -1,0 +1,23 @@
+[Unit]
+Description=Cockroach Database
+Requires=network.target
+
+
+[Service]
+Type=notify
+WorkingDirectory=/var/trasa/crdb
+ExecStart=/usr/local/bin/cockroach start --store=/var/trasa/crdb --insecure --http-addr=127.0.0.1:8081 --listen-addr=127.0.0.1:26257
+#ExecStart=/usr/local/bin/cockroach start --store=/var/trasa/crdb --http-addr=127.0.0.1:8081 --listen-addr=127.0.0.1:26257 --insecure
+ExecStop=/usr/local/bin/cockroach quit --insecure
+#--certs-dir=/etc/trasa/certs
+TimeoutStopSec=60
+Restart=always
+RestartSec=10
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=cockroach
+#User=cockroach
+
+
+[Install]
+WantedBy=default.target
