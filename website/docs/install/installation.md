@@ -15,7 +15,45 @@ import TabItem from '@theme/TabItem';
     {label: 'kubernetes', value: 'kubernetes'},
   ]}>
   
-  <TabItem value="linux"> coming soon... </TabItem>
+<TabItem value="linux">
+
+
+* Download [trasa-server](https://storage.googleapis.com/trasa-public-download-assets/release/v0.0.1/trasa-server) binary
+```shell script
+curl https://storage.googleapis.com/trasa-public-download-assets/release/v0.0.1/trasa-server
+chmod +x trasa-server
+```
+
+
+* Download [dashboard](https://storage.googleapis.com/trasa-public-download-assets/release/v0.0.1/dashboard.tar) and extract into /var/trasa/dashboard 
+```shell script
+curl https://storage.googleapis.com/trasa-public-download-assets/release/v0.0.1/dashboard.tar
+mkdir -p /var/trasa/dashboard
+tar -xf dashboard /var/trasa
+```
+
+* Run [Postgres](https://www.postgresql.org/) or [cockroachdb](https://cockroachlabs.com) on port 5432
+```shell script
+docker run -d -p 5432:5432 --name some-postgres -e POSTGRES_PASSWORD=mysecretpassword -e POSTGRES_USER=trasauser -e POSTGRES_DB=trasadb postgres
+```
+* Run [Redis](https://redis.io/download) on port 6379 
+```shell script
+docker run -d -p 6379:6379 --name some-redis redis
+```
+
+* Run trasa-server binary
+```shell script
+./trasa-server
+```
+
+
+* Edit `/etc/trasa/config/config.toml` if needed and restart trasa-server
+
+
+
+
+   
+   </TabItem>
   <TabItem value="docker"> coming soon... </TabItem>
   <TabItem value="kubernetes"> coming soon... </TabItem>
 
