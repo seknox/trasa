@@ -8,10 +8,10 @@ module.exports = {
   projectName: 'TRASA',
   plugins: ['@docusaurus/plugin-google-analytics'],
   themeConfig: {
-    // colorMode: {
-    //   disableDarkMode: true,
-    // },
-    
+    colorMode: {
+      disableSwitch: true,
+    },
+
     googleAnalytics: {
       trackingID: 'UA-126179756-2',
       // Optional fields.
@@ -24,8 +24,8 @@ module.exports = {
         src: 'img/trasa-bluebg.svg',
       },
       items: [
-        { to: 'blog', label: 'Blog', position: 'right' },
-        { to: 'security', label: 'Security', position: 'right' },
+        // { to: 'blog', label: 'Blog', position: 'right' },
+        // { to: 'security', label: 'Security', position: 'right' },
         {
           to: 'docs/',
           activeBasePath: 'docs',
