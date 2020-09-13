@@ -20,16 +20,16 @@ import TabItem from '@theme/TabItem';
 
 * Download [trasa-server](https://storage.googleapis.com/trasa-public-download-assets/release/v0.0.1/trasa-server) binary
 ```shell script
-curl https://storage.googleapis.com/trasa-public-download-assets/release/v0.0.1/trasa-server
+wget https://storage.googleapis.com/trasa-public-download-assets/release/v0.0.1/trasa-server
 chmod +x trasa-server
 ```
 
 
 * Download [dashboard](https://storage.googleapis.com/trasa-public-download-assets/release/v0.0.1/dashboard.tar) and extract into /var/trasa/dashboard 
 ```shell script
-curl https://storage.googleapis.com/trasa-public-download-assets/release/v0.0.1/dashboard.tar
+wget https://storage.googleapis.com/trasa-public-download-assets/release/v0.0.1/dashboard.tar
 mkdir -p /var/trasa/dashboard
-tar -xf dashboard /var/trasa
+tar -C /var/trasa -xf dashboard.tar
 ```
 
 * Run [Postgres](https://www.postgresql.org/) or [cockroachdb](https://cockroachlabs.com) on port 5432
