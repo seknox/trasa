@@ -376,6 +376,7 @@ func checkInitDirsAndFiles() {
   dbname = "trasadb"
   dbtype = "postgres"
   dbuser = "trasauser"
+  dbpass = "trasauser"
   port = "5432"
   server = "localhost"
   usercert = "/etc/trasa/certs/app.trasa.io/client.trasauser.crt"
