@@ -2,7 +2,7 @@ version: '3.8'
 services:
   trasa-server:
     build:
-      context: ../..
+      context: ../../..
       dockerfile: Dockerfile
     ports:
       - "80:80"

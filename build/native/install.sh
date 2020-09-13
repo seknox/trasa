@@ -47,8 +47,6 @@ sudo mkdir -p /var/trasa/minio && \
 
 
 
-#generate rsa keys for trasagw
-sudo ssh-keygen -t rsa -b 4096 -f /etc/trasa/certs/id_rsa -q -N ""
 
 mkdir bins
 
@@ -80,6 +78,11 @@ sudo cp service-files/* /etc/systemd/system
 sudo systemctl daemon-reload && \
 
 
+psql <<- EOSQL
+    CREATE USER docker;
+    CREATE DATABASE docker;
+    GRANT ALL PRIVILEGES ON DATABASE docker TO docker;
+EOSQL
 
 #Start services
 sudo systemctl start postgresql && \

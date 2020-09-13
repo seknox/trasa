@@ -76,12 +76,12 @@ type KexDerivedKey struct {
 }
 
 func InitDBSTORE() *State {
+	checkInitDirsAndFiles()
 	conf := ParseConfig()
 	return InitDBSTOREWithConfig(conf)
 }
 
 func InitDBSTOREWithConfig(conf Config) *State {
-	//checkInitDirsAndFiles()
 
 	config = conf
 	level, _ := logrus.ParseLevel(config.Logging.Level)
@@ -323,29 +323,105 @@ func newRedisClient(config Config) *redis.Client {
 }
 
 func checkInitDirsAndFiles() {
-	err := os.MkdirAll("/var/trasa/accessproxy/log/", 0600)
+	err := os.MkdirAll("/var/tmp/trasa/accessproxy/guac/shared", 0600)
 	if err != nil {
 		panic(err)
 	}
-	err = os.MkdirAll("/var/trasa/accessproxy/shared", 0600)
+	err = os.MkdirAll("/var/tmp/trasa/accessproxy/ssh", 0600)
 	if err != nil {
 		panic(err)
 	}
-	err = os.MkdirAll("/var/tmp/trasa/accessproxy/guac/shared", 0600)
+	err = os.MkdirAll("/var/tmp/trasa/accessproxy/http", 0600)
 	if err != nil {
 		panic(err)
 	}
-	err = os.MkdirAll("/var/trasa/trasacore/log/", 0600)
+
+	err = os.MkdirAll("/var/trasa/crdb", 0600)
 	if err != nil {
 		panic(err)
 	}
+	err = os.MkdirAll("/var/trasa/minio", 0600)
+	if err != nil {
+		panic(err)
+	}
+
 	err = os.MkdirAll("/etc/trasa/certs", 0600)
+	if err != nil {
+		panic(err)
+	}
+	err = os.MkdirAll("/etc/trasa/config", 0600)
 	if err != nil {
 		panic(err)
 	}
 	err = os.MkdirAll("/etc/trasa/static", 0600)
 	if err != nil {
 		panic(err)
+	}
+
+	//create config file if no exist
+	_, err = os.Stat("/etc/trasa/config/config.toml")
+	if err != nil {
+		f, err := os.OpenFile("/etc/trasa/config/config.toml", os.O_CREATE|os.O_WRONLY, os.ModePerm)
+		if err != nil {
+			panic(err)
+		}
+		defer f.Close()
+		f.WriteString(
+			`[backup]
+  backupdir = "$HOME/trasa/backup"
+
+[database]
+  cacert = "/etc/trasa/certs/app.trasa.io/ca.crt"
+  dbname = "trasadb"
+  dbtype = "postgres"
+  dbuser = "trasauser"
+  port = "5432"
+  server = "localhost"
+  usercert = "/etc/trasa/certs/app.trasa.io/client.trasauser.crt"
+  userkey = "/etc/trasa/certs/app.trasa.io/client.trasauser.key"
+
+[dbproxy]
+  listenaddr = "127.0.0.1:8023"
+
+[etcd]
+  server = "http://localhost:2379"
+
+[logging]
+  level = "TRACE"
+
+[minio]
+  status = false
+  key = "minioadmin"
+  secret = "minioadmin"
+  server = "127.0.0.1:9000"
+  usessl = false
+
+[platform]
+  base = "private"
+
+[redis]
+  server = "localhost:6379"
+
+[security]
+  insecureSkipVerify = true
+
+[proxy]
+  sshlistenAddr = "127.0.0.1:8022"
+  dbListenAddr = "127.0.0.1:3333"
+  guacdEnabled = false
+  guacdAddr = "127.0.0.1:4822"
+
+[timezone]
+  location = "Asia/Kathmandu"
+
+[trasa]
+  cloudserver = "https://sg.cpxy.trasa.io"
+  dashboard = "http://localhost"
+  listenaddr = "localhost"
+  ssodomain = "sso.gw.trasa.io"
+  orgID = ""
+
+`)
 	}
 
 }
