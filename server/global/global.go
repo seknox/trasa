@@ -208,6 +208,7 @@ func migrate(conn *sql.DB) error {
 func DBconn(config Config) string {
 
 	dbuser := config.Database.Dbuser
+	dbpass := config.Database.Dbpass
 	dbhost := config.Database.Server
 	dbport := config.Database.Port
 	dbname := config.Database.Dbname
@@ -224,10 +225,10 @@ func DBconn(config Config) string {
 		userCert, _ := filepath.Abs(userCertPath)
 		userKey, _ := filepath.Abs(userKeyPath)
 
-		str = fmt.Sprintf("postgresql://%s@%s:%s/%s?sslmode=verify-full&sslrootcert=%s&sslcert=%s&sslkey=%s", dbuser, dbhost, dbport, dbname, caCert, userCert, userKey)
+		str = fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=verify-full&sslrootcert=%s&sslcert=%s&sslkey=%s", dbuser, dbpass, dbhost, dbport, dbname, caCert, userCert, userKey)
 
 	} else {
-		str = fmt.Sprintf("postgresql://%s@%s:%s/%s?sslmode=disable", dbuser, dbhost, dbport, dbname)
+		str = fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=disable", dbuser, dbpass, dbhost, dbport, dbname)
 	}
 
 	return str
