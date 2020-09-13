@@ -88,10 +88,6 @@ export default function HostCerts(props: any) {
 
     const config = {
       responseType: 'blob',
-      headers: {
-        'X-SESSION': localStorage.getItem('X-SESSION'),
-        'X-CSRF': localStorage.getItem('X-CSRF'),
-      },
     };
 
     axios

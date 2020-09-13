@@ -47,7 +47,7 @@ func ListenSSH(closeChan chan bool) error {
 	config.AddHostKey(private)
 	logrus.Debug("TRASA gateway started")
 
-	listenAddr := global.GetConfig().SSHProxy.ListenAddr
+	listenAddr := global.GetConfig().Proxy.SSHListenAddr
 	if listenAddr == "" {
 		listenAddr = ":8022"
 	}

@@ -84,18 +84,22 @@ type Config struct {
 		InsecureSkipVerify bool `toml:"insecureSkipVerify"`
 	} `toml:"security"`
 	Trasa struct {
-		AutoCert    bool   `json:"autoCert"`
-		ListenAddr  string `toml:"listenAddr"`
-		Email       string `toml:"email"`
-		Rootdomain  string `toml:"rootdomain"`
-		CloudServer string `toml:"cloudServer"`
-		Ssodomain   string `toml:"ssodomain"`
-		Rootdir     string `toml:"rootdir"`
-		OrgId       string `toml:"orgID"`
+		ProxyDashboard bool   `toml:"proxyDashboard"`
+		DashboardAddr  string `toml:"dashboardAddr"`
+		AutoCert       bool   `toml:"autoCert"`
+		ListenAddr     string `toml:"listenAddr"`
+		Email          string `toml:"email"`
+		Rootdomain     string `toml:"rootdomain"`
+		CloudServer    string `toml:"cloudServer"`
+		Ssodomain      string `toml:"ssodomain"`
+		Rootdir        string `toml:"rootdir"`
+		OrgId          string `toml:"orgID"`
 	} `toml:"trasa"`
-	SSHProxy struct {
-		ListenAddr string `toml:"listenAddr"`
-	} `toml:"sshProxy"`
+	Proxy struct {
+		SSHListenAddr string `toml:"sshlistenAddr"`
+		GuacdAddr     string `toml:"guacdAddr"`
+		GuacdEnabled  bool   `toml:"guacdEnabled"`
+	} `toml:"proxy"`
 	Vault struct {
 		Tsxvault bool   `toml:"tsxvault"`
 		Port     string `toml:"port"`

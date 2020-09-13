@@ -40,7 +40,7 @@ func makeConfig(params *models.ConnectionParams, creds *models.UpstreamCreds) (*
 	config.Parameters["password"] = creds.Password
 
 	if params.SessionRecord {
-		config.Parameters["recording-path"] = "/tmp/trasa/trasagw"
+		config.Parameters["recording-path"] = "/tmp/trasa/accessproxy/guac"
 		config.Parameters["create-recording-path"] = "true"
 		config.Parameters["recording-name"] = params.SessionID + ".guac"
 
@@ -49,7 +49,7 @@ func makeConfig(params *models.ConnectionParams, creds *models.UpstreamCreds) (*
 	if params.CanTransferFile {
 		config.Parameters["enable-drive"] = "true"
 		config.Parameters["create-drive-path"] = "true"
-		config.Parameters["drive-path"] = "/tmp/trasa/trasagw/shared/" + params.UserID
+		config.Parameters["drive-path"] = "/tmp/trasa/accessproxy/guac/shared/" + params.UserID
 		config.Parameters["drive-name"] = "TRASA shared drive"
 	}
 

@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
+	"net"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -163,6 +164,18 @@ func InitDBSTOREWithConfig(conf Config) *State {
 		panic(err)
 	}
 
+	if config.Proxy.GuacdEnabled {
+		guacdAddr := config.Proxy.GuacdAddr
+		if guacdAddr == "" {
+			guacdAddr = "127.0.0.1:4822"
+		}
+		c, err := net.Dial("tcp", guacdAddr)
+		if err != nil {
+			panic("guacd is down")
+		}
+		c.Close()
+	}
+
 	return &State{
 		DB:             db,
 		Geoip:          geodb,
@@ -310,15 +323,15 @@ func newRedisClient(config Config) *redis.Client {
 }
 
 func checkInitDirsAndFiles() {
-	err := os.MkdirAll("/var/trasa/trasagw/log/", 0600)
+	err := os.MkdirAll("/var/trasa/accessproxy/log/", 0600)
 	if err != nil {
 		panic(err)
 	}
-	err = os.MkdirAll("/var/trasa/trasagw/shared", 0600)
+	err = os.MkdirAll("/var/trasa/accessproxy/shared", 0600)
 	if err != nil {
 		panic(err)
 	}
-	err = os.MkdirAll("/var/tmp/trasa/trasagw/shared", 0600)
+	err = os.MkdirAll("/var/tmp/trasa/accessproxy/guac/shared", 0600)
 	if err != nil {
 		panic(err)
 	}

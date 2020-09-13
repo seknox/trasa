@@ -293,7 +293,7 @@ func (s Store) deleteGuestChannel(sessionID string) {
 
 func (s Store) uploadSessionLog(authlog *logs.AuthLog) error {
 
-	tempFileDir := "/tmp/trasa/trasagw"
+	tempFileDir := "/tmp/trasa/accessproxy/ssh"
 	bucketName := "trasa-ssh-logs"
 	sessionID := authlog.SessionID
 

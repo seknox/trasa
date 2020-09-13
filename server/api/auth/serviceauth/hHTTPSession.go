@@ -225,7 +225,7 @@ func AuthHTTPAccessProxy(w http.ResponseWriter, r *http.Request) {
 	sessionIdentifiers.SessionRecord = policy.RecordSession
 
 	if policy.RecordSession {
-		directoryBuilder := fmt.Sprintf("/var/trasa/thg/logs/%s", encodedSession)
+		directoryBuilder := fmt.Sprintf("/tmp/trasa/accessproxy/http/%s", encodedSession)
 		logger.Tracef("Logging to : %s", directoryBuilder)
 		utils.CreateDirIfNotExist(directoryBuilder)
 		logPath := fmt.Sprintf("%s/%s.http-raw", directoryBuilder, encodedSession)
@@ -322,7 +322,7 @@ func sessionWriter(sessionID, shots string) {
 			if len(counterAndImage) == 2 {
 				videoRecord := logStruct.SessionRecord //strings.Split(logStruct.AppID, ":")
 				//home, _ := hdir.Dir()
-				directoryBuilder := fmt.Sprintf("/var/trasa/thg/logs/%s", sessionID)
+				directoryBuilder := fmt.Sprintf("/tmp/trasa/accessproxy/http/%s", sessionID)
 				if videoRecord == true {
 
 					// convert to png
@@ -417,7 +417,7 @@ func logoutSequence(sessionID string) {
 	// 3) create video file from image file
 
 	deleteDirectory := false
-	directory := fmt.Sprintf("/var/trasa/thg/logs/%s", sessionID)
+	directory := fmt.Sprintf("/tmp/trasa/accessproxy/http/%s", sessionID)
 
 	SessionRecord := logStruct.SessionRecord
 	if SessionRecord == true {

@@ -20,14 +20,14 @@ func (s GWStore) CheckPolicy(params *models.ConnectionParams, policy *models.Pol
 
 func (s GWStore) uploadSessionLog(authlog *logs.AuthLog) error {
 
-	tempFileDir := "/tmp/trasa/trasagw"
+	tempFileDir := "/tmp/trasa/accessproxy/guac"
 	bucketName := "trasa-guac-logs"
 	sessionID := authlog.SessionID
 	logrus.Debugf("sessionID is %s", sessionID)
 
 	loginTime := time.Unix(0, authlog.LoginTime)
 
-	guacencCmdStr := fmt.Sprintf("sudo docker exec  guacd guacenc -f /tmp/trasa/trasagw/%s.guac", sessionID)
+	guacencCmdStr := fmt.Sprintf("sudo docker exec  guacd /usr/local/guacamole/bin/guacenc -f /tmp/trasa/accessproxy/guac/%s.guac", sessionID)
 	guacenc := exec.Command("/bin/bash", "-c", guacencCmdStr)
 	ll, err := guacenc.CombinedOutput()
 	//	logger.Debug(string(ll))

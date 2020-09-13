@@ -53,6 +53,7 @@ func init() {
 
 	config.Context.NEW_TRASA_ID = rootCmd.PersistentFlags().BoolP("new", "n", false, "Use new Trasa ID")
 	config.Context.SSH_USERNAME = rootCmd.PersistentFlags().StringP("user", "u", config.Context.OS_USERNAME, "Upstream ssh username")
+	config.Context.RAW_ARGS = rootCmd.PersistentFlags().StringP("args", "r", "", "Raw args to for")
 
 	rootCmd.AddCommand(sshCmd)
 	rootCmd.AddCommand(sftpCmd)

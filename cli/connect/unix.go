@@ -7,30 +7,30 @@ import (
 	"os/exec"
 )
 
-func ConnectRemote(cmdType, user, port, certPath string, args ...string) {
+func ConnectRemote(cmdType, user, port, certPath string, args string) {
 	switch config.Context.SSH_CLIENT_NAME {
 	case "openssh":
-		connectUnix(cmdType, user, port, certPath, args...)
+		connectUnix(cmdType, user, port, certPath, args)
 	case "putty":
-		connectWindowsPutty(cmdType, user, port, certPath, args...)
+		connectWindowsPutty(cmdType, user, port, certPath, args)
 	case "bitvise":
-		connectWindowsBitvise(cmdType, user, port, certPath, args...)
+		connectWindowsBitvise(cmdType, user, port, certPath, args)
 	case "winscp":
-		connectWindowsWinSCP(cmdType, user, port, certPath, args...)
+		connectWindowsWinSCP(cmdType, user, port, certPath, args)
 	case "moba":
-		connectWindowsMoba(cmdType, user, port, certPath, args...)
+		connectWindowsMoba(cmdType, user, port, certPath, args)
 	}
 
 }
 
-func connectUnix(cmdType, user, port, certPath string, otherArgs ...string) {
+func connectUnix(cmdType, user, port, certPath string, otherArgs string) {
 	sshArgs := []string{
 		"-o", fmt.Sprintf(`User=%s`, user),
 		"-o", fmt.Sprintf(`Port=%s`, port),
 		"-i", certPath,
 	}
 
-	sshArgs = append(sshArgs, otherArgs...)
+	sshArgs = append(sshArgs, otherArgs)
 
 	//scp takes hostname as <hostname>:<file path> so it is defered to scp itself
 	if cmdType != "scp" {
@@ -40,7 +40,8 @@ func connectUnix(cmdType, user, port, certPath string, otherArgs ...string) {
 	//sshCmd := exec.Command(`ssh`, "-l", utils.Context.SSH_USERNAME, "-i", certPath, "localhost", "-p", "8022")
 	c := exec.Command(cmdType, sshArgs...)
 
-	fmt.Println(c.String())
+	//fmt.Println(">",c.String())
+	//fmt.Println("[]>",c.Args)
 
 	c.Stdin = os.Stdin
 	c.Stdout = os.Stdout

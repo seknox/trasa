@@ -83,7 +83,6 @@ func GetRawLog(w http.ResponseWriter, r *http.Request) {
 		path, bucketName = getMinioPath(sessionID, "http-raw", orgID, year, month, day)
 	}
 
-	// Upload log file to minio
 	object, err := Store.GetFromMinio(path, bucketName)
 	if err != nil {
 		logrus.Error(err)

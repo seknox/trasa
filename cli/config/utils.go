@@ -27,6 +27,7 @@ var Context struct {
 	TRASA_ID        string
 	NEW_TRASA_ID    *bool
 	SSH_USERNAME    *string
+	RAW_ARGS        *string
 	OS_USERNAME     string
 	U_ID            int
 	G_ID            int
@@ -62,8 +63,7 @@ func NormalizeString(s string) string {
 //		return nil,err
 //	}
 //
-//
-//	//req.Header.Set("X-SESSION", sessionID)
+
 //	//req.Header.Set("X-CSRF", csrfToken)
 //
 //
