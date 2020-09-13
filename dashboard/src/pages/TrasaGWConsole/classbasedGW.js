@@ -29,7 +29,7 @@ export class TrasaGWConsole extends React.Component {
       progress: 0,
     };
     this.guactunnel = new Guacamole.Tunnel(
-      `${Constants.TRASA_HOSTNAME_WEBSOCKET}/trasagw/rdp/tunnel`,
+      `${Constants.TRASA_HOSTNAME_WEBSOCKET}/accessproxy/rdp/tunnel`,
     );
     // Instantiate client, using an HTTP tunnel for communications.
     this.client = new Guacamole.Client(this.guactunnel);

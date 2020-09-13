@@ -116,7 +116,7 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 	inapptrailmiddleware := middlewares.InAppTrail{}
 	gproxy := rdpproxy.NewProxy()
 
-	r.Route("/trasagw", func(r chi.Router) {
+	r.Route("/accessproxy", func(r chi.Router) {
 		r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("Reached not found in File server ")
 			fmt.Println(r.URL)

@@ -42,9 +42,9 @@ export function SSHLiveSession(props: any) {
 
     let wskt: WebSocket;
     if (props.connID) {
-      wskt = new WebSocket(`${Constants.TRASA_GUAC_HOSTNAME_WEBSOCKET}/trasagw/ssh/join`,"xterm");
+      wskt = new WebSocket(`${Constants.TRASA_GUAC_HOSTNAME_WEBSOCKET}/accessproxy/ssh/join`,"xterm");
     } else {
-      wskt = new WebSocket(`${Constants.TRASA_GUAC_HOSTNAME_WEBSOCKET}/trasagw/ssh/connect`,"xterm");
+      wskt = new WebSocket(`${Constants.TRASA_GUAC_HOSTNAME_WEBSOCKET}/accessproxy/ssh/connect`,"xterm");
     }
 
     wskt.onclose = (e) => {
