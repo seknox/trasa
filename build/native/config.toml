@@ -1,3 +1,4 @@
+
 [backup]
   backupdir = "$HOME/trasa/backup"
 
@@ -11,11 +12,7 @@
   usercert = "/etc/trasa/certs/app.trasa.io/client.trasauser.crt"
   userkey = "/etc/trasa/certs/app.trasa.io/client.trasauser.key"
 
-[dbproxy]
-  listenaddr = "127.0.0.1:8023"
 
-[etcd]
-  server = "http://localhost:2379"
 
 [logging]
   level = "TRACE"
@@ -42,15 +39,11 @@
   guacdEnabled = false
   guacdAddr = "127.0.0.1:4822"
 
-[timezone]
-  location = "Asia/Kathmandu"
 
 [trasa]
-  #cloudserver = "https://u2fproxy.trasa.io"
+  proxyDashboard = false
   cloudserver = "https://sg.cpxy.trasa.io"
   dashboard = "http://app.trasa"
   listenaddr = "app.trasa"
-  rootdomain = "gw.trasa.io"
-  ssodomain = "sso.gw.trasa.io"
   orgID = ""
 
