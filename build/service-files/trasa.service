@@ -1,0 +1,13 @@
+[Unit]
+Description=TRASA Server
+Documentation=https://seknox.com/trasa/guides
+Requires=redis.service  postgresql.service
+
+[Service]
+ExecStart=/usr/local/bin/trasa-server -f
+ExecStop=/usr/bin/pkill trasa-server
+User=root
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

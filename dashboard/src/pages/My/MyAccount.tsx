@@ -455,7 +455,6 @@ function SettinMenu(props: SettingsMenuProps) {
     const config = {
       responseType: 'blob',
       headers: {
-        'X-SESSION': localStorage.getItem('X-SESSION'),
         'X-CSRF': localStorage.getItem('X-CSRF'),
       },
     };

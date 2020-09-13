@@ -79,7 +79,7 @@ export default function LiveSessionTable() {
 
   const connect = () => {
     const data = {
-      session: localStorage.getItem('X-SESSION'),
+      //session: localStorage.getItem('X-SESSION'),
       csrf: localStorage.getItem('X-CSRF'),
     };
 
