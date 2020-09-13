@@ -1,0 +1,16 @@
+[Unit]
+Description=Redis
+#After=syslog.target
+
+[Service]
+#WorkingDirectory=/var/trasa/redis
+#ExecStart=/usr/bin/docker run -v /etc/trasa/config/redis.conf:/usr/local/etc/redis/redis.conf  redis redis-server /usr/local/etc/redis/redis.conf
+ExecStart=/usr/local/bin/redis-server
+
+ExecStop=/usr/bin/pkill redis-server
+RestartSec=5s
+Restart=always
+#User=root
+
+[Install]
+WantedBy=multi-user.target

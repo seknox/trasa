@@ -18,7 +18,6 @@ export default function FileBrowser() {
   const sendReq = (action: string, name: string, i: number) => {
     const config = {
       headers: {
-        'X-SESSION': localStorage.getItem('X-SESSION'),
         'X-CSRF': localStorage.getItem('X-CSRF'),
       },
       url: '',

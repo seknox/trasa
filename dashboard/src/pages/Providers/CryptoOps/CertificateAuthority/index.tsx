@@ -135,15 +135,9 @@ export default function CA(props: any) {
   };
 
   React.useEffect(() => {
-    // code to run on component mount
-    const config = {
-      headers: {
-        'X-SESSION': localStorage.getItem('X-SESSION'),
-        'X-CSRF': localStorage.getItem('X-CSRF'),
-      },
-    };
+
     axios
-      .get(`${Constants.TRASA_HOSTNAME}/api/v1/providers/ca/tsxca/all`, config)
+      .get(`${Constants.TRASA_HOSTNAME}/api/v1/providers/ca/tsxca/all`)
       .then((response) => {
         if (response.data.status === 'success') {
           // console.log(response.data.data[0].cert)

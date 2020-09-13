@@ -130,7 +130,7 @@ func FileDownloadHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, filePath)
 }
 func FileDeleteHandler(w http.ResponseWriter, r *http.Request) {
-	//http.StripPrefix("/api/v1/download_file", http.FileServer(http.Dir("../trasagw/shared"))).ServeHTTP
+	//http.StripPrefix("/api/v1/download_file", http.FileServer(http.Dir("../accessproxy/shared"))).ServeHTTP
 	userContext := r.Context().Value("user").(models.UserContext)
 	userID := userContext.User.ID
 	fileNameEnc := chi.URLParam(r, "fileName")

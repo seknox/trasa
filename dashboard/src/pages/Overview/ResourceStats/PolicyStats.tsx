@@ -68,17 +68,11 @@ function PolicyStat() {
   const [policyStat, setPolicyStat] = useState({ total: 0, expired: 0 });
 
   useEffect(() => {
-    const config = {
-      headers: {
-        'X-SESSION': localStorage.getItem('X-SESSION'),
-        'X-CSRF': localStorage.getItem('X-CSRF'),
-      },
-    };
 
     const reqPath = `${Constants.TRASA_HOSTNAME}/api/v1/stats/policies`;
 
     axios
-      .get(reqPath, config)
+      .get(reqPath)
       .then((r) => {
         setPolicyStat(r.data.data[0]);
         // console.log('uuuuuuuuuu ', r.data.data[0])

@@ -63,8 +63,7 @@ func NormalizeString(s string) string {
 //		return nil,err
 //	}
 //
-//
-//	//req.Header.Set("X-SESSION", sessionID)
+
 //	//req.Header.Set("X-CSRF", csrfToken)
 //
 //
