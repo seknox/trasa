@@ -1,3 +1,4 @@
+
 [backup]
   backupdir = "$HOME/trasa/backup"
 
@@ -38,8 +39,6 @@
   guacdEnabled = false
   guacdAddr = "127.0.0.1:4822"
 
-[timezone]
-  location = "Asia/Kathmandu"
 
 [trasa]
   proxyDashboard = false
