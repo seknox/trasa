@@ -45,9 +45,15 @@ docker run -d -p 6379:6379 --name some-redis redis
 ```shell script
 ./trasa-server
 ```
+>Add -f while running trasa-server to enable logging to file /var/log/trasa.log
 
 
 * Edit `/etc/trasa/config/config.toml` if needed and restart trasa-server
+
+* Run guacamole proxy if you use rdp
+```shell script
+docker run  --rm --name guacd -p 127.0.0.1:4822:4822 -v /tmp/trasa/accessproxy:/tmp/trasa/accessproxy -v /tmp/trasa/accessproxy/guac/shared/:/tmp/trasa/accessproxy/guac/shared/  seknox/guacd:v0.0.1
+```
 
 
 
