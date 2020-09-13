@@ -6,6 +6,7 @@
   cacert = "/etc/trasa/certs/ca.crt"
   dbname = "trasadb"
   dbuser = "trasauser"
+  dbpass = "trasauser"
   port = "5432"
   server = "db"
   sslenabled = false
@@ -32,8 +33,11 @@
 
 
 [trasa]
-  cloudServer = "https://u2fproxy.trasa.io"
-  listenAddr = "app.trasa"
+  proxyDashboard = false
+  cloudserver = "https://sg.cpxy.trasa.io"
+  dashboard = "http://app.trasa"
+  listenaddr = "app.trasa"
+  orgID = ""
 
 
 [proxy]
