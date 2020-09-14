@@ -329,15 +329,15 @@ func newRedisClient(config Config) *redis.Client {
 }
 
 func checkInitDirsAndFiles() {
-	err := os.MkdirAll("/var/tmp/trasa/accessproxy/guac/shared", 0600)
+	err := os.MkdirAll("/tmp/trasa/accessproxy/guac/shared", 0600)
 	if err != nil {
 		panic(err)
 	}
-	err = os.MkdirAll("/var/tmp/trasa/accessproxy/ssh", 0600)
+	err = os.MkdirAll("/tmp/trasa/accessproxy/ssh", 0600)
 	if err != nil {
 		panic(err)
 	}
-	err = os.MkdirAll("/var/tmp/trasa/accessproxy/http", 0600)
+	err = os.MkdirAll("/tmp/trasa/accessproxy/http", 0600)
 	if err != nil {
 		panic(err)
 	}
