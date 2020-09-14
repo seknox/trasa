@@ -37,9 +37,9 @@
 
 
 [trasa]
-  dashboard = "https://app.trasa"
-  cloudServer = "https://u2fproxy.trasa.io"
-  listenAddr = "app.trasa"
+  dashboard = "https://localhost"
+  cloudServer = "https://sg.cpxy.trasa.io"
+  listenAddr = "localhost"
 
 
 [sshproxy]

@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
   card: {
     textAlign: 'center',
     minWidth: 450,
-    minHeight: 450,
+    minHeight: 500,
     // minWidth: 750,
     // minHeight: 200,
     backgroundColor: 'white', // '#d0d3d4', // //rgba(1,1,35,1)

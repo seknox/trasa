@@ -6,6 +6,7 @@
   cacert = "/etc/trasa/certs/ca.crt"
   dbname = "trasadb"
   dbuser = "trasauser"
+  dbpass = "trasauser"
   port = "5432"
   server = "db"
   sslenabled = false
@@ -23,8 +24,6 @@
 [redis]
   server = "redis:6379"
 
-[timezone]
-  location = "Asia/Kathmandu"
 
 [security]
   insecureSkipVerify=false
@@ -32,16 +31,19 @@
 
 
 [trasa]
-  cloudServer = "https://u2fproxy.trasa.io"
-  listenAddr = "app.trasa"
+  proxyDashboard = false
+  cloudserver = "https://sg.cpxy.trasa.io"
+  dashboard = "http://app.trasa"
+  listenaddr = "app.trasa"
+  orgID = ""
 
 
 [proxy]
- sshListenAddr="0.0.0.0:8022"
- guacdPath=""
+  sshlistenAddr = "127.0.0.1:8022"
+  dbListenAddr = "127.0.0.1:3333"
+  guacdEnabled = false
+  guacdAddr = "127.0.0.1:4822"
 
-[dbproxy]
-  listenAddr="127.0.0.1:8023"
 
 [vault]
   tsxvault = true

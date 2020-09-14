@@ -44,6 +44,7 @@ type Config struct {
 		Dbtype     string `toml:"dbname"`
 		Dbname     string `toml:"dbname"`
 		Dbuser     string `toml:"dbuser"`
+		Dbpass     string `toml:"dbpass"`
 		Port       string `toml:"port"`
 		Server     string `toml:"server"`
 		Sslenabled bool   `toml:"sslenabled"`

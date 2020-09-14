@@ -35,6 +35,7 @@ RUN apt-get install -y --no-install-recommends ca-certificates
 RUN update-ca-certificates
 COPY --from=gobuilder /go/src/seknox/trasa/server/server .
 COPY --from=dashbuilder /trasa/build /var/trasa/dashboard
-COPY tests/build/end-to-end/etc/trasa /etc/trasa
-COPY tests/build/end-to-end/wait-for-it.sh .
-CMD ["/trasa/wait-for-it.sh","db:5432", "--","/trasa/server"]
+COPY tests/build/etc/trasa /etc/trasa
+COPY tests/build/e2e/wait-for-it.sh .
+RUN  chmod +x wait-for-it.sh
+CMD ["bash","/trasa/wait-for-it.sh","db:5432", "--","/trasa/server"]

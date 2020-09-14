@@ -25,7 +25,7 @@ Assign short and easy to use username. Emails are usually lengthy, so short user
 
 + Head over to users page and click <Hlt  color="#1877F2">Create User</Hlt> button.
 
-![Create User](/img/docs/users/trasa/create-user.png 'Create User')
+<!-- ![Create User](/img/docs/users/trasa/create-user.png 'Create User') -->
 
 + If your request is successful, the user will receive an account activation link via email. Though immediately, you will also receive a link that you can share with the user.
 
