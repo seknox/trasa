@@ -21,7 +21,7 @@ We render full dashboard inside puppeteer and run test suites which will
 
 ## Prerequisite:
 
-TRASA server running on `https://app.trasa`
+TRASA server running on `https://localhost`
 - Run test on already running trasa instance with `yarn test`
 - Create fresh test infrastructure and test with `yarn run spinNTest`
 

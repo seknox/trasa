@@ -2,8 +2,8 @@ const getToken = require("../utils/totpgen");
 require('expect-puppeteer')
 
 
-const TRASA_HOSTNAME="http://app.trasa:3000"
-const TRASA_API="https://app.trasa"
+const TRASA_HOSTNAME="http://localhost:3000"
+const TRASA_API="https://localhost"
 const TOTP_SEC="AV2COXZHVG4OAFSF"
 const SSH_USERNAME="bhrg3se"
 const SSH_PASSWORD="testpass"
