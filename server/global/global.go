@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
+	"github.com/spf13/viper"
 	"net"
 	"net/http"
 	"os"
@@ -77,6 +78,7 @@ type KexDerivedKey struct {
 
 func InitDBSTORE() *State {
 	checkInitDirsAndFiles()
+	viper.AutomaticEnv()
 	conf := ParseConfig()
 	return InitDBSTOREWithConfig(conf)
 }
