@@ -73,7 +73,7 @@ docker run -d -p 5432:5432 --name db -e POSTGRES_PASSWORD=mysecretpassword -e PO
 docker run -d -p 6379:6379 --name redis redis
 ```
 
-* Run guacamole proxy if you use rdp
+* Run guacamole proxy if you use RDP
 ```shell script
 docker run  --rm --name guacd -p 127.0.0.1:4822:4822 -v /tmp/trasa/accessproxy:/tmp/trasa/accessproxy -v /tmp/trasa/accessproxy/guac/shared/:/tmp/trasa/accessproxy/guac/shared/  seknox/guacd:v0.0.1
 ```
@@ -82,16 +82,15 @@ docker run  --rm --name guacd -p 127.0.0.1:4822:4822 -v /tmp/trasa/accessproxy:/
 * Run trasa-server
 ```shell script
 docker run --link db:db \
---link guacd:guacd \
+--link guacd:guacd \             # Needed for RDP
 --link redis:redis \
 -p 443:443 \
 -p 80:80 \
--p 8022:8022 \
--e TRASA.LISTENADDR=app.trasa \
+-p 8022:8022 \                   # SSH proxy 
+-e TRASA.LISTENADDR=app.trasa \  # Replace app.trasa with your TRASA hostname.  
+-v /tmp/trasa:/tmp/trasa \       # Needed for RDP
 seknox/trasa:v0.0.1
 ```
->Replace app.trasa with your TRASA hostname
-
 
 
 
