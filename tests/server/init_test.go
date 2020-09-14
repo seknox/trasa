@@ -74,6 +74,7 @@ func setupTestEnv() *global.State {
 			Dbtype     string `toml:"dbname"`
 			Dbname     string `toml:"dbname"`
 			Dbuser     string `toml:"dbuser"`
+			Dbpass     string `toml:"dbpass"`
 			Port       string `toml:"port"`
 			Server     string `toml:"server"`
 			Sslenabled bool   `toml:"sslenabled"`
@@ -83,6 +84,7 @@ func setupTestEnv() *global.State {
 		}{
 			"postgres",
 			"trasadb",
+			"trasauser",
 			"trasauser",
 			"54321",
 			"127.0.0.1",
@@ -116,15 +118,17 @@ func setupTestEnv() *global.State {
 			InsecureSkipVerify bool `toml:"insecureSkipVerify"`
 		}{true},
 		Trasa: struct {
-			AutoCert    bool   `json:"autoCert"`
-			ListenAddr  string `toml:"listenAddr"`
-			Email       string `toml:"email"`
-			Rootdomain  string `toml:"rootdomain"`
-			CloudServer string `toml:"cloudServer"`
-			Ssodomain   string `toml:"ssodomain"`
-			Rootdir     string `toml:"rootdir"`
-			OrgId       string `toml:"orgID"`
-		}{false, "localhost", "", "", "https://u2fproxy.trasa.io", "", "", testutils.MockOrgID},
+			ProxyDashboard bool   `toml:"proxyDashboard"`
+			DashboardAddr  string `toml:"dashboardAddr"`
+			AutoCert       bool   `toml:"autoCert"`
+			ListenAddr     string `toml:"listenAddr"`
+			Email          string `toml:"email"`
+			Rootdomain     string `toml:"rootdomain"`
+			CloudServer    string `toml:"cloudServer"`
+			Ssodomain      string `toml:"ssodomain"`
+			Rootdir        string `toml:"rootdir"`
+			OrgId          string `toml:"orgID"`
+		}{false, "https://localhost", false, "localhost", "", "", "https://u2fproxy.trasa.io", "", "", testutils.MockOrgID},
 		Proxy: struct {
 			SSHListenAddr string `toml:"sshlistenAddr"`
 			GuacdAddr     string `toml:"guacdAddr"`

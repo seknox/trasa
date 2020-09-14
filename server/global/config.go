@@ -45,6 +45,7 @@ type Config struct {
 		Dbtype     string `toml:"dbname"`
 		Dbname     string `toml:"dbname"`
 		Dbuser     string `toml:"dbuser"`
+		Dbpass     string `toml:"dbpass"`
 		Port       string `toml:"port"`
 		Server     string `toml:"server"`
 		Sslenabled bool   `toml:"sslenabled"`
@@ -85,14 +86,16 @@ type Config struct {
 		InsecureSkipVerify bool `toml:"insecureSkipVerify"`
 	} `toml:"security"`
 	Trasa struct {
-		AutoCert    bool   `json:"autoCert"`
-		ListenAddr  string `toml:"listenAddr"`
-		Email       string `toml:"email"`
-		Rootdomain  string `toml:"rootdomain"`
-		CloudServer string `toml:"cloudServer"`
-		Ssodomain   string `toml:"ssodomain"`
-		Rootdir     string `toml:"rootdir"`
-		OrgId       string `toml:"orgID"`
+		ProxyDashboard bool   `toml:"proxyDashboard"`
+		DashboardAddr  string `toml:"dashboardAddr"`
+		AutoCert       bool   `toml:"autoCert"`
+		ListenAddr     string `toml:"listenAddr"`
+		Email          string `toml:"email"`
+		Rootdomain     string `toml:"rootdomain"`
+		CloudServer    string `toml:"cloudServer"`
+		Ssodomain      string `toml:"ssodomain"`
+		Rootdir        string `toml:"rootdir"`
+		OrgId          string `toml:"orgID"`
 	} `toml:"trasa"`
 	Proxy struct {
 		SSHListenAddr string `toml:"sshlistenAddr"`

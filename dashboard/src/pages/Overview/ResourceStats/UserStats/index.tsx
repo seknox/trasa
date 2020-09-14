@@ -73,17 +73,11 @@ function UserAggregatedData(props: ResourceStatsFilterProps) {
   });
 
   useEffect(() => {
-    const config = {
-      headers: {
-        'X-SESSION': localStorage.getItem('X-SESSION'),
-        'X-CSRF': localStorage.getItem('X-CSRF'),
-      },
-    };
 
     const reqPath = `${Constants.TRASA_HOSTNAME}/api/v1/stats/users/${props.entityType}/${props.entityID}`;
 
     axios
-      .get(reqPath, config)
+      .get(reqPath)
       .then((r) => {
         setAllusers(r.data.data[0]);
         // console.log('uuuuuuuuuu ', r.data.data[0])

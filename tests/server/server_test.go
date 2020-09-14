@@ -1,12 +1,14 @@
 package server
 
 import (
+	"github.com/seknox/trasa/server/accessproxy/sshproxy"
 	"github.com/seknox/trasa/tests/server/accessproxytest"
 	"github.com/seknox/trasa/tests/server/crudtest"
 	"github.com/seknox/trasa/tests/server/notiftest"
 	"github.com/seknox/trasa/tests/server/providerstest"
 	"github.com/seknox/trasa/tests/server/testutils"
 	"testing"
+	"time"
 )
 
 func TestServer(t *testing.T) {
@@ -24,15 +26,17 @@ func TestServer(t *testing.T) {
 		accessproxytest.TestConnectNewSSH(t)
 	})
 
-	t.Run("ssh cli proxy with authorised  key", func(t *testing.T) {
-		accessproxytest.TestSSHAuthWithAuthorisedPublicKey(t)
-	})
+	t.Run("ssh cli proxy ", func(t *testing.T) {
+		done := make(chan bool, 1)
+		go sshproxy.ListenSSH(done)
+		time.Sleep(time.Second * 3)
 
-	t.Run("ssh cli proxy without public key", func(t *testing.T) {
+		accessproxytest.TestSSHAuthWithAuthorisedPublicKey(t)
 		accessproxytest.TestSSHAuthWithoutPublicKey(t)
-	})
-	t.Run("ssh cli proxy with public key", func(t *testing.T) {
 		accessproxytest.TestSSHAuthWithPublicKey(t)
+
+		done <- true
+
 	})
 
 	//t.Run("ssh cli proxy with trasacli", func(t *testing.T) {

@@ -4,7 +4,7 @@ dependency:
 	@cd ../server && go get -v ./...
 
 end-to-end-test: docker-up-all dependency
-	@cd e2e && yarn jest
+	@cd e2e && yarn install && yarn jest
 	@make clear
 
 integration-test: docker-up-db dependency
@@ -21,7 +21,7 @@ docker-down-db:
 	@cd build/integration && docker-compose down
 
 docker-up-all:
-	@cd build/e2e && docker-compose up -d
+	@cd build/e2e && docker-compose up --build -d
 
 docker-down-all:
 	@cd build/e2e && docker-compose down

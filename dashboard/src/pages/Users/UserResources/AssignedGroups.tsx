@@ -46,14 +46,8 @@ export default function AssignedGroups(props: any) {
   const [userGroups, setUserGroups] = useState([]);
 
   useEffect(() => {
-    const config = {
-      headers: {
-        'X-SESSION': localStorage.getItem('X-SESSION'),
-        'X-CSRF': localStorage.getItem('X-CSRF'),
-      },
-    };
     axios
-      .get(`${Constants.TRASA_HOSTNAME}/api/v1/user/assignedgroups/${props.userID}`, config)
+      .get(`${Constants.TRASA_HOSTNAME}/api/v1/user/assignedgroups/${props.userID}`)
       .then((resp) => {
         if (resp.data.status == 'success' && resp.data.data) setUserGroups(resp.data.data[0]);
       });

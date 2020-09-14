@@ -145,7 +145,7 @@ const useStyles = makeStyles((theme) => ({
   dividerInset: {
     margin: `5px 0 0 ${theme.spacing(9)}px`,
   },
-  appsDemiter: {
+  servicesDemiter: {
     marginBottom: 20,
   },
   lightTooltip: {
@@ -157,7 +157,7 @@ const useStyles = makeStyles((theme) => ({
   extendedIcon: {
     marginRight: '10px',
   },
-  appName: {
+  ServiceName: {
     color: 'black',
     fontSize: '12px',
     fontFamily: 'Open Sans, Rajdhani',
@@ -183,19 +183,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function MyAppsList() {
+export default function MyservicesList() {
   const classes = useStyles();
   const [newconDlgOpen, setNewconDlgOpen] = useState(false);
   const [reqOpen, setReqOpen] = useState(false);
   const [serviceName, setServiceName] = useState('');
   const [serviceID, setserviceID] = useState('');
   const [query, setQuery] = useState('');
-  const [assignedApps, setAssignedApps] = useState<any[]>([]);
+  const [assignedservices, setAssignedservices] = useState<any[]>([]);
   const [user, setUser] = useState({ email: '' });
-  const [selectedAppIndex, setSelectedAppIndex] = useState(0);
+  const [selectedServiceIndex, setSelectedServiceIndex] = useState(0);
   const [admins, setAdmins] = useState([]);
 
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+
 
   const handleNewconDlgState = () => {
     setNewconDlgOpen(!newconDlgOpen);
@@ -256,8 +256,8 @@ export default function MyAppsList() {
       .then((response) => {
         console.log(response.data);
         setUser(response.data.User);
-        setAssignedApps(response.data?.data?.[0]?.myServices);
-        // setState({ user: response.data.User, apps: response.data.UserApp });
+        setAssignedservices(response.data?.data?.[0]?.myServices);
+        // setState({ user: response.data.User, services: response.data.UserService });
       })
       .catch((error) => {
         console.error(error);
@@ -287,27 +287,29 @@ export default function MyAppsList() {
 
   const sendAccessRequest = () => {
     axios
-      .post(`${Constants.TRASA_HOSTNAME}/api/v1/my/apps/adhoc/request`)
+      .post(`${Constants.TRASA_HOSTNAME}/api/v1/my/services/adhoc/request`)
       .then((response) => {})
       .catch((error) => {
         console.error(error);
       });
   };
 
-  const searchApp = (e: any) => {
+  const searchService = (e: any) => {
     setQuery(e.target.value);
   };
 
   const onConnectClicked = (index: any) => {
     // setMenuOpen(true);
-    setSelectedAppIndex(index);
+    setSelectedServiceIndex(index);
   };
+
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const openPrivMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const apps = assignedApps.filter((a) =>
+  const services = assignedservices.filter((a) =>
     JSON.stringify(a).toUpperCase().includes(query.toUpperCase().trim()),
   );
   return (
@@ -322,7 +324,7 @@ export default function MyAppsList() {
         </IconButton>
         <InputBase
           className={classes.searchInput}
-          onChange={searchApp}
+          onChange={searchService}
           placeholder="Search services by name or hostname"
           inputProps={{ 'aria-label': 'Search  service s' }}
         />
@@ -337,7 +339,7 @@ export default function MyAppsList() {
         handleNewconDlgState={handleNewconDlgState}
         open={newconDlgOpen}
         close={handleNewconDlgState}
-        apps={apps}
+        services={services}
         //  email={user.email}
       />
 
@@ -345,13 +347,13 @@ export default function MyAppsList() {
       <br />
       <br />
       <br />
-      <div className={classes.appsDemiter}>
-        <p>Pre assigned Apps</p>
+      <div className={classes.servicesDemiter}>
+        <p>Pre assigned Services</p>
         <Divider light />{' '}
       </div>
 
       <Grid container spacing={2}>
-        {apps.map((value: any, index) => (
+        {services.map((value: any, index) => (
           <Grid key={value.id} item xs={6} sm={4} md={3} lg={2}>
             <Paper className={classes.paper}>
               {value.isAuthorised ? (
@@ -379,8 +381,8 @@ export default function MyAppsList() {
               )}
 
               <img
-                alt="appIcon"
-                src={returnAppIcon(value.serviceType)}
+                alt="ServiceIcon"
+                src={returnServiceIcon(value.serviceType)}
                 style={{
                   height: 40,
                   marginTop: 1,
@@ -388,7 +390,7 @@ export default function MyAppsList() {
               />
 
               <div />
-              <div className={classes.appName}> {value.serviceName} </div>
+              <div className={classes.ServiceName}> {value.serviceName} </div>
 
               <div className={classes.buttonSpace}>
                 <br />
@@ -425,7 +427,7 @@ export default function MyAppsList() {
         <Menu
           id="connect-privilege-menu"
           open={Boolean(anchorEl)}
-          keepMounted
+          // keepMounted
           anchorEl={anchorEl}
           onClose={() => setAnchorEl(null)}
           anchorOrigin={{
@@ -437,17 +439,17 @@ export default function MyAppsList() {
             horizontal: 'left',
           }}
         >
-          {/* <MenuList> */}
-          {assignedApps[selectedAppIndex] &&
-            assignedApps[selectedAppIndex].usernames.map((v: string) => (
+
+          {services[selectedServiceIndex] &&
+            services[selectedServiceIndex].usernames.map((v: string) => (
               <MenuItem
                 id={v}
                 // name={v}
                 onClick={() => {
                   handleClickOpen(
-                    assignedApps[selectedAppIndex].serviceID,
-                    assignedApps[selectedAppIndex].serviceType,
-                    assignedApps[selectedAppIndex].hostname,
+                    services[selectedServiceIndex].serviceID,
+                    services[selectedServiceIndex].serviceType,
+                    services[selectedServiceIndex].hostname,
                     v,
                   );
                 }}
@@ -455,7 +457,7 @@ export default function MyAppsList() {
                 {v}
               </MenuItem>
             ))}
-          {/* </MenuList> */}
+
         </Menu>
 
         <RequestAccess
@@ -472,7 +474,7 @@ export default function MyAppsList() {
   );
 }
 
-const returnAppIcon = (val: any) => {
+const returnServiceIcon = (val: any) => {
   if (val === 'ssh') {
     return SshIcon;
   }
@@ -497,7 +499,7 @@ const returnAppIcon = (val: any) => {
 //   }
 //   return (
 //     <h6>
-//       looks like you have not created any apps yet. Users wont be able to authenticate to protected
+//       looks like you have not created any services yet. Users wont be able to authenticate to protected
 //       hosts unless configured.
 //     </h6>
 //   );
@@ -525,7 +527,7 @@ function RequestAccess(props: RequestAccessProps) {
     const d = data;
     // d.serviceID = `${props.serviceID}:${props.serviceName}`;
     d.serviceID = props.serviceID;
-    // data['appName'] = props.appName
+    // data['ServiceName'] = props.ServiceName
 
     axios
       .post(`${Constants.TRASA_HOSTNAME}/api/v1/my/services/adhoc/request`, data)
@@ -550,7 +552,7 @@ function RequestAccess(props: RequestAccessProps) {
         fullWidth
         maxWidth="sm"
       >
-        <DialogTitle>Request Access to this app.</DialogTitle>
+        <DialogTitle>Request Access to this Service.</DialogTitle>
         <DialogContent>
           <Grid container spacing={2}>
             <Grid item xs={5} sm={5} md={5}>

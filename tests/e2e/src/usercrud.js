@@ -14,7 +14,7 @@ const loginData = {
   idpName: '',
 };
 
-const TRASA_HOSTNAME="https://app.trasa"
+const TRASA_HOSTNAME="https://localhost"
 let TOTP_SSC=""
 
 
