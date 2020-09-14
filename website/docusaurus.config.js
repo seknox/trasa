@@ -6,7 +6,8 @@ module.exports = {
   favicon: 'img/seknoxIcon.png',
   organizationName: 'Seknox',
   projectName: 'TRASA',
-  plugins: ['@docusaurus/plugin-google-analytics'],
+  onBrokenLinks: 'ignore',
+  // plugins: ['@docusaurus/plugin-google-analytics'],
   themeConfig: {
     colorMode: {
       disableSwitch: true,

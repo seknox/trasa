@@ -42,6 +42,7 @@ module.exports = {
       'Secret Vault': ['secret-vault/index'],
 
       'System Configurations': ['system/index'],
+      Reference: ['reference/config'],
     },
   ],
   guides: [
