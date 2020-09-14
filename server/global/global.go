@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
+	"github.com/spf13/viper"
 	"net"
 	"net/http"
 	"os"
@@ -77,7 +78,11 @@ type KexDerivedKey struct {
 
 func InitDBSTORE() *State {
 	checkInitDirsAndFiles()
+	viper.AutomaticEnv()
 	conf := ParseConfig()
+	if conf.Trasa.DashboardAddr == "" {
+		conf.Trasa.DashboardAddr = fmt.Sprintf("https://%s", conf.Trasa.ListenAddr)
+	}
 	return InitDBSTOREWithConfig(conf)
 }
 
