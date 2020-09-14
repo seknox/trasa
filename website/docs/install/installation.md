@@ -81,7 +81,7 @@ docker run --link db:db \
 -p 443:443 \
 -p 80:80 \
 -p 8022:8022 \
--e TRASA.LISTENADDR=app.trasa
+-e TRASA.LISTENADDR=app.trasa \
 seknox/trasa:v0.0.1
 ```
 
