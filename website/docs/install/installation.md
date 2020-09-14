@@ -18,9 +18,9 @@ import TabItem from '@theme/TabItem';
 <TabItem value="linux">
 
 
-* Download [trasa](https://storage.googleapis.com/trasa-public-download-assets/release/v0.0.1/trasa-server) binary
+* Download [trasa](https://storage.googleapis.com/trasa-public-download-assets/release/v0.0.1/trasa.tar.gz) binary
 ```shell script
-wget https://storage.googleapis.com/trasa-public-download-assets/release/v0.0.1/trasa.tar
+wget https://storage.googleapis.com/trasa-public-download-assets/release/v0.0.1/trasa.tar.gz
 ```
 
 
@@ -29,7 +29,7 @@ wget https://storage.googleapis.com/trasa-public-download-assets/release/v0.0.1/
 mkdir -p /var/trasa/dashboard
 mkdir -p /etc/trasa/static
 
-tar -xf trasa.tar
+tar -xzf trasa.tar.gz
 mv  trasa/dashboard /var/trasa/
 mv trasa/GeoLite2-City.mmdb /etc/trasa/static/
 ```
@@ -38,7 +38,7 @@ mv trasa/GeoLite2-City.mmdb /etc/trasa/static/
 
 * Run [Postgres](https://www.postgresql.org/) or [CockroachDB](https://cockroachlabs.com) on port 5432
 ```shell script
-docker run -d -p 5432:5432 --name db -e POSTGRES_PASSWORD=mysecretpassword -e POSTGRES_USER=trasauser -e POSTGRES_DB=trasadb postgres
+docker run -d -p 5432:5432 --name db -e POSTGRES_PASSWORD=trasauser -e POSTGRES_USER=trasauser -e POSTGRES_DB=trasadb postgres
 ```
 * Run [Redis](https://redis.io/download) on port 6379 
 ```shell script
@@ -73,6 +73,12 @@ docker run -d -p 5432:5432 --name db -e POSTGRES_PASSWORD=mysecretpassword -e PO
 docker run -d -p 6379:6379 --name redis redis
 ```
 
+* Run guacamole proxy if you use rdp
+```shell script
+docker run  --rm --name guacd -p 127.0.0.1:4822:4822 -v /tmp/trasa/accessproxy:/tmp/trasa/accessproxy -v /tmp/trasa/accessproxy/guac/shared/:/tmp/trasa/accessproxy/guac/shared/  seknox/guacd:v0.0.1
+```
+
+
 * Run trasa-server
 ```shell script
 docker run --link db:db \
@@ -84,12 +90,8 @@ docker run --link db:db \
 -e TRASA.LISTENADDR=app.trasa \
 seknox/trasa:v0.0.1
 ```
+>Replace app.trasa with your TRASA hostname
 
-
-* Run guacamole proxy if you use rdp
-```shell script
-docker run  --rm --name guacd -p 127.0.0.1:4822:4822 -v /tmp/trasa/accessproxy:/tmp/trasa/accessproxy -v /tmp/trasa/accessproxy/guac/shared/:/tmp/trasa/accessproxy/guac/shared/  seknox/guacd:v0.0.1
-```
 
 
 
@@ -102,3 +104,8 @@ docker run  --rm --name guacd -p 127.0.0.1:4822:4822 -v /tmp/trasa/accessproxy:/
     
 
 </Tabs>
+
+
+:::info
+Go through [config reference](../reference/config) to run TRASA in environment  according to your need
+:::
