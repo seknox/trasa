@@ -80,6 +80,9 @@ func InitDBSTORE() *State {
 	checkInitDirsAndFiles()
 	viper.AutomaticEnv()
 	conf := ParseConfig()
+	if conf.Trasa.DashboardAddr == "" {
+		conf.Trasa.DashboardAddr = fmt.Sprintf("https://%s", conf.Trasa.ListenAddr)
+	}
 	return InitDBSTOREWithConfig(conf)
 }
 
