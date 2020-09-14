@@ -20,15 +20,13 @@ import (
 
 	"github.com/seknox/trasa/server/api/auth/serviceauth"
 
-	"github.com/seknox/trasa/server/api/accesscontrol"
-	"github.com/seknox/trasa/server/api/system"
-
 	"github.com/go-chi/chi"
 	"github.com/go-chi/hostrouter"
 	"github.com/rs/cors"
 	webproxy "github.com/seknox/trasa/server/accessproxy/http"
 	"github.com/seknox/trasa/server/accessproxy/rdpproxy"
 	"github.com/seknox/trasa/server/accessproxy/sshproxy"
+	"github.com/seknox/trasa/server/api/accesscontrol"
 	"github.com/seknox/trasa/server/api/accessmap"
 	"github.com/seknox/trasa/server/api/auth"
 	"github.com/seknox/trasa/server/api/devices"
@@ -46,8 +44,10 @@ import (
 	"github.com/seknox/trasa/server/api/redis"
 	"github.com/seknox/trasa/server/api/services"
 	"github.com/seknox/trasa/server/api/stats"
+	"github.com/seknox/trasa/server/api/system"
 	"github.com/seknox/trasa/server/api/users"
 	"github.com/seknox/trasa/server/global"
+	"github.com/seknox/trasa/server/utils"
 	"github.com/sirupsen/logrus"
 )
 
