@@ -38,9 +38,14 @@ jobs:
           sudo mkdir -p /tmp/trasa/accessproxy/ssh
           sudo chmod 777 /tmp/trasa/accessproxy/ssh
 
+
+      - name: Go get
+        working-directory: ./server
+        run: go get -v ./...
+
       - name: Unit Test
         working-directory: ./server
-        run: go get -v ./... && go test -v ./...
+        run: go test -v ./...
 
       - name: Integration Test
         working-directory: ./tests
