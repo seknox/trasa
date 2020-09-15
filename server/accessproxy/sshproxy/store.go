@@ -301,7 +301,7 @@ func (s Store) uploadSessionLog(authlog *logs.AuthLog) error {
 	loginTime := time.Unix(0, authlog.LoginTime)
 	authlog.LogoutTime = time.Now().UnixNano()
 
-	objectName := filepath.Join(authlog.OrgID, string(loginTime.Year()), fmt.Sprintf("%d", int(loginTime.Month())), fmt.Sprintf("%d", loginTime.Day()), fmt.Sprintf("%s.session", sessionID))
+	objectName := filepath.Join(authlog.OrgID, fmt.Sprintf("%s", loginTime.Year()), fmt.Sprintf("%d", int(loginTime.Month())), fmt.Sprintf("%d", loginTime.Day()), fmt.Sprintf("%s.session", sessionID))
 	filePath := filepath.Join(tempFileDir, fmt.Sprintf("%s.session", sessionID))
 
 	// Upload log file to minio
