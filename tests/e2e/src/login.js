@@ -64,7 +64,7 @@ export const InitialUserLoginAndDeviceEnrol = () => {
       }).then(r=>{
           expect(r.data.status).toBe("success")
       })
-      await page.goto("https://app.trasa/login",{waitUntil:"load"})
+      await page.goto("https://localhost/login",{waitUntil:"load"})
 
       await page.type('#email', loginData.email)
       await page.type('#password', loginData.password);

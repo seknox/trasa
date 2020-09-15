@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
+	"github.com/seknox/trasa/server/utils"
 	"github.com/spf13/viper"
 	"net"
 	"net/http"
@@ -94,8 +95,7 @@ func InitDBSTOREWithConfig(conf Config) *State {
 
 	flag.Parse()
 	if *logOutputToFile {
-
-		f, err := os.OpenFile("/var/log/trasa.log", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+		f, err := os.OpenFile(filepath.Join(utils.GetVarDir(), "log", "trasa.log"), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 		if err != nil {
 			panic(err)
 		}
@@ -126,7 +126,7 @@ func InitDBSTOREWithConfig(conf Config) *State {
 	//elasticUrl, authUser, authPass := elasticon()
 
 	// initialize geoIP connection
-	absPath, err := filepath.Abs("/etc/trasa/static/GeoLite2-City.mmdb")
+	absPath, err := filepath.Abs(filepath.Join(utils.GetETCDir(), "trasa", "static", "GeoLite2-City.mmdb"))
 	if err != nil {
 		panic("geodb file not found: " + err.Error())
 	}
@@ -134,7 +134,7 @@ func InitDBSTOREWithConfig(conf Config) *State {
 	if err != nil {
 		panic(err)
 	}
-	absPath, err = filepath.Abs("/etc/trasa/config/key.json")
+	absPath, err = filepath.Abs(filepath.Join(utils.GetETCDir(), "trasa", "config", "key.json"))
 	if err != nil {
 		logrus.Errorf("firebase key not found: %v", err)
 	}
@@ -329,45 +329,45 @@ func newRedisClient(config Config) *redis.Client {
 }
 
 func checkInitDirsAndFiles() {
-	err := os.MkdirAll("/var/tmp/trasa/accessproxy/guac/shared", 0600)
+	err := os.MkdirAll(filepath.Join(utils.GetTmpDir(), "trasa", "accessproxy", "guac", "shared"), 0600)
 	if err != nil {
 		panic(err)
 	}
-	err = os.MkdirAll("/var/tmp/trasa/accessproxy/ssh", 0600)
+	err = os.MkdirAll(filepath.Join(utils.GetTmpDir(), "trasa", "accessproxy", "ssh"), 0600)
 	if err != nil {
 		panic(err)
 	}
-	err = os.MkdirAll("/var/tmp/trasa/accessproxy/http", 0600)
-	if err != nil {
-		panic(err)
-	}
-
-	err = os.MkdirAll("/var/trasa/crdb", 0600)
-	if err != nil {
-		panic(err)
-	}
-	err = os.MkdirAll("/var/trasa/minio", 0600)
+	err = os.MkdirAll(filepath.Join(utils.GetTmpDir(), "trasa", "accessproxy", "http"), 0600)
 	if err != nil {
 		panic(err)
 	}
 
-	err = os.MkdirAll("/etc/trasa/certs", 0600)
+	err = os.MkdirAll(filepath.Join(utils.GetVarDir(), "trasa", "crdb"), 0600)
 	if err != nil {
 		panic(err)
 	}
-	err = os.MkdirAll("/etc/trasa/config", 0600)
+	err = os.MkdirAll(filepath.Join(utils.GetVarDir(), "trasa", "minio"), 0600)
 	if err != nil {
 		panic(err)
 	}
-	err = os.MkdirAll("/etc/trasa/static", 0600)
+
+	err = os.MkdirAll(filepath.Join(utils.GetETCDir(), "trasa", "certs"), 0600)
+	if err != nil {
+		panic(err)
+	}
+	err = os.MkdirAll(filepath.Join(utils.GetETCDir(), "trasa", "config"), 0600)
+	if err != nil {
+		panic(err)
+	}
+	err = os.MkdirAll(filepath.Join(utils.GetETCDir(), "trasa", "static"), 0600)
 	if err != nil {
 		panic(err)
 	}
 
 	//create config file if no exist
-	_, err = os.Stat("/etc/trasa/config/config.toml")
+	_, err = os.Stat(filepath.Join(utils.GetETCDir(), "trasa", "config", "config.toml"))
 	if err != nil {
-		f, err := os.OpenFile("/etc/trasa/config/config.toml", os.O_CREATE|os.O_WRONLY, os.ModePerm)
+		f, err := os.OpenFile(filepath.Join(utils.GetETCDir(), "trasa", "config", "config.toml"), os.O_CREATE|os.O_WRONLY, os.ModePerm)
 		if err != nil {
 			panic(err)
 		}
@@ -430,5 +430,14 @@ func checkInitDirsAndFiles() {
 
 `)
 	}
+}
 
+//Gstate is a global state struct which contains database connections, configurations etc
+type Gstate struct {
+	db             *sql.DB
+	geoip          *geoip2.Reader
+	firebaseClient *firebase.App
+	minioClient    *minio.Client
+	config         Config
+	redisClient    *redis.Client
 }

@@ -2,8 +2,8 @@ version: '3.8'
 services:
   trasa-server:
     build:
-      context: ../..
-      dockerfile: build/e2e/Dockerfile
+      context: ../../..
+      dockerfile: tests/build/e2e/Dockerfile
     ports:
       - "80:80"
       - "443:443"

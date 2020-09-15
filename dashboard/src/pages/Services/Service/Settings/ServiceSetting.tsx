@@ -271,7 +271,7 @@ export default function Servicesetting(props: ServicesettingProps) {
                   <div className={classes.settingSHeader}>SSH </div>
                 </MenuItem>
                 <MenuItem value="http" id="http">
-                  <div className={classes.settingSHeader}>HTTP </div>
+                  <div className={classes.settingSHeader}>HTTP (Beta)</div>
                 </MenuItem>
 
                 <MenuItem value="rdp" id="rdp">

@@ -8,6 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net"
+	"path/filepath"
 )
 
 func ListenSSH(closeChan chan bool) error {
@@ -18,7 +19,7 @@ func ListenSSH(closeChan chan bool) error {
 	//	}
 	//}()
 
-	privateBytes, err := ioutil.ReadFile("/etc/trasa/certs/id_rsa")
+	privateBytes, err := ioutil.ReadFile(filepath.Join(utils.GetETCDir(), "trasa", "certs", "id_rsa"))
 	if err != nil {
 		pkey, err := utils.GeneratePrivateKey(4082)
 		if err != nil {

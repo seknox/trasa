@@ -4,6 +4,8 @@
 trasa-server
 server/server
 
+devenv/
+
 .vscode/
 .idea/
 

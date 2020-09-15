@@ -1,31 +1,14 @@
 package models
 
 import (
-	"database/sql"
 	"database/sql/driver"
 	"encoding/json"
 	"errors"
 
 	"github.com/seknox/trasa/server/consts"
 
-	firebase "firebase.google.com/go"
-	"github.com/minio/minio-go"
-	"github.com/oschwald/geoip2-golang"
-	"github.com/seknox/trasa/server/global"
 	"github.com/tstranex/u2f"
-
-	"github.com/go-redis/redis/v8"
 )
-
-//Gstate is a global state struct which contains database connections, configurations etc
-type Gstate struct {
-	db             *sql.DB
-	geoip          *geoip2.Reader
-	firebaseClient *firebase.App
-	minioClient    *minio.Client
-	config         global.Config
-	redisClient    *redis.Client
-}
 
 type GeoLocation struct {
 	IsoCountryCode string    `json:"isoCountryCode"`
