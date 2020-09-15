@@ -39,15 +39,15 @@ jobs:
           sudo chmod 777 /tmp/trasa/accessproxy/ssh
 
       - name: Unit Test
-        working-directory: ./tests
-        run: make unit-test
+        working-directory: ./server
+        run: go test -v ./...
 
       - name: Integration Test
         working-directory: ./tests
-        run: make integration-test
+        run: cd build/integration && docker-compose up --build -d && cd ../.. && go test -v  ./server
 
       - name: Clean
-        working-directory: ./tests
-        run: make clear
+        working-directory: ./tests/build/integration
+        run: docker-compose down
 
 
