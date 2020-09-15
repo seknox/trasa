@@ -109,12 +109,7 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: '0 -1px 0 #404854 inset',
     color: 'white',
   },
-  firebase: {
-    fontSize: 24,
-    backgroundColor: '#eeeeee', // 'rgb(3,4,27)',   //'#030417', // rgb(3,4,27)
-    fontFamily: theme.typography.fontFamily,
-    color: theme.palette.common.white,
-  },
+
   itemActionable: {
     '&:hover': {
       backgroundColor: 'rgba(255, 255, 255, 0.08)',
@@ -212,7 +207,7 @@ export default function Navigator(props: any) {
                 ))}
                 {/* <Divider className={classes.divider} /> */}
               </React.Fragment>
-          ))
+            ))
           : categories().map(({ id, children, path, icon }) => (
               <React.Fragment key={id}>
                 <ListItem
@@ -257,7 +252,7 @@ export default function Navigator(props: any) {
                 ))}
                 {/* <Divider light /> */}
               </React.Fragment>
-          ))}
+            ))}
       </List>
     </Drawer>
   );

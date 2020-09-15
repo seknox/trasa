@@ -81,3 +81,5 @@ Distributed under the Mozilla Public License v2 License. See `LICENSE` for more 
 <!-- CONTACT -->
 
 ## Contact
+
+React out to Seknox team at secure at seknox dot com
