@@ -40,7 +40,7 @@ jobs:
 
       - name: Unit Test
         working-directory: ./server
-        run: go test -v ./...
+        run: go get -v ./... && go test -v ./...
 
       - name: Integration Test
         working-directory: ./tests
