@@ -23,7 +23,6 @@ require (
 	github.com/hashicorp/vault/api v1.0.5-0.20200317185738-82f498082f02
 	github.com/huandu/go-sqlbuilder v1.8.0
 	github.com/jinzhu/now v1.1.1
-	github.com/kabukky/httpscerts v0.0.0-20150320125433-617593d7dcb3
 	github.com/lib/pq v1.8.0
 	github.com/manifoldco/promptui v0.7.0
 	github.com/mholt/archiver v3.1.1+incompatible
