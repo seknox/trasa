@@ -42,7 +42,7 @@
   sshlistenAddr = "127.0.0.1:8022"
   dbListenAddr = "127.0.0.1:3333"
   guacdEnabled = false
-  guacdAddr = "127.0.0.1:4822"
+  guacdAddr = "guacd:4822"
 
 
 [vault]

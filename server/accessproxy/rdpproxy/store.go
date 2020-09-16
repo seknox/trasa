@@ -109,6 +109,12 @@ func getGuacencCmd(sessionID string) *exec.Cmd {
 
 func getFFMPEGcmd(tempFileDir, sessionID string) *exec.Cmd {
 
+	if os.Getenv("GUACENC_INSTALLED") == "true" {
+		ffmpegCmdStr := fmt.Sprintf("ffmpeg -i %s/%s.guac.m4v %s/%s.mp4", tempFileDir, sessionID, tempFileDir, sessionID)
+		return exec.Command("/bin/bash", "-c", ffmpegCmdStr)
+
+	}
+
 	if runtime.GOOS == "windows" {
 		ffmpegCmdStr := fmt.Sprintf(`ffmpeg.exe -i %s\%s.guac.m4v %s\%s.mp4`, tempFileDir, sessionID, tempFileDir, sessionID)
 		return exec.Command("powershell", "-c", ffmpegCmdStr)

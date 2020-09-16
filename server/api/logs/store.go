@@ -312,7 +312,7 @@ func (s logStore) PutIntoMinio(objectName, logfilepath, bucketName string) error
 	if err != nil {
 		return err
 	}
-	return os.Rename(logfilepath, newpath)
+	return utils.MoveFile(logfilepath, newpath)
 
 }
 
