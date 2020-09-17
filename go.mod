@@ -5,6 +5,7 @@ go 1.14
 require (
 	firebase.google.com/go v3.13.0+incompatible
 	github.com/BurntSushi/toml v0.3.1
+	github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d // indirect
 	github.com/andelf/go-curl v0.0.0-20200630032108-fd49ff24ed97
 	github.com/cloudflare/cfssl v1.4.1
 	github.com/digitalocean/godo v1.42.0
@@ -15,6 +16,7 @@ require (
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-chi/hostrouter v0.0.0-20180220162504-7bff2694dfd9
 	github.com/go-ini/ini v1.57.0 // indirect
+	github.com/go-ole/go-ole v1.2.4 // indirect
 	github.com/go-playground/validator/v10 v10.3.0
 	github.com/go-redis/redis/v8 v8.0.0-beta.7
 	github.com/google/goexpect v0.0.0-20200816234442-b5b77125c2c5
@@ -33,7 +35,6 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/rs/cors v1.7.0
 	github.com/satori/go.uuid v1.2.1-0.20181028125025-b2ce2384e17b
-	github.com/seknox/fireser v0.0.0-20200820170914-cd18062539e6
 	github.com/seknox/guacamole v0.0.0-20200729194451-d3df4ebf9f6a
 	github.com/seknox/ssh v0.0.0-20200729180628-0439c2427e43
 	github.com/shirou/gopsutil v2.20.7+incompatible
