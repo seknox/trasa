@@ -12,11 +12,10 @@
 - Run the binary
 `sudo ./server`
 
-- Edit `/etc/trasa/config/config.toml` file and change `trasa.dashboardProxy` as ` true`
+- Edit `/etc/trasa/config/config.toml` file and change `trasa.proxyDashboard` as ` true`
 - Open TRASA dashboard at http://localhost:3000
 
-
-
+- Go through the wiki to get overview of codebase. 
 
 
 # Code convensions 
