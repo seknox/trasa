@@ -12,7 +12,7 @@ import TextField from '@material-ui/core/TextField';
 // import classNames from "classnames";
 import Typography from '@material-ui/core/Typography';
 import axios from 'axios';
-import mixpanel from 'mixpanel-browser';
+// import mixpanel from 'mixpanel-browser';
 import React, { useState } from 'react';
 import Constants from '../../../../Constants';
 // Form validation
@@ -225,7 +225,7 @@ export default function ProxySetting(props: ProxySettingProps) {
 
   const handleSubmit = () => {
     setLoader(true);
-    mixpanel.track('http proxy');
+    // mixpanel.track('http proxy');
 
     const { serviceDetail } = props;
     const req = {
@@ -269,7 +269,7 @@ export default function ProxySetting(props: ProxySettingProps) {
           <Grid item xs={7} sm={7} md={7}>
             <TextField
               fullWidth
-              // label="App Name"
+              // label="Service name"
               onChange={handleChange('routeRule')}
               name="routeRule"
               value={proxy.routeRule}

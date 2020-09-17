@@ -1,0 +1,53 @@
+
+[backup]
+  backupdir = "$HOME/trasa/backup"
+
+[database]
+  cacert = "/etc/trasa/certs/ca.crt"
+  dbname = "trasadb"
+  dbuser = "trasauser"
+  port = "5432"
+  server = "db"
+  sslenabled = false
+  usercert = "/etc/trasa/certs/client.trasauser.crt"
+  userkey = "/etc/trasa/certs/client.trasauser.key"
+
+
+[logging]
+  level = "ERROR"
+
+[minio]
+  key="minioadmin"
+  secret="minioadmin"
+  server = "127.0.0.1:9000"
+  usessl = false
+
+[platform]
+  base = "public"
+
+[redis]
+  server = "redis:6379"
+
+[timezone]
+  location = "Asia/Kathmandu"
+
+[security]
+  insecureSkipVerify=false
+
+
+
+[trasa]
+  dashboard = "https://localhost"
+  cloudServer = "https://sg.cpxy.trasa.io"
+  listenAddr = "localhost"
+
+
+[sshproxy]
+ listenAddr="0.0.0.0:8022"
+
+[dbproxy]
+  listenAddr="127.0.0.1:8023"
+
+[vault]
+  tsxvault = true
+

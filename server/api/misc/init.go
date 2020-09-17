@@ -6,23 +6,25 @@ import (
 	"github.com/seknox/trasa/server/models"
 )
 
+//InitStore initialises package state
 func InitStore(state *global.State) {
-	Store = MiscStore{State: state}
+	Store = miscStore{State: state}
 }
 
-func InitMock() *MiscMock {
-	m := new(MiscMock)
+func InitMock() *miscMock {
+	m := new(miscMock)
 	Store = m
 	return m
 }
 
-var Store MiscAdapter
+//Store is the package state variable which contains database connections
+var Store adapter
 
-type MiscStore struct {
+type miscStore struct {
 	*global.State
 }
 
-type MiscAdapter interface {
+type adapter interface {
 	GetAdmins(orgID string) ([]models.User, error)
 
 	GetGeoLocation(ip string) (geo models.GeoLocation, err error)

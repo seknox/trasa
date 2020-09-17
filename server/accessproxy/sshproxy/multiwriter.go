@@ -3,9 +3,11 @@ package sshproxy
 import (
 	"fmt"
 	"github.com/gorilla/websocket"
+	"github.com/seknox/trasa/server/utils"
 	"github.com/sirupsen/logrus"
 	"io"
 	"os"
+	"path/filepath"
 	"runtime/debug"
 )
 
@@ -21,7 +23,7 @@ type WrappedTunnel struct {
 
 func NewWrappedTunnel(sessionID string, sessionRecord bool, backendReader io.Reader, backendWriter io.WriteCloser, guestChan chan GuestClient) (*WrappedTunnel, error) {
 
-	err := os.MkdirAll("/tmp/trasa/trasagw/", 0644)
+	err := os.MkdirAll(filepath.Join(utils.GetTmpDir(), "trasa", "accessproxy", "ssh"), 0644)
 	if err != nil {
 		logrus.Error(err)
 		return nil, err
@@ -35,7 +37,7 @@ func NewWrappedTunnel(sessionID string, sessionRecord bool, backendReader io.Rea
 	}
 
 	if sessionRecord {
-		tunn.tempLogFile, err = os.OpenFile("/tmp/trasa/trasagw/"+sessionID+".session", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+		tunn.tempLogFile, err = os.OpenFile(filepath.Join(utils.GetTmpDir(), "trasa", "accessproxy", "ssh", sessionID+".session"), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 		if err != nil {
 			logrus.Error(err)
 			return nil, err
@@ -75,7 +77,7 @@ func (lr *WrappedTunnel) readFromGuests(guest *websocket.Conn) {
 	for {
 		_, data, err := guest.ReadMessage()
 		if err != nil {
-			logrus.Debugf(`Could not read from viewer, disconnected: `, err)
+			logrus.Debugf(`Could not read from viewer, disconnected: %v`, err)
 			return
 		}
 		lr.WriteCloser.Write(data)

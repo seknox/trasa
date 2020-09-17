@@ -59,10 +59,11 @@ func Test_handleIntentResponse(t *testing.T) {
 		wantStatus   string
 		wantReason   consts.FailedReason
 		wantIntent   string
+		wantSession  bool
 		wantRespType reflect.Type
 	}{
 		{
-			name: "",
+			name: "successful dash login ",
 			args: args{tfaRequest{
 				Token:     "1234",
 				TfaMethod: "totp",
@@ -78,12 +79,13 @@ func Test_handleIntentResponse(t *testing.T) {
 			}},
 			wantStatus:   "success",
 			wantReason:   "",
+			wantSession:  true,
 			wantIntent:   "DashboardLogin",
 			wantRespType: reflect.TypeOf(userAuthSessionResp{}),
 		},
 
 		{
-			name: "",
+			name: "successful enrol device ",
 			args: args{tfaRequest{
 				Token:     "1234",
 				TfaMethod: "totp",
@@ -99,12 +101,13 @@ func Test_handleIntentResponse(t *testing.T) {
 			}},
 			wantStatus:   "success",
 			wantReason:   "",
+			wantSession:  false,
 			wantIntent:   consts.AUTH_RESP_ENROL_DEVICE,
 			wantRespType: reflect.TypeOf(devices.EnrolDeviceStruct{}),
 		},
 
 		{
-			name: "",
+			name: "successful change pass",
 			args: args{tfaRequest{
 				Token:     "1234",
 				TfaMethod: "totp",
@@ -120,13 +123,14 @@ func Test_handleIntentResponse(t *testing.T) {
 			}},
 			wantStatus:   "success",
 			wantReason:   "",
+			wantSession:  false,
 			wantIntent:   consts.AUTH_RESP_CHANGE_PASS,
 			wantRespType: reflect.TypeOf(""),
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotStatus, gotReason, gotIntent, gotResp := handleIntentResponse(tt.args.req, tt.args.user)
+			gotStatus, gotReason, gotIntent, gotSession, gotResp := handleIntentResponse(tt.args.req, tt.args.user, "", "")
 			if gotStatus != tt.wantStatus {
 				t.Errorf("handleIntentResponse() gotStatus = %v, want %v", gotStatus, tt.wantStatus)
 			}
@@ -136,6 +140,10 @@ func Test_handleIntentResponse(t *testing.T) {
 			if gotIntent != tt.wantIntent {
 				t.Errorf("handleIntentResponse() gotIntent = %v, want %v", gotIntent, tt.wantIntent)
 			}
+			if tt.wantSession && gotSession == "" {
+				t.Error("handleIntentResponse() got blank Session while status is success ")
+			}
+
 			//if !reflect.DeepEqual(gotResp, tt.wantResp) {
 			//		t.Errorf("handleIntentResponse() gotResp = %v, want %v", gotResp, tt.wantResp)
 			//}

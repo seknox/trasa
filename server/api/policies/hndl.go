@@ -43,7 +43,7 @@ func CreatePolicy(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// Update policy of a organization
+//UpdatePolicy updates given policy of an organization
 func UpdatePolicy(w http.ResponseWriter, r *http.Request) {
 	logrus.Trace("UpdatePolicy request received")
 	uc := r.Context().Value("user").(models.UserContext)
@@ -71,7 +71,7 @@ func UpdatePolicy(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// Get all policies of a organization
+//GetPolicies returns all policies of an organization
 func GetPolicies(w http.ResponseWriter, r *http.Request) {
 	logrus.Trace("GetPolicies request received")
 	uc := r.Context().Value("user").(models.UserContext)
@@ -104,7 +104,7 @@ func GetPolicies(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// Get policy from policyID
+//GetPolicy returns policy details from policyID
 func GetPolicy(w http.ResponseWriter, r *http.Request) {
 	logrus.Trace("CreatePolicy request received")
 	uc := r.Context().Value("user").(models.UserContext)
@@ -125,7 +125,7 @@ type policyIDs struct {
 	PolicyID []string `json:"policyID"`
 }
 
-// GetPolicies returns all policies which belongs to callers organization.
+//DeletePolicies deletes given policies
 func DeletePolicies(w http.ResponseWriter, r *http.Request) {
 	logrus.Trace("request received")
 	userContext := r.Context().Value("user").(models.UserContext)
@@ -143,7 +143,7 @@ func DeletePolicies(w http.ResponseWriter, r *http.Request) {
 		err := Store.DeletePolicy(v, userContext.User.OrgID)
 		if err != nil {
 			logrus.Error(err)
-			utils.TrasaResponse(w, 200, "failed", "error fetching group detail", "Policy not deleted")
+			utils.TrasaResponse(w, 200, "failed", "Could not delete policy", "Policy not deleted")
 			return
 		}
 		deletedNum = deletedNum + 1

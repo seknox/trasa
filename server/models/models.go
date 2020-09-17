@@ -1,30 +1,14 @@
 package models
 
 import (
-	"database/sql"
 	"database/sql/driver"
 	"encoding/json"
 	"errors"
 
 	"github.com/seknox/trasa/server/consts"
 
-	firebase "firebase.google.com/go"
-	"github.com/minio/minio-go"
-	"github.com/oschwald/geoip2-golang"
-	"github.com/seknox/trasa/server/global"
 	"github.com/tstranex/u2f"
-
-	"github.com/go-redis/redis/v8"
 )
-
-type Gstate struct {
-	db             *sql.DB
-	geoip          *geoip2.Reader
-	firebaseClient *firebase.App
-	minioClient    *minio.Client
-	config         global.Config
-	redisClient    *redis.Client
-}
 
 type GeoLocation struct {
 	IsoCountryCode string    `json:"isoCountryCode"`
@@ -106,7 +90,7 @@ type InitSignup struct {
 	DeletedAt      string
 }
 
-// AppLogin mocks request structure which ssh logins and rdp logins generates
+// ServiceLogin is a request structure which ssh logins and rdp logins generates
 type ServiceLogin struct {
 	ServiceID       string           `json:"serviceID"`
 	DynamicService  bool             `json:"dynamicService"`
@@ -600,26 +584,13 @@ type EmailUserCrud struct {
 	CC            []string `json:"cc"`
 }
 
-//////////////////////////////////////////////
-///////// FCM server config
-//////////////////////////////////////////////
-type FcmConfig struct {
-	ServerAddr string `json:"serverAddr"` // should be fqdn with path
-	FcmApiKey  string `json:"fcmApiKey"`
-}
-
-type AppUserPermission struct {
-	Policy       Policy
-	Username     string
-	AdHocEnabled bool
-}
-
 // Current Database version
 type DBVersion struct {
 	DBVersion string `json:"dbVersion"`
 	CreatedOn int64  `json:"createdOn"`
 }
 
+//AdhocPermission represents a single adhoc request
 type AdhocPermission struct {
 	RequestID        string   `json:"reqID"`
 	RequesterID      string   `json:"requesterID"`

@@ -5,4 +5,4 @@ sidebar_label: Install TRASA Device Agent
 ---
 
 
-TRASA device agents is used by TRASA to retrieve cyber hygiene of your device.
+TRASA device agents is used by TRASA to retreive cyber hygiene of your device.

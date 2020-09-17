@@ -1,0 +1,45 @@
+
+[backup]
+  backupdir = "$HOME/trasa/backup"
+
+[database]
+  dbname = "trasadb"
+  dbuser = "trasauser"
+  port = "5432"
+  server = "localhost"
+  sslenabled = false
+
+
+[logging]
+  level = "ERROR"
+
+
+[platform]
+  base = "public"
+
+[redis]
+  server = "redis:6379"
+
+[timezone]
+  location = "Asia/Kathmandu"
+
+[security]
+  insecureSkipVerify=false
+
+
+
+[trasa]
+  cloudServer = "https://u2fproxy.trasa.io"
+  listenAddr = "<TRASA_LISTEN_ADDR>"
+  autoCert  = <AUTO_CERT>
+
+
+[sshproxy]
+ listenAddr="0.0.0.0:8022"
+
+[dbproxy]
+  listenAddr="127.0.0.1:8023"
+
+[vault]
+  tsxvault = true
+

@@ -2,7 +2,6 @@ package serviceauth
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -18,32 +17,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// AppLogin mocks request structure which ssh logins and rdp logins generates
-//Deprecated
-type appLoginLegacy struct {
-	AppID           string `json:"appID"`
-	DynamicAuthApp  bool   `json:"dynamicAuthApp"`
-	AppSecret       string `json:"appSecret"`
-	User            string `json:"user"`
-	Password        string `json:"password"`
-	PublicKey       []byte `json:"publicKey"`
-	TfaMethod       string `json:"tfaMethod"`
-	TotpCode        string `json:"totpCode"`
-	UserIP          string `json:"userIP"`
-	UserWorkstation string `json:"workstation"`
-	TrasaID         string `json:"trasaID"`
-	SessionID       string `json:"sessionID"`
-	AppType         string `json:"appType"`
-	//RdpProtocol     string           `json:"rdpProto"`
-	OrgID    string `json:"orgID"`
-	Hostname string `json:"hostname"`
-	//SignResponse    u2f.SignResponse `json:"signResponse"`
-	//DeviceHygiene   DeviceHygiene    `json:"deviceHygiene"`
-}
-
-type serviceAgentLogin struct {
+type ServiceAgentLogin struct {
 	ServiceID       string `json:"serviceID"`
-	DynamicAuthApp  bool   `json:"dynamicAuthApp"`
 	ServiceKey      string `json:"serviceKey"`
 	User            string `json:"user"`
 	Password        string `json:"password"`
@@ -65,7 +40,7 @@ type serviceAgentLogin struct {
 func AgentLogin(w http.ResponseWriter, r *http.Request) {
 	logrus.Trace("Agent request received")
 
-	var remoteLogin serviceAgentLogin
+	var remoteLogin ServiceAgentLogin
 
 	if err := json.NewDecoder(r.Body).Decode(&remoteLogin); err != nil {
 		utils.TrasaResponse(w, 200, "failed", "invalid request", "AgentLogin", nil)
@@ -77,12 +52,12 @@ func AgentLogin(w http.ResponseWriter, r *http.Request) {
 
 	logLoginFunc := func(authlog *logs.AuthLog, reason consts.FailedReason, status bool) error {
 		if nativeLogEnabled {
-			return logs.Store.LogLogin(authlog, consts.REASON_INVALID_SERVICE_CREDS, false)
+			return logs.Store.LogLogin(authlog, reason, status)
 		}
 		return nil
 	}
 
-	authlog := logs.NewEmptyLog("rdp")
+	authlog := logs.NewEmptyLog("")
 
 	temp := strings.Split(remoteLogin.User, "\\")
 	if len(temp) > 1 && temp[0] == "" {
@@ -151,7 +126,7 @@ func AgentLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	policy, privilege, adhoc, err := policies.Store.GetAccessPolicy(userDetails.ID, service.ID, orgDetail.ID)
+	policy, adhoc, err := policies.Store.GetAccessPolicy(userDetails.ID, service.ID, utils.NormalizeString(remoteLogin.User), orgDetail.ID)
 	if err != nil {
 		logrus.Debug(err)
 		err = logLoginFunc(&authlog, consts.REASON_NO_POLICY_ASSIGNED, false)
@@ -162,17 +137,17 @@ func AgentLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	normalizedPrivilege := utils.NormalizeString(privilege)
-	normalizedRemoteUsername := utils.NormalizeString(remoteLogin.User)
-
-	if normalizedPrivilege != normalizedRemoteUsername {
-		err = logLoginFunc(&authlog, consts.REASON_INVALID_PRIVILEGE, false)
-		if err != nil {
-			logrus.Error(err)
-		}
-		utils.TrasaResponse(w, 200, "failed", fmt.Sprintf("privilege assigned is (%s) but received %s ", normalizedPrivilege, normalizedRemoteUsername), "agent-login", nil)
-		return
-	}
+	//normalizedPrivilege := utils.NormalizeString(privilege)
+	//normalizedRemoteUsername := utils.NormalizeString(remoteLogin.User)
+	//
+	//if normalizedPrivilege != normalizedRemoteUsername {
+	//	err = logLoginFunc(&authlog, consts.REASON_INVALID_PRIVILEGE, false)
+	//	if err != nil {
+	//		logrus.Error(err)
+	//	}
+	//	utils.TrasaResponse(w, 200, "failed", fmt.Sprintf("privilege assigned is (%s) but received %s ", normalizedPrivilege, normalizedRemoteUsername), "agent-login", nil)
+	//	return
+	//}
 
 	ok, reason := Store.CheckPolicy(service.ID, userDetails.ID, orgDetail.ID, remoteLogin.UserIP, orgDetail.Timezone, policy, adhoc)
 	if !ok {

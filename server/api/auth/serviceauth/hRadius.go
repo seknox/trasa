@@ -1,8 +1,6 @@
 package serviceauth
 
 import (
-	"encoding/json"
-	"fmt"
 	"net"
 	"strings"
 
@@ -25,7 +23,10 @@ func RadiusLogin(w radius.ResponseWriter, r *radius.Request) {
 	logrus.Trace("RadiusLogin login request received")
 
 	remoteUser := rfc2865.UserName_GetString(r.Packet)
+	logrus.Info(remoteUser)
 	usernameWithTfaMethod := strings.Split(remoteUser, ":")
+
+	logrus.Info(usernameWithTfaMethod)
 	trasaID := usernameWithTfaMethod[0]
 	password := rfc2865.UserPassword_GetString(r.Packet)
 
@@ -100,7 +101,7 @@ func RadiusLogin(w radius.ResponseWriter, r *radius.Request) {
 		return
 	}
 
-	policy, privilege, adhoc, err := policies.Store.GetAccessPolicy(userDetails.ID, service.ID, orgDetail.ID)
+	policy, adhoc, err := policies.Store.GetAccessPolicy(userDetails.ID, service.ID, "", orgDetail.ID)
 	if err != nil {
 		logrus.Debug(err)
 		err = logLoginFunc(&authlog, consts.REASON_NO_POLICY_ASSIGNED, false)
@@ -111,14 +112,15 @@ func RadiusLogin(w radius.ResponseWriter, r *radius.Request) {
 		return
 	}
 
-	if privilege != trasaID {
-		err = logLoginFunc(&authlog, consts.REASON_INVALID_PRIVILEGE, false)
-		if err != nil {
-			logrus.Error(err)
-		}
-		w.Write(r.Response(radius.CodeAccessReject))
-		return
-	}
+	//TODO @sshahcodes check
+	//if privilege != trasaID {
+	//	err = logLoginFunc(&authlog, consts.REASON_INVALID_PRIVILEGE, false)
+	//	if err != nil {
+	//		logrus.Error(err)
+	//	}
+	//	w.Write(r.Response(radius.CodeAccessReject))
+	//	return
+	//}
 
 	ok, reason := Store.CheckPolicy(service.ID, userDetails.ID, orgDetail.ID, ipAddr[0], orgDetail.Timezone, policy, adhoc)
 	if !ok {
@@ -173,59 +175,59 @@ type printIP struct {
 	Nas    net.IP
 }
 
-func HandleRadiusReq(w radius.ResponseWriter, r *radius.Request) {
-	trasaID := rfc2865.UserName_GetString(r.Packet)
-	password := rfc2865.UserPassword_GetString(r.Packet)
-
-	var p printIP
-	p.Framed = rfc2865.FramedIPAddress_Get(r.Packet)
-	p.LOgin = rfc2865.LoginIPHost_Get(r.Packet)
-	p.Nas = rfc2865.NASIPAddress_Get(r.Packet)
-
-	v, err := json.Marshal(p)
-	if err != nil {
-		logrus.Error(err)
-	}
-
-	fmt.Println(string(v))
-	// verify password.
-
-	fmt.Printf("user: %s, password: %s\n", trasaID, password)
-
-	authlog := logs.NewEmptyLog("radius")
-
-	// get user info from database
-	userDetails, err := auth.Store.GetLoginDetails(trasaID, "")
-	if err != nil {
-		logrus.Error(err)
-		err = logs.Store.LogLogin(&authlog, consts.REASON_USER_NOT_FOUND, false)
-		if err != nil {
-			logrus.Error(err)
-		}
-		w.Write(r.Response(radius.CodeAccessReject))
-		return
-	}
-
-	authlog.UpdateUser(userDetails)
-
-	if !userDetails.Status {
-		err = logs.Store.LogLogin(&authlog, consts.REASON_USER_DISABLED, false)
-		if err != nil {
-			logrus.Error(err)
-		}
-
-		w.Write(r.Response(radius.CodeAccessReject))
-		return
-	}
-
-	_, err = auth.CheckPassword(userDetails, trasaID, password)
-	if err != nil {
-		logrus.Error(err)
-		err = logs.Store.LogLogin(&authlog, consts.REASON_INVALID_USER_CREDS, false)
-		if err != nil {
-			logrus.Error(err)
-		}
-	}
-	w.Write(r.Response(radius.CodeAccessAccept))
-	return
-}
+//func HandleRadiusReq(w radius.ResponseWriter, r *radius.Request) {
+//	trasaID := rfc2865.UserName_GetString(r.Packet)
+//	password := rfc2865.UserPassword_GetString(r.Packet)
+//
+//	var p printIP
+//	p.Framed = rfc2865.FramedIPAddress_Get(r.Packet)
+//	p.LOgin = rfc2865.LoginIPHost_Get(r.Packet)
+//	p.Nas = rfc2865.NASIPAddress_Get(r.Packet)
+//
+//	v, err := json.Marshal(p)
+//	if err != nil {
+//		logrus.Error(err)
+//	}
+//
+//	fmt.Println(string(v))
+//	// verify password.
+//
+//	fmt.Printf("user: %s, password: %s\n", trasaID, password)
+//
+//	authlog := logs.NewEmptyLog("radius")
+//
+//	// get user info from database
+//	userDetails, err := auth.Store.GetLoginDetails(trasaID, "")
+//	if err != nil {
+//		logrus.Error(err)
+//		err = logs.Store.LogLogin(&authlog, consts.REASON_USER_NOT_FOUND, false)
+//		if err != nil {
+//			logrus.Error(err)
+//		}
+//		w.Write(r.Response(radius.CodeAccessReject))
+//		return
+//	}
+//
+//	authlog.UpdateUser(userDetails)
+//
+//	if !userDetails.Status {
+//		err = logs.Store.LogLogin(&authlog, consts.REASON_USER_DISABLED, false)
+//		if err != nil {
+//			logrus.Error(err)
+//		}
+//
+//		w.Write(r.Response(radius.CodeAccessReject))
+//		return
+//	}
+//
+//	_, err = auth.CheckPassword(userDetails, trasaID, password)
+//	if err != nil {
+//		logrus.Error(err)
+//		err = logs.Store.LogLogin(&authlog, consts.REASON_INVALID_USER_CREDS, false)
+//		if err != nil {
+//			logrus.Error(err)
+//		}
+//	}
+//	w.Write(r.Response(radius.CodeAccessAccept))
+//	return
+//}

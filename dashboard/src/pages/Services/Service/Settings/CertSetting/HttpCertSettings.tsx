@@ -126,15 +126,10 @@ export default function TlsConfig(props: any) {
       formData.keyVal = keyFile;
     }
 
-    const config = {
-      headers: {
-        'X-SESSION': localStorage.getItem('X-SESSION'),
-        'X-CSRF': localStorage.getItem('X-CSRF'),
-      },
-    };
+
 
     axios
-      .post(`${Constants.TRASA_HOSTNAME}/api/v1/gateway/httpproxy/configtls`, formData, config)
+      .post(`${Constants.TRASA_HOSTNAME}/api/v1/gateway/httpproxy/configtls`, formData)
       .then((r) => {
         if (r.data.status === 'success') {
           setLoader(false);
@@ -219,7 +214,7 @@ export default function TlsConfig(props: any) {
                 <Grid item xs={9}>
                   <TextField
                     fullWidth
-                    // label="App Name"
+                    // label="Service name"
                     rows="4"
                     multiline
                     onChange={handleCertFile}
@@ -248,7 +243,7 @@ export default function TlsConfig(props: any) {
                 <Grid item xs={9}>
                   <TextField
                     fullWidth
-                    // label="App Name"
+                    // label="Service name"
                     rows="4"
                     multiline
                     onChange={handleKeyFile}

@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/go-chi/chi"
-	"github.com/seknox/trasa/server/api/crypt"
+	"github.com/seknox/trasa/server/api/providers/ca"
 	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/models"
 	"github.com/seknox/trasa/server/utils"
@@ -16,45 +16,62 @@ import (
 	"golang.org/x/crypto/ssh"
 )
 
+type UpdateSSLCertsReq struct {
+	SslKey    string `json:"sslKey"`
+	SslCert   string `json:"sslCert"`
+	CaCert    string `json:"caCert"`
+	Username  string `json:"username"`
+	ServiceID string `json:"serviceID"`
+}
+
 func UpdateSSLCerts(w http.ResponseWriter, r *http.Request) {
 	userContext := r.Context().Value("user").(models.UserContext)
-	var req struct {
-		SslKey  string `json:"sslKey"`
-		SslCert string `json:"sslCert"`
-		CaCert  string `json:"caCert"`
-	}
+	var req UpdateSSLCertsReq
 	err := utils.ParseAndValidateRequest(r, &req)
 	if err != nil {
 		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "json parse error", "UpdateAppCerts", nil)
 		return
 	}
-	serviceID := chi.URLParam(r, "serviceID")
 
 	req.SslKey = utils.NormalizeString(req.SslKey)
 	req.SslCert = utils.NormalizeString(req.SslCert)
 	req.CaCert = utils.NormalizeString(req.CaCert)
 
-	//TODO Use vault
-	err = Store.UpdateSSLCerts(req.CaCert, "", req.SslCert, req.SslKey, serviceID, userContext.Org.ID)
+	//TODO Use vault to store key
+	err = Store.UpdateSSLCerts(req.CaCert, "", req.SslCert, "", req.ServiceID, userContext.Org.ID)
 	if err != nil {
 		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "could not update certs", "UpdateAppCerts", nil)
 		return
 	}
+	//var s models.ServiceSecretVault
+	//s.KeyID = utils.GetRandomString(7)
+	//s.ServiceID = req.ServiceID
+	//s.SecretType = "db"
+	//s.OrgID = userContext.Org.ID
+	//
+	//s.Secret = []byte(req.SslKey)
+	//s.SecretID = ""
+	//s.AddedAt = time.Now().Unix()
+	//s.LastUpdated = time.Now().Unix()
+	//
+	//err:=vault.Store.StoreKey(s)
 
 	utils.TrasaResponse(w, 200, "success", "", "UpdateAppCerts", nil)
 	return
 
 }
 
+type UpdateHostCertsReq struct {
+	CertVal   string `json:"certVal"`
+	ServiceID string `json:"serviceID" validate:"required"`
+}
+
 func UpdateHostCerts(w http.ResponseWriter, r *http.Request) {
 	userContext := r.Context().Value("user").(models.UserContext)
 
-	var req struct {
-		CertVal   string `json:"certVal"`
-		ServiceID string `json:"serviceID" validate:"required"`
-	}
+	var req UpdateHostCertsReq
 
 	err := utils.ParseAndValidateRequest(r, &req)
 	if err != nil {
@@ -95,7 +112,7 @@ func DownloadHostCerts(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sshHostCA, err := crypt.Store.GetCertHolder(consts.CERT_TYPE_SSH_CA, "host", userContext.Org.ID)
+	sshHostCA, err := ca.Store.GetCertHolder(consts.CERT_TYPE_SSH_CA, "host", userContext.Org.ID)
 	if err != nil {
 		logrus.Debugf(`could not get CA key: %v`, err)
 		utils.TrasaResponse(w, http.StatusOK, "failed", "could not get CA key", "GenerateKeyPair", nil)

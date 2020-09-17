@@ -1,14 +1,15 @@
 #!/usr/bin/env sh
 
+TRASA_VERSION=0.0.1
 
 #Install postgres
 sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-sudo apt-get update
-sudo apt-get install postgresql
+sudo apt-get -y update
+sudo apt-get -y install postgresql
 
 #Install docker
-sudo apt-get -y remove docker docker-engine docker.io containerd runc && \
+sudo apt-get -y remove docker docker-engine docker.io containerd runc
 sudo apt-get -y update && \
 sudo apt-get -y install  \
     apt-transport-https \
@@ -25,44 +26,66 @@ sudo add-apt-repository -y \
 sudo apt-get -y update && \
 sudo apt-get -y install docker-ce docker-ce-cli containerd.io && \
 
-
+sudo apt-get install make
 sudo apt-get -y install ffmpeg && \
 
 
-sudo mkdir -p /etc/trasa && \
+
+wget http://download.redis.io/releases/redis-6.0.8.tar.gz
+tar xzf redis-6.0.8.tar.gz
+cd redis-6.0.8 && make && cp src/redis-server /usr/local/bin/ && cd ..
+
+
+sudo mkdir -p /etc/trasa/config && \
 sudo mkdir -p /etc/trasa/certs && \
+sudo mkdir -p /etc/trasa/static && \
 
 #chown $USER /etc/trasa && \
 sudo mkdir -p /var/trasa && \
-
 sudo mkdir -p /var/trasa/crdb
-
 sudo mkdir -p /var/trasa/minio && \
 
 
 
-#generate rsa keys for trasagw
-sudo ssh-keygen -t rsa -b 4096 -f /etc/trasa/certs/id_rsa -q -N ""
+
+mkdir bins
+
+wget https://storage.googleapis.com/trasa-public-download-assets/release/v$TRASA_VERSION/trasa-server -O bins/trasa-server
+wget https://storage.googleapis.com/trasa-public-download-assets/release/v$TRASA_VERSION/dashboard.tar -O dashboard.tar
+
+tar xzf dashboard.tar
 
 
 #copy binaries to binchow
 chmod +x bins/* && \
 sudo cp bins/* /usr/local/bin/ && \
-sudo cp -r  dashboard /etc/trasa/build
+sudo cp -r  dashboard/dashboard /var/trasa/dashboard
+
+wget https://raw.githubusercontent.com/seknox/trasa/master/build/etc/trasa/config/config.toml
+
+sudo mv config.toml /etc/trasa/config/config.toml
+
+wget https://storage.googleapis.com/trasa-public-download-assets/GeoLite2-City.mmdb
+sudo mv GeoLite2-City.mmdb /etc/trasa/static/GeoLite2-City.mmdb
 
 
-sudo cp -r config /etc/trasa/config && \
-sudo cp -r static /etc/trasa/static && \
 
+mkdir service-files
+wget https://raw.githubusercontent.com/seknox/trasa/master/build/native/trasa.service -O service-files/trasa.service
+wget https://raw.githubusercontent.com/seknox/trasa/master/build/native/trasa.service -O service-files/redis.service
 
-sudo cp service-files-single-binary/* /etc/systemd/system && \
+sudo cp service-files/* /etc/systemd/system
 sudo systemctl daemon-reload && \
 
 
+psql <<- EOSQL
+    CREATE USER docker;
+    CREATE DATABASE docker;
+    GRANT ALL PRIVILEGES ON DATABASE docker TO docker;
+EOSQL
 
 #Start services
-sudo systemctl start cockroach && \
-sudo systemctl start minio && \
+sudo systemctl start postgresql && \
 sudo systemctl start redis && \
 sudo systemctl start guacd && \
 

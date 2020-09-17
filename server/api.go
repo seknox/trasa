@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/seknox/trasa/server/api/auth/serviceauth"
-
 	"github.com/seknox/trasa/server/accessproxy/rdpproxy"
 	"github.com/seknox/trasa/server/accessproxy/sshproxy"
-
+	"github.com/seknox/trasa/server/api/auth/serviceauth"
 	"github.com/seknox/trasa/server/api/crypt"
+	"github.com/seknox/trasa/server/api/providers/ca"
+	"github.com/seknox/trasa/server/api/providers/sidp"
+	"github.com/seknox/trasa/server/api/providers/uidp"
 
 	"github.com/seknox/trasa/server/middlewares"
 
@@ -19,10 +20,10 @@ import (
 	"github.com/seknox/trasa/server/api/auth/tfa"
 	"github.com/seknox/trasa/server/api/devices"
 	"github.com/seknox/trasa/server/api/groups"
-	"github.com/seknox/trasa/server/api/idps"
 	"github.com/seknox/trasa/server/api/logs"
 	"github.com/seknox/trasa/server/api/my"
 	"github.com/seknox/trasa/server/api/notif"
+	"github.com/seknox/trasa/server/api/orgs"
 	"github.com/seknox/trasa/server/api/policies"
 	"github.com/seknox/trasa/server/api/services"
 	"github.com/seknox/trasa/server/api/stats"
@@ -35,7 +36,10 @@ import (
 // CoreAPIRoutes holds api route declarations for trasa-server
 func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 
-	//r.Use(middlewares.Dumper{}.Handler)
+	//logLevel := utils.NormalizeString(global.GetConfig().Logging.Level)
+	//if logLevel == "trace" {
+	//	r.Use(middlewares.Dumper{}.Handler)
+	//}
 
 	r.NotFound(func(w http.ResponseWriter, req *http.Request) {
 		logrus.Debug("NOT FOUND URL in core api: ", req.URL)
@@ -53,15 +57,16 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		r.Post("/tfa", auth.TfaHandler)
 		r.Delete("/logout", auth.LogoutHandler)
 
-		r.Post("/enrol/ext", auth.EnrolBrowserExtension)
 		r.Post("/accessproxy/http", serviceauth.AuthHTTPAccessProxy)
 
 		r.Post("/crypto/kex", crypt.Kex)
 		r.Post("/device/register", auth.RegisterUserDevice)
 		r.Post("/device/ext/sync", auth.SyncExtension)
+		r.Post("/device/cli/updatehygiene", auth.UpdateHygiene)
 
 		r.Post("/agent/nix", serviceauth.AgentLogin)
 		r.Post("/agent/win", serviceauth.AgentLogin)
+		r.Post("/agent/db", serviceauth.DBLogin)
 		r.Post("/agent/checkconfig", services.CheckAppConfigs)
 	})
 
@@ -90,6 +95,7 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		r.Post("/devices/brsrdetail", devices.GetBrsrDetails)
 
 		r.Post("/forgotpass", my.ForgotPassword)
+		r.Get("/providers/uidp/all", uidp.GetAllIdps)
 
 	})
 	r.Get("/api/v1/my/download_file/get/{fileName}/{sskey}", my.FileDownloadHandler)
@@ -110,7 +116,7 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 	inapptrailmiddleware := middlewares.InAppTrail{}
 	gproxy := rdpproxy.NewProxy()
 
-	r.Route("/trasagw", func(r chi.Router) {
+	r.Route("/accessproxy", func(r chi.Router) {
 		r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("Reached not found in File server ")
 			fmt.Println(r.URL)
@@ -138,13 +144,11 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		r.Use(authmiddleware.Handler)
 		r.Use(inapptrailmiddleware.Handler)
 
-		//public APIs
-		//TODO @sshah verify these
-
 		r.Post("/devicedetailpipe", devices.DeviceDetailPipe)
 		r.Post("/passmydevicedetail", devices.PassMyDeviceDetail)
 
-		//r.Post("/gateway/ext/sync", gateway.SyncExtension)
+		r.Get("/org/detail", orgs.Get)
+		r.Post("/org/update", orgs.Update)
 
 		r.Get("/my", my.GetMyDetail)
 		r.Post("/my/forgotpass", my.ForgotPassword)
@@ -170,11 +174,6 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		//After device is enrolled
 		r.Post("/my/enroldevice", auth.Enrol2FADevice)
 		r.Get("/my/authmeta/{appID}/{username}", my.GetAuthMeta)
-
-		//r.Get("/my/regreq", mdlwr.SessionValidator(Authorization(crypto.RegisterRequest)))
-		//r.Post("/my/regresp", mdlwr.SessionValidator(Authorization(crypto.RegisterResponse)))
-		//r.Post("/my/signreq", mdlwr.SessionValidator(Authorization(crypto.SignRequest)))
-		//r.Post("/my/signresp", mdlwr.SessionValidator(Authorization(crypto.SignResponseHandler)))
 
 		r.Get("/my/notifs", notif.GetPendingNotif)
 		r.Post("/my/notif/resolve", notif.ResolveNotif)
@@ -270,7 +269,7 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		r.Get("/stats/loginsbytype/{entitytype}/{entityid}/{timeFilter}/{statusFilter}", stats.GetLoginsByType)
 		r.Get("/stats/total/{entitytype}/{entityid}/{timeFilter}", stats.GetSuccessAndFailedEvents)
 		r.Get("/stats/ca", stats.GetCAStats)
-		r.Get("/stats/appperms/{serviceID}", stats.GetAppPermStats)
+		r.Get("/stats/appperms/{serviceID}", stats.GetServicePermStats)
 		r.Get("/events/stats/{entitytype}/{entityid}/byday", stats.GetTotalLoginsByDate)
 
 		r.Get("/system/status", system.SystemStatus)
@@ -280,20 +279,6 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		//r.Post("/remote/auth/radius", services.RadiusLogin)
 
 		//
-		//// TSxVault Operations
-		r.Get("/crypto/key/{vendorID}", system.Getkey)
-		r.Post("/crypto/store/key", system.StoreKey)
-		r.Post("/crypto/vault/init", system.TsxvaultInit)
-		r.Delete("/crypto/vault/reinit", system.ReInit)
-		r.Get("/crypto/vault/status", system.Status)
-		r.Post("/crypto/vault/decrypt", system.DecryptKey)
-
-		r.Post("/system/ca/init", crypt.InitCA)
-		r.Post("/system/sshca/init/{type}", crypt.InitSSHCA)
-		r.Post("/system/ca/upload", crypt.UploadCA)
-		r.Get("/system/ca/detail", crypt.GetHttpCADetail)
-		r.Get("/system/ca/all", crypt.GetAllCAs)
-		r.Get("/system/ca/ssh/{type}", crypt.DownloadSshCA)
 
 		// Global System settings
 		r.Get("/system/settings/all", system.GlobalSettings)
@@ -302,26 +287,37 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		r.Post("/system/settings/passwordpolicy/update", system.UpdatePasswordPolicy)
 		r.Get("/system/settings/passwordpolicy/enforce", passwordpolicy.EnforcePasswordPolicyNow)
 		r.Post("/system/settings/email/update", system.UpdateEmailSetting)
-		r.Post("/system/settings/sshcert/update", system.UpdateSSHCertSetting)
 		r.Post("/system/settings/devicehygienecheck/update", system.UpdateDeviceHygieneSetting)
 		r.Post("/system/settings/dynamicaccess/update", system.UpdateDynamicAccessSetting)
+		r.Post("/system/settings/cloudproxy/access", system.StoreCloudProxyKey)
 
 		// Identity Providers
-		r.Post("/idp/external/create", idps.CreateIdp)
-		r.Post("/idp/external/update", idps.UpdateIdp)
-		r.Get("/idp/external/cloudiaas/syncstatus/{vendorID}", idps.GetSyncDetail)
-		r.Post("/idp/external/cloudiaas/syncnow/{vendorID}", idps.SyncNow)
-		r.Get("/idp/external/all", idps.GetAllIdps)
-		r.Post("/idp/external/generatescimtoken/{idpID}", idps.GenerateSCIMAuthToken)
+		r.Post("/providers/uidp/create", uidp.CreateIdp)
+		r.Post("/providers/uidp/update", uidp.UpdateIdp)
+		r.Get("/providers/uidp/all", uidp.GetAllIdps)
+		r.Post("/providers/uidp/generatescimtoken/{idpID}", uidp.GenerateSCIMAuthToken)
+		r.Post("/providers/uidp/ldap/importusers", uidp.ImportLdapUsers)
+		r.Post("/providers/uidp/activateordisable", uidp.ActivateOrDisableIdp)
+		r.Get("/providers/uidp/users/all/{idpname}", uidp.GetAllUsersForIdp)
+		r.Post("/providers/uidp/users/transfer", uidp.TransferUserToGivenIdp)
 
-		r.Post("/idp/external/ldap/importusers", idps.ImportLdapUsers)
-		r.Post("/idp/external/activateordisable", idps.ActivateOrDisableIdp)
+		r.Get("/providers/sidp/syncstatus/{vendorID}", sidp.GetSyncDetail)
+		r.Post("/providers/sidp/syncnow/{vendorID}", sidp.SyncNow)
 
-		//// we are using http session validator in this case
-		//r.Post("/gateway/getpass", mdlwr.HttpSessionValidator(gateway.ValidateUserAndGetPass))
+		//// TSxVault Operations
+		r.Get("/providers/vault/tsxvault/key/{vendorID}", system.Getkey)
+		r.Post("/providers/vault/tsxvault/store/key", system.StoreKey)
+		r.Post("/providers/vault/tsxvault/init", system.TsxvaultInit)
+		r.Delete("/providers/vault/tsxvault/reinit", system.ReInit)
+		r.Get("/providers/vault/tsxvault/status", system.Status)
+		r.Post("/providers/vault/tsxvault/decrypt", system.DecryptKey)
 
-		//r.Get("/gateway/internalhosts", mdlwr.SessionValidator(Authorization(gateway.GetInternalHosts)))
-		//r.Post("/gateway/updateinternalhosts", mdlwr.SessionValidator(Authorization(mdlwr.InAppTrailWrapper(gateway.UpdateInternalHosts, consts.UPDATE_HTTP_PROXY, true))))
+		r.Post("/providers/ca/tsxca/init", ca.InitCA)
+		r.Post("/providers/ca/tsxca/ssh/init/{type}", ca.InitSSHCA)
+		r.Post("/providers/ca/tsxca/upload", ca.UploadCA)
+		r.Get("/providers/ca/tsxca/http/detail", ca.GetHttpCADetail)
+		r.Get("/providers/ca/tsxca/all", ca.GetAllCAs)
+		r.Get("/providers/ca/tsxca/ssh/{type}", ca.DownloadSshCA)
 
 	})
 

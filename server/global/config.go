@@ -1,15 +1,18 @@
 package global
 
 import (
+	"github.com/seknox/trasa/server/utils"
 	"path/filepath"
 
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
-func parseConfig() (config Config) {
-	absPath, err := filepath.Abs("/etc/trasa/config")
+// ParseConfig uses viper to parse TRASA config file.
+func ParseConfig() (config Config) {
+	absPath, err := filepath.Abs(filepath.Join(utils.GetETCDir(), "trasa", "config"))
 	if err != nil {
-		panic("config file not found in /etc/trasa/config")
+		panic("config file not found in " + filepath.Join(utils.GetETCDir(), "trasa", "config"))
 	}
 	//viper.SetConfigType("toml")
 	viper.SetConfigName("config")
@@ -39,8 +42,10 @@ type Config struct {
 		Backupdir string `toml:"backupdir"`
 	} `toml:"backup"`
 	Database struct {
+		Dbtype     string `toml:"dbname"`
 		Dbname     string `toml:"dbname"`
 		Dbuser     string `toml:"dbuser"`
+		Dbpass     string `toml:"dbpass"`
 		Port       string `toml:"port"`
 		Server     string `toml:"server"`
 		Sslenabled bool   `toml:"sslenabled"`
@@ -59,6 +64,7 @@ type Config struct {
 		SendErrReport string `toml:"sendErrReport"`
 	} `toml:"logging"`
 	Minio struct {
+		Status bool   `toml:"status"`
 		Key    string `toml:"key"`
 		Secret string `toml:"secret"`
 		Server string `toml:"server"`
@@ -75,32 +81,64 @@ type Config struct {
 		Userkey    string   `toml:"userkey"`
 		Cacert     string   `toml:"cacert"`
 	} `toml:"redis"`
-	Timezone struct {
-		Location string `toml:"location"`
-	} `toml:"timezone"`
+
 	Security struct {
 		InsecureSkipVerify bool `toml:"insecureSkipVerify"`
 	} `toml:"security"`
 	Trasa struct {
-		ListenAddr  string `toml:"listenAddr"`
-		Dashboard   string `toml:"dashboard"`
-		Rootdomain  string `toml:"rootdomain"`
-		CloudServer string `toml:"cloudServer"`
-		Ssodomain   string `toml:"ssodomain"`
-		Trasacore   string `toml:"trasacore"`
-		Rootdir     string `toml:"rootdir"`
-		OrgId       string `toml:"orgID"`
+		ProxyDashboard bool   `toml:"proxyDashboard"`
+		DashboardAddr  string `toml:"dashboardAddr"`
+		AutoCert       bool   `toml:"autoCert"`
+		ListenAddr     string `toml:"listenAddr"`
+		Email          string `toml:"email"`
+		Rootdomain     string `toml:"rootdomain"`
+		CloudServer    string `toml:"cloudServer"`
+		Ssodomain      string `toml:"ssodomain"`
+		Rootdir        string `toml:"rootdir"`
+		OrgId          string `toml:"orgID"`
 	} `toml:"trasa"`
-	SSHProxy struct {
-		ListenAddr string `toml:"listenAddr"`
-	} `toml:"sshProxy"`
+	Proxy struct {
+		SSHListenAddr string `toml:"sshlistenAddr"`
+		GuacdAddr     string `toml:"guacdAddr"`
+		GuacdEnabled  bool   `toml:"guacdEnabled"`
+	} `toml:"proxy"`
 	Vault struct {
 		Tsxvault bool   `toml:"tsxvault"`
 		Port     string `toml:"port"`
 		Server   string `toml:"server"`
 		Token    string `toml:"token"`
 	} `toml:"vault"`
-	InternalHosts struct {
-		Hosts string `toml:"hosts"`
-	} `toml:"internalHosts"`
+}
+
+// UpdateTRASACPxyAddr updates TRASA cloud proxy server address.
+func UpdateTRASACPxyAddr(serverAddr string) {
+	absPath, err := filepath.Abs(filepath.Join(utils.GetETCDir(), "trasa", "config"))
+	if err != nil {
+		logrus.Error(err)
+	}
+	//viper.SetConfigType("toml")
+	viper.SetConfigName("config")
+	viper.AddConfigPath(absPath)
+	if err := viper.ReadInConfig(); err != nil {
+		logrus.Error(err)
+	}
+	err = viper.Unmarshal(&config)
+	if err != nil {
+		logrus.Error(err)
+	}
+
+	viper.Set("trasa.cloudServer", serverAddr)
+
+	config.Trasa.CloudServer = serverAddr
+
+	err = viper.WriteConfig()
+	if err != nil {
+		logrus.Error(err)
+		return
+	}
+
+	// update global config val
+	// config = ParseConfig()
+
+	return
 }

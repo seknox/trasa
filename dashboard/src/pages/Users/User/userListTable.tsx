@@ -9,7 +9,11 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
-import MUIDataTable, { MUIDataTableColumn, MUIDataTableOptions } from 'mui-datatables';
+import MUIDataTable, {
+  MUIDataTableColumn,
+  MUIDataTableMeta,
+  MUIDataTableOptions,
+} from 'mui-datatables';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Constants from '../../../Constants';
@@ -256,9 +260,15 @@ export default function UserTable(props: UsertableProps) {
       name: 'View Profile',
       options: {
         filter: false,
-        customBodyRender: (value: any) => {
+        customBodyRender: (value: any, tableMeta: MUIDataTableMeta) => {
           return (
-            <Button component={Link} to={`/users/user/${value}`} variant="outlined" color="primary">
+            <Button
+              id={tableMeta.rowData[0]}
+              component={Link}
+              to={`/users/user/${value}`}
+              variant="outlined"
+              color="primary"
+            >
               View
             </Button>
           );

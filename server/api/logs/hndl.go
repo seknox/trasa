@@ -37,6 +37,7 @@ func GetLoginEvents(w http.ResponseWriter, r *http.Request) {
 	utils.TrasaResponse(w, http.StatusOK, "success", "invalid size or page", "get org logs by page", events)
 }
 
+//GetLoginEventsByPage returns login events with pagination
 func GetLoginEventsByPage(w http.ResponseWriter, r *http.Request) {
 	userContext := r.Context().Value("user").(models.UserContext)
 	entityType := chi.URLParam(r, "entitytype")
@@ -89,6 +90,7 @@ func GetLoginEventsByPage(w http.ResponseWriter, r *http.Request) {
 
 }
 
+//GetAllInAppTrails returns all inapp trails
 func GetAllInAppTrails(w http.ResponseWriter, r *http.Request) {
 	userContext := r.Context().Value("user").(models.UserContext)
 	page, err1 := strconv.ParseInt(chi.URLParam(r, "page"), 10, 32)
@@ -119,6 +121,7 @@ func GetAllInAppTrails(w http.ResponseWriter, r *http.Request) {
 	utils.TrasaResponse(w, 200, "success", "", "GetAllInAppTrails", events)
 }
 
+//GetLiveSessions serves live sessions through web socket
 func GetLiveSessions(params models.ConnectionParams, uc models.UserContext, ws *websocket.Conn) {
 
 	if uc.User.UserRole != "orgAdmin" {

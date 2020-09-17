@@ -132,7 +132,7 @@ export default function AddUserToGroup(props: AddUserToGroupProps) {
         <br />
         <Grid container spacing={2} direction="column" alignItems="center" justify="center">
           <Grid item xs={12}>
-            <Button variant="contained" color="secondary" onClick={submitAddUserRequest}>
+            <Button id='addSelectedUsersBtn' variant="contained" color="secondary" onClick={submitAddUserRequest}>
               Add Selected Users
             </Button>
             <br />

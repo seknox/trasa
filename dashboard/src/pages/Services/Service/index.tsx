@@ -11,7 +11,7 @@ import AccessStats from '../AccessStats';
 import ManageCreds from './ManageCredentials';
 import ServiceOverview from './ServiceOverview';
 
-function AppPageIndex(props: any) {
+function ServicePageIndex(props: any) {
   const [serviceName, setserviceName] = useState('');
   const [appData, setAppData] = useState({});
   const [allUsers, setallUsers] = useState([]);
@@ -71,13 +71,13 @@ function AppPageIndex(props: any) {
     <Layout>
       <Headers
         pageName={[
-          { name: 'Services', route: '/services/groups#All%20services' },
+          { name: 'Services', route: '/services' },
           {
             name: serviceName,
-            route: getRoute('/services/service#serviceID=', props.ID),
+            route: getRoute('/services/service/', props.ID),
           },
         ]}
-        tabHeaders={['Overview', 'Access Stats', 'Access Maps', 'Manage Credentials']}
+        tabHeaders={['Overview', 'Access Maps', 'Manage Credentials', 'Access Stats']}
         Components={[
           <ServiceOverview
             entityType="service"
@@ -87,8 +87,6 @@ function AppPageIndex(props: any) {
             UpdateserviceName={UpdateserviceName}
             serviceName={serviceName}
           />,
-
-          <AccessStats entityType="service" entityID={props.ID} />,
 
           <AccessMaps
             entityType="service"
@@ -104,6 +102,8 @@ function AppPageIndex(props: any) {
             allUsers={allUsers}
             UpdateserviceName={UpdateserviceName}
           />,
+
+          <AccessStats entityType="service" entityID={props.ID} />,
         ]}
       />
     </Layout>
@@ -112,12 +112,12 @@ function AppPageIndex(props: any) {
 
 type TParams = { ID: string };
 
-const AppPage = ({ match }: RouteComponentProps<TParams>) => {
+const ServicePage = ({ match }: RouteComponentProps<TParams>) => {
   return (
     <div>
-      <AppPageIndex ID={match.params.ID} />
+      <ServicePageIndex ID={match.params.ID} />
     </div>
   );
 };
 
-export default AppPage;
+export default ServicePage;

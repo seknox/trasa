@@ -1,17 +1,5 @@
 package models
 
-//Deprecated
-type GlobalServiceSettings struct {
-	Status              bool    `json:"status"`
-	VideoRecord         bool    `json:"videoRecord"`
-	AutocreateApp       bool    `json:"autocreateApp"`
-	PolicyID            string  `json:"policyID"`
-	PolicyName          string  `json:"policyName"`
-	UserGroups          []Group `json:"userGroups"`
-	UserGroupName       string  `json:"userGroupName"`
-	DynamicServiceGroup string  `json:"dynamicServiceGroup"` //map_id of appgroup_usergroup_mapv1
-}
-
 // GlobalSettings holds model for global settings that can be applied to users in
 // TRASA (not appusers. appusers can be managed from policy or compliance settings)
 // multiple settings can be applied to global user settings.
@@ -32,13 +20,14 @@ type GlobalSettings struct {
 	UpdatedOn int64  `json:"updatedOn"`
 }
 
+//GlobalDynamicAccessSettings is dynamic access setting struct
 type GlobalDynamicAccessSettings struct {
 	Status     bool     `json:"status"`
 	PolicyID   string   `json:"policyID"`
-	Admins     []string `json:"admins"`
 	UserGroups []string `json:"userGroups"`
 }
 
+//Config is trasa config file structure
 type Config struct {
 	Backup struct {
 		Backupdir string `toml:"backupdir"`

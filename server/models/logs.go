@@ -4,6 +4,7 @@ import (
 	"github.com/seknox/trasa/server/consts"
 )
 
+//AuthLog is a log struct for all authentication events in trasa including dashboard login
 type AuthLog struct {
 	EventID        string                `json:"eventID"`
 	Endpoint       consts.ConstEndpoints `json:"endpoint"`
@@ -40,7 +41,7 @@ type AuthLog struct {
 	Guests          []string            `json:"guests"`
 }
 
-// Elastic modals
+//InAppTrail is struct of inapp audit log of trasa
 type InAppTrail struct {
 	EventID      string      `json:"eventID"`
 	Status       bool        `json:"status"`
@@ -56,6 +57,7 @@ type InAppTrail struct {
 	ClientIP     string      `json:"clientIP"`
 }
 
+//SignupLog
 type SignupLog struct {
 	FirstName   string `json:"firstName"`
 	LastName    string `json:"lastName"`

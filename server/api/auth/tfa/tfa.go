@@ -49,7 +49,7 @@ func VerifyTotpCode(totpCode, userID, orgID string) (bool, string, error) {
 func SendU2F(userID, orgID, appName, ip string) (bool, string) {
 
 	// If code reaches here, its time to generate random challenge, store it in redis with 2 min timer, send remote notification to user.
-	challenge := utils.GetRandomID(5)
+	challenge := utils.GetRandomString(5)
 
 	//fmt.Printf("challenge: %s\n", hex.EncodeToString(challenge))
 	var userDevice models.UserDevice
@@ -163,16 +163,16 @@ func SendU2F(userID, orgID, appName, ip string) (bool, string) {
 ////////////////////////////
 //TODO check and rename fields
 type notifFederation struct {
-	serviceID string `json:"serviceID"`
-	AppName   string `json:"appSecret"`
-	OrgName   string `json:"orgName"`
-	IpAddress string `json:"IPAddress"`
-	Time      string `json:"time"`
+	ServiceID   string `json:"serviceID"`
+	ServiceName string `json:"serviceName"`
+	OrgName     string `json:"orgName"`
+	IPAddress   string `json:"IPAddress"`
+	Time        string `json:"time"`
 	//DeviceID  string   `json:"deviceId"`
 	FcmTokens []string `json:"fcmTokens"`
 }
 
-func sendNotificationThroughCloudProxy(fcmTokens []string, orgName, appName, ipAddr, time string) (U2f, error) {
+func sendNotificationThroughCloudProxy(fcmTokens []string, orgName, serviceName, ipAddr, time string) (U2f, error) {
 	var requestConfig notifFederation
 	requestConfig.FcmTokens = fcmTokens
 
@@ -180,16 +180,16 @@ func sendNotificationThroughCloudProxy(fcmTokens []string, orgName, appName, ipA
 
 	//requestConfig.DeviceID = deviceID
 	requestConfig.OrgName = orgName
-	requestConfig.AppName = appName
+	requestConfig.ServiceName = serviceName
 	requestConfig.Time = time
-	requestConfig.IpAddress = ipAddr
+	requestConfig.IPAddress = ipAddr
 
 	//urlPath := "https:///onprem2fa"
-	urlPath := global.GetConfig().Trasa.CloudServer + "/api/v3/onprem2fa"
+	urlPath := global.GetConfig().Trasa.CloudServer + "/api/v1/onprem2fa"
 	//urlPath := "http://localhost:3339" + "/api/v1/onprem2fa"
 
 	insecureSkip := global.GetConfig().Security.InsecureSkipVerify
-	result, err := utils.CallTrasaAPI(urlPath, requestConfig, insecureSkip)
+	result, err := notif.Store.CallTrasaCloudProxy(urlPath, requestConfig, insecureSkip)
 	if err != nil {
 		return U2f{}, err
 	}
@@ -247,7 +247,7 @@ func sendNotificationThroughCloudProxy(fcmTokens []string, orgName, appName, ipA
 //
 //}
 
-//This function will handle all 2fa process,
+//HandleTfaAndGetDeviceID handles all 2fa process,
 // update device hygiene from u2f
 // and return device ID of 2fa device
 func HandleTfaAndGetDeviceID(signResponse *u2f.SignResponse, tfaMethod, totpCode, userID, clientIP, appName, timezone, orgName, orgID string) (deviceID string, reason consts.FailedReason, ok bool) {
@@ -325,7 +325,7 @@ func HandleTfaAndGetDeviceID(signResponse *u2f.SignResponse, tfaMethod, totpCode
 		}
 
 	} else {
-		challenge := utils.GetRandomID(5)
+		challenge := utils.GetRandomString(5)
 
 		c := make(chan U2f, 1)
 
@@ -426,46 +426,46 @@ func rsaVerify(signedChallenge string, originalChallenge string, publicKeyPEM st
 
 }
 
-//Check newly enrolled device via U2F or TOTP
-func CheckDeviceEnroll(deviceID, clientIP, orgName, timezone, orgID string) (bool, error) {
-	deviceDetail, err := devices.Store.GetFromID(deviceID)
-	if err != nil {
-		return false, err
-	}
-
-	loc, err := time.LoadLocation(timezone)
-	if err != nil {
-		logrus.Error(err)
-		return false, err
-	}
-	now := time.Now().In(loc)
-
-	if global.GetConfig().Platform.Base == "private" {
-		tfaResp, err := sendNotificationThroughCloudProxy([]string{deviceDetail.FcmToken}, orgName, "Test", clientIP, now.String())
-		if err != nil || tfaResp.Answer != "YES" {
-			return false, err
-		}
-	} else {
-		challenge := utils.GetRandomID(5)
-		err := notif.Store.SendPushNotification(deviceDetail.FcmToken, orgName, "Test", clientIP, now.String(), challenge)
-		if err != nil {
-			return false, err
-		}
-
-		//TODO for ugly workaround, we have escaped setting device id this time.
-		err = redis.Store.Set(challenge, time.Second*400, "status", "false")
-		if err != nil {
-			return false, err
-		}
-
-		// Wait and verify U2f challenge
-		checkU2FChallenge, _ := redis.Store.WaitForStatusAndGet(challenge, "device")
-
-		if checkU2FChallenge == false {
-			return false, nil
-		}
-
-		return true, nil
-	}
-	return false, nil
-}
+////CheckDeviceEnroll checks newly enrolled device via U2F or TOTP
+//func CheckDeviceEnroll(deviceID, clientIP, orgName, timezone, orgID string) (bool, error) {
+//	deviceDetail, err := devices.Store.GetFromID(deviceID)
+//	if err != nil {
+//		return false, err
+//	}
+//
+//	loc, err := time.LoadLocation(timezone)
+//	if err != nil {
+//		logrus.Error(err)
+//		return false, err
+//	}
+//	now := time.Now().In(loc)
+//
+//	if global.GetConfig().Platform.Base == "private" {
+//		tfaResp, err := sendNotificationThroughCloudProxy([]string{deviceDetail.FcmToken}, orgName, "Test", clientIP, now.String())
+//		if err != nil || tfaResp.Answer != "YES" {
+//			return false, err
+//		}
+//	} else {
+//		challenge := utils.GetRandomString(5)
+//		err := notif.Store.SendPushNotification(deviceDetail.FcmToken, orgName, "Test", clientIP, now.String(), challenge)
+//		if err != nil {
+//			return false, err
+//		}
+//
+//		//TODO for ugly workaround, we have escaped setting device id this time.
+//		err = redis.Store.Set(challenge, time.Second*400, "status", "false")
+//		if err != nil {
+//			return false, err
+//		}
+//
+//		// Wait and verify U2f challenge
+//		checkU2FChallenge, _ := redis.Store.WaitForStatusAndGet(challenge, "device")
+//
+//		if checkU2FChallenge == false {
+//			return false, nil
+//		}
+//
+//		return true, nil
+//	}
+//	return false, nil
+//}

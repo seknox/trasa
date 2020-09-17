@@ -3,6 +3,7 @@ package rdpproxy
 import (
 	"bytes"
 	"database/sql"
+	"github.com/seknox/trasa/server/global"
 	"io"
 	"net"
 	"sync"
@@ -65,8 +66,8 @@ func NewSession(params *models.ConnectionParams, authlog *logs.AuthLog) (*Sessio
 
 	if session.isOwner {
 
-		policy, privilege, _, err := policies.Store.GetAccessPolicy(params.UserID, service.ID, params.OrgID)
-		if errors.Is(err, sql.ErrNoRows) || privilege != params.Privilege {
+		policy, _, err := policies.Store.GetAccessPolicy(params.UserID, service.ID, params.Privilege, params.OrgID)
+		if errors.Is(err, sql.ErrNoRows) {
 			//if service is not assigned to user, create one (only if dynamic access is enabled)
 			policy, err = accessmap.CreateDynamicAccessMap(params.SessionID, params.UserID, params.TrasaID, params.Privilege, params.OrgID)
 			if err != nil {
@@ -122,8 +123,12 @@ func NewSession(params *models.ConnectionParams, authlog *logs.AuthLog) (*Sessio
 		config.ConnectionID = params.ConnID
 	}
 
-	//todo read guacd address from config
-	addr, err := net.ResolveTCPAddr("tcp", "127.0.0.1:4822")
+	guacdAddr := global.GetConfig().Proxy.GuacdAddr
+	if guacdAddr == "" {
+		guacdAddr = "127.0.0.1:4822"
+	}
+
+	addr, err := net.ResolveTCPAddr("tcp", guacdAddr)
 	if err != nil {
 		logrus.Error(err)
 		return nil, err
@@ -164,7 +169,7 @@ func (s *Session) Start(ws *websocket.Conn) (errcode string, err error) {
 	reader := s.tunnel.AcquireReader()
 	defer s.tunnel.ReleaseReader()
 
-	errcode, err = catchInitialErrors(*ws, writer, reader)
+	errcode, err = catchInitialErrors(ws, writer, reader)
 	if err != nil {
 		logrus.Error(errcode, err)
 		if errcode == "519" || errcode == "769" {
@@ -178,7 +183,7 @@ func (s *Session) Start(ws *websocket.Conn) (errcode string, err error) {
 
 	//logrus.Debug("auth success,  tfa")
 
-	var tfaSuccess = true
+	tfaSuccess := true
 	var tfaDeviceID string
 	tfaSuccess, tfaDeviceID = s.handleTfa(ws, writer)
 
@@ -230,13 +235,13 @@ func (s *Session) Start(ws *websocket.Conn) (errcode string, err error) {
 
 //It will listen for error within first few instructions
 //If everything seem fine continue to serveIO
-func catchInitialErrors(ws websocket.Conn, guacdWriter io.Writer, guacdReader guacamole.InstructionReader) (errcode string, err error) {
+func catchInitialErrors(ws *websocket.Conn, guacdWriter io.Writer, guacdReader guacamole.InstructionReader) (errcode string, err error) {
 	wg := sync.WaitGroup{}
 	exit := make(chan error, 2)
 	wg.Add(2)
 	var done = false
 
-	go func(conn guacamole.InstructionReader, ws websocket.Conn) {
+	go func(conn guacamole.InstructionReader, ws *websocket.Conn) {
 		var err error
 		var raw []byte
 		var inst *guacamole.Instruction
@@ -274,7 +279,7 @@ func catchInitialErrors(ws websocket.Conn, guacdWriter io.Writer, guacdReader gu
 		wg.Done()
 	}(guacdReader, ws)
 
-	go func(conn io.Writer, ws websocket.Conn) {
+	go func(conn io.Writer, ws *websocket.Conn) {
 		var err error
 		var buf []byte
 		for !done {

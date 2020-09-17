@@ -23,6 +23,7 @@ type UserDevice struct {
 	AddedAt       int64         `json:"addedAt"`
 }
 
+//Deprecated
 type DeviceFinger struct {
 	Browser        string `json:"browser"`
 	BrowserVersion string `json:"browserVersion"`
@@ -31,28 +32,6 @@ type DeviceFinger struct {
 	Device         string `json:"device"`
 	IP             string `json:"ip"`
 	Blob           string `json:"blob"`
-}
-
-type MobileDeviceInfo struct {
-	InstalledApps         string `json:"installedApps"`
-	DeviceName            string `json:"name"`             // iOS: "Becca's iPhone 6" // Android: ?
-	Brand                 string `json:"brand"`            // iOS: "Apple" // Android: "xiaomi"
-	Manufacturer          string `json:"manufacturer"`     // iOS: "Apple"  // Android: "Google"
-	OSName                string `json:"osName"`           //(OS Name) iOS: "iOS" on newer iOS devices "iPhone OS" on older devices, including older iPad's. // Android: "Android"
-	OSVersion             string `json:"osVersion"`        //(OS version) iOS: "11.0" // Android: "7.1.1"
-	Model                 string `json:"model"`            // iOS: "iPhone7,2"  // Android: "goldfish"
-	UserAgent             string `json:"userAgent"`        // iOS: "Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143" // Android: ?
-	IsJailBroken          bool   `json:"isJailBroken"`     //jailbroken or root
-	HooksDetected         bool   `json:"hooksDetected"`    //(ANDROID ONLY) Check if the phone has some malicious apps installed
-	IsDebugged            bool   `json:"debugModeEnabled"` //// Check if the application is running in debug mode
-	DeviceID              string `json:"deviceID"`         // iOS: "FCDBD8EF-62FC-4ECB-B2F5-92C9E79AC7F9" // Android: "dd96dec43fb81c97"
-	IpAddress             string `json:"ipAddress"`
-	MacAddress            string `json:"macAddress"`
-	ReadableVersion       string `json:"readableVersion"` //(application version+build number) iOS: 1.0.1.32  // Android: 1.0.1.234
-	SecurityPatch         string `json:"securityPatch"`   //// "2018-07-05"
-	AppVersion            string `json:"appVersion"`      //Application version of TRASA.
-	IsEmulator            bool   `json:"isEmulator"`      //Tells if the TRASA app is running in an emulator.
-	IsPinOrFingerprintSet bool   `json:"isPinOrFingerprintSet"`
 }
 
 ////////////////////////////////////////////////////
@@ -97,6 +76,7 @@ func (a *DeviceHygiene) Scan(value interface{}) error {
 	return nil
 }
 
+//DeviceInfo
 type DeviceInfo struct {
 	DeviceName    string `json:"deviceName"`
 	DeviceVersion string `json:"deviceVersion"`
@@ -106,6 +86,7 @@ type DeviceInfo struct {
 	DeviceModel   string `json:"deviceModel"`  // iOS: "iPhone7,2"  //
 }
 
+//DeviceOS
 type DeviceOS struct {
 	OSName              string   `json:"osName"`    //(OS Name) iOS: "iOS" on newer iOS devices "iPhone OS" on older devices, including older iPad's. // Android: "Android"
 	OSVersion           string   `json:"osVersion"` //(OS version) iOS: "11.0" // Android: "7.1.1"
@@ -120,6 +101,7 @@ type DeviceOS struct {
 	IsEmulator          bool     `json:"isEmulator"`       // only for mobile device
 }
 
+//LoginSecurity is device hygiene related to login
 type LoginSecurity struct {
 	// checks if device requires login before console.
 	AutologinEnabled bool `json:"autologinEnabled" `

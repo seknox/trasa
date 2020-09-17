@@ -130,20 +130,14 @@ export default function CA(props: any) {
 
   const generateSSHCA = (type: any) => () => {
     axios
-      .post(`${Constants.TRASA_HOSTNAME}/api/v1/system/sshca/init/${type}`)
+      .post(`${Constants.TRASA_HOSTNAME}/api/v1/providers/ca/tsxca/ssh/init/${type}`)
       .then((response) => {});
   };
 
   React.useEffect(() => {
-    // code to run on component mount
-    const config = {
-      headers: {
-        'X-SESSION': localStorage.getItem('X-SESSION'),
-        'X-CSRF': localStorage.getItem('X-CSRF'),
-      },
-    };
+
     axios
-      .get(`${Constants.TRASA_HOSTNAME}/api/v1/system/ca/all`, config)
+      .get(`${Constants.TRASA_HOSTNAME}/api/v1/providers/ca/tsxca/all`)
       .then((response) => {
         if (response.data.status === 'success') {
           // console.log(response.data.data[0].cert)
@@ -342,7 +336,7 @@ function CATable(props: any) {
   const downloadCA = (name: any, type: any) => () => {
     switch (type) {
       case 'SSH_CA':
-        axios.get(`${Constants.TRASA_HOSTNAME}/api/v1/system/ca/ssh/${name}`).then((response) => {
+        axios.get(`${Constants.TRASA_HOSTNAME}/api/v1/providers/ca/tsxca/ssh/${name}`).then((response) => {
           fileDownload(response.data, 'ca-cert.pem', 'application/x-pem-file');
         });
         break;

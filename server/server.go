@@ -1,18 +1,24 @@
 package main
 
 import (
+	"context"
+	"crypto/tls"
 	"fmt"
 	"net/http"
+	"net/url"
+	"os"
+	"os/signal"
+	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/seknox/trasa/server/initdb"
+	"github.com/vulcand/oxy/forward"
+	"golang.org/x/crypto/acme/autocert"
 
 	"github.com/seknox/trasa/server/api/my"
 
 	"github.com/seknox/trasa/server/api/auth/serviceauth"
-
-	"github.com/seknox/trasa/server/api/accesscontrol"
-	"github.com/seknox/trasa/server/api/system"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/hostrouter"
@@ -20,23 +26,28 @@ import (
 	webproxy "github.com/seknox/trasa/server/accessproxy/http"
 	"github.com/seknox/trasa/server/accessproxy/rdpproxy"
 	"github.com/seknox/trasa/server/accessproxy/sshproxy"
+	"github.com/seknox/trasa/server/api/accesscontrol"
 	"github.com/seknox/trasa/server/api/accessmap"
 	"github.com/seknox/trasa/server/api/auth"
-	"github.com/seknox/trasa/server/api/crypt"
-	"github.com/seknox/trasa/server/api/crypt/vault"
 	"github.com/seknox/trasa/server/api/devices"
 	"github.com/seknox/trasa/server/api/groups"
-	"github.com/seknox/trasa/server/api/idps"
 	"github.com/seknox/trasa/server/api/logs"
 	"github.com/seknox/trasa/server/api/misc"
 	"github.com/seknox/trasa/server/api/notif"
 	"github.com/seknox/trasa/server/api/orgs"
 	"github.com/seknox/trasa/server/api/policies"
+	"github.com/seknox/trasa/server/api/providers/ca"
+	"github.com/seknox/trasa/server/api/providers/sidp"
+	"github.com/seknox/trasa/server/api/providers/uidp"
+	"github.com/seknox/trasa/server/api/providers/vault"
+	"github.com/seknox/trasa/server/api/providers/vault/tsxvault"
 	"github.com/seknox/trasa/server/api/redis"
 	"github.com/seknox/trasa/server/api/services"
 	"github.com/seknox/trasa/server/api/stats"
+	"github.com/seknox/trasa/server/api/system"
 	"github.com/seknox/trasa/server/api/users"
 	"github.com/seknox/trasa/server/global"
+	"github.com/seknox/trasa/server/utils"
 	"github.com/sirupsen/logrus"
 )
 
@@ -54,11 +65,11 @@ func StartServr() {
 	accessmap.InitStore(state)
 
 	auth.InitStore(state)
-
-	crypt.InitStore(state)
+	vault.InitStore(state)
+	tsxvault.InitStore(state)
 	devices.InitStore(state)
 	groups.InitStore(state)
-	idps.InitStore(state)
+	uidp.InitStore(state)
 	logs.InitStore(state)
 	misc.InitStore(state)
 	my.InitStore(state)
@@ -70,12 +81,24 @@ func StartServr() {
 	system.InitStore(state)
 	stats.InitStore(state)
 	users.InitStore(state)
-	vault.InitStore(state)
+
+	uidp.InitStore(state)
+
+	sidp.InitStore(state)
+	ca.InitStore(state)
 
 	initdb.InitDB()
 
 	logrus.Trace("Starting API Server...")
-	go sshproxy.ListenSSH()
+
+	closeChan := make(chan bool, 1)
+	go func() {
+		err := sshproxy.ListenSSH(closeChan)
+		if err != nil {
+			logrus.Error(err)
+		}
+		closeChan <- true
+	}()
 
 	webproxy.PrepareProxyConfig()
 
@@ -95,9 +118,47 @@ func StartServr() {
 
 	go http.ListenAndServe(":80", http.HandlerFunc(redirect))
 
-	go startRadiusServer()
+	go StartRadiusServer(closeChan)
 
-	err := http.ListenAndServeTLS(":443", "/etc/trasa/certs/trasa-server-dev.crt", "/etc/trasa/certs/trasa-server-dev.key", r)
+	s := http.Server{
+		Addr:    ":443",
+		Handler: r,
+	}
+
+	done := make(chan struct{})
+	go func() {
+		quit := make(chan os.Signal, 1)
+		signal.Notify(quit, os.Interrupt, os.Kill)
+		sig := <-quit
+		logrus.Infof("trasa-server: shutting down ... %v", sig)
+		logs.Store.RemoveAllActiveSessions()
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		if err := s.Shutdown(ctx); err != nil {
+			logrus.Infof("trasa-server: server shutdown with error: %v", err)
+		}
+		cancel()
+		done <- struct{}{}
+	}()
+
+	var err error
+	if global.GetConfig().Trasa.AutoCert {
+		err = s.Serve(autocert.NewListener(trasaListenAddr))
+	} else {
+		certPath := filepath.Join(utils.GetETCDir(), "trasa", "certs", "trasa-server.crt")
+		keyPath := filepath.Join(utils.GetETCDir(), "trasa", "certs", "trasa-server.key")
+
+		err = checkIfCertExists(certPath, keyPath)
+		// If they are not available, generate new ones.
+		if err != nil {
+			err = generateCerts(certPath, keyPath, trasaListenAddr)
+			if err != nil {
+				logrus.Fatal("Error: Couldn't create https certs.")
+			}
+		}
+
+		err = s.ListenAndServeTLS(certPath, keyPath)
+	}
+
 	if err != nil {
 		fmt.Println(err)
 		logrus.Error(err)
@@ -107,16 +168,16 @@ func StartServr() {
 	// if err != nil {
 	// 	logrus.Error(err)
 	// }
-
+	//
 	// tlsKeypair, err := tls.LoadX509KeyPair("/etc/trasa/certs/trasa-server-dev.crt", "/etc/trasa/certs/trasa-server-dev.key")
 	// if err != nil {
 	// 	log.Println(err)
 	// 	return
 	// }
-
+	//
 	// TODO @bhrg3se commenting out your graceful shutdown code coz for some reason, setting up server this way is causing ssl error (SSL_ERROR_RX_RECORD_TOO_LONG).
 	// Feel free to change this if you can figure out the solution.
-
+	//
 	// trasaTLSServer := http.Server{
 	// 	Addr:      ":443",
 	// 	Handler:   r,
@@ -128,21 +189,7 @@ func StartServr() {
 	// 	//MaxHeaderBytes:    0,
 	// 	//
 	// }
-
-	// done := make(chan struct{})
-	// go func() {
-	// 	quit := make(chan os.Signal, 1)
-	// 	signal.Notify(quit, os.Interrupt, os.Kill)
-	// 	sig := <-quit
-	// 	logrus.Errorf("trasa-server: shutting down ... %v", sig)
-	// 	logs.Store.RemoveAllActiveSessions()
-	// 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	// 	if err := trasaTLSServer.Shutdown(ctx); err != nil {
-	// 		logrus.Errorf("trasa-server: server shutdown with error: %v", err)
-	// 	}
-	// 	cancel()
-	// 	done <- struct{}{}
-	// }()
+	//
 
 	//err = trasaTLSServer.ListenAndServe()
 
@@ -191,28 +238,56 @@ func CoreAPIRouter(r *chi.Mux) chi.Router {
 
 	r = CoreAPIRoutes(r)
 
+	logrus.Trace("Proxying dashboard: ", global.GetConfig().Trasa.ProxyDashboard)
+	if global.GetConfig().Trasa.ProxyDashboard == true {
+
+		r.Get("/*", func(w http.ResponseWriter, req *http.Request) {
+			logrus.Trace("Forwarding non api request to dashboard: ", global.GetConfig().Trasa.DashboardAddr)
+			transport := &http.Transport{
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+			}
+
+			url, err := url.ParseRequestURI(global.GetConfig().Trasa.DashboardAddr)
+			if err != nil {
+				logrus.Error(err)
+				// TODO respond with error notification?
+				return
+			}
+			req.URL = url
+			fwd, err := forward.New(forward.RoundTripper(transport))
+
+			if err != nil {
+				logrus.Error(err)
+			}
+			fwd.ServeHTTP(w, req)
+		})
+
+		return r
+
+	}
+
 	r.Get("/", func(w http.ResponseWriter, req *http.Request) {
 		logrus.Trace("Not Found ROOT URL: serving ROOT: ", req.URL.Path)
 		w.Header().Set("Cache-Control", "public, max-age=8176000")
-		http.FileServer(http.Dir("/etc/trasa/build")).ServeHTTP(w, req)
+		http.FileServer(http.Dir(filepath.Join(utils.GetVarDir(), "trasa", "dashboard"))).ServeHTTP(w, req)
 	})
 
 	r.Get("/static*", func(w http.ResponseWriter, req *http.Request) {
 		logrus.Trace("Found static URL: serving STATIC : ", req.URL.Path)
 		w.Header().Set("Cache-Control", "public, max-age=8176000")
-		http.FileServer(http.Dir("/etc/trasa/build")).ServeHTTP(w, req)
+		http.FileServer(http.Dir(filepath.Join(utils.GetVarDir(), "trasa", "dashboard"))).ServeHTTP(w, req)
 	})
 
 	r.Get("/assets*", func(w http.ResponseWriter, req *http.Request) {
 		logrus.Trace("Found static URL: serving ASSETS : ", req.URL.Path)
 		w.Header().Set("Cache-Control", "public, max-age=8176000")
-		http.FileServer(http.Dir("/etc/trasa/build")).ServeHTTP(w, req)
+		http.FileServer(http.Dir(filepath.Join(utils.GetVarDir(), "trasa", "dashboard"))).ServeHTTP(w, req)
 	})
 
 	r.NotFound(func(w http.ResponseWriter, req *http.Request) {
 		logrus.Trace("Not Found URL: serving Index File : ", req.URL.Path)
 		w.Header().Set("Cache-Control", "no-store")
-		http.ServeFile(w, req, "/etc/trasa/build/index.html")
+		http.ServeFile(w, req, filepath.Join(utils.GetVarDir(), "trasa", "dashboard", "index.html"))
 
 	})
 
@@ -237,7 +312,7 @@ func FileServer(r chi.Router, path string) {
 	r.NotFound(func(w http.ResponseWriter, req *http.Request) {
 		fmt.Println("Reached not found in File server ")
 		fmt.Println(req.URL)
-		http.ServeFile(w, req, "/etc/trasa/build/index.html")
+		http.ServeFile(w, req, filepath.Join(utils.GetVarDir(), "trasa", "dashboard", "index.html"))
 	})
 }
 
@@ -246,12 +321,12 @@ func serveFile(w http.ResponseWriter, r *http.Request) {
 
 	//workDir, _ := os.Getwd()
 
-	// filesDir := http.Dir(filepath.Join(workDir, "/etc/trasa/build"))
+	// filesDir := http.Dir(filepath.Join(workDir, filepath.Join(utils.GetVarDir(),"trasa","dashboard")))
 
 	//fmt.Println("context: ", rctx.RoutePattern())
 	pathPrefix := strings.TrimSuffix(rctx.RoutePattern(), "/*")
 	// fmt.Println("serving: ", pathPrefix)
-	fs := http.StripPrefix(pathPrefix, http.FileServer(http.Dir("/etc/trasa/build")))
+	fs := http.StripPrefix(pathPrefix, http.FileServer(http.Dir(filepath.Join(utils.GetVarDir(), "trasa", "dashboard"))))
 
 	fs.ServeHTTP(w, r)
 }

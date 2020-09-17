@@ -2,6 +2,7 @@ package devices
 
 import (
 	"encoding/json"
+	"github.com/pkg/errors"
 	"time"
 
 	"github.com/lib/pq"
@@ -9,7 +10,7 @@ import (
 )
 
 // get user devices
-func (s DeviceStore) GetFromID(deviceID string) (*models.UserDevice, error) {
+func (s deviceStore) GetFromID(deviceID string) (*models.UserDevice, error) {
 	var device models.UserDevice
 	err := s.DB.QueryRow(
 		"SELECT user_id, org_id, id, type,trusted, fcm_token, public_key, device_hygiene, added_at FROM devices WHERE deleted != true AND id = $1 AND type != $2",
@@ -19,12 +20,12 @@ func (s DeviceStore) GetFromID(deviceID string) (*models.UserDevice, error) {
 	return &device, err
 }
 
-func (s DeviceStore) Trust(trusted bool, deviceID, orgID string) error {
+func (s deviceStore) Trust(trusted bool, deviceID, orgID string) error {
 	_, err := s.DB.Exec(`UPDATE devices set trusted=$1 WHERE id=$2 AND org_id=$3`, trusted, deviceID, orgID)
 	return err
 }
 
-func (s DeviceStore) Register(device models.UserDevice) error {
+func (s deviceStore) Register(device models.UserDevice) error {
 
 	//If device is already registered with same machineID, just update device hygiene
 	//var deviceID string
@@ -47,7 +48,7 @@ func (s DeviceStore) Register(device models.UserDevice) error {
 
 }
 
-func (s DeviceStore) ReRegisterDevice(device models.UserDevice) error {
+func (s deviceStore) ReRegisterDevice(device models.UserDevice) error {
 	_, err := s.DB.Exec(`Update  devices SET 
 										user_id=$1,
 										org_id=$2, 
@@ -64,7 +65,7 @@ func (s DeviceStore) ReRegisterDevice(device models.UserDevice) error {
 }
 
 //UpdateWorkstationHygiene updates device hygiene based on deviceID and orgID
-func (s DeviceStore) UpdateWorkstationHygiene(deviceHyg models.DeviceHygiene, deviceID, orgID string) error {
+func (s deviceStore) UpdateWorkstationHygiene(deviceHyg models.DeviceHygiene, deviceID, orgID string) error {
 
 	_, err := s.DB.Exec(`UPDATE devices SET device_hygiene=$1,deleted = false 
 									WHERE id=$2 AND org_id=$3`,
@@ -78,7 +79,7 @@ func (s DeviceStore) UpdateWorkstationHygiene(deviceHyg models.DeviceHygiene, de
 }
 
 //UpdateDeviceHygiene updates device hygiene based on machineID
-func (s DeviceStore) UpdateDeviceHygiene(deviceHyg models.DeviceHygiene, orgID string) (deviceID string, err error) {
+func (s deviceStore) UpdateDeviceHygiene(deviceHyg models.DeviceHygiene, orgID string) (deviceID string, err error) {
 
 	//logger.Debug(deviceHyg)
 	deviceHyg.LastCheckedTime = time.Now().Unix()
@@ -86,7 +87,7 @@ func (s DeviceStore) UpdateDeviceHygiene(deviceHyg models.DeviceHygiene, orgID s
 		deviceHyg.DeviceInfo.MachineID, orgID).
 		Scan(&deviceID)
 	if err != nil {
-		return "", err
+		return "", errors.Errorf(`device not registered with this machine id: %v`, err)
 	}
 
 	_, err = s.DB.Exec(`UPDATE devices SET device_hygiene=$1,deleted = false 
@@ -101,7 +102,7 @@ func (s DeviceStore) UpdateDeviceHygiene(deviceHyg models.DeviceHygiene, orgID s
 }
 
 // BrowserStoreExtensionDetails stores details of other extensions installed in user's browser.
-func (s DeviceStore) BrowserStoreExtensionDetails(brsr models.BrowserExtensions, orgID, userID, deviceID string) error {
+func (s deviceStore) BrowserStoreExtensionDetails(brsr models.BrowserExtensions, orgID, userID, deviceID string) error {
 
 	_, err := s.DB.Exec(`INSERT into browser_ext (user_id, org_id, browser_id,ext_id, name, description, version, maydisable,enabled,install_type,type,perms, host_perms, isvuln, vuln_reason, last_checked)
 	values($1, $2, $3, $4, $5, $6, $7, $8,$9,$10,$11,$12,$13, $14, $15, $16);`, userID, orgID, deviceID, brsr.ExtensionID, brsr.Name, brsr.Description, brsr.Version, brsr.MayDisable, brsr.Enabled, brsr.InstallType, brsr.Type, pq.Array(brsr.Permissions), pq.Array(brsr.HostPermissions), brsr.IsVulnerable, brsr.VulnReason, time.Now().Unix())
@@ -112,13 +113,13 @@ func (s DeviceStore) BrowserStoreExtensionDetails(brsr models.BrowserExtensions,
 	return nil
 }
 
-func (s DeviceStore) Deregister(deviceID, orgID string) error {
+func (s deviceStore) Deregister(deviceID, orgID string) error {
 	_, err := s.DB.Exec(`DELETE from devices where id = $1 AND org_id=$2`, deviceID, orgID)
 	return err
 }
 
 // RegisterBrowser stores browser detail referencing deviceID of workstation
-func (s DeviceStore) RegisterBrowser(brsr models.DeviceBrowser) error {
+func (s deviceStore) RegisterBrowser(brsr models.DeviceBrowser) error {
 
 	exts, err := json.Marshal(brsr.Extensions)
 	if err != nil {
@@ -135,7 +136,7 @@ func (s DeviceStore) RegisterBrowser(brsr models.DeviceBrowser) error {
 
 //UpdateBrowserHygiene updates device hygiene based on machineID
 //UpdateWorkstationHygiene updates device hygiene based on deviceID and orgID
-func (s DeviceStore) UpdateBrowserHygiene(brsr models.DeviceBrowser, brsrID, orgID string) error {
+func (s deviceStore) UpdateBrowserHygiene(brsr models.DeviceBrowser, brsrID, orgID string) error {
 
 	exts, err := json.Marshal(brsr.Extensions)
 	if err != nil {
@@ -154,7 +155,7 @@ func (s DeviceStore) UpdateBrowserHygiene(brsr models.DeviceBrowser, brsrID, org
 }
 
 // CheckIfExtIsRegistered validates if extID is in database.
-func (s DeviceStore) CheckIfExtIsRegistered(extID string) (string, error) {
+func (s deviceStore) CheckIfExtIsRegistered(extID string) (string, error) {
 	var orgID string
 	err := s.DB.QueryRow(
 		"SELECT devices.org_id from devices JOIN browsers b ON devices.id= b.device_id WHERE b.id=$1",
@@ -169,7 +170,7 @@ func (s DeviceStore) CheckIfExtIsRegistered(extID string) (string, error) {
 }
 
 // GetDeviceAndOrgIDFromExtID from extID
-func (s DeviceStore) GetDeviceAndOrgIDFromExtID(extID string) (orgID, deviceID, userID string, err error) {
+func (s deviceStore) GetDeviceAndOrgIDFromExtID(extID string) (orgID, deviceID, userID string, err error) {
 
 	err = s.DB.QueryRow(
 		"SELECT browsers.org_id, browsers.device_id, devices.user_id from browsers JOIN devices ON browsers.device_id=devices.id WHERE browsers.id = $1",
@@ -183,7 +184,7 @@ func (s DeviceStore) GetDeviceAndOrgIDFromExtID(extID string) (orgID, deviceID, 
 	return
 }
 
-func (s DeviceStore) GetDeviceIDFromExtID(machineID string) (deviceID string, err error) {
+func (s deviceStore) GetDeviceIDFromExtID(machineID string) (deviceID string, err error) {
 	err = s.DB.QueryRow(`SELECT id from devices where machine_id=$1`, machineID).Scan(&deviceID)
 	return
 }

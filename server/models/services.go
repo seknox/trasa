@@ -38,6 +38,7 @@ type Service struct {
 	DeletedAt     int64
 }
 
+//NewEmptyServiceStruct returns empty struct of service
 func NewEmptyServiceStruct() Service {
 	return Service{
 		ID:              "",

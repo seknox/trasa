@@ -13,8 +13,9 @@ import (
 
 	"github.com/go-chi/chi"
 	hashicorpVault "github.com/hashicorp/vault/api"
-	"github.com/seknox/trasa/server/api/crypt/vault"
 	"github.com/seknox/trasa/server/api/orgs"
+	"github.com/seknox/trasa/server/api/providers/vault"
+	"github.com/seknox/trasa/server/api/providers/vault/tsxvault"
 	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/global"
 	"github.com/seknox/trasa/server/models"
@@ -38,7 +39,7 @@ func StoreKey(w http.ResponseWriter, r *http.Request) {
 
 	var store models.KeysHolder
 	store.OrgID = uc.User.OrgID
-	store.KeyID = utils.GetRandomID(5)
+	store.KeyID = utils.GetRandomString(5)
 	store.KeyTag = fmt.Sprintf("%s-xxxx-xxxx...", req.KeyVal[0:4])
 	store.AddedBy = uc.User.ID
 	store.AddedAt = time.Now().Unix()
@@ -60,9 +61,9 @@ func Getkey(w http.ResponseWriter, r *http.Request) {
 
 	vendorID := chi.URLParam(r, "vendorID")
 
-	key, err := vault.Store.GetKeyOrTokenWithTag(uc.User.OrgID, vendorID)
+	key, err := tsxvault.Store.GetKeyOrTokenWithTag(uc.User.OrgID, vendorID)
 	if err != nil {
-		logger.Error(err)
+		logger.Error(err, vendorID)
 		utils.TrasaResponse(w, 200, "failed", "failed to get token.", "Getkey-GetKeyOrTokenWithTag", nil)
 		return
 	}
@@ -78,17 +79,17 @@ func Getkey(w http.ResponseWriter, r *http.Request) {
 	utils.TrasaResponse(w, 200, "success", "key fetched", "Getkey", resp)
 }
 
-// StoreKeyOrToken is helper function which encrypts key or token and store it in database.
+//EncryptAndStoreKeyOrToken is helper function which encrypts key or token and store it in database.
 func EncryptAndStoreKeyOrToken(req models.KeysHolder) ([]byte, error) {
 
-	ct, err := vault.Store.AesEncrypt([]byte(req.KeyVal))
+	ct, err := tsxvault.Store.AesEncrypt([]byte(req.KeyVal))
 	req.KeyVal = ct
 	if err != nil {
 		//logger.Error(err)
 		return nil, err
 	}
 
-	err = vault.Store.StoreKeyOrTokens(req)
+	err = tsxvault.Store.StoreKeyOrTokens(req)
 	if err != nil {
 		logger.Error(err)
 		return nil, fmt.Errorf("failed to store token")
@@ -96,17 +97,24 @@ func EncryptAndStoreKeyOrToken(req models.KeysHolder) ([]byte, error) {
 	return req.KeyVal, nil
 }
 
+type VaultInit struct {
+	SecretShares    int `json:"secretShares"`
+	SecretThreshold int `json:"secretThreshold"`
+}
+type VaultInitResp struct {
+	UnsealKeys   []string `json:"unsealKeys"`
+	DecryptKeys  []string `json:"decryptKeys"`
+	EncRootToken string   `json:"encRootToken"`
+	Tsxvault     bool     `json:"tsxvault"`
+}
+
 // TsxvaultInit initializes TRASA built in secure storage. master key for encryption is
 // Shamir'ed into 5 keys with minimum 3 keys threshold and responded back to administrator.
 func TsxvaultInit(w http.ResponseWriter, r *http.Request) {
-	type vaultInit struct {
-		SecretShares    int `json:"secretShares"`
-		SecretThreshold int `json:"secretThreshold"`
-	}
 
 	uc := r.Context().Value("user").(models.UserContext)
 
-	var req vaultInit
+	var req VaultInit
 
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logger.Error(err)
@@ -145,14 +153,7 @@ func TsxvaultInit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	type vaultInitResp struct {
-		UnsealKeys   []string `json:"unsealKeys"`
-		DecryptKeys  []string `json:"decryptKeys"`
-		EncRootToken string   `json:"encRootToken"`
-		Tsxvault     bool     `json:"tsxvault"`
-	}
-
-	var resp vaultInitResp
+	var resp VaultInitResp
 	resp.UnsealKeys = encKeyShards
 	resp.Tsxvault = true
 
@@ -163,7 +164,7 @@ func TsxvaultInit(w http.ResponseWriter, r *http.Request) {
 // initTsxvault generates aws encryption key. shards it with sharder and returns sharded key.
 func initTsxvault(orgID string) ([]string, error) {
 
-	encKey, err := vault.Store.GenAndStoreKey(orgID)
+	encKey, err := tsxvault.Store.GenAndStoreKey(orgID)
 	if err != nil {
 		return nil, err
 	}
@@ -186,7 +187,7 @@ func ReInit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = vault.Store.TsxvdeactivateAllKeys(uc.User.OrgID, time.Now().Unix())
+	err = tsxvault.Store.TsxvdeactivateAllKeys(uc.User.OrgID, time.Now().Unix())
 	if err != nil {
 		logger.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "failed to remove manged users but vault storage is removed.", "Vault not reinitialised", nil)
@@ -194,7 +195,7 @@ func ReInit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// delete all rows from Service_keyvaultv1
-	err = vault.Store.TsxvDeleteAllSecret(uc.User.OrgID)
+	err = tsxvault.Store.TsxvDeleteAllSecret(uc.User.OrgID)
 	if err != nil {
 		logger.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "failed to remove manged users but vault storage is removed.", "Vault not reinitialised", nil)
@@ -205,11 +206,11 @@ func ReInit(w http.ResponseWriter, r *http.Request) {
 
 }
 
-type vaultStatus struct {
+type VaultStatus struct {
 	InitStatus  models.GlobalSettings              `json:"initStatus"`
 	SealStatus  *hashicorpVault.SealStatusResponse `json:"sealStatus"`
 	TokenStatus hashicorpVault.SealStatusResponse  `json:"tokenStatus"`
-	// TsxVault is TRASA's built in vault. if false, caller should assume hashicorp vault is used instead.
+	// TsxVault is TRASA's built in tsxvault. if false, caller should assume hashicorp vault is used instead.
 	Tsxvault bool   `json:"tsxvault"`
 	Setting  string `json:"setting"`
 }
@@ -225,14 +226,14 @@ func Status(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var resp vaultStatus
+	var resp VaultStatus
 	resp.InitStatus = vaultInitStatus
 
 	resp.Tsxvault = global.GetConfig().Vault.Tsxvault
 
 	resp.Setting = vaultInitStatus.SettingValue
 
-	_, status := vault.Store.GetTsxVaultKey()
+	_, status := tsxvault.Store.GetTsxVaultKey()
 	if status == false {
 		resp.TokenStatus = hashicorpVault.SealStatusResponse{Sealed: true}
 		utils.TrasaResponse(w, 200, "failed", "This key is not retrieved", "Vault not decrypted", resp)
@@ -253,7 +254,7 @@ type unseal struct {
 }
 
 // DecryptKey retrieves token from vaultDecrypt function and
-// store it in vaultEncryption Token. This is only available option for tsxvault.
+// store it in vaultEncryption Token. This is only available option for tsxtsxvault.
 // TODO @sshahcodes compose this handler to smaller functions
 func DecryptKey(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
@@ -302,7 +303,7 @@ func DecryptKey(w http.ResponseWriter, r *http.Request) {
 	// check if token is valid.
 	// this is verified by fetching value from TsxvGetEncKeyHash. if this fails or returned key is expired,
 	// we return failed response. other wise will store it in TsxVaultKey.
-	getKey, err := vault.Store.TsxvGetEncKeyHash(uc.User.OrgID, hex.EncodeToString(hashed))
+	getKey, err := tsxvault.Store.TsxvGetEncKeyHash(uc.User.OrgID, hex.EncodeToString(hashed))
 	if err != nil {
 		logger.Error(err)
 		HoldDecryptShard = nil
@@ -328,12 +329,27 @@ func DecryptKey(w http.ResponseWriter, r *http.Request) {
 	copy(nkey[:], deducedVal)
 
 	// set in global tsxvKey vault
-	vault.Store.SetTsxVaultKey(nkey, true)
+	tsxvault.Store.SetTsxVaultKey(nkey, true)
 
 	HoldDecryptShard = HoldDecryptShard[:0]
 
 	resp.Sealed = false
 	resp.Progress = len(HoldDecryptShard)
+
+	// retreive trasaCPxy api key here
+
+	// get key ct from database.
+	apikey, err := vault.Store.GetKeyOrTokenWithKeyval(uc.User.OrgID, consts.GLOBAL_CLOUDPROXY_APIKEY)
+	if err != nil {
+		logger.Error(err)
+	}
+
+	pt, err := utils.AESDecrypt(nkey[:], apikey.KeyVal)
+	if err != nil {
+		logger.Error(err)
+	}
+
+	tsxvault.Store.SetTsxCPxyKey(string(pt))
 
 	utils.TrasaResponse(w, 200, "success", "token retrieved", "Vault decrypted", resp)
 

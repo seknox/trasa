@@ -277,6 +277,7 @@ export default function ServiceOverview(props: any) {
           <Grid item xs={1}>
             <Tooltip title="delete" placement="top">
               <IconButton
+                id="deleteBtn"
                 style={{ color: 'maroon' }}
                 onClick={() => {
                   setDeleteDlgState(true);
@@ -381,7 +382,11 @@ function ServiceDetail(props: any) {
         </Grid>
         <Grid item xs={3}>
           <Tooltip title="edit" placement="top">
-            <IconButton style={{ color: 'navy' }} onClick={props.toggleConfigDrawer('right', true)}>
+            <IconButton
+              id="configEditBtn"
+              style={{ color: 'navy' }}
+              onClick={props.toggleConfigDrawer('right', true)}
+            >
               <EditIcon />
             </IconButton>
           </Tooltip>
@@ -466,7 +471,7 @@ function ServiceDetail(props: any) {
             </Grid>
 
             <Grid item xs={5}>
-              <div className={classes.settingHeader}>Remote App Name : </div>
+              <div className={classes.settingHeader}>Remote Service name : </div>
             </Grid>
             <Grid item xs={7}>
               <Typography component="h4" className={classes.proxyVals}>
@@ -834,7 +839,7 @@ const DeleteServiceDlg = (props: any) => {
       .then((response) => {
         setLoader(false);
         if (response.data.status === 'success') {
-          window.location.href = '/services/groups';
+          window.location.href = '/services';
         }
         props.closeDlg();
       })
@@ -863,15 +868,20 @@ const DeleteServiceDlg = (props: any) => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={DeleteApp} className={classes.WarningButton} variant="contained">
+          <Button
+            id="deleteConfirmBtn"
+            onClick={DeleteApp}
+            className={classes.WarningButton}
+            variant="contained"
+          >
             Yes, Delete this app.
           </Button>
           <Button onClick={props.close} color="primary" variant="contained" autoFocus>
             No
           </Button>
           <br />
-          {loader ? <ProgressHOC /> : null}
         </DialogActions>
+        {loader ? <ProgressHOC /> : null}
       </Dialog>
     </div>
   );

@@ -12,7 +12,7 @@ import Typography from '@material-ui/core/Typography';
 // import CircularProgress from "@material-ui/core/CircularProgress";
 // import classNames from "classnames";
 import axios from 'axios';
-import mixpanel from 'mixpanel-browser';
+// import mixpanel from 'mixpanel-browser';
 import React, { useEffect, useState } from 'react';
 import AWS from '../../../../assets/cloudiaas/aws.png';
 import DO from '../../../../assets/cloudiaas/do.svg';
@@ -374,9 +374,9 @@ function DOConnectAndSync() {
 
   const storeApiKey = () => {
     updateActionStatus({ ...actionStatus, respStatus: false, statusMsg: '', loader: true });
-    mixpanel.track('manage-accounts-dointegration');
+    // mixpanel.track('manage-accounts-dointegration');
     axios
-      .post(`${Constants.TRASA_HOSTNAME}/api/v1/crypto/store/key`, storedKey)
+      .post(`${Constants.TRASA_HOSTNAME}/api/v1/providers/vault/tsxvault/store/key`, storedKey)
       .then((r) => {
         updateActionStatus({ ...actionStatus, loader: false });
         if (r.data.status === 'success') {
@@ -407,20 +407,13 @@ function DOConnectAndSync() {
 
   const syncNow = () => {
     updateActionStatus({ ...actionStatus, respStatus: false, statusMsg: '', loader: true });
-    mixpanel.track('manage-accounts-dointegration');
-    const config = {
-      headers: {
-        'X-SESSION': localStorage.getItem('X-SESSION'),
-        'X-CSRF': localStorage.getItem('X-CSRF'),
-      },
-    };
+
     axios
       .post(
-        `${Constants.TRASA_HOSTNAME}/api/v1/idp/external/cloudiaas/syncnow/do`,
+        `${Constants.TRASA_HOSTNAME}/api/v1/providers/sidp/syncnow/do`,
         storedKey,
-        config,
       )
-      .then((r) => {
+      .then((r: any) => {
         updateActionStatus({ ...actionStatus, loader: false });
         if (r.data.status === 'success') {
           updateActionStatus({
@@ -449,14 +442,8 @@ function DOConnectAndSync() {
   };
 
   useEffect(() => {
-    const config = {
-      headers: {
-        'X-SESSION': localStorage.getItem('X-SESSION'),
-        'X-CSRF': localStorage.getItem('X-CSRF'),
-      },
-    };
     axios
-      .get(`${Constants.TRASA_HOSTNAME}/api/v1/crypto/key/KEY_DOAPI`, config)
+      .get(`${Constants.TRASA_HOSTNAME}/api/v1/providers/vault/key/KEY_DOAPI`)
 
       .then((response) => {
         // console.log(response.data)
@@ -479,7 +466,7 @@ function DOConnectAndSync() {
               <Grid item xs={7}>
                 <TextField
                   fullWidth
-                  // label="App Name"
+                  // label="Service name"
                   onChange={handleChange('keyVal')}
                   name="keyVal"
                   // variant = 'outlined'

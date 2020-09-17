@@ -1,6 +1,6 @@
 package stats
 
-func (s StatStore) GetPoliciesStats(orgID string) (stat policyStat, err error) {
+func (s statStore) GetPoliciesStats(orgID string) (stat policyStat, err error) {
 	//TODO check timezone
 	rows, err := s.DB.Query(`select count(*) as c , expiry::timestamp < now() as is_expired from policies where org_id=$1 GROUP BY   expiry::timestamp < now();`, orgID)
 	if err != nil {
@@ -28,7 +28,7 @@ type policyStat struct {
 	Expired int `json:"expired"`
 }
 
-func (s StatStore) GetTotalGroups(orgID, groupType string) (int, error) {
+func (s statStore) GetTotalGroups(orgID, groupType string) (int, error) {
 	var total int
 	err := s.DB.QueryRow(`SELECT count(*)from groups where type=$1 AND org_id=$2`, groupType, orgID).Scan(&total)
 

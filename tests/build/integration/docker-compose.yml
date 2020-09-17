@@ -1,0 +1,37 @@
+version: '3.8'
+services:
+  redis:
+    image: redis
+    ports:
+    - "16379:6379"
+  ssh-test-server:
+    image: rastasheep/ubuntu-sshd
+    ports:
+    - "2222:22"
+  guacd:
+    image: guacamole/guacd
+    ports:
+    - "4822:4822"
+    environment:
+       GUACD_LOG_LEVEL : trace
+    links:
+      - rdp-test-server
+
+  rdp-test-server:
+    image: umis/xubuntu-office-xrdp-desktop:v1.0
+    ports:
+    - "3389:3389"
+
+  db:
+    image: postgres
+    ports:
+    - "54321:5432"
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+
+
+
+

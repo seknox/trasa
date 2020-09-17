@@ -2,6 +2,7 @@ package sshproxy
 
 import (
 	"database/sql"
+	"github.com/seknox/trasa/server/api/accesscontrol"
 
 	"github.com/pkg/errors"
 	"github.com/seknox/trasa/server/api/accessmap"
@@ -24,28 +25,28 @@ import (
 
 	"github.com/seknox/ssh"
 
-	"strconv"
 	"strings"
 	"time"
 )
 
 const (
-	goto_keyboard_interactive = "trasa: goto_keyboard_interactive"
-	goto_public_key           = "trasa: goto_public_key"
-	fail_now                  = "trasa: fail_now"
+	gotoKeyboardInteractive = "trasa: goto_keyboard_interactive"
+	gotoPublicKey           = "trasa: goto_public_key"
+	//gotoPublicKeyOrKeyboardInteractive           = "trasa: goto_public_key_or_kb_interactive"
+	failNow = "trasa: fail_now"
 )
 
 //Decides which auth method to use next from previous error
 func nextAuthMethodHandler(conn ssh.ConnMetadata, prevErr error) ([]string, bool, error) {
 
 	switch prevErr.Error() {
-	case goto_keyboard_interactive:
+	case gotoKeyboardInteractive:
 		return []string{"keyboard-interactive"}, true, nil
 	case "ssh: no auth passed yet":
 		return []string{"publickey", "keyboard-interactive"}, false, nil
-	case goto_public_key:
+	case gotoPublicKey:
 		return []string{"publickey", "keyboard-interactive"}, false, nil
-	case fail_now:
+	case failNow:
 		return []string{}, false, prevErr
 	default:
 		if prevErr != nil {
@@ -106,7 +107,7 @@ func handleUpstreamPasswordAndKey(username, serviceID, hostname string, challeng
 	}
 
 	var hostConfirmFunc = func(message string) bool {
-		ans, err := challengeUser("user", "",
+		ans, err := challengeUser("user", "Host key verify",
 			[]string{message + "\n\rType \"yes\" to ignore and save host key:\n"},
 			[]bool{true})
 		if err != nil || len(ans) != 1 {
@@ -145,7 +146,7 @@ func handleUpstreamPasswordAndKey(username, serviceID, hostname string, challeng
 
 		var ans []string
 		if creds.Password == "" {
-			ans, err = challengeUser("user", "",
+			ans, err = challengeUser("user", "Upstream password",
 				[]string{"\n\rEnter Password(Upstream Server): "},
 				[]bool{false})
 			if err != nil {
@@ -191,7 +192,7 @@ func handleUpstreamPasswordAndKey(username, serviceID, hostname string, challeng
 func authenticateTRASA(conn ssh.ConnMetadata, challengeUser ssh.KeyboardInteractiveChallenge) (models.User, error) {
 	user := models.User{}
 	creds, err := challengeUser("user",
-		"",
+		"Enter TRASA credentials",
 		[]string{"\n\rEnter Email (TRASA): ", "\n\rEnter Password (TRASA): "},
 		[]bool{true, false})
 
@@ -242,7 +243,7 @@ func chooseService(privilege, userID, userEmail string, challengeUser ssh.Keyboa
 	for isHostDown {
 
 		ans, err := challengeUser("user",
-			"",
+			"Choose Service",
 			[]string{"\n\r_____________________________________________________________________________________\n\rEnter Service IP : \n\r"}, []bool{true})
 		if len(ans) != 1 || err != nil {
 			logrus.Debug("User canceled")
@@ -328,11 +329,11 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 		SSHStore.UpdateSessionUser(conn.RemoteAddr(), &userDetails)
 		sessionMeta.params.UserID = userDetails.ID
 		sessionMeta.params.OrgID = userDetails.OrgID
-		sessionMeta.params.Email = userDetails.Email
+		sessionMeta.params.TrasaID = userDetails.Email
 
 	}
 
-	logrus.Debug(sessionMeta.params.UserID, sessionMeta.params.OrgID)
+	//logrus.Debug(sessionMeta.params.UserID, sessionMeta.params.OrgID)
 	//call api to authenticate and  enumerate accessible servers
 	//accessableServiceDetails, err = users.Store.GetAccessMapDetails(sessionMeta.params.UserID, sessionMeta.params.OrgID)
 	//if err != nil {
@@ -341,20 +342,17 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 	//	return nil, fmt.Errorf("get access map: %v", err)
 	//}
 
-	//if service is not chosen (not embedded in ssh certificate)
-	if sessionMeta.AuthType == consts.SSH_AUTH_TYPE_PUB || sessionMeta.AuthType == consts.SSH_AUTH_TYPE_PASSWORD {
-		service, err := chooseService(conn.User(), sessionMeta.params.UserID, sessionMeta.params.Email, challengeUser)
-		if err != nil {
-			logrus.Error(err)
-			challengeUser("", "Cannot access this service", nil, nil)
-			return nil, err
-		}
-		sessionMeta.UpdateService(service)
-		//sessionMeta.params.ServiceName = params.ServiceName
-		//sessionMeta.params.ServiceID = params.ServiceID
-		//sessionMeta.params.Hostname = params.Hostname
-		//sessionMeta.params.Policy=params.Policy
+	service, err := chooseService(conn.User(), sessionMeta.params.UserID, sessionMeta.params.TrasaID, challengeUser)
+	if err != nil {
+		logrus.Error(err)
+		challengeUser("", "Cannot access this service", nil, nil)
+		return nil, err
 	}
+	sessionMeta.UpdateService(service)
+	//sessionMeta.params.ServiceName = params.ServiceName
+	//sessionMeta.params.ServiceID = params.ServiceID
+	//sessionMeta.params.Hostname = params.Hostname
+	//sessionMeta.params.Policy=params.Policy
 
 	sessionMeta.params.Privilege = conn.User()
 	policy, reason, err := SSHStore.checkPolicy(&models.ConnectionParams{
@@ -373,60 +371,66 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 		challengeUser("", string(reason), nil, nil)
 		return nil, err
 	}
-	sessionMeta.params.Policy = *policy
+	sessionMeta.policy = policy
 	sessionMeta.log.SessionRecord = policy.RecordSession
 
 	totp := ""
 
-	if sessionMeta.AuthType != consts.SSH_AUTH_TYPE_DACERT {
+	ans, _ := challengeUser("user",
+		"Second factor authentication",
+		[]string{"\n\rEnter OTP(Blank for U2F): "},
+		[]bool{true})
 
-		ans, _ := challengeUser("user",
-			"Second factor authentication",
-			[]string{"\n\rEnter OTP(Blank for U2F): "},
-			[]bool{true})
+	if len(ans) != 1 {
+		logrus.Debug("User canceled")
+		return nil, ssh.ErrNoAuth
+	}
 
-		if len(ans) != 1 {
-			logrus.Debug("User canceled")
-			return nil, ssh.ErrNoAuth
+	totp = ans[0]
+	tfaMethod := "u2f"
+	if totp != "" {
+		tfaMethod = "totp"
+	}
+
+	//logrus.Debug(sessionMeta.params.Hostname)
+	//logrus.Debug(sessionMeta.params.ServiceID)
+	//logrus.Debug(sessionMeta.params.ServiceName)
+
+	//logrus.Debug(utils.MarshallStruct(sessionMeta.params))
+
+	if sessionMeta.policy.TfaRequired {
+		orgDetail, err := orgs.Store.Get(sessionMeta.params.OrgID)
+		if err != nil {
+			logrus.Error(err)
 		}
 
-		totp = ans[0]
-		tfaMethod := "u2f"
-		if totp != "" {
-			tfaMethod = "totp"
+		deviceID, reason, ok := tfa.HandleTfaAndGetDeviceID(nil,
+			tfaMethod,
+			totp, sessionMeta.params.UserID,
+			sessionMeta.log.UserIP,
+			sessionMeta.params.ServiceName,
+			orgDetail.Timezone,
+			orgDetail.OrgName,
+			sessionMeta.params.OrgID)
+
+		if !ok {
+			logrus.Trace("tfa failed ", reason)
+			sessionMeta.log.FailedReason = reason
+			sessionMeta.log.TfaDeviceID = deviceID
+			sessionMeta.log.Status = false
+			challengeUser("", string(reason), nil, nil)
+			return nil, errors.New("tfa failed")
 		}
+	}
 
-		//logrus.Debug(sessionMeta.params.Hostname)
-		//logrus.Debug(sessionMeta.params.ServiceID)
-		//logrus.Debug(sessionMeta.params.ServiceName)
+	logrus.Trace(sessionMeta.params.AccessDeviceID)
+	reason, ok, err := accesscontrol.CheckDevicePolicy(policy.DevicePolicy, sessionMeta.params.AccessDeviceID, sessionMeta.log.TfaDeviceID, sessionMeta.params.OrgID)
+	if err != nil {
+		logrus.Error(err)
+	}
 
-		//logrus.Debug(utils.MarshallStruct(sessionMeta.params))
-
-		if sessionMeta.params.Policy.TfaRequired {
-			orgDetail, err := orgs.Store.Get(sessionMeta.params.OrgID)
-			if err != nil {
-				logrus.Error(err)
-			}
-
-			deviceID, reason, ok := tfa.HandleTfaAndGetDeviceID(nil,
-				tfaMethod,
-				totp, sessionMeta.params.UserID,
-				sessionMeta.log.UserIP,
-				sessionMeta.params.ServiceName,
-				orgDetail.Timezone,
-				orgDetail.OrgName,
-				sessionMeta.params.OrgID)
-
-			if !ok {
-				logrus.Trace("tfa failed ", reason)
-				sessionMeta.log.FailedReason = reason
-				sessionMeta.log.TfaDeviceID = deviceID
-				sessionMeta.log.Status = false
-				challengeUser("", string(reason), nil, nil)
-				return nil, errors.New("tfa failed")
-			}
-		}
-
+	if !ok {
+		return nil, errors.Errorf("device policy failed: %s", reason)
 	}
 
 	challengeUser("", "Checking host key", nil, nil)
@@ -468,7 +472,7 @@ func updateSessionCredentials(sess *Session, signer ssh.Signer, hostkeyCallback 
 					answers[0] = password
 					return answers, nil
 				} else if strings.Contains(questions[0], "email") {
-					answers[0] = sess.params.Email
+					answers[0] = sess.params.TrasaID
 					return answers, nil
 				} else if strings.Contains(questions[0], "totp") {
 					answers[0] = totp
@@ -489,37 +493,37 @@ func updateSessionCredentials(sess *Session, signer ssh.Signer, hostkeyCallback 
 // Returns index of app list.
 // Returns -1 if dynamic ip is entered.
 // Returns -2 if input is invalid.
-func searchAppName(input string, appUsers []models.AccessMapDetail) int {
-	input = strings.Trim(input, "")
-	for i, app := range appUsers {
-		if strings.EqualFold(input, app.ServiceName) {
-			return i
-		} else if input == app.Hostname {
-			return i
-		}
-	}
-
-	splittedInput := strings.Split(input, ":")
-	//If port is included
-	if (len(splittedInput) == 2) && splittedInput[0] != "" && splittedInput[1] != "" {
-		ip := net.ParseIP(splittedInput[0])
-		if ip != nil {
-			return -1
-		}
-	} else if len(splittedInput) == 1 {
-		ip := net.ParseIP(input)
-		if ip != nil {
-			return -1
-		}
-	}
-
-	index, err := strconv.Atoi(input)
-
-	//appNum, errStrConv = strconv.Atoi(ans[0])
-	//Check if choice is out of index
-	if err != nil || index > len(appUsers) || index < 1 {
-		return -2
-	}
-	return index - 1
-
-}
+//func searchAppName(input string, appUsers []models.AccessMapDetail) int {
+//	input = strings.Trim(input, "")
+//	for i, app := range appUsers {
+//		if strings.EqualFold(input, app.ServiceName) {
+//			return i
+//		} else if input == app.Hostname {
+//			return i
+//		}
+//	}
+//
+//	splittedInput := strings.Split(input, ":")
+//	//If port is included
+//	if (len(splittedInput) == 2) && splittedInput[0] != "" && splittedInput[1] != "" {
+//		ip := net.ParseIP(splittedInput[0])
+//		if ip != nil {
+//			return -1
+//		}
+//	} else if len(splittedInput) == 1 {
+//		ip := net.ParseIP(input)
+//		if ip != nil {
+//			return -1
+//		}
+//	}
+//
+//	index, err := strconv.Atoi(input)
+//
+//	//appNum, errStrConv = strconv.Atoi(ans[0])
+//	//Check if choice is out of index
+//	if err != nil || index > len(appUsers) || index < 1 {
+//		return -2
+//	}
+//	return index - 1
+//
+//}

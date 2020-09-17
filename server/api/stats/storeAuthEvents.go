@@ -3,6 +3,7 @@ package stats
 import (
 	"database/sql"
 	"fmt"
+	"github.com/seknox/trasa/server/global"
 	"net"
 	"strconv"
 	"strings"
@@ -17,8 +18,8 @@ import (
 
 //select sum(array_length(string_to_array(managed_accounts,','),1)) from servicesv1;
 
-func (s StatStore) GetAggregatedLoginFails(entityType, entityID, orgID, timezone, timeFilter string) (reasons []failedReasonsByType, err error) {
-	reasons = make([]failedReasonsByType, 0)
+func (s statStore) GetAggregatedLoginFails(entityType, entityID, orgID, timezone, timeFilter string) (reasons []FailedReasonsByType, err error) {
+	reasons = make([]FailedReasonsByType, 0)
 
 	loc, err := time.LoadLocation(timezone)
 	if err != nil {
@@ -52,7 +53,7 @@ func (s StatStore) GetAggregatedLoginFails(entityType, entityID, orgID, timezone
 		return reasons, err
 	}
 	for rows.Next() {
-		var reason failedReasonsByType
+		var reason FailedReasonsByType
 		err = rows.Scan(&reason.Value, &reason.Name)
 		reason.Label = reason.Name
 		if err != nil {
@@ -63,8 +64,8 @@ func (s StatStore) GetAggregatedLoginFails(entityType, entityID, orgID, timezone
 	return reasons, err
 }
 
-func (s StatStore) GetAggregatedLoginHours(entityType, entityID, timezone, orgID, timeFilter, statusFilter string) (logins []loginsByHour, err error) {
-	logins = make([]loginsByHour, 0)
+func (s statStore) GetAggregatedLoginHours(entityType, entityID, timezone, orgID, timeFilter, statusFilter string) (logins []LoginsByHour, err error) {
+	logins = make([]LoginsByHour, 0)
 	loc, err := time.LoadLocation(timezone)
 	if err != nil {
 		return logins, err
@@ -84,8 +85,13 @@ func (s StatStore) GetAggregatedLoginHours(entityType, entityID, timezone, orgID
 	}
 	sb.Where(sb.Equal(`org_id`, orgID))
 
-	sb.Select(sb.As(fmt.Sprintf(`((login_time/3600000000000)%%24)::int + %d`, tzOffset/3600), `hour`), sb.As(`count(*)`, `c`))
-	//sb.Select(sb.As(`EXTRACT('hour',(login_time/1000000000)::int::timestamp)`, `hour `), sb.As(`count(*)`, `c`))
+	if global.GetConfig().Database.Dbtype == "postgres" {
+		sb.Select(sb.As(fmt.Sprintf(`extract(HOURS FROM (to_timestamp(login_time/1000000000) at time zone %s))`, sb.Var(timezone)), `hour`), sb.As(`count(*)`, `c`))
+	} else {
+		//cockroachdb
+		sb.Select(sb.As(fmt.Sprintf(`EXTRACT('hour',timezone(timezone((login_time/1000000000)::int::timestamp,'UTC'),%s))`, sb.Var(timezone)), `hour `), sb.As(`count(*)`, `c`))
+	}
+
 	sb.GroupBy(`hour`)
 	sb.OrderBy(`hour`)
 
@@ -109,7 +115,7 @@ func (s StatStore) GetAggregatedLoginHours(entityType, entityID, timezone, orgID
 	for rows.Next() {
 
 		//TODO break the logic into new function
-		var login loginsByHour
+		var login LoginsByHour
 		err = rows.Scan(&login.Hour, &login.Count)
 		if err != nil {
 			return logins, err
@@ -128,9 +134,9 @@ out:
 			}
 		}
 
-		temp1 := make([]loginsByHour, len(logins[:i]))
+		temp1 := make([]LoginsByHour, len(logins[:i]))
 		copy(temp1, logins[:i])
-		temp := append(temp1, loginsByHour{Hour: strconv.Itoa(i), Count: "0"})
+		temp := append(temp1, LoginsByHour{Hour: strconv.Itoa(i), Count: "0"})
 
 		logins = append(temp, logins[i:]...)
 
@@ -139,9 +145,9 @@ out:
 	return logins, err
 }
 
-func (s StatStore) GetAggregatedIPs(entityType, entityID, orgID, timezone, timeFilter, statusFilter string) (aggIps, error) {
+func (s statStore) GetAggregatedIPs(entityType, entityID, orgID, timezone, timeFilter, statusFilter string) (AggIps, error) {
 
-	var ippool aggIps
+	var ippool AggIps
 
 	loc, err := time.LoadLocation(timezone)
 	if err != nil {
@@ -261,7 +267,7 @@ func sortIps(arr []ipcount) []firstOctet {
 	return firstOctets
 }
 
-func (s StatStore) GetLoginsByType(entityType, entityID, orgID, timezone, timeFilter, statusFilter string) (logins []nameValue, err error) {
+func (s statStore) GetLoginsByType(entityType, entityID, orgID, timezone, timeFilter, statusFilter string) (logins []nameValue, err error) {
 	logins = make([]nameValue, 0)
 
 	loc, err := time.LoadLocation(timezone)
@@ -321,7 +327,7 @@ out:
 	return logins, err
 }
 
-func (s StatStore) SortLoginByCity(entityType, entityID, orgID, timezone, timeFilter, statusFilter string) ([]geoDataType, error) {
+func (s statStore) SortLoginByCity(entityType, entityID, orgID, timezone, timeFilter, statusFilter string) ([]geoDataType, error) {
 	var dat geoDataType
 	var docs []geoDataType = make([]geoDataType, 0)
 
@@ -392,7 +398,7 @@ func (s StatStore) SortLoginByCity(entityType, entityID, orgID, timezone, timeFi
 	//return string(docsStr), err
 }
 
-func (s StatStore) GetAllAuthEventsByEntityType(entityType, entityID, timeFilter, timezone string) (totalEventsAuthEvents, error) {
+func (s statStore) GetAllAuthEventsByEntityType(entityType, entityID, timeFilter, timezone string) (totalEventsAuthEvents, error) {
 	var events totalEventsAuthEvents
 
 	// events.TotalLogins = &new(int64)
@@ -448,7 +454,7 @@ func (s StatStore) GetAllAuthEventsByEntityType(entityType, entityID, timeFilter
 	return events, err
 }
 
-func (s StatStore) GetTodayHexaLoginEvents(entityType, entityID, orgID, statusFilter, timezone string) ([]todayHexa, error) {
+func (s statStore) GetTodayHexaLoginEvents(entityType, entityID, orgID, statusFilter, timezone string) ([]todayHexa, error) {
 	var hexas = make([]todayHexa, 0)
 	loc, err := time.LoadLocation(timezone)
 	if err != nil {
@@ -502,7 +508,7 @@ func (s StatStore) GetTodayHexaLoginEvents(entityType, entityID, orgID, statusFi
 
 // GetTotalLoginsByDate generates time range based on current time and delta (start time for organization)
 // and returns json array of total login events per day.
-func (s StatStore) GetTotalLoginsByDate(entityType, entityID, orgID, timezone string) ([]totalEventsByDate, error) {
+func (s statStore) GetTotalLoginsByDate(entityType, entityID, orgID, timezone string) ([]totalEventsByDate, error) {
 	var events []totalEventsByDate
 	loc, err := time.LoadLocation(timezone)
 	if err != nil {
@@ -585,7 +591,7 @@ GROUP BY login_day  ORDER BY login_day DESC LIMIT 45;`, limitTime.UnixNano(), or
 	return events, err
 }
 
-func (s StatStore) GetRemoteAppCount(entityType, entityID, orgID, timezone, timeFilter, statusFilter string) (count int, err error) {
+func (s statStore) GetRemoteAppCount(entityType, entityID, orgID, timezone, timeFilter, statusFilter string) (count int, err error) {
 
 	loc, err := time.LoadLocation(timezone)
 	if err != nil {

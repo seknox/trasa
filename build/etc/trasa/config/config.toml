@@ -6,8 +6,9 @@
   cacert = "/etc/trasa/certs/ca.crt"
   dbname = "trasadb"
   dbuser = "trasauser"
+  dbpass = "trasauser"
   port = "5432"
-  server = "localhost"
+  server = "db"
   sslenabled = false
   usercert = "/etc/trasa/certs/client.trasauser.crt"
   userkey = "/etc/trasa/certs/client.trasauser.key"
@@ -16,20 +17,13 @@
 [logging]
   level = "ERROR"
 
-[minio]
-  key="minioadmin"
-  secret="minioadmin"
-  server = "127.0.0.1:9000"
-  usessl = false
 
 [platform]
-  base = "private"
+  base = "public"
 
 [redis]
-  server = "localhost:6379"
+  server = "redis:6379"
 
-[timezone]
-  location = "Asia/Kathmandu"
 
 [security]
   insecureSkipVerify=false
@@ -37,16 +31,19 @@
 
 
 [trasa]
-  dashboard = "https://app.trasa"
-  cloudServer = "https://u2fproxy.trasa.io"
-  listenAddr = "app.trasa"
+  proxyDashboard = false
+  cloudserver = "https://sg.cpxy.trasa.io"
+  dashboard = "http://app.trasa"
+  listenaddr = "app.trasa"
+  orgID = ""
 
 
-[sshproxy]
- listenAddr="0.0.0.0:8022"
+[proxy]
+  sshlistenAddr = "127.0.0.1:8022"
+  dbListenAddr = "127.0.0.1:3333"
+  guacdEnabled = false
+  guacdAddr = "guacd:4822"
 
-[dbproxy]
-  listenAddr="127.0.0.1:8023"
 
 [vault]
   tsxvault = true

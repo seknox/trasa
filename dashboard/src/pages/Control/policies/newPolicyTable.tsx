@@ -140,6 +140,7 @@ export default function PolicyTable(props: policyTableProps) {
         ) => {
           return (
             <Button
+              id={tableMeta.rowData[0]}
               variant="outlined"
               color="secondary"
               size="small"

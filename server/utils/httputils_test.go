@@ -6,7 +6,7 @@ import (
 )
 
 func TestTrasaResponse(t *testing.T) {
-	t.Log("testing..")
+	//	t.Log("testing..")
 	w := httptest.NewRecorder()
 	TrasaResponse(w, 200, "success", "succeed", "test TrasaResponse", nil)
 

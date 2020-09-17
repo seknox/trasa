@@ -1,5 +1,5 @@
 import axios from 'axios';
-import mixpanel from 'mixpanel-browser';
+// import mixpanel from 'mixpanel-browser';
 import React, { Component, Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import TrasaTheme from './Layout/TrasaTheme';
@@ -15,7 +15,7 @@ import Snack from './utils/Components/Snackbar';
 
 import ProgressBar from './utils/Components/Progressbar';
 // var mixpanel = require('mixpanel-browser');
-mixpanel.init('5dcb2f677ad4963e7e6eae978d97b378');
+// mixpanel.init('5dcb2f677ad4963e7e6eae978d97b378');
 // add this     "semantic-ui-css": "^2.3.1"
 
 type AppProps = {};
@@ -102,7 +102,6 @@ export default class APP extends Component<AppProps, Tstate> {
     );
 
     axios.interceptors.request.use((config) => {
-      config.headers['X-SESSION'] = localStorage.getItem('X-SESSION');
       config.headers['X-CSRF'] = localStorage.getItem('X-CSRF');
       this.setState((prevState) => ({
         actionStatus: { ...prevState.actionStatus, respStatus: false, statusMsg: '', loader: true },
@@ -113,7 +112,7 @@ export default class APP extends Component<AppProps, Tstate> {
 
     if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
       Constants.TRASA_HOSTNAME = 'https://app.trasa';
-      // Constants.TRASA_HOSTNAME = 'https://rc.trasa.io';
+      // Constants.TRASA_HOSTNAME = 'https://app.trasa.io';
       // Constants.TRASA_GUAC_HOSTNAME_WEBSOCKET = 'wss://rc.trasa.io';
       Constants.TRASA_GUAC_HOSTNAME_WEBSOCKET = 'wss://app.trasa';
     } else {

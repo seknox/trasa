@@ -3,24 +3,11 @@ package consts
 import "time"
 
 //TODO change this
+
+//TRASA_VERSION is current version of TRASA
 const TRASA_VERSION = "2020.7.2"
 
 const (
-	SystemLog       = 0
-	ErrorLog        = 1
-	DebugLog        = 2
-	ReqParsingError = 3
-	DatabaseError   = 4
-	InfoStatus      = 5
-	U2FErr          = 6
-	RedisErr        = 7
-	BcryptErr       = 8
-	ElasticError    = 9
-	RedisError      = 10
-	UnexpectedError = 11
-	VaultErr        = 12
-	CertErr         = 13
-	// EventTypes
 	ChangePassword = "changepassword"
 )
 

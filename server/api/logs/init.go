@@ -1,36 +1,39 @@
 package logs
 
 import (
+	"io"
 	"os"
 
 	"github.com/gorilla/websocket"
-	"github.com/minio/minio-go"
 	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/global"
 	"github.com/seknox/trasa/server/models"
 )
 
+//InitStore initialises package state
 func InitStore(con *global.State) {
 	// initialize local state
-	Store = LogStore{
+	Store = logStore{
 		State: con,
 	}
 
 }
 
-func InitStoreMock() *LogsMock {
-	lmock := new(LogsMock)
+//InitStoreMock will init mock state of this package
+func InitStoreMock() *logsMock {
+	lmock := new(logsMock)
 	Store = lmock
 	return lmock
 }
 
-var Store LogAdapter
+//Store is the package state variable which contains database connections
+var Store adapter
 
-type LogStore struct {
+type logStore struct {
 	*global.State
 }
 
-type LogAdapter interface {
+type adapter interface {
 	LogSignup(signup *models.InitSignup) error
 	LogLogin(log *AuthLog, reason consts.FailedReason, status bool) error
 
@@ -45,7 +48,7 @@ type LogAdapter interface {
 	LogInAppTrail(ip, userAgent, description string, user *models.User, status bool) error
 	GetOrgInAppTrails(orgID string, page int, size int, dateFrom, dateTo int64) ([]models.InAppTrail, error)
 
-	GetFromMinio(path, bucketName string) (*minio.Object, error)
+	GetFromMinio(path, bucketName string) (io.ReadSeeker, error)
 	PutIntoMinio(path, filepath, bucketName string) error
 	UploadHTTPLogToMinio(file *os.File, login AuthLog) error
 }

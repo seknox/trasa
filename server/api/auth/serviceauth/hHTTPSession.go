@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime/debug"
 	"strings"
 	"sync"
@@ -30,7 +31,7 @@ import (
 	"golang.org/x/crypto/nacl/secretbox"
 )
 
-type newSession struct {
+type NewSession struct {
 	ExtToken  string `json:"extToken"`
 	HostName  string `json:"hostName"`
 	TfaMethod string `json:"tfaMethod"`
@@ -58,7 +59,7 @@ type http2faCache struct {
 // AuthHTTPAccessProxy initiates http access proxy session. Intent should be 'AUTH_HTTP_ACCESS_PROXY'
 func AuthHTTPAccessProxy(w http.ResponseWriter, r *http.Request) {
 	logger.Trace("AuthHTTPAccessProxy request")
-	var req newSession
+	var req NewSession
 
 	authlog := logs.NewLog(r, "http")
 
@@ -107,7 +108,7 @@ func AuthHTTPAccessProxy(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	policy, privilege, adhoc, err := policies.Store.GetAccessPolicy(userDetailFromDB.ID, serviceDetailFromDB.ID, orgDetailFromDB.ID)
+	policy, adhoc, err := policies.Store.GetAccessPolicy(userDetailFromDB.ID, serviceDetailFromDB.ID, "", orgDetailFromDB.ID)
 	if err != nil {
 		logger.Debug(err)
 		utils.TrasaResponse(w, 200, "failed", "no policy assigned", "AuthHTTPAccessProxy", nil)
@@ -116,7 +117,7 @@ func AuthHTTPAccessProxy(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// TODO @sshahcodes, check if we can assign user's username here
-	authlog.Privilege = privilege
+	//authlog.Privilege = privilege
 	//authlog.Privilege = userDetailFromDB.UserName
 	authlog.SessionRecord = policy.RecordSession
 
@@ -176,8 +177,8 @@ func AuthHTTPAccessProxy(w http.ResponseWriter, r *http.Request) {
 	sessionStore[encodedSession] = authlog
 	// sessionStoreMutex.Unlock()
 
-	logger.Trace(authlog.SessionID)
-	logger.Trace(encodedSession)
+	//logger.Trace(authlog.SessionID)
+	//logger.Trace(encodedSession)
 
 	// create csrf token
 	var encryptionKey [32]byte
@@ -207,7 +208,7 @@ func AuthHTTPAccessProxy(w http.ResponseWriter, r *http.Request) {
 	if !policy.RecordSession {
 		sessionRec = "false"
 	}
-	logger.Trace(encodedSession)
+	//logger.Trace(encodedSession)
 	err = redis.Store.SetHTTPGatewaySession(encodedSession, orgusr, authData, sessionRec)
 	if err != nil {
 		logger.Errorf("setting session in redis: %v", err)
@@ -219,16 +220,16 @@ func AuthHTTPAccessProxy(w http.ResponseWriter, r *http.Request) {
 		logger.Errorf("add active session: %v", err)
 	}
 
-	var sessionIdentifiers session
+	var sessionIdentifiers Session
 	sessionIdentifiers.SessionID = encodedSession
 	sessionIdentifiers.CsrfToken = base64.StdEncoding.EncodeToString(csrfToken)
 	sessionIdentifiers.SessionRecord = policy.RecordSession
 
 	if policy.RecordSession {
-		directoryBuilder := fmt.Sprintf("/var/trasa/thg/logs/%s", encodedSession)
+		directoryBuilder := filepath.Join(utils.GetTmpDir(), "trasa", "accessproxy", "http", encodedSession)
 		logger.Tracef("Logging to : %s", directoryBuilder)
 		utils.CreateDirIfNotExist(directoryBuilder)
-		logPath := fmt.Sprintf("%s/%s.http-raw", directoryBuilder, encodedSession)
+		logPath := filepath.Join(directoryBuilder, fmt.Sprintf("%s.http-raw", encodedSession))
 		file, err := os.OpenFile(logPath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0755)
 		if err != nil {
 			logger.Error(err)
@@ -250,6 +251,7 @@ func AuthHTTPAccessProxy(w http.ResponseWriter, r *http.Request) {
 
 }
 
+//DestroyHttpSession ends http session and starts logout sequence
 func DestroyHttpSession(w http.ResponseWriter, r *http.Request) {
 
 	err := r.ParseMultipartForm(10 << 20)
@@ -263,12 +265,12 @@ func DestroyHttpSession(w http.ResponseWriter, r *http.Request) {
 
 	sessionID := r.Form.Get("sid")
 
-	LogoutSequence(sessionID)
+	logoutSequence(sessionID)
 	logger.Trace("session destroyed ", sessionID)
 	utils.TrasaResponse(w, http.StatusOK, "success", "session destroyed", "Destroy session", nil)
 }
 
-type session struct {
+type Session struct {
 	SessionID     string `json:"sessionID"`
 	CsrfToken     string `json:"csrfToken"`
 	SessionRecord bool   `json:"sessionRecord"`
@@ -321,7 +323,7 @@ func sessionWriter(sessionID, shots string) {
 			if len(counterAndImage) == 2 {
 				videoRecord := logStruct.SessionRecord //strings.Split(logStruct.AppID, ":")
 				//home, _ := hdir.Dir()
-				directoryBuilder := fmt.Sprintf("/var/trasa/thg/logs/%s", sessionID)
+				directoryBuilder := filepath.Join(utils.GetTmpDir(), "trasa", "accessproxy", "http", sessionID)
 				if videoRecord == true {
 
 					// convert to png
@@ -338,7 +340,7 @@ func sessionWriter(sessionID, shots string) {
 
 					utils.CreateDirIfNotExist(directoryBuilder)
 
-					filenameBuilder := fmt.Sprintf("%s/%s.png", directoryBuilder, counterAndImage[0])
+					filenameBuilder := filepath.Join(directoryBuilder, fmt.Sprintf("%s.png", counterAndImage[0]))
 					//fmt.Println("writing to file: ", filenameBuilder)
 
 					outputFile, err := os.Create(filenameBuilder)
@@ -358,7 +360,7 @@ func sessionWriter(sessionID, shots string) {
 					outputFile.Close()
 					// return at last
 				}
-				logPath := fmt.Sprintf("%s/%s.http-raw", directoryBuilder, sessionID)
+				logPath := filepath.Join(directoryBuilder, fmt.Sprintf("%s.http-raw", sessionID))
 				file, err := os.OpenFile(logPath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0755)
 				if err != nil {
 					logger.Debug(err)
@@ -377,10 +379,10 @@ func gopherPNG(imsgData string) io.Reader {
 	return base64.NewDecoder(base64.StdEncoding, strings.NewReader(imsgData))
 }
 
-func LogoutSequence(sessionID string) {
+func logoutSequence(sessionID string) {
 	defer func() {
 		if r := recover(); r != nil {
-			logger.Errorf(`Panic in LogoutSequence: %v:%s`, r, string(debug.Stack()))
+			logger.Errorf(`Panic in logoutSequence: %v:%s`, r, string(debug.Stack()))
 		}
 
 	}()
@@ -416,7 +418,7 @@ func LogoutSequence(sessionID string) {
 	// 3) create video file from image file
 
 	deleteDirectory := false
-	directory := fmt.Sprintf("/var/trasa/thg/logs/%s", sessionID)
+	directory := filepath.Join(utils.GetTmpDir(), "trasa", "accessproxy", "http", sessionID)
 
 	SessionRecord := logStruct.SessionRecord
 	if SessionRecord == true {
@@ -437,7 +439,7 @@ func LogoutSequence(sessionID string) {
 		if err != nil {
 			logger.Error(err)
 		}
-		videoSource := fmt.Sprintf("%s/%s", directory, videoFileName)
+		videoSource := filepath.Join(directory, videoFileName)
 
 		// 4) upload video file to minio
 		err = uploadToMinio(videoSource, logStruct)
@@ -445,7 +447,7 @@ func LogoutSequence(sessionID string) {
 			logger.Error(err)
 		}
 
-		rawSource := fmt.Sprintf("%s/%s", directory, rawFileName)
+		rawSource := filepath.Join(directory, rawFileName)
 
 		// 5) upload raw log file to minio
 		err = uploadToMinio(rawSource, logStruct)

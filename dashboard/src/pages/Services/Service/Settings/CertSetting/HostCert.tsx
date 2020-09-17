@@ -88,10 +88,6 @@ export default function HostCerts(props: any) {
 
     const config = {
       responseType: 'blob',
-      headers: {
-        'X-SESSION': localStorage.getItem('X-SESSION'),
-        'X-CSRF': localStorage.getItem('X-CSRF'),
-      },
     };
 
     axios
@@ -143,7 +139,7 @@ export default function HostCerts(props: any) {
                 <Grid item xs={7}>
                   <TextField
                     fullWidth
-                    // label="App Name"
+                    // label="Service name"
                     rows="10"
                     multiline
                     onChange={handleCertFile}

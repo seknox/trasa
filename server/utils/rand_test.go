@@ -46,8 +46,8 @@ func TestGetRandomID(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := GetRandomID(tt.args.length); got != tt.want {
-				t.Errorf("GetRandomID() = %v, want %v", got, tt.want)
+			if got := GetRandomString(tt.args.length); got != tt.want {
+				t.Errorf("GetRandomString() = %v, want %v", got, tt.want)
 			}
 		})
 	}

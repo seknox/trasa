@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/now"
-	"github.com/phuslu/geoip"
+	"github.com/phuslu/iploc"
 	"github.com/seknox/trasa/server/api/system"
 	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/models"
@@ -29,7 +29,7 @@ cases:
 */
 
 // TrasaUAC or User access control is handled when assigning user to application.
-// User access constol handles users timing for access, users workstation for access
+// User access control handles users timing for access, users workstation for access
 // and user IP for access. Access can be assigned for limited time per day, limited day per week
 // or limited access with expiry date.
 // type TrasaUAC struct {
@@ -39,18 +39,6 @@ cases:
 // 	Workstation string
 // 	ExpiryTimer string
 // }
-
-// we handle ACL with dtored json datastructure.
-/*
-{
-	"timeAndDate" : "",
-	"IP": "192.168.100.4",
-	"workstation": "DEKTOP-01",
-	"ExpiresAfter": "never"
-}
-
-*/
-
 func CheckTrasaUAC(timezone, clientip string, policy *models.Policy) (bool, consts.FailedReason) {
 
 	allow := false
@@ -99,7 +87,7 @@ func CheckTrasaUAC(timezone, clientip string, policy *models.Policy) (bool, cons
 	}
 
 	//len(allowedCountries)==1 means blank allowed countries
-	if !utils.ArrayContainsString(allowedCountries, string(geoip.Country(net.ParseIP(clientip)))) && policy.AllowedCountries != "" {
+	if !utils.ArrayContainsString(allowedCountries, string(iploc.Country(net.ParseIP(clientip)))) && policy.AllowedCountries != "" {
 		return false, consts.REASON_COUNTRY_POLICY_FAILED
 	}
 	return allow, reason
@@ -181,17 +169,19 @@ func timeChecker(hour, minute int, from, to []int) bool {
 // TrasaUAC validates policy for user access
 func TrasaUAC(params *models.ConnectionParams, policy *models.Policy, adHocSwitch bool) (bool, consts.FailedReason) {
 
-	checkPermission, reason := false, consts.REASON_UNKNOWN
+	ok := false
+	reason := consts.REASON_UNKNOWN
 
-	// 2) we check users rergular policy
-	checkPermission, reason = CheckTrasaUAC(params.Timezone, params.UserIP, policy)
-	if checkPermission == true {
+	//we check users policy
+	ok, reason = CheckTrasaUAC(params.Timezone, params.UserIP, policy)
+	if ok == true {
 		return true, "user authorised by uac check"
 	}
 
-	return checkPermission, reason
+	return ok, reason
 }
 
+//CheckDevicePolicy checks if device hygiene of user is according to device policy
 func CheckDevicePolicy(policy models.DevicePolicy, accessDeviceID, tfaDeviceID, orgID string) (consts.FailedReason, bool, error) {
 
 	//Skipping device policy for now

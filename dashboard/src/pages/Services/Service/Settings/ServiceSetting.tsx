@@ -231,14 +231,15 @@ export default function Servicesetting(props: ServicesettingProps) {
 
         <Grid container spacing={2}>
           <Grid item xs={5} sm={5} md={5}>
-            <div className={classes.settingHeader}>App Name :</div>
+            <div className={classes.settingHeader}>Service name :</div>
           </Grid>
           <Grid item xs={7} sm={7} md={7}>
             <TextField
               fullWidth
-              // label="App Name"
+              // label="Service name"
               onChange={handleChange('serviceName')}
               name="serviceName"
+              id="serviceName"
               value={serviceDetail.serviceName}
               // defaultValue={props.serviceDetail.serviceName}
               variant="outlined"
@@ -266,23 +267,22 @@ export default function Servicesetting(props: ServicesettingProps) {
                   // },
                 }}
               >
-                <MenuItem value="ssh">
+                <MenuItem value="ssh" id="ssh">
                   <div className={classes.settingSHeader}>SSH </div>
                 </MenuItem>
-                <MenuItem value="http">
-                  <div className={classes.settingSHeader}>HTTP </div>
+                <MenuItem value="http" id="http">
+                  <div className={classes.settingSHeader}>HTTP (Beta)</div>
                 </MenuItem>
-                
-                <MenuItem value="rdp">
+
+                <MenuItem value="rdp" id="rdp">
                   <div className={classes.settingSHeader}>RDP </div>
                 </MenuItem>
-                <MenuItem value="radius">
+                <MenuItem value="radius" id="radius">
                   <div className={classes.settingSHeader}>Radius </div>
                 </MenuItem>
-                <MenuItem value="db">
+                <MenuItem value="db" id="db">
                   <div className={classes.settingSHeader}>Database </div>
                 </MenuItem>
-               
               </Select>
             </FormControl>
           </Grid>
@@ -320,7 +320,7 @@ export default function Servicesetting(props: ServicesettingProps) {
             </Grid>
 
             <Grid item xs={5} sm={5} md={5}>
-              <div className={classes.settingHeader}>Remote App Name : </div>
+              <div className={classes.settingHeader}>Remote Service name : </div>
             </Grid>
             <Grid item xs={7} sm={7} md={7}>
               <TextField
@@ -348,6 +348,7 @@ export default function Servicesetting(props: ServicesettingProps) {
               fullWidth
               onChange={handleChange('hostname')}
               name="hostname"
+              id="hostname"
               value={serviceDetail.hostname}
               // defaultValue={props.serviceDetail.hostname}
               // validators={['required']}
@@ -463,7 +464,13 @@ export default function Servicesetting(props: ServicesettingProps) {
 
       <Grid container alignItems="flex-start" justify="flex-end" direction="row">
         <Grid item xs={12}>
-          <Button variant="contained" onClick={handleSubmit} className={classes.submitButton}>
+          <Button
+            name="submit"
+            id="submit"
+            variant="contained"
+            onClick={handleSubmit}
+            className={classes.submitButton}
+          >
             Submit
           </Button>
         </Grid>

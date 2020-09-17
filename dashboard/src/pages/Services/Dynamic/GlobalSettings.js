@@ -134,13 +134,8 @@ class GlobalSettings extends Component {
     data.userGroups = this.state.selectedUserGroups;
     data.policyID =
       this.state.selectedPolicies.length == 1 ? this.state.selectedPolicies[0].policyID : null;
-    const config = {
-      headers: {
-        'X-SESSION': localStorage.getItem('X-SESSION'),
-        'X-CSRF': localStorage.getItem('X-CSRF'),
-      },
-    };
-    axios.post(`${Constants.TRASA_HOSTNAME}/api/v1/services/globalsettings`, data, config);
+
+    axios.post(`${Constants.TRASA_HOSTNAME}/api/v1/services/globalsettings`, data);
   };
 
   getPolicies = (val) => {
@@ -217,14 +212,9 @@ class GlobalSettings extends Component {
   };
 
   componentDidMount() {
-    const config = {
-      headers: {
-        'X-SESSION': localStorage.getItem('X-SESSION'),
-        'X-CSRF': localStorage.getItem('X-CSRF'),
-      },
-    };
+
     axios
-      .get(`${Constants.TRASA_HOSTNAME}/api/v1/services/globalsettings`, config)
+      .get(`${Constants.TRASA_HOSTNAME}/api/v1/services/globalsettings`)
       .then((response) => {
         //   this.setState({progress: false,loading: false})
         console.log(response.data.data);
@@ -242,7 +232,7 @@ class GlobalSettings extends Component {
       });
 
     axios
-      .get(`${Constants.TRASA_HOSTNAME}/api/v1/groups/policy/all`, config)
+      .get(`${Constants.TRASA_HOSTNAME}/api/v1/groups/policy/all`)
       .then((response) => {
         // this.setState({allUsers: response.data})
         const resp = response.data.data[0];
@@ -257,7 +247,7 @@ class GlobalSettings extends Component {
 
     const url = `${Constants.TRASA_HOSTNAME}/api/v1/groups/Services/usergroupstoadd`;
     axios
-      .get(url, config)
+      .get(url)
       .then((response) => {
         const resp = response.data.data[0];
         this.setState({ userGroups: resp });

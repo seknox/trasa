@@ -22,7 +22,7 @@ import Typography from '@material-ui/core/Typography';
 import Send from '@material-ui/icons/Send';
 // import TextField from '@material-ui/core/TextField';
 import axios from 'axios';
-import mixpanel from 'mixpanel-browser';
+// import mixpanel from 'mixpanel-browser';
 import React, { useEffect, useState } from 'react';
 import Constants from '../../../Constants';
 import ProgressBar from '../../../utils/Components/Progressbar';
@@ -393,7 +393,7 @@ export default function CreatePolicy(props: createPolicyProps) {
   };
 
   const SubmitPolicy = () => {
-    mixpanel.track('control-policies-createpolicy');
+    // mixpanel.track('control-policies-createpolicy');
     setLoading(true);
     const devicePolicy = { ...dhBlocking };
     const basicPolicy = {
@@ -470,6 +470,7 @@ export default function CreatePolicy(props: createPolicyProps) {
               devicePolicy={dhBlocking}
             />
             <Button
+              id="submitBtn"
               className={classes.button}
               variant="contained"
               color="secondary"
@@ -500,7 +501,7 @@ export default function CreatePolicy(props: createPolicyProps) {
         disableEscapeKeyDown
       >
         <DialogContent>
-          <Typography variant="h2"> Create new Policy </Typography>
+          <Typography variant="h2"> Create New Policy </Typography>
           <DialogContentText>
             Policies created here will be avaialable when assigning user or group to Service or
             Servicegroup.
@@ -551,6 +552,7 @@ export default function CreatePolicy(props: createPolicyProps) {
 
             <Grid item xs={1} sm={1} md={1}>
               <Button
+                id="nextBtn"
                 className={classes.stepperButtonRight}
                 variant="contained"
                 color="secondary"
@@ -628,7 +630,7 @@ function PolicyTab(props: any) {
         aria-label="styled tabs example"
       >
         <StyledTab label="Basic Policy" />
-        <StyledTab label="Device Hygiene" />
+        <StyledTab label="Device Hygiene (Beta)" />
       </StyledTabs>
       <TabPanel value={tabValue} index={0}>
         <TrasaUAC
@@ -746,7 +748,7 @@ export function ReviewAccess(props: reviewAccessProps) {
         aria-label="styled tabs example"
       >
         <StyledTab label="Basic Policy" />
-        <StyledTab label="Device Hygiene" />
+        <StyledTab label="Device Hygiene (Beta)" />
       </StyledTabs>
       {/* Basic Policy */}
       <TabPanel value={tabValue} index={0}>

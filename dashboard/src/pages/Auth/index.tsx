@@ -314,8 +314,7 @@ export default function AuthIndex(props: LoginIndexProps) {
                 props.changeHasAuthenticated();
                 break;
               default:
-                localStorage.setItem('X-SESSION', r.data.data[0].tokens.session);
-                localStorage.setItem('X-CSRF', r.data.data[0].tokens.csrf);
+                localStorage.setItem('X-CSRF', r.data.data[0].CSRFToken);
                 if (r.data.data[0].user.userRole === 'orgAdmin') {
                   const urlParams = new URLSearchParams(window.location.search);
                   const nextUrl = urlParams.get('next');

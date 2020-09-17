@@ -2,12 +2,13 @@ package rdpproxy
 
 import (
 	"fmt"
+	"github.com/seknox/trasa/server/utils"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"time"
 
-	"github.com/minio/minio-go"
 	"github.com/pkg/errors"
 	"github.com/seknox/trasa/server/api/logs"
 	"github.com/seknox/trasa/server/consts"
@@ -21,15 +22,20 @@ func (s GWStore) CheckPolicy(params *models.ConnectionParams, policy *models.Pol
 
 func (s GWStore) uploadSessionLog(authlog *logs.AuthLog) error {
 
-	tempFileDir := "/tmp/trasa/trasagw"
+	tempFileDir := filepath.Join(utils.GetTmpDir(), "trasa", "accessproxy", "guac")
 	bucketName := "trasa-guac-logs"
 	sessionID := authlog.SessionID
 	logrus.Debugf("sessionID is %s", sessionID)
 
 	loginTime := time.Unix(0, authlog.LoginTime)
 
-	guacencCmdStr := fmt.Sprintf("sudo docker exec  guacd guacenc -f /tmp/trasa/trasagw/%s.guac", sessionID)
-	guacenc := exec.Command("/bin/bash", "-c", guacencCmdStr)
+	//TODO @sshahcodes
+
+	//sudo docker exec  guacd /usr/local/guacamole/bin/guacenc -f /tmp/trasa/accessproxy/guac/%s.guac
+	//here guacd is container name
+
+	guacenc := getGuacencCmd(sessionID)
+
 	ll, err := guacenc.CombinedOutput()
 	//	logger.Debug(string(ll))
 	if err != nil {
@@ -43,8 +49,7 @@ func (s GWStore) uploadSessionLog(authlog *logs.AuthLog) error {
 
 	}
 
-	ffmpegCmdStr := fmt.Sprintf("sudo ffmpeg -i %s/%s.guac.m4v %s/%s.mp4", tempFileDir, sessionID, tempFileDir, sessionID)
-	ffmpeg := exec.Command("/bin/bash", "-c", ffmpegCmdStr)
+	ffmpeg := getFFMPEGcmd(tempFileDir, sessionID)
 	ll, err = ffmpeg.CombinedOutput()
 	//logger.Debug(string(ll))
 	if err != nil {
@@ -58,14 +63,15 @@ func (s GWStore) uploadSessionLog(authlog *logs.AuthLog) error {
 
 	}
 
+	//don't use fileapth.join in object name
 	objectName := fmt.Sprintf("%s/%d/%d/%d/%s.guac", authlog.OrgID, loginTime.Year(), int(loginTime.Month()), loginTime.Day(), sessionID)
-	filePath := fmt.Sprintf("%s/%s.mp4", tempFileDir, sessionID)
+	filePath := filepath.Join(tempFileDir, fmt.Sprintf("%s.mp4", sessionID))
 
 	// Upload log file to minio
-	_, uploadErr := s.MinioClient.FPutObject(bucketName, objectName, filePath, minio.PutObjectOptions{})
+	uploadErr := logs.Store.PutIntoMinio(objectName, filePath, bucketName)
 	if uploadErr != nil {
 		logrus.Errorf("could not upload to minio, trying again: %v", uploadErr)
-		_, uploadErr = s.MinioClient.FPutObject(bucketName, objectName, filePath, minio.PutObjectOptions{})
+		uploadErr = logs.Store.PutIntoMinio(objectName, filePath, bucketName)
 	}
 
 	if uploadErr == nil {
@@ -77,4 +83,45 @@ func (s GWStore) uploadSessionLog(authlog *logs.AuthLog) error {
 	}
 
 	return uploadErr
+}
+
+func getGuacencCmd(sessionID string) *exec.Cmd {
+	if os.Getenv("GUACENC_INSTALLED") == "true" {
+		guacencCmdStr := fmt.Sprintf(
+			"nice -n 10 /usr/local/guacamole/bin/guacenc -f /tmp/trasa/accessproxy/guac/%s.guac", sessionID)
+
+		return exec.Command("/bin/sh", "-c", guacencCmdStr)
+
+	}
+
+	if runtime.GOOS == "windows" {
+		guacencCmdStr := fmt.Sprintf(
+			"docker.exe exec  guacd nice -n 10  /usr/local/guacamole/bin/guacenc -f /tmp/trasa/accessproxy/guac/%s.guac", sessionID)
+
+		return exec.Command("powershell", "-c", guacencCmdStr)
+	}
+
+	guacencCmdStr := fmt.Sprintf(
+		"sudo docker exec  guacd nice -n 10 /usr/local/guacamole/bin/guacenc -f /tmp/trasa/accessproxy/guac/%s.guac", sessionID)
+	return exec.Command("/bin/bash", "-c", guacencCmdStr)
+
+}
+
+func getFFMPEGcmd(tempFileDir, sessionID string) *exec.Cmd {
+
+	if os.Getenv("GUACENC_INSTALLED") == "true" {
+		ffmpegCmdStr := fmt.Sprintf("nice -n 10 ffmpeg -i %s/%s.guac.m4v %s/%s.mp4", tempFileDir, sessionID, tempFileDir, sessionID)
+		return exec.Command("/bin/bash", "-c", ffmpegCmdStr)
+
+	}
+
+	if runtime.GOOS == "windows" {
+		ffmpegCmdStr := fmt.Sprintf(`ffmpeg.exe -i %s\%s.guac.m4v %s\%s.mp4`, tempFileDir, sessionID, tempFileDir, sessionID)
+		return exec.Command("powershell", "-c", ffmpegCmdStr)
+
+	}
+
+	ffmpegCmdStr := fmt.Sprintf("sudo nice -n 10 ffmpeg -i %s/%s.guac.m4v %s/%s.mp4", tempFileDir, sessionID, tempFileDir, sessionID)
+	return exec.Command("/bin/bash", "-c", ffmpegCmdStr)
+
 }

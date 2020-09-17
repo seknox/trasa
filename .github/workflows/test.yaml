@@ -1,0 +1,58 @@
+name: Test
+
+on :
+  push:
+    branches:
+      - master
+      - dev
+  pull_request:
+    branches:
+      - master
+      - dev
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-20.04
+    steps:
+
+      - name: Set up Go 1.x
+        uses: actions/setup-go@v2
+        with:
+          go-version: ^1.13
+        id: go
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+
+      - name: Setup config for test
+        run: sudo cp -r tests/build/etc/trasa /etc/trasa
+
+      - name: Create necessary directories
+        run: |
+          sudo mkdir -p /var/trasa/minio
+          sudo chmod 777 /var/trasa/minio
+          sudo mkdir -p /tmp/trasa/accessproxy/http
+          sudo chmod 777 /tmp/trasa/accessproxy/http
+          sudo mkdir -p /tmp/trasa/accessproxy/guac
+          sudo chmod 777 /tmp/trasa/accessproxy/guac
+          sudo mkdir -p /tmp/trasa/accessproxy/ssh
+          sudo chmod 777 /tmp/trasa/accessproxy/ssh
+
+
+      - name: Go get
+        working-directory: ./server
+        run: go get -v ./...
+
+      - name: Unit Test
+        working-directory: ./server
+        run: go test -v ./...
+
+      - name: Integration Test
+        working-directory: ./tests
+        run: cd build/integration && docker-compose up --build -d && cd ../.. && go test -v  ./server
+
+      - name: Clean
+        working-directory: ./tests/build/integration
+        run: docker-compose down
+
+

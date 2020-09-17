@@ -5,17 +5,19 @@ import (
 	"github.com/seknox/trasa/server/models"
 )
 
+//InitStore initialises package state
 func InitStore(state *global.State) {
-	Store = DeviceStore{state}
+	Store = deviceStore{state}
 }
 
-var Store DeviceAdapter
+//Store is the package state variable which contains database connections
+var Store adapter
 
-type DeviceStore struct {
+type deviceStore struct {
 	*global.State
 }
 
-type DeviceAdapter interface {
+type adapter interface {
 	GetFromID(deviceID string) (*models.UserDevice, error)
 	Register(device models.UserDevice) error
 	Deregister(deviceID, orgID string) error

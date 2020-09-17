@@ -188,13 +188,14 @@ export default function AppuserTable(props: any) {
             <div>
               {updateRow && updateRowIndex === tableMeta.rowIndex ? (
                 <div>
-                  <IconButton color="primary" onClick={updateUserPolicy}>
+                  <IconButton id="savePrivilegeBtn" color="primary" onClick={updateUserPolicy}>
                     {loader && <CircularProgress size={58} className={classes.fabProgress} />}
                     {loader ? <CheckIcon /> : <SaveIcon />}
                   </IconButton>
                 </div>
               ) : (
                 <IconButton
+                  id="editUserPrivilegeBtn"
                   color="primary"
                   onClick={() => {
                     updateEditRowState(tableMeta);

@@ -2,6 +2,7 @@ package rdpproxy
 
 import (
 	"io"
+	"strings"
 
 	"github.com/seknox/trasa/server/api/accesscontrol"
 	"github.com/seknox/trasa/server/api/auth/tfa"
@@ -28,12 +29,18 @@ func makeConfig(params *models.ConnectionParams, creds *models.UpstreamCreds) (*
 	config.Parameters = make(map[string]string)
 	config.Parameters["hostname"] = params.Hostname
 	config.Parameters["port"] = "3389"
-	config.Parameters["username"] = params.Privilege
+	splitted := strings.Split(params.Privilege, `\`)
+	if strings.Contains(params.Privilege, `\`) && len(splitted) == 2 {
+		config.Parameters["username"] = splitted[1]
+		config.Parameters["domain"] = splitted[0]
+	} else {
+		config.Parameters["username"] = params.Privilege
+	}
 
 	config.Parameters["password"] = creds.Password
 
 	if params.SessionRecord {
-		config.Parameters["recording-path"] = "/tmp/trasa/trasagw"
+		config.Parameters["recording-path"] = "/tmp/trasa/accessproxy/guac"
 		config.Parameters["create-recording-path"] = "true"
 		config.Parameters["recording-name"] = params.SessionID + ".guac"
 
@@ -42,7 +49,7 @@ func makeConfig(params *models.ConnectionParams, creds *models.UpstreamCreds) (*
 	if params.CanTransferFile {
 		config.Parameters["enable-drive"] = "true"
 		config.Parameters["create-drive-path"] = "true"
-		config.Parameters["drive-path"] = "/tmp/trasa/trasagw/shared/" + params.UserID
+		config.Parameters["drive-path"] = "/tmp/trasa/accessproxy/guac/shared/" + params.UserID
 		config.Parameters["drive-name"] = "TRASA shared drive"
 	}
 
@@ -83,21 +90,16 @@ func handlePass(params *models.ConnectionParams) (*models.UpstreamCreds, error) 
 }
 
 func handlePolicy(params *models.ConnectionParams, serviceID string) (ok bool, reason consts.FailedReason) {
-	policy, privilege, adhoc, err := policies.Store.GetAccessPolicy(params.UserID, serviceID, params.OrgID)
+	policy, adhoc, err := policies.Store.GetAccessPolicy(params.UserID, serviceID, params.Privilege, params.OrgID)
 	if err != nil {
 		logrus.Error(err)
 		//Dynamic  service
 		return false, consts.REASON_NO_POLICY_ASSIGNED
 	}
-	if privilege != params.Privilege {
-		return false, consts.REASON_INVALID_PRIVILEGE
-	}
 
 	params.CanTransferFile = policy.FileTransfer
 	params.SessionRecord = policy.RecordSession
 	params.Skip2FA = !policy.TfaRequired
-
-	//TODO device policy
 
 	reason, ok, err = accesscontrol.CheckDevicePolicy(policy.DevicePolicy, params.AccessDeviceID, "", params.OrgID)
 

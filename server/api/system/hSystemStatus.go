@@ -12,7 +12,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type sysStatus struct {
+type SysStatus struct {
 	HostStat *host.InfoStat         `json:"hostStatus"`
 	MemStat  *mem.VirtualMemoryStat `json:"memStatus"`
 	DiskStat *disk.UsageStat        `json:"diskStatus"`
@@ -24,9 +24,10 @@ type cpustat struct {
 	CPUStat  []float64 `json:"cpuStat"`
 }
 
+//SystemStatus returns information about system TRASA is running on.
 func SystemStatus(w http.ResponseWriter, r *http.Request) {
 
-	var systemStat sysStatus
+	var systemStat SysStatus
 	systemStat.HostStat = hostStatus()
 	systemStat.MemStat = memStatus()
 	systemStat.DiskStat = diskStatus()

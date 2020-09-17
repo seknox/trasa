@@ -47,14 +47,14 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 	// Create a temporary file within our temp-images directory that follows
 	// a particular naming pattern
 
-	err = os.MkdirAll(filepath.Join("/tmp/trasa/trasagw/shared/", userContext.User.ID), os.ModePerm)
+	err = os.MkdirAll(filepath.Join(utils.GetTmpDir(), "trasa", "accessproxy", "guac", "shared", userContext.User.ID), os.ModePerm)
 	if err != nil {
 		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "could not create shared directory ", "File not uploaded", nil)
 		return
 	}
 
-	f, err := os.Create(filepath.Join("/tmp/trasa/trasagw/shared/", userContext.User.ID, handler.Filename))
+	f, err := os.Create(filepath.Join(utils.GetTmpDir(), "trasa", "accessproxy", "guac", "shared", userContext.User.ID, handler.Filename))
 	if err != nil {
 		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "could not create a file", "File not uploaded", nil)
@@ -69,7 +69,7 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 
 func GetDownloadableFileList(w http.ResponseWriter, r *http.Request) {
 	userContext := r.Context().Value("user").(models.UserContext)
-	userDir := filepath.Join("/tmp/trasa/trasagw/shared/", userContext.User.ID)
+	userDir := filepath.Join(utils.GetTmpDir(), "trasa", "accessproxy", "guac", "shared", userContext.User.ID)
 	fileList, err := ioutil.ReadDir(userDir)
 	if err != nil {
 		logrus.Error(err)
@@ -89,7 +89,7 @@ func GetDownloadableFileList(w http.ResponseWriter, r *http.Request) {
 func GetFileDownloadToken(w http.ResponseWriter, r *http.Request) {
 	userContext := r.Context().Value("user").(models.UserContext)
 	userID := userContext.User.ID
-	authKey := utils.GetRandomID(17)
+	authKey := utils.GetRandomString(17)
 	err := redis.Store.Set(authKey, time.Second*600, "userID", userID)
 	if err != nil {
 		logrus.Error(err)
@@ -124,13 +124,13 @@ func FileDownloadHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	filePath := filepath.Join("/tmp/trasa/trasagw/shared/", userID, fileName)
+	filePath := filepath.Join(utils.GetTmpDir(), "trasa", "accessproxy", "guac", "shared", userID, fileName)
 
 	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", fileName))
 	http.ServeFile(w, r, filePath)
 }
 func FileDeleteHandler(w http.ResponseWriter, r *http.Request) {
-	//http.StripPrefix("/api/v1/download_file", http.FileServer(http.Dir("../trasagw/shared"))).ServeHTTP
+	//http.StripPrefix("/api/v1/download_file", http.FileServer(http.Dir("../accessproxy/shared"))).ServeHTTP
 	userContext := r.Context().Value("user").(models.UserContext)
 	userID := userContext.User.ID
 	fileNameEnc := chi.URLParam(r, "fileName")
@@ -146,7 +146,7 @@ func FileDeleteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	filePath := filepath.Join("/tmp/trasa/trasagw/shared/", userID, fileName)
+	filePath := filepath.Join(utils.GetTmpDir(), "trasa", "accessproxy", "guac", "shared", userID, fileName)
 	err = os.Remove(filePath)
 	if err != nil {
 		logrus.Error(err)

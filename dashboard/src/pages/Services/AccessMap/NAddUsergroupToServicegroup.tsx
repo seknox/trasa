@@ -248,7 +248,12 @@ export default function AssignUsergroupToServicegroup(props: AssignUsergroupToSe
           </Grid>
 
           <Grid container spacing={2} alignItems="flex-end" direction="row" justify="center">
-            <Button variant="contained" color="secondary" onClick={submitGroupMapRequest}>
+            <Button
+              id="submitAccessMapBtn"
+              variant="contained"
+              color="secondary"
+              onClick={submitGroupMapRequest}
+            >
               Submit
             </Button>
           </Grid>
@@ -327,7 +332,7 @@ function AddPrivilege(props: any) {
   return (
     <TextField
       fullWidth
-      // label="App Name"
+      // label="Service name"
       onChange={props.changePrivilege}
       name="privilege"
       value={props.privilege}

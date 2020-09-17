@@ -28,7 +28,7 @@ const (
 )
 
 //AddNewActiveSession adds new sesssion to active session list in redis
-func (s LogStore) AddNewActiveSession(session *AuthLog, connID, appType string) error {
+func (s logStore) AddNewActiveSession(session *AuthLog, connID, appType string) error {
 	client := s.RedisClient
 	ctx := context.Background()
 
@@ -62,7 +62,7 @@ func (s LogStore) AddNewActiveSession(session *AuthLog, connID, appType string) 
 
 }
 
-func (s LogStore) RemoveActiveSession(connID string) error {
+func (s logStore) RemoveActiveSession(connID string) error {
 	client := s.RedisClient
 	ctx := context.Background()
 
@@ -83,7 +83,7 @@ func (s LogStore) RemoveActiveSession(connID string) error {
 	return err
 }
 
-func (s LogStore) RemoveAllActiveSessions() {
+func (s logStore) RemoveAllActiveSessions() {
 	ctx := context.Background()
 	sessions, err := s.getAllActiveSessions(ctx)
 	if err != nil {
@@ -99,7 +99,7 @@ func (s LogStore) RemoveAllActiveSessions() {
 	}
 }
 
-func (s LogStore) getAllActiveSessions(ctx context.Context) ([]string, error) {
+func (s logStore) getAllActiveSessions(ctx context.Context) ([]string, error) {
 	client := s.RedisClient
 
 	list, err := client.LRange(ctx, "activeSessionKeys", 0, -1).Result()
@@ -125,7 +125,7 @@ func (s LogStore) getAllActiveSessions(ctx context.Context) ([]string, error) {
 
 }
 
-func (s LogStore) ServeLiveSessions(ws *websocket.Conn) {
+func (s logStore) ServeLiveSessions(ws *websocket.Conn) {
 	ctx := context.Background()
 	sessions, err := s.getAllActiveSessions(ctx)
 	if err != nil {

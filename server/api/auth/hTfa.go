@@ -153,12 +153,24 @@ func TfaHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	status, failedReason, intent, respData := handleIntentResponse(req, userDetails, deviceID, req.ExtID)
+	status, failedReason, intent, sessionToken, respData := handleIntentResponse(req, userDetails, deviceID, req.ExtID)
 
 	err = logs.Store.LogLogin(&authlog, failedReason, status == "success")
 	if err != nil {
 		logrus.Error(err)
 	}
+
+	// we set session token in HTTPonly cookie and expect csrf token in http header.
+	xSESSION := http.Cookie{
+		Name:     "X-SESSION",
+		Value:    sessionToken,
+		HttpOnly: true,
+		SameSite: http.SameSiteStrictMode,
+		Secure:   true,
+		Path:     "/",
+	}
+
+	http.SetCookie(w, &xSESSION)
 
 	utils.TrasaResponse(w, 200, status, reason, intent, respData)
 	return
@@ -234,7 +246,7 @@ func handleTFAMethodd(req tfaRequest, user *models.User, authlog *logs.AuthLog) 
 
 }
 
-func handleIntentResponse(req tfaRequest, user *models.User, deviceID, browserID string) (status string, reason consts.FailedReason, intent string, resp interface{}) {
+func handleIntentResponse(req tfaRequest, user *models.User, deviceID, browserID string) (status string, reason consts.FailedReason, intent, sessionToken string, resp interface{}) {
 	orgUserStr := fmt.Sprintf("%s:%s", user.OrgID, user.ID)
 	switch req.Intent {
 	// in case of u2fy, we do not need to generate login credentials here but process it in another signed response request from client
@@ -245,17 +257,18 @@ func handleIntentResponse(req tfaRequest, user *models.User, deviceID, browserID
 		if err != nil {
 			// if we reached here means there's no pending change password policy enforced for this user.
 			// we can continue for creating session.
-			resp, err := sessionResponse(user, deviceID, browserID)
+			sessionToken, resp, err := sessionResponse(user, deviceID, browserID)
 			if err != nil {
 				logrus.Error(err)
-				return "failed", consts.REASON_TRASA_ERROR, "DashboardLogin", nil
+				return "failed", consts.REASON_TRASA_ERROR, "DashboardLogin", sessionToken, nil
 			}
-			return "success", "", "DashboardLogin", resp
+
+			return "success", "", "DashboardLogin", sessionToken, resp
 
 		} else {
 			// respond with change password intent
 			if policy.Pending == true {
-				verifyToken := utils.GetRandomID(7)
+				verifyToken := utils.GetRandomString(7)
 				// store token to redis
 				err = redis.Store.Set(
 					verifyToken,
@@ -267,15 +280,15 @@ func handleIntentResponse(req tfaRequest, user *models.User, deviceID, browserID
 
 				if err != nil {
 					logrus.Error(err)
-					return "failed", consts.REASON_TRASA_ERROR, consts.AUTH_RESP_RESET_PASS, verifyToken
+					return "failed", consts.REASON_TRASA_ERROR, consts.AUTH_RESP_RESET_PASS, "", verifyToken
 				}
-				return "success", "", consts.AUTH_RESP_RESET_PASS, verifyToken
+				return "success", "", consts.AUTH_RESP_RESET_PASS, "", verifyToken
 			}
-			resp, err := sessionResponse(user, deviceID, browserID)
+			sessionToken, resp, err := sessionResponse(user, deviceID, browserID)
 			if err != nil {
-				return "failed", consts.REASON_TRASA_ERROR, "DashboardLogin", nil
+				return "failed", consts.REASON_TRASA_ERROR, "DashboardLogin", sessionToken, nil
 			}
-			return "success", "", "DashboardLogin", resp
+			return "success", "", "DashboardLogin", sessionToken, resp
 
 		}
 	case consts.AUTH_REQ_ENROL_DEVICE:
@@ -286,9 +299,9 @@ func handleIntentResponse(req tfaRequest, user *models.User, deviceID, browserID
 		}
 		resp := devices.EnrolDeviceFunc(*user)
 		resp.OrgName = userWithPass.OrgName
-		return "success", "", consts.AUTH_RESP_ENROL_DEVICE, resp
+		return "success", "", consts.AUTH_RESP_ENROL_DEVICE, "", resp
 	case consts.AUTH_REQ_CHANGE_PASS:
-		verifyToken := utils.GetRandomID(7)
+		verifyToken := utils.GetRandomString(7)
 		// store token to redis
 		err := redis.Store.Set(verifyToken,
 			consts.TOKEN_EXPIRY_CHANGEPASS,
@@ -298,19 +311,19 @@ func handleIntentResponse(req tfaRequest, user *models.User, deviceID, browserID
 
 		if err != nil {
 			logrus.Error(err)
-			return "failed", consts.REASON_TRASA_ERROR, consts.AUTH_RESP_CHANGE_PASS, verifyToken
+			return "failed", consts.REASON_TRASA_ERROR, consts.AUTH_RESP_CHANGE_PASS, "", verifyToken
 		}
-		return "success", "", consts.AUTH_RESP_CHANGE_PASS, verifyToken
+		return "success", "", consts.AUTH_RESP_CHANGE_PASS, "", verifyToken
 
 	case consts.AUTH_REQ_FORGOT_PASS:
 		err := forgotPassTfaResp(*user)
 		if err != nil {
 			logrus.Error(err)
-			return "failed", consts.REASON_TRASA_ERROR, consts.AUTH_RESP_FORGOT_PASS, nil
+			return "failed", consts.REASON_TRASA_ERROR, consts.AUTH_RESP_FORGOT_PASS, "", nil
 		}
-		return "success", "", consts.AUTH_RESP_FORGOT_PASS, nil
+		return "success", "", consts.AUTH_RESP_FORGOT_PASS, "", nil
 	default:
-		return "failed", "default", "DashboardLogin", nil
+		return "failed", "default", "DashboardLogin", "", nil
 	}
 
 }
@@ -341,7 +354,7 @@ func decryptAndUpdateDH(ourPriv, clientPub, clientDH, extID string) (string, err
 
 	plainText, err := utils.AESDecrypt(sec, dhBytes)
 
-	var dh deviceDetail
+	var dh DeviceDetail
 	err = json.Unmarshal(plainText, &dh)
 	if err != nil {
 		return "", fmt.Errorf("json.Unmarshal(plainText, &dh): %v ", err)

@@ -7,7 +7,7 @@ import (
 	"github.com/seknox/trasa/server/utils"
 )
 
-func (s GroupStore) CheckIfUserInGroup(userID, orgID string, groupIDs []string) (bool, error) {
+func (s groupStore) CheckIfUserInGroup(userID, orgID string, groupIDs []string) (bool, error) {
 	var exists bool
 	for _, groupID := range groupIDs {
 		err := s.DB.QueryRow(`SELECT EXISTS (select user_id from user_group_maps where user_id=$1 AND group_id=$2 AND org_id=$3)`,
@@ -28,7 +28,7 @@ func (s GroupStore) CheckIfUserInGroup(userID, orgID string, groupIDs []string) 
 }
 
 // GGet users that are already assigned to this group.
-func (s GroupStore) GetUsersInGroup(groupID, org string) ([]models.User, error) {
+func (s groupStore) GetUsersInGroup(groupID, org string) ([]models.User, error) {
 	var users = make([]models.User, 0)
 	var user models.User
 	rows, err := s.DB.Query(`SELECT users.id, username, first_name, last_name, email, idp_name, user_role,users.status, users.created_at, users.updated_at
@@ -52,7 +52,7 @@ func (s GroupStore) GetUsersInGroup(groupID, org string) ([]models.User, error) 
 
 }
 
-func (s GroupStore) GetUsersNotInGroup(groupID, orgID string) ([]models.User, error) {
+func (s groupStore) GetUsersNotInGroup(groupID, orgID string) ([]models.User, error) {
 	var users = make([]models.User, 0)
 	rows, err := s.DB.Query(`select id, username, email,first_name, last_name FROM users  
 										where org_id=$1 AND id not in
@@ -76,7 +76,7 @@ func (s GroupStore) GetUsersNotInGroup(groupID, orgID string) ([]models.User, er
 }
 
 // GetApps returns apps available for organizations.
-func (s GroupStore) GetServicesInGroup(groupID, org string) ([]models.Service, error) {
+func (s groupStore) GetServicesInGroup(groupID, org string) ([]models.Service, error) {
 	var services = make([]models.Service, 0)
 
 	rows, err := s.DB.Query(`SELECT services.id, name, adhoc,hostname, type
@@ -99,7 +99,7 @@ func (s GroupStore) GetServicesInGroup(groupID, org string) ([]models.Service, e
 	return services, err
 }
 
-func (s GroupStore) GetServicesNotInGroup(groupID, orgID string) ([]models.Service, error) {
+func (s groupStore) GetServicesNotInGroup(groupID, orgID string) ([]models.Service, error) {
 	var services = make([]models.Service, 0)
 	rows, err := s.DB.Query(`select id, name 
 										from services where id not in (
@@ -120,7 +120,7 @@ func (s GroupStore) GetServicesNotInGroup(groupID, orgID string) ([]models.Servi
 	return services, nil
 }
 
-func (s GroupStore) AddServicesToGroup(group models.Group, serviceIDs []string) (err error) {
+func (s groupStore) AddServicesToGroup(group models.Group, serviceIDs []string) (err error) {
 	for i := 0; i < len(serviceIDs); i++ {
 		mapId := utils.GetUUID()
 		createdAt := time.Now().Unix()
@@ -136,7 +136,7 @@ func (s GroupStore) AddServicesToGroup(group models.Group, serviceIDs []string) 
 	return err
 }
 
-func (s GroupStore) RemoveServicesFromGroup(groupID, orgID string, serviceIDs []string) error {
+func (s groupStore) RemoveServicesFromGroup(groupID, orgID string, serviceIDs []string) error {
 	var err error
 	for i := 0; i < len(serviceIDs); i++ {
 		// delete the user from group
@@ -152,7 +152,7 @@ func (s GroupStore) RemoveServicesFromGroup(groupID, orgID string, serviceIDs []
 }
 
 //AddUsersToGroup adds users to user-group
-func (s GroupStore) AddUsersToGroup(group models.Group, userIDs []string) (err error) {
+func (s groupStore) AddUsersToGroup(group models.Group, userIDs []string) (err error) {
 
 	for i := 0; i < len(userIDs); i++ {
 		mapId := utils.GetUUID()
@@ -171,7 +171,7 @@ func (s GroupStore) AddUsersToGroup(group models.Group, userIDs []string) (err e
 // RemoveUsersFromGroup should remove users from group and also corresponding authorization from appusers table.
 // service usertable should store user group id if the assignment was initiated from within group.
 // group_id in appusersv1 can be either group id or "no-group" value.
-func (s GroupStore) RemoveUsersFromGroup(groupID, orgID string, userIDs []string) (err error) {
+func (s groupStore) RemoveUsersFromGroup(groupID, orgID string, userIDs []string) (err error) {
 	for i := 0; i < len(userIDs); i++ {
 		// delete the user from group
 		_, err = s.DB.Exec(`DELETE FROM user_group_maps WHERE user_id = $1 AND group_id=$2 AND org_id=$3;`,

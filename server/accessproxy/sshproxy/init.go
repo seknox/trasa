@@ -10,6 +10,7 @@ import (
 	"github.com/seknox/trasa/server/models"
 )
 
+//InitStore initialises package state
 func InitStore(state *global.State, checkPolicyFunc models.CheckPolicyFunc) {
 	SSHStore = Store{
 		State:           state,
@@ -30,15 +31,15 @@ type Store struct {
 
 type Adapter interface {
 	checkPolicy(params *models.ConnectionParams) (*models.Policy, consts.FailedReason, error)
-	getUserFromPublicKey(publicKey ssh.PublicKey, orgID string) (*models.User, error)
+	GetUserFromPublicKey(publicKey ssh.PublicKey, orgID string) (*models.User, error)
 	validateTempCert(publicKey ssh.PublicKey, privilege string, orgID string) error
-	tfaCert(publicKey ssh.PublicKey) (*models.AccessMapDetail, error)
+	parseSSHCert(addr net.Addr, publicKey ssh.PublicKey) error
 
 	SetSession(addr net.Addr, session *Session) error
 	GetSession(addr net.Addr) (*Session, error)
 	DeleteSession(addr net.Addr) error
 	UpdateSessionMeta(addr net.Addr, connMeta ssh.ConnMetadata) error
-	UpdateSessionParams(addr net.Addr, params *models.AccessMapDetail) error
+	//	UpdateSessionParams(addr net.Addr, params *models.AccessMapDetail) error
 	UpdateSessionUser(addr net.Addr, user *models.User) error
 	SetAuthType(addr net.Addr, authType consts.SSH_AUTH_TYPE) error
 

@@ -209,7 +209,7 @@ function UserGroupPage(props: any) {
     <Layout>
       <Headers
         pageName={[
-          { name: 'User Group', route: '/users/groups' },
+          { name: 'User Group', route: '/users#User%20Groups' },
           {
             name: groupMeta.groupName,
             route: getRoute('/users/groups/group/', props.groupid),
@@ -263,7 +263,7 @@ function GroupUsersTableWrapper(props: any) {
         setLoader(false);
         if (r.data.status === 'success') {
           changeGroupDeleteDlgState();
-          window.location.href = '/users/groups';
+          window.location.href = '/users#User%20Groups';
         }
       })
       .catch((error) => {
@@ -293,7 +293,7 @@ function GroupUsersTableWrapper(props: any) {
           <Grid container>
             <Grid item xs={9}>
               <Tooltip title="Add users">
-                <Button variant="contained" onClick={changeAddUserDlgState}>
+                <Button id='addUsersToGrpBtn' variant="contained" onClick={changeAddUserDlgState}>
                   <AddIcon />
                   Add Users
                 </Button>

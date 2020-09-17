@@ -37,6 +37,15 @@ func TestLoginHandler(t *testing.T) {
 		UpdatedBy:    "",
 		UpdatedOn:    0,
 	}, nil)
+	systemstore.On("GetGlobalSetting", "abc", consts.GLOBAL_DEVICE_HYGIENE_CHECK).Return(models.GlobalSettings{
+		SettingID:    "123213123",
+		OrgID:        "abc",
+		Status:       false,
+		SettingType:  consts.GLOBAL_DEVICE_HYGIENE_CHECK,
+		SettingValue: "{}",
+		UpdatedBy:    "",
+		UpdatedOn:    0,
+	}, nil)
 
 	orgstore.On("Get", "abc").Return(models.Org{
 		ID:       "abc",
@@ -69,13 +78,13 @@ func TestLoginHandler(t *testing.T) {
 	handler := http.HandlerFunc(LoginHandler)
 
 	tests := []struct {
-		arg          loginRequest
+		arg          LoginRequest
 		wantedStatus string
 		wantedIntent string
 		wantedData   []interface{}
 	}{
 		{
-			arg: loginRequest{
+			arg: LoginRequest{
 				Email:    "user@example.com",
 				Password: "testpass@123",
 			},
@@ -85,7 +94,7 @@ func TestLoginHandler(t *testing.T) {
 		},
 
 		{
-			arg: loginRequest{
+			arg: LoginRequest{
 				Email:    "user@example.com",
 				Password: "wrongpass",
 			},

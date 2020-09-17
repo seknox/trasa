@@ -13,7 +13,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// CheckAndFireSecurityRule, when called based on constName queries database to see if there is a rule
+// CheckAndFireSecurityRule  when called based on constName queries database to see if there is a rule
 // that has been enabled and matches situation. If true, it should also perform actions according to rule.
 // Currently only hardcoded and email and dashboard notifications are supported.
 func CheckAndFireSecurityRule(orgID, constName, entityValue string) {
@@ -66,7 +66,7 @@ func CheckAndFireSecurityRule(orgID, constName, entityValue string) {
 	notif.ResolvedOn = 0
 
 	for _, v := range getAdmins {
-		notif.NotificationID = utils.GetRandomID(10)
+		notif.NotificationID = utils.GetRandomString(10)
 		notif.UserID = v.ID
 		// we call notification store to store notification for this event in user id who is to be notified.
 		err = Store.StoreNotif(notif)

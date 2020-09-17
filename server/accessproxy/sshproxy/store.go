@@ -7,23 +7,23 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
-	"github.com/minio/minio-go"
 	"github.com/pkg/errors"
 	"github.com/seknox/ssh"
 	"github.com/seknox/trasa/server/api/accessmap"
-	"github.com/seknox/trasa/server/api/crypt"
 	"github.com/seknox/trasa/server/api/logs"
 	"github.com/seknox/trasa/server/api/policies"
+	"github.com/seknox/trasa/server/api/providers/ca"
 	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/models"
 	"github.com/seknox/trasa/server/utils"
 	"github.com/sirupsen/logrus"
 )
 
-func (s Store) getUserFromPublicKey(publicKey ssh.PublicKey, orgID string) (*models.User, error) {
+func (s Store) GetUserFromPublicKey(publicKey ssh.PublicKey, orgID string) (*models.User, error) {
 	var user models.User
 
 	publicKeyStr := strings.TrimSpace(string(ssh.MarshalAuthorizedKey(publicKey)))
@@ -38,10 +38,30 @@ func (s Store) getUserFromPublicKey(publicKey ssh.PublicKey, orgID string) (*mod
 
 //tfaCert
 //Is tfa already done from device agent
-func (s Store) tfaCert(publicKey ssh.PublicKey) (*models.AccessMapDetail, error) {
+func (s Store) parseSSHCert(addr net.Addr, publicKey ssh.PublicKey) error {
 	//TODO
+	cert, ok := publicKey.(*ssh.Certificate)
+	if !ok {
+		return errors.New("invalid ssh certificate")
+	}
+	deviceID, ok := cert.Extensions["trasa-device-id"]
+	if !ok {
+		return errors.New("device ID not found in ssh certificate")
+	}
 
-	return nil, errors.New("not implemented yet")
+	if s.sessions == nil {
+		return errors.New("session map not initialised")
+	}
+
+	sess, ok := s.sessions[addr]
+	if !ok {
+		return errors.New("session not found")
+	}
+
+	sess.log.AccessDeviceID = deviceID
+	sess.params.AccessDeviceID = deviceID
+
+	return errors.New("not implemented yet")
 }
 
 //validateTempCert
@@ -52,7 +72,7 @@ func (s Store) validateTempCert(publicKey ssh.PublicKey, privilege string, orgID
 		return errors.Errorf("invalid certificate")
 	}
 
-	caKey, err := crypt.Store.GetCertDetail(orgID, "system", consts.CERT_TYPE_SSH_CA)
+	caKey, err := ca.Store.GetCertDetail(orgID, "system", consts.CERT_TYPE_SSH_CA)
 	if err != nil {
 		//logger.Error(err)
 		//dbstore.SendErrorReport(err, "CA not initialised")
@@ -130,30 +150,30 @@ func (s Store) UpdateSessionMeta(addr net.Addr, connMeta ssh.ConnMetadata) error
 	return nil
 }
 
-func (s Store) UpdateSessionParams(addr net.Addr, params *models.AccessMapDetail) error {
-	if s.sessions == nil {
-		return errors.New("session map not initialised")
-	}
-
-	if params == nil {
-		return errors.New("params is nil")
-	}
-
-	sess, ok := s.sessions[addr]
-	if !ok {
-		return errors.New("session not found")
-	}
-
-	sess.params = params
-
-	sess.log.OrgID = params.OrgID
-
-	sess.log.ServiceType = "ssh"
-	sess.log.Email = params.Email
-	sess.log.LoginTime = time.Now().UnixNano()
-	s.sessions[addr] = sess
-	return nil
-}
+//func (s Store) UpdateSessionParams(addr net.Addr, params *models.AccessMapDetail) error {
+//	if s.sessions == nil {
+//		return errors.New("session map not initialised")
+//	}
+//
+//	if params == nil {
+//		return errors.New("params is nil")
+//	}
+//
+//	sess, ok := s.sessions[addr]
+//	if !ok {
+//		return errors.New("session not found")
+//	}
+//
+//	sess.params = params
+//
+//	sess.log.OrgID = params.OrgID
+//
+//	sess.log.ServiceType = "ssh"
+//	sess.log.Email = params.Email
+//	sess.log.LoginTime = time.Now().UnixNano()
+//	s.sessions[addr] = sess
+//	return nil
+//}
 
 func (s Store) UpdateSessionUser(addr net.Addr, user *models.User) error {
 	if s.sessions == nil {
@@ -174,7 +194,7 @@ func (s Store) UpdateSessionUser(addr net.Addr, user *models.User) error {
 	}
 
 	sess.params.UserID = user.ID
-	sess.params.Email = user.Email
+	sess.params.TrasaID = user.Email
 	sess.params.OrgID = user.OrgID
 
 	sess.log.OrgID = user.OrgID
@@ -220,16 +240,9 @@ func (s Store) GetGuestChannel(sessionID string) (chan GuestClient, error) {
 
 func (s Store) checkPolicy(params *models.ConnectionParams) (*models.Policy, consts.FailedReason, error) {
 
-	//TODO support device hygiene check for cli access
-	//fail if setting is enabled
-	//sett, err := system.Store.GetGlobalSetting(params.OrgID, consts.GLOBAL_DEVICE_HYGIENE_CHECK)
-	//if err != nil || sett.Status {
-	//	return nil, consts.REASON_DEVICE_POLICY_FAILED, err
-	//}
+	policy, adhoc, err := policies.Store.GetAccessPolicy(params.UserID, params.ServiceID, params.Privilege, params.OrgID)
 
-	policy, privilege, adhoc, err := policies.Store.GetAccessPolicy(params.UserID, params.ServiceID, params.OrgID)
-
-	if errors.Is(err, sql.ErrNoRows) || privilege != params.Privilege {
+	if errors.Is(err, sql.ErrNoRows) {
 		//if service is not assigned to user, create one (only if dynamic access is enabled)
 		policy, err = accessmap.CreateDynamicAccessMap(params.ServiceID, params.UserID, params.TrasaID, params.Privilege, params.OrgID)
 		if err != nil {
@@ -281,21 +294,21 @@ func (s Store) deleteGuestChannel(sessionID string) {
 
 func (s Store) uploadSessionLog(authlog *logs.AuthLog) error {
 
-	tempFileDir := "/tmp/trasa/trasagw"
+	tempFileDir := filepath.Join(utils.GetTmpDir(), "trasa", "accessproxy", "ssh")
 	bucketName := "trasa-ssh-logs"
 	sessionID := authlog.SessionID
 
 	loginTime := time.Unix(0, authlog.LoginTime)
 	authlog.LogoutTime = time.Now().UnixNano()
 
-	objectName := fmt.Sprintf("%s/%d/%d/%d/%s.session", authlog.OrgID, loginTime.Year(), int(loginTime.Month()), loginTime.Day(), sessionID)
-	filePath := fmt.Sprintf("%s/%s.session", tempFileDir, sessionID)
+	objectName := filepath.Join(authlog.OrgID, fmt.Sprintf("%d", loginTime.Year()), fmt.Sprintf("%d", int(loginTime.Month())), fmt.Sprintf("%d", loginTime.Day()), fmt.Sprintf("%s.session", sessionID))
+	filePath := filepath.Join(tempFileDir, fmt.Sprintf("%s.session", sessionID))
 
 	// Upload log file to minio
-	_, uploadErr := s.MinioClient.FPutObject(bucketName, objectName, filePath, minio.PutObjectOptions{})
+	uploadErr := logs.Store.PutIntoMinio(objectName, filePath, bucketName)
 	if uploadErr != nil {
 		logrus.Errorf("could not upload to minio, trying again: %v", uploadErr)
-		_, uploadErr = s.MinioClient.FPutObject(bucketName, objectName, filePath, minio.PutObjectOptions{})
+		uploadErr = logs.Store.PutIntoMinio(objectName, filePath, bucketName)
 	}
 
 	if uploadErr == nil {

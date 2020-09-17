@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
   card: {
     textAlign: 'center',
     minWidth: 450,
-    minHeight: 450,
+    minHeight: 500,
     // minWidth: 750,
     // minHeight: 200,
     backgroundColor: 'white', // '#d0d3d4', // //rgba(1,1,35,1)
@@ -94,7 +94,12 @@ export default function LoginPage(props: LoginProps): ReactElement {
           <Typography variant="h3"> {title} </Typography>
         </div>
         <br />
-        <form onSubmit={(e) => sendLoginRequest(e, '', 'trasa', '')} noValidate autoComplete="off">
+        <form
+          onSubmit={(e) => sendLoginRequest(e, '', 'trasa', '')}
+          noValidate
+          autoComplete="off"
+          name="loginform"
+        >
           {autofillEmail ? null : (
             <TextField
               fullWidth
@@ -102,9 +107,8 @@ export default function LoginPage(props: LoginProps): ReactElement {
               // defaultValue={loginData.email}
               onChange={handleLoginDataChange}
               autoFocus
-              // placeholder="Enter your email address"
+              id="email"
               name="email"
-              // id="email"
               value={loginData.email}
               variant="outlined"
               size="small"
@@ -119,6 +123,7 @@ export default function LoginPage(props: LoginProps): ReactElement {
             label="  Password"
             // defaultValue={loginData.password}
             onChange={handleLoginDataChange}
+            id="password"
             name="password"
             type="password"
             value={loginData.password}
@@ -134,6 +139,7 @@ export default function LoginPage(props: LoginProps): ReactElement {
               <Button
                 variant="contained"
                 name="submit"
+                id="submit"
                 type="submit"
                 onClick={(e) => sendLoginRequest(e, '', 'trasa', '')}
               >
@@ -168,10 +174,7 @@ export default function LoginPage(props: LoginProps): ReactElement {
       </CardContent>
 
       <div className={classes.padMiddle}>
-        <div className={classes.cprightText}>
-          {' '}
-          Trasa Dashboard v20.6.1 by Seknox{' '}
-        </div>{' '}
+        <div className={classes.cprightText}> Trasa Dashboard v20.6.1 by Seknox </div>{' '}
       </div>
 
       {/* <OrgSelect orgs={orgs} submitLoginRequest={sendLoginRequest} /> */}

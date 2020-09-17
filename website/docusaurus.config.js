@@ -6,9 +6,13 @@ module.exports = {
   favicon: 'img/seknoxIcon.png',
   organizationName: 'Seknox',
   projectName: 'TRASA',
-  plugins: ['@docusaurus/plugin-google-analytics'],
+  onBrokenLinks: 'ignore',
+  // plugins: ['@docusaurus/plugin-google-analytics'],
   themeConfig: {
-    disableDarkMode: true,
+    colorMode: {
+      disableSwitch: true,
+    },
+
     googleAnalytics: {
       trackingID: 'UA-126179756-2',
       // Optional fields.
@@ -20,14 +24,16 @@ module.exports = {
         alt: 'TRASA Logo',
         src: 'img/trasa-bluebg.svg',
       },
-      links: [
-        { to: 'blog', label: 'Blog', position: 'right' },
+      items: [
+        // { to: 'blog', label: 'Blog', position: 'right' },
+        // { to: 'security', label: 'Security', position: 'right' },
         {
           to: 'docs/',
           activeBasePath: 'docs',
-          label: 'Docs',
+          label: 'Admin Docs',
           position: 'right',
         },
+
         {
           to: 'docs/guides/getting-started',
           activeBasePath: 'guides',

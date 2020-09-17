@@ -6,23 +6,26 @@ import (
 	"github.com/seknox/trasa/server/models"
 )
 
+//InitStore initialises package state
 func InitStore(state *global.State) {
-	Store = NotifStore{State: state}
+	Store = notifStore{State: state}
 }
 
-func InitStoreMock() *NotifMock {
-	m := new(NotifMock)
+//InitStoreMock will init mock state of this package
+func InitStoreMock() *notifMock {
+	m := new(notifMock)
 	Store = m
 	return m
 }
 
-var Store NotifAdapter
+//Store is the package state variable which contains database connections
+var Store adapter
 
-type NotifStore struct {
+type notifStore struct {
 	*global.State
 }
 
-type NotifAdapter interface {
+type adapter interface {
 	GetPendingNotif(userID, orgID string) ([]models.InAppNotification, error)
 	StoreNotif(notif models.InAppNotification) (err error)
 	UpdateNotif(notif models.InAppNotification) error
@@ -31,4 +34,5 @@ type NotifAdapter interface {
 	SendEmail(orgID string, emailType consts.EmailType, emailTemplate interface{}) error
 
 	SendPushNotification(fcmToken, orgName, appName, ipAddr, time, challenge string) error
+	CallTrasaCloudProxy(path string, reqBody interface{}, insecure bool) (resp models.TrasaResponseStruct, err error)
 }

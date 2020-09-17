@@ -16,7 +16,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type userDetails struct {
+type UserDetails struct {
 	User           models.User              `json:"user"`
 	UserAccessMaps []models.AccessMapDetail `json:"userAccessMaps"`
 	UserDevices    []models.UserDevice      `json:"userDevices"`
@@ -28,7 +28,7 @@ func GetUserDetails(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
 	userID := chi.URLParam(r, "userID")
 
-	var resp userDetails
+	var resp UserDetails
 
 	user, err := Store.GetFromID(userID, uc.User.OrgID)
 	if err != nil {
@@ -80,11 +80,11 @@ func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	utils.TrasaResponse(w, 200, "success", "users fetched", "GetUsersAll", val)
 }
 
-type createUserReq struct {
+type CreateUserReq struct {
 	User           models.UserWithPass `json:"user"`
 	PasswordMethod string              `json:"passMethod"`
 }
-type createUserResp struct {
+type CreateUserResp struct {
 	User             models.User `json:"user"`
 	ConfirmationLink string      `json:"confirmLink"`
 }
@@ -92,7 +92,7 @@ type createUserResp struct {
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	// declare request struct
-	var request createUserReq
+	var request CreateUserReq
 
 	// parse json value into struct
 	if err := utils.ParseAndValidateRequest(r, &request); err != nil {
@@ -118,7 +118,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	// while previously we created temporary password for users and send it to them via email,
 	// we now will generate a short lived token which will be presented in a link.
 	// this will allow us to verify user account as well and let the user setup password as soon as the token is validated.
-	verifyToken := utils.GetRandomID(12)
+	verifyToken := utils.GetRandomString(12)
 
 	// config fie should provide full url scheme
 
@@ -150,7 +150,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var resp createUserResp
+	var resp CreateUserResp
 	resp.User = models.CopyUserWithoutPass(request.User)
 	resp.ConfirmationLink = tmplt.VerifyUrl
 
@@ -172,7 +172,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 // UpdateUser updates TRASA user
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
-	var request createUserReq
+	var request CreateUserReq
 
 	if err := utils.ParseAndValidateRequest(r, &request); err != nil {
 		logrus.Error(err)
@@ -183,22 +183,6 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	prepareUserStruct(&request, uc)
 
-	// generate password hash
-	// if user.Password != "" {
-	// 	hashedpass, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
-	// 	if err != nil {
-	// 		panic(err)
-	// 	}
-	// 	password := string(hashedpass)
-	// 	//fmt.Println("hashed pass", password)
-	// 	err = Store.UpdatePassword(user.ID, password)
-	// 	if err != nil {
-	// 		utils.TrasaResponse(w, 200, "failed", "failed updating user password.", "user  not updated")
-	// 		return
-	// 	}
-
-	// }
-
 	err := Store.Update(models.CopyUserWithoutPass(request.User)) //createUser(&user)
 	if err != nil {
 		reason := utils.GetConstraintErrorMessage(err)
@@ -206,7 +190,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		utils.TrasaResponse(w, 200, "failed", reason, "user not updated")
 		return
 	}
-	utils.TrasaResponse(w, 200, "success", "", fmt.Sprintf(`user %s updated`, request.User.Email))
+	utils.TrasaResponse(w, 200, "success", "", fmt.Sprintf(`user %s updated`, request.User.Email), request)
 
 	//TODO @sshah
 	// check and fire security rule. Here only interesting if user is admin or is granted admin privilege
@@ -264,7 +248,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func newUserEmailTemplate(user *models.UserWithPass, token string) models.EmailUserCrud {
-	dashboardPath := global.GetConfig().Trasa.Dashboard
+	dashboardPath := "https://" + global.GetConfig().Trasa.ListenAddr
 	verifyURL := fmt.Sprintf("%s/woa/verify#token=%s", dashboardPath, token)
 	var tmplt models.EmailUserCrud
 	tmplt.ReceiverEmail = user.Email
@@ -274,7 +258,7 @@ func newUserEmailTemplate(user *models.UserWithPass, token string) models.EmailU
 	return tmplt
 }
 
-func prepareUserStruct(request *createUserReq, uc models.UserContext) {
+func prepareUserStruct(request *CreateUserReq, uc models.UserContext) {
 
 	request.User.Email = strings.ToLower(request.User.Email)
 	request.User.UserName = strings.ToLower(request.User.UserName)

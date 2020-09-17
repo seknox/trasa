@@ -5,7 +5,7 @@ import (
 )
 
 //TODO handle error
-func (s AccessMapStore) CheckIfPrivilegeExist(privilege, orgID, serviceID string) bool {
+func (s accessMapStore) CheckIfPrivilegeExist(privilege, orgID, serviceID string) bool {
 	var check bool = true
 	s.DB.QueryRow(`
 SELECT EXISTS 
@@ -33,7 +33,7 @@ SELECT EXISTS
 
 }
 
-func (s AccessMapStore) GetServiceUserMaps(serviceID, orgID string) (appusers []models.AccessMapDetail, err error) {
+func (s accessMapStore) GetServiceUserMaps(serviceID, orgID string) (appusers []models.AccessMapDetail, err error) {
 	appusers = make([]models.AccessMapDetail, 0)
 	rows, err := s.DB.Query(`
 SELECT map.id, service_id, map.user_id,users.email, map.privilege, map.policy_id, policies.name, map.added_at 
@@ -61,20 +61,20 @@ WHERE service_id= $1 AND map.org_id=$2`, serviceID, orgID)
 	return appusers, err
 }
 
-func (s AccessMapStore) UpdateServiceUserMap(mapID, orgID, privilege string) error {
+func (s accessMapStore) UpdateServiceUserMap(mapID, orgID, privilege string) error {
 	_, err := s.DB.Exec(`UPDATE user_accessmaps SET privilege = $1 WHERE id = $2 AND org_id = $3;`,
 		privilege, mapID, orgID)
 	return err
 }
 
-func (s AccessMapStore) CreateServiceUserMap(appUser *models.ServiceUserMap) error {
+func (s accessMapStore) CreateServiceUserMap(appUser *models.ServiceUserMap) error {
 	_, err := s.DB.Exec(`INSERT into user_accessmaps (id, service_id,  org_id, user_id,privilege, policy_id, added_at)
 						values($1, $2, $3, $4, $5, $6, $7);`, &appUser.MapID, &appUser.ServiceID, &appUser.OrgID, &appUser.UserID, &appUser.Privilege, &appUser.PolicyID, &appUser.AddedAt)
 
 	return err
 }
 
-func (s AccessMapStore) DeleteServiceUserMap(mapID, orgID string) (string, error) {
+func (s accessMapStore) DeleteServiceUserMap(mapID, orgID string) (string, error) {
 	var name string
 	//TODO check query
 	err := s.DB.QueryRow(`
@@ -92,7 +92,7 @@ func (s AccessMapStore) DeleteServiceUserMap(mapID, orgID string) (string, error
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////   	AppGroup UserGroup MAP 	////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
-func (s AccessMapStore) CreateServiceGroupUserGroupMap(data *models.ServiceGroupUserGroupMap) error {
+func (s accessMapStore) CreateServiceGroupUserGroupMap(data *models.ServiceGroupUserGroupMap) error {
 	_, err := s.DB.Exec(`INSERT into usergroup_accessmaps (id, org_id, servicegroup_id, map_type, usergroup_id,privilege, policy_id, created_at)
 						values($1, $2, $3, $4, $5, $6, $7, $8);`,
 		&data.MapID, &data.OrgID, &data.ServiceGroupID, &data.MapType, &data.UserGroupID, &data.
@@ -101,14 +101,14 @@ func (s AccessMapStore) CreateServiceGroupUserGroupMap(data *models.ServiceGroup
 	return err
 }
 
-func (s AccessMapStore) UpdateServiceGroupUserGroupMap(mapID, orgID, privilege string) error {
+func (s accessMapStore) UpdateServiceGroupUserGroupMap(mapID, orgID, privilege string) error {
 	_, err := s.DB.Exec(`UPDATE usergroup_accessmaps SET privilege = $1 WHERE id = $2 AND org_id = $3;`,
 		privilege, mapID, orgID)
 
 	return err
 }
 
-func (s AccessMapStore) DeleteServiceGroupUserGroupMap(mapID, orgID string) (string, string, error) {
+func (s accessMapStore) DeleteServiceGroupUserGroupMap(mapID, orgID string) (string, string, error) {
 	var appGroupName, userGroupName string
 	//TODO check query
 	err := s.DB.QueryRow(`WITH deleted as (DELETE FROM usergroup_accessmaps WHERE id = $1 AND org_id=$2 RETURNING *)
@@ -121,7 +121,7 @@ func (s AccessMapStore) DeleteServiceGroupUserGroupMap(mapID, orgID string) (str
 	return appGroupName, userGroupName, err
 }
 
-func (s AccessMapStore) GetUserGroupsToAddInServiceGroup(orgID string) ([]models.Group, error) {
+func (s accessMapStore) GetUserGroupsToAddInServiceGroup(orgID string) ([]models.Group, error) {
 	var userGroups = make([]models.Group, 0)
 	rows, err := s.DB.Query(`select id, name FROM groups where org_id=$1 AND type=$2;`, orgID, "usergroup")
 	if err != nil {
@@ -139,8 +139,8 @@ func (s AccessMapStore) GetUserGroupsToAddInServiceGroup(orgID string) ([]models
 	return userGroups, err
 }
 
-func (s AccessMapStore) GetAssignedUserGroupsWithPolicies(groupID, orgID string) ([]userGroupOfServiceGroup, error) {
-	var userGroups = make([]userGroupOfServiceGroup, 0)
+func (s accessMapStore) GetAssignedUserGroupsWithPolicies(groupID, orgID string) ([]UserGroupOfServiceGroup, error) {
+	var userGroups = make([]UserGroupOfServiceGroup, 0)
 
 	rows, err := s.DB.Query(`
 							select ag_ug.id, usergroup_id, g.name , ag_ug.policy_id ,p.name, ag_ug.privilege, ag_ug.created_at FROM 
@@ -153,7 +153,7 @@ func (s AccessMapStore) GetAssignedUserGroupsWithPolicies(groupID, orgID string)
 		return userGroups, err
 	}
 	for rows.Next() {
-		var userGroup userGroupOfServiceGroup
+		var userGroup UserGroupOfServiceGroup
 		err := rows.Scan(&userGroup.MapID, &userGroup.UsergroupID, &userGroup.UsergroupName, &userGroup.PolicyID, &userGroup.PolicyName, &userGroup.Privilege, &userGroup.AddedAt)
 		if err != nil {
 			return userGroups, err

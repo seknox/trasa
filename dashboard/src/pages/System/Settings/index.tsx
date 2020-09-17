@@ -3,9 +3,9 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import Constants from '../../../Constants';
 import EmailSetting from './Emails';
-import HttpGwSetting from './InternalHosts';
+import OrgAccountSetting from './OrgAccount';
 import PasswordSettings from './PasswordPolicy';
-
+import FcmConfig from './FCMConfig';
 
 export type PassPolicyProps = {};
 
@@ -19,7 +19,6 @@ export default function SystemStatus() {
     authKey: '',
     authPass: '',
   });
-
 
   function handleEmailConfigChange(e: any) {
     const { name } = e.target;
@@ -41,8 +40,32 @@ export default function SystemStatus() {
       });
   }, []);
 
+  const [orgData, setOrgSetting] = useState({
+    orgName: '',
+    domain: '',
+    primaryContact: '',
+    timezone: '',
+  });
+
+  React.useEffect(() => {
+    axios
+      .get(`${Constants.TRASA_HOSTNAME}/api/v1/org/detail`)
+      .then((r) => {
+        if (r.data.status === 'success') {
+          console.debug('orgData: ', r.data.data[0]);
+          setOrgSetting(r.data.data[0]);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
+
   return (
     <Grid container spacing={2} direction="row" alignItems="center" justify="center">
+      <Grid item xs={9}>
+        <OrgAccountSetting orgData={orgData} />
+      </Grid>
       <Grid item xs={9}>
         <EmailSetting
           emailSetting={emailSetting}
@@ -50,10 +73,10 @@ export default function SystemStatus() {
         />
       </Grid>
       <Grid item xs={9}>
-        <PasswordSettings />
+        <FcmConfig orgData={orgData} />
       </Grid>
       <Grid item xs={9}>
-        <HttpGwSetting />
+        <PasswordSettings />
       </Grid>
     </Grid>
   );

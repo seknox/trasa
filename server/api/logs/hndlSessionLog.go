@@ -11,6 +11,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+//GetVideoLog serves recorded video log of a certain session
 func GetVideoLog(w http.ResponseWriter, r *http.Request) {
 
 	values, err := url.ParseQuery(r.URL.RawQuery)
@@ -44,11 +45,12 @@ func GetVideoLog(w http.ResponseWriter, r *http.Request) {
 
 }
 
+//GetRawLog returns recorded text log of a certain session
 func GetRawLog(w http.ResponseWriter, r *http.Request) {
 
 	userContext := r.Context().Value("user").(models.UserContext)
 
-	authKey := utils.GetRandomID(17)
+	authKey := utils.GetRandomString(17)
 
 	values, err := url.ParseQuery(r.URL.RawQuery)
 	if err != nil {
@@ -81,7 +83,6 @@ func GetRawLog(w http.ResponseWriter, r *http.Request) {
 		path, bucketName = getMinioPath(sessionID, "http-raw", orgID, year, month, day)
 	}
 
-	// Upload log file to minio
 	object, err := Store.GetFromMinio(path, bucketName)
 	if err != nil {
 		logrus.Error(err)

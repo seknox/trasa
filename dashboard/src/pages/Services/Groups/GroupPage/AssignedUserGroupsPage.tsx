@@ -52,6 +52,7 @@ export default function AssignedUserGroup(props: any) {
   return (
     <div>
       <Button
+        id='assignUserGroupBtn'
         variant="contained"
         color="secondary"
         size="small"
@@ -69,7 +70,8 @@ export default function AssignedUserGroup(props: any) {
         groupMeta={props.groupMeta}
         policies={policiesToAdd}
         renderFor="assignUsergroupToServicegroup"
-        serviceName="///// TODO  /////"
+        /// // TODO serviceName /////
+        serviceName=""
         assignuser={false}
         ID={props.groupID}
       />

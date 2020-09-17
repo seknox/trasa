@@ -2,17 +2,19 @@ package stats
 
 import "github.com/seknox/trasa/server/global"
 
+//InitStore initialises package state
 func InitStore(state *global.State) {
-	Store = StatStore{state}
+	Store = statStore{state}
 }
 
-var Store StatAdapter
+//Store is the package state variable which contains database connections
+var Store adapter
 
-type StatStore struct {
+type statStore struct {
 	*global.State
 }
 
-type StatAdapter interface {
+type adapter interface {
 	//Services
 	GetTotalServices(orgID string) (int64, error)
 	GetTotalManagedUsers(entityType, entityID, orgID string) (count int, err error)
@@ -34,13 +36,13 @@ type StatAdapter interface {
 	GetAggregatedDeviceUsers(entityType, entityID, deviceType, orgID string) (total int, devices []deviceByType, err error)
 	GetAggregatedMobileDevices(entityType, entityID, orgID string) (total int, devices []deviceByType, err error)
 	GetAggregatedBrowsers(entityType, entityID, orgID string) (total int, devices []deviceByType, err error)
-	GetAggregatedServices(orgID string) (services allServices, err error)
+	GetAggregatedServices(orgID string) (services AllServices, err error)
 
 	//Login Events
-	GetAggregatedLoginFails(entityType, entityID, orgID, timezone, timeFilter string) (reasons []failedReasonsByType, err error)
-	GetAggregatedLoginHours(entityType, entityID, timezone, orgID, timeFilter, statusFilter string) (logins []loginsByHour, err error)
+	GetAggregatedLoginFails(entityType, entityID, orgID, timezone, timeFilter string) (reasons []FailedReasonsByType, err error)
+	GetAggregatedLoginHours(entityType, entityID, timezone, orgID, timeFilter, statusFilter string) (logins []LoginsByHour, err error)
 	GetTotalLoginsByDate(entityType, entityID, orgID, timezone string) ([]totalEventsByDate, error)
-	GetAggregatedIPs(entityType, entityID, orgID, timezone, timeFilter, statusFilter string) (aggIps, error)
+	GetAggregatedIPs(entityType, entityID, orgID, timezone, timeFilter, statusFilter string) (AggIps, error)
 	GetLoginsByType(entityType, entityID, orgID, timezone, timeFilter, statusFilter string) (logins []nameValue, err error)
 	SortLoginByCity(entityType, entityID, orgID, timezone, timeFilter, statusFilter string) ([]geoDataType, error)
 	GetAllAuthEventsByEntityType(entityType, entityID, timeFilter, timezone string) (totalEventsAuthEvents, error)
@@ -52,5 +54,5 @@ type StatAdapter interface {
 	//Users
 	GetTotalAdmins(orgID string) (int, error)
 	GetTotalDisabledUsers(orgID string) (int, error)
-	GetAggregatedIdpUsers(entityType, entityID, orgID string) (users totalUsers, err error)
+	GetAggregatedIdpUsers(entityType, entityID, orgID string) (users TotalUsers, err error)
 }

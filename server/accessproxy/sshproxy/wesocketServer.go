@@ -278,8 +278,6 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 		authlog.TfaDeviceID = deviceID
 	}
 
-	//TODO device policy
-
 	logrus.Trace(params.AccessDeviceID)
 	reason, ok, err = accesscontrol.CheckDevicePolicy(policy.DevicePolicy, params.AccessDeviceID, authlog.TfaDeviceID, uc.Org.ID)
 	if err != nil {

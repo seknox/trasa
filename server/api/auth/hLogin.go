@@ -10,9 +10,9 @@ import (
 
 	uuid "github.com/satori/go.uuid"
 	"github.com/seknox/trasa/server/api/devices"
-	"github.com/seknox/trasa/server/api/idps"
 	"github.com/seknox/trasa/server/api/logs"
 	"github.com/seknox/trasa/server/api/orgs"
+	"github.com/seknox/trasa/server/api/providers/uidp"
 	"github.com/seknox/trasa/server/api/redis"
 	"github.com/seknox/trasa/server/api/system"
 	"github.com/seknox/trasa/server/api/users"
@@ -24,7 +24,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type loginRequest struct {
+type LoginRequest struct {
 	OrgID     string `json:"orgId"`
 	UserID    string `json:"userId"`
 	Email     string `json:"email"`
@@ -42,7 +42,7 @@ type loginRequest struct {
 // successful authentication should respond with tfarequired intent. If user has not enrolled any 2fa device,
 // this handler should respond with enroll device intent.
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
-	var loginRequest loginRequest
+	var loginRequest LoginRequest
 
 	if err := utils.ParseAndValidateRequest(r, &loginRequest); err != nil {
 		http.Error(w, http.StatusText(400), 200)
@@ -125,7 +125,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	// this token will be used to validate tfa request and retrieve userID for this user.
 	// this userID will be used to retrieve user detail and send in response to successful authentication.
 	// @sshahcodes 18 dec, 2019. changing second parameter from hardcoded device-id to login. This will ensure that subsequent tfa requests are tied to this login authentication event.
-	// token := utils.GetRandomID(15) // using public key for token
+	// token := utils.GetRandomString(15) // using public key for token
 
 	priv, pub, err := utils.ECDHGenKeyPair()
 	if err != nil {
@@ -146,6 +146,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		utils.TrasaResponse(w, http.StatusOK, "failed", "failed setting token for polling", "", "")
 		return
 	}
+
+	logrus.Info(hex.EncodeToString(pub[:]), "-")
 
 	respIntent := consts.AUTH_RESP_TFA_REQUIRED
 	globalDeviceCheck, err := system.Store.GetGlobalSetting(userDetails.OrgID, consts.GLOBAL_DEVICE_HYGIENE_CHECK)
@@ -176,7 +178,7 @@ type EnrolDeviceStruct struct {
 // This is a Four step process. 1) handle user login, 2) generate device, get totpssc ID 3) send GetDeviceDetail Request to trasa cloud 4) respond with device ID and otpauth url.
 func Enrol2FADevice(w http.ResponseWriter, r *http.Request) {
 	// remote auth request
-	var req loginRequest
+	var req LoginRequest
 	// user struct
 	var getUser models.User
 
@@ -270,7 +272,7 @@ func CheckPassword(userDetails *models.UserWithPass, email, password string) (re
 			fullUserPath = fmt.Sprintf("CN=%s, %s", email, idp.IdpMeta)
 		}
 
-		err = idps.BindLdap(fullUserPath, password, idp.Endpoint)
+		err = uidp.BindLdap(fullUserPath, password, idp.Endpoint)
 		if err != nil {
 
 			return consts.REASON_LDAP_AUTH_FAILED, err

@@ -164,7 +164,12 @@ export default function GroupPage(props: any) {
           <Grid container>
             <Grid item xs={8}>
               <Tooltip title="Add users">
-                <Button variant="contained" color="secondary" onClick={changeAddServiceDlgState}>
+                <Button
+                  id="addServiceToGroupBtn"
+                  variant="contained"
+                  color="secondary"
+                  onClick={changeAddServiceDlgState}
+                >
                   <AddIcon />
                   {/* <AddServiceIcon className={classes.buttonIcons} /> */}
                   Add Service
@@ -175,6 +180,7 @@ export default function GroupPage(props: any) {
             <Grid item xs={1}>
               <Tooltip title="edit">
                 <Button
+                  id="editGroupBtn"
                   variant="contained"
                   color="secondary"
                   size="small"
@@ -189,6 +195,7 @@ export default function GroupPage(props: any) {
             <Grid item xs={2}>
               <Tooltip title="delete">
                 <Button
+                  id="deleteGroupBtn"
                   variant="contained"
                   color="secondary"
                   size="small"
@@ -246,6 +253,7 @@ export default function GroupPage(props: any) {
           </DialogContent>
           <DialogActions>
             <Button
+              id="deleteConfirmBtn"
               onClick={() => {
                 changeGroupDeleteDlgState();
                 props.DeleteAuthServicegroup(props.groupID);

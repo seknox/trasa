@@ -14,11 +14,13 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 // import {Link } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import Drawer from '@material-ui/core/Drawer';
 import Service from '../../assets/services.png';
 import DatabaseIcon from '../../assets/database.png';
 import RdpIcon from '../../assets/rdp.png';
 import SshIcon from '../../assets/ssh.png';
 import Constants from '../../Constants';
+import Servicesetting from './Service/Settings/ServiceSetting';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -34,6 +36,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.secondary,
     // minWidth: 100,
   },
+
   card: {
     marginLeft: 20,
     height: 200,
@@ -168,12 +171,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function AppList() {
+type Anchor = 'top' | 'left' | 'bottom' | 'right';
+
+export default function ServiceList() {
   const classes = useStyles();
   const [https, sethttps] = useState([]);
   const [rdp, setrdp] = useState([]);
   const [ssh, setssh] = useState([]);
   const [db, setdb] = useState([]);
+  const [radius, setRadius] = useState([]);
   const [other, setothers] = useState([]);
   const [query, setquery] = useState('');
 
@@ -191,6 +197,7 @@ export default function AppList() {
         setrdp(response.data.data[0].rdp);
         setssh(response.data.data[0].ssh);
         setdb(response.data.data[0].db);
+        setRadius(response.data.data[0].radius);
         setothers(response.data.data[0].other);
       })
       .catch((error) => {
@@ -206,8 +213,53 @@ export default function AppList() {
     setquery(e.target.value);
   };
 
+  const [configDrawerState, setConfigDrawerState] = useState({ right: false });
+
+  const toggleConfigDrawer = (side: Anchor, open: boolean) => (
+    event: React.KeyboardEvent | React.MouseEvent,
+  ) => {
+    if (
+      event.type === 'keydown' &&
+      ((event as React.KeyboardEvent).key === 'Tab' ||
+        (event as React.KeyboardEvent).key === 'Shift')
+    ) {
+      return;
+    }
+    setConfigDrawerState({ ...configDrawerState, [side]: open });
+  };
+
+  const serviceDetail = {
+    ID: '',
+    serviceName: '',
+    serviceType: 'db',
+    rdpProtocol: '',
+    remoteserviceName: '',
+    passthru: false,
+    hostname: '',
+    nativeLog: false,
+    adhoc: false,
+  };
+
   return (
     <div className={classes.root}>
+      <Button
+        variant="contained"
+        size="small"
+        name="create-new-service-button"
+        id="create-new-service-button"
+        onClick={toggleConfigDrawer('right', true)}
+      >
+        Create new Service
+      </Button>
+      <Drawer
+        anchor="right"
+        open={configDrawerState.right}
+        onClose={toggleConfigDrawer('right', false)}
+      >
+        <Paper className={classes.paper}>
+          <Servicesetting newApp serviceDetail={serviceDetail} />
+        </Paper>
+      </Drawer>
       <Paper className={classes.searchRoot}>
         <IconButton className={classes.iconButton} aria-label="Search">
           <SearchIcon />
@@ -220,30 +272,35 @@ export default function AppList() {
         />
       </Paper>
       <div className={classes.servicesDemiter}>
-        <p>HTTPs applications</p>
+        <p>HTTPs services</p>
         <Divider light />{' '}
       </div>
       <Renderservices data={https} query={query} serviceType="http" />
 
       <div className={classes.servicesDemiter}>
-        <p>RDP applications</p>
+        <p>RDP services</p>
         <Divider light />{' '}
       </div>
       <Renderservices data={rdp} serviceType="rdp" query={query} />
       <div className={classes.servicesDemiter}>
-        <p>SSH applications</p>
+        <p>SSH services</p>
         <Divider light />{' '}
       </div>
       <Renderservices data={ssh} serviceType="ssh" query={query} />
 
       <div className={classes.servicesDemiter}>
-        <p>Database applications</p>
+        <p>Database services</p>
         <Divider light />{' '}
       </div>
       <Renderservices data={db} serviceType="db" query={query} />
+      <div className={classes.servicesDemiter}>
+        <p>Radius services</p>
+        <Divider light />{' '}
+      </div>
+      <Renderservices data={radius} serviceType="radius" query={query} />
 
       <div className={classes.servicesDemiter}>
-        <p>Other applications</p>
+        <p>Other services</p>
         <Divider light />{' '}
       </div>
       <Renderservices data={other} serviceType="other" query={query} />
@@ -270,6 +327,9 @@ function Renderservices(props: any) {
   const [data, setData] = useState([]);
 
   useEffect(() => {
+    if (!props.data) {
+      return;
+    }
     const filteredService = props.data.filter((a: any) => {
       return JSON.stringify(a).toUpperCase().includes(props.query.toUpperCase().trim());
     });
@@ -284,6 +344,9 @@ function Renderservices(props: any) {
       return RdpIcon;
     }
     if (val === 'http') {
+      return Service;
+    }
+    if (val === 'radius') {
       return Service;
     }
     if (val === 'db') {
@@ -341,12 +404,13 @@ function Renderservices(props: any) {
             <div className={classes.buttonSpace} />
             <br />
             <Button
+              id={value.serviceName}
               variant="outlined"
               color="secondary"
               component={Link}
               to={`/services/service/${value.ID}`}
             >
-              App Setting
+              Service Setting
             </Button>
           </Paper>
         </Grid>

@@ -2,15 +2,16 @@ package notif
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"html/template"
-	"net/smtp"
 	"runtime"
+	"strconv"
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/seknox/trasa/server/api/crypt"
+	"github.com/seknox/trasa/server/api/providers/vault"
 	"github.com/seknox/trasa/server/api/system"
 	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/global"
@@ -18,6 +19,7 @@ import (
 	"github.com/seknox/trasa/server/utils"
 	"github.com/sirupsen/logrus"
 
+	"gopkg.in/gomail.v2"
 	"gopkg.in/mailgun/mailgun-go.v1"
 )
 
@@ -94,7 +96,7 @@ func SendErrorReport(err error, desc string) {
 // SendEmail is single interface to send emails within TRASA operations.
 // Ideally, setting values should be retrieved during start of trasacore and updated during setting update
 // to remove database hit in every email sending operations. TODO @bhrg3se
-func (s NotifStore) SendEmail(orgID string, emailType consts.EmailType, emailTemplate interface{}) error {
+func (s notifStore) SendEmail(orgID string, emailType consts.EmailType, emailTemplate interface{}) error {
 	setting, err := system.Store.GetGlobalSetting(orgID, consts.GLOBAL_EMAIL_CONFIG)
 	if err != nil || setting.Status == false {
 		return fmt.Errorf("Email setting not configured: %v", err)
@@ -117,7 +119,7 @@ func (s NotifStore) SendEmail(orgID string, emailType consts.EmailType, emailTem
 	}
 
 	// get key ct from database.
-	key, err := crypt.Store.GetKeyOrTokenWithKeyval(orgID, consts.GLOBAL_EMAIL_CONFIG_SECRET)
+	key, err := vault.Store.GetKeyOrTokenWithKeyval(orgID, consts.GLOBAL_EMAIL_CONFIG_SECRET)
 	if err != nil {
 		return fmt.Errorf("eailed to retrieve cipher text.")
 	}
@@ -407,28 +409,25 @@ func userCrud(emailIntegration models.EmailIntegrationConfig, emailData interfac
 
 func smtpEmail(creds models.EmailIntegrationConfig, subject string, receivers []string, cc []string, emailBody string) error {
 	logrus.Trace("sending smtp email")
-	auth := smtp.PlainAuth(
-		"",
-		creds.AuthKey,
-		creds.AuthPass,
-		creds.ServerAddress,
-	)
-
-	mime := "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\r\n"
-	from := "From: TRASA team\r\n"
-	sub := fmt.Sprintf("Subject: %s\r\n", subject)
-	err := smtp.SendMail(
-		fmt.Sprintf("%s:%s", creds.ServerAddress, creds.ServerPort),
-		auth,
-		creds.SenderAddress,
-
-		receivers,
-		[]byte(from+sub+mime+emailBody),
-	)
+	port, err := strconv.Atoi(creds.ServerPort)
 	if err != nil {
 		return err
 	}
+	d := gomail.NewDialer(creds.ServerAddress, port, creds.AuthKey, creds.AuthPass)
+	d.TLSConfig = &tls.Config{InsecureSkipVerify: global.GetConfig().Security.InsecureSkipVerify}
 
+	m := gomail.NewMessage()
+	m.SetHeader("From", creds.AuthKey)
+	m.SetHeaders(map[string][]string{
+		"To": receivers,
+	})
+	m.SetHeader("Subject", subject)
+	m.SetBody("text/html", emailBody)
+
+	//d := gomail.Dialer{Host: "localhost", Port: 587}
+	if err := d.DialAndSend(m); err != nil {
+		return err
+	}
 	return nil
 }
 

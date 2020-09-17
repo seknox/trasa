@@ -126,40 +126,6 @@ func NewLog(r *http.Request, sType string) AuthLog {
 	return authLog
 }
 
-// NewHTTPAuthLog returns initialized Auth log struct
-func NewHTTPAuthLog(endpoint consts.ConstEndpoints, ip, sessionID, userAgent string, reason consts.FailedReason, privilege string, status bool, user *models.User, service *models.Service, deviceID, domainName string) (AuthLog, error) {
-	geo, err := misc.Store.GetGeoLocation(ip)
-	if err != nil {
-		logrus.Trace(err)
-	}
-
-	var session AuthLog
-	session.EventID = utils.GetRandomID(5)
-	session.SessionID = sessionID
-	session.OrgID = user.OrgID
-	session.UserID = user.ID
-	session.Email = user.Email
-	session.Privilege = privilege
-	session.ServiceID = service.ID
-	session.ServiceName = service.Name
-	session.ServiceType = service.Type
-	session.UserAgent = userAgent
-	session.DeviceType = ""
-	session.ServerIP = domainName
-	session.TfaDeviceID = deviceID
-	session.UserIP = ip
-	//session.ServerIP = "0.0.0.0"
-	session.GeoLocation.IsoCountryCode = geo.IsoCountryCode
-	session.GeoLocation.City = geo.City
-	session.GeoLocation.TimeZone = geo.TimeZone
-	session.GeoLocation.Location = geo.Location
-	//log.GeoLocation.Longitude =
-	session.Status = status
-	session.LoginTime = time.Now().UnixNano()
-	session.FailedReason = reason
-	return session, err
-}
-
 func (l *AuthLog) UpdateUser(user *models.UserWithPass) {
 	l.Email = user.Email
 	l.UserID = user.ID

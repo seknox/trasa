@@ -78,11 +78,11 @@ function AllUsers() {
     <div>
       <Layout>
         <Headers
-          pageName={[{ name: 'Users', route: '/users/groups' }]}
-          tabHeaders={['User Groups', 'All Users']}
+          pageName={[{ name: 'Users', route: '/users' }]}
+          tabHeaders={['All Users', 'User Groups']}
           Components={[
-            <UserGroups allUsers={allUsers} groups={groups} />,
             <UsersList allUsers={allUsers} groupID="" isGroup={false} deleteUsers={() => {}} />,
+            <UserGroups allUsers={allUsers} groups={groups} />,
           ]}
         />
       </Layout>
@@ -93,9 +93,10 @@ function AllUsers() {
 const UserView = () => {
   return (
     <Switch>
-      <Route exact path="/users/groups" component={AllUsers} />
+      <Route exact path="/users" component={AllUsers} />
       {/* <Route exact ='/users/allusers' component={AllUsers} /> */}
       <Route path="/users/user/:userid" component={UserPage} />
+      {/* <Route exact path="/users/groups" component={AllUsers} /> */}
       <Route path="/users/groups/group/:groupid" component={GroupPage} />
       {/* <Route path='/users/:groupid/user/:userid' component={AppUserSetting} /> */}
     </Switch>
