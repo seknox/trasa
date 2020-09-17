@@ -81,7 +81,7 @@ sudo docker run -d --rm --name guacd -p 127.0.0.1:4822:4822 -v /tmp/trasa/access
 
 * Run trasa-server
 ```shell script
-docker run --link db:db \
+sudo docker run --link db:db \
 --link guacd:guacd \             # Needed for RDP
 --link redis:redis \
 -p 443:443 \
