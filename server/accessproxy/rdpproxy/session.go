@@ -169,7 +169,7 @@ func (s *Session) Start(ws *websocket.Conn) (errcode string, err error) {
 	reader := s.tunnel.AcquireReader()
 	defer s.tunnel.ReleaseReader()
 
-	errcode, err = catchInitialErrors(*ws, writer, reader)
+	errcode, err = catchInitialErrors(ws, writer, reader)
 	if err != nil {
 		logrus.Error(errcode, err)
 		if errcode == "519" || errcode == "769" {
@@ -235,13 +235,13 @@ func (s *Session) Start(ws *websocket.Conn) (errcode string, err error) {
 
 //It will listen for error within first few instructions
 //If everything seem fine continue to serveIO
-func catchInitialErrors(ws websocket.Conn, guacdWriter io.Writer, guacdReader guacamole.InstructionReader) (errcode string, err error) {
+func catchInitialErrors(ws *websocket.Conn, guacdWriter io.Writer, guacdReader guacamole.InstructionReader) (errcode string, err error) {
 	wg := sync.WaitGroup{}
 	exit := make(chan error, 2)
 	wg.Add(2)
 	var done = false
 
-	go func(conn guacamole.InstructionReader, ws websocket.Conn) {
+	go func(conn guacamole.InstructionReader, ws *websocket.Conn) {
 		var err error
 		var raw []byte
 		var inst *guacamole.Instruction
@@ -279,7 +279,7 @@ func catchInitialErrors(ws websocket.Conn, guacdWriter io.Writer, guacdReader gu
 		wg.Done()
 	}(guacdReader, ws)
 
-	go func(conn io.Writer, ws websocket.Conn) {
+	go func(conn io.Writer, ws *websocket.Conn) {
 		var err error
 		var buf []byte
 		for !done {

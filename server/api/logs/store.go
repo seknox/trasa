@@ -295,7 +295,8 @@ func (s logStore) GetFromMinio(path, bucketName string) (object io.ReadSeeker, e
 	if global.GetConfig().Minio.Status {
 		return s.MinioClient.GetObject(bucketName, path, minio.GetObjectOptions{})
 	}
-	filename := fmt.Sprintf(`/var/trasa/minio/%s/%s`, bucketName, path)
+
+	filename := filepath.Join(utils.GetVarDir(), "trasa", "minio", bucketName, path)
 	return os.OpenFile(filename, os.O_RDONLY, os.ModePerm)
 }
 
@@ -305,13 +306,13 @@ func (s logStore) PutIntoMinio(objectName, logfilepath, bucketName string) error
 		_, err := s.MinioClient.FPutObject(bucketName, objectName, logfilepath, minio.PutObjectOptions{})
 		return err
 	}
-	newpath := fmt.Sprintf(`/var/trasa/minio/%s/%s`, bucketName, objectName)
+	newpath := filepath.Join(utils.GetVarDir(), "trasa", "minio", bucketName, objectName)
 	dir, _ := filepath.Split(newpath)
 	err := os.MkdirAll(dir, os.ModePerm)
 	if err != nil {
 		return err
 	}
-	return os.Rename(logfilepath, newpath)
+	return utils.MoveFile(logfilepath, newpath)
 
 }
 
@@ -321,7 +322,7 @@ func (s logStore) UploadHTTPLogToMinio(file *os.File, login AuthLog) error {
 	bucketName := "trasa-https-logs"
 	filePath := file.Name()
 	loginTime := time.Unix(0, login.LoginTime)
-	objectNamePrefix := login.OrgID + "/" + strconv.Itoa(loginTime.Year()) + "/" + strconv.Itoa(int(loginTime.Month())) + "/" + strconv.Itoa(loginTime.Day()) + "/"
+	objectNamePrefix := filepath.Join(login.OrgID, strconv.Itoa(loginTime.Year()), strconv.Itoa(int(loginTime.Month())), strconv.Itoa(loginTime.Day()))
 
 	objectName := objectNamePrefix + filepath.Base(file.Name())
 

@@ -11,16 +11,11 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
-	"time"
 )
 
 //TODO make tabular tests
 
 func TestSSHAuthWithoutPublicKey(t *testing.T) {
-	done := make(chan bool, 1)
-	go sshproxy.ListenSSH(done)
-
-	time.Sleep(time.Second * 2)
 
 	cconf := ssh.ClientConfig{
 		User: testutils.MockupstreamUser,
@@ -51,14 +46,9 @@ func TestSSHAuthWithoutPublicKey(t *testing.T) {
 		t.Fatalf(`could not run command: %v`, err)
 	}
 
-	done <- true
 }
 
 func TestSSHAuthWithPublicKey(t *testing.T) {
-	done := make(chan bool, 1)
-	go sshproxy.ListenSSH(done)
-
-	time.Sleep(time.Second * 2)
 
 	pk, err := ssh.ParsePrivateKey([]byte(testutils.MockPrivateKey))
 	if err != nil {
@@ -95,14 +85,9 @@ func TestSSHAuthWithPublicKey(t *testing.T) {
 		t.Fatalf(`could not run command: %v`, err)
 	}
 
-	done <- true
 }
 
 func TestSSHAuthWithAuthorisedPublicKey(t *testing.T) {
-	done := make(chan bool, 1)
-	go sshproxy.ListenSSH(done)
-
-	time.Sleep(time.Second * 2)
 
 	key := downloadKey(t)
 
@@ -141,7 +126,6 @@ func TestSSHAuthWithAuthorisedPublicKey(t *testing.T) {
 		t.Fatalf(`could not run command: %v`, err)
 	}
 
-	done <- true
 }
 
 func handleKBAuth(t *testing.T) ssh.AuthMethod {

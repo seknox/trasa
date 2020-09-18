@@ -36,7 +36,7 @@ beforeAll(async () => {
     await page.setDefaultTimeout(10000);
   let up = false
   while (up !== true) {
-  let u=await isReachable('app.trasa:443')
+  let u=await isReachable('localhost:443')
       up=u
    }
 

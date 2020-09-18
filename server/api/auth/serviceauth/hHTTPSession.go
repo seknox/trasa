@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime/debug"
 	"strings"
 	"sync"
@@ -225,10 +226,10 @@ func AuthHTTPAccessProxy(w http.ResponseWriter, r *http.Request) {
 	sessionIdentifiers.SessionRecord = policy.RecordSession
 
 	if policy.RecordSession {
-		directoryBuilder := fmt.Sprintf("/tmp/trasa/accessproxy/http/%s", encodedSession)
+		directoryBuilder := filepath.Join(utils.GetTmpDir(), "trasa", "accessproxy", "http", encodedSession)
 		logger.Tracef("Logging to : %s", directoryBuilder)
 		utils.CreateDirIfNotExist(directoryBuilder)
-		logPath := fmt.Sprintf("%s/%s.http-raw", directoryBuilder, encodedSession)
+		logPath := filepath.Join(directoryBuilder, fmt.Sprintf("%s.http-raw", encodedSession))
 		file, err := os.OpenFile(logPath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0755)
 		if err != nil {
 			logger.Error(err)
@@ -322,7 +323,7 @@ func sessionWriter(sessionID, shots string) {
 			if len(counterAndImage) == 2 {
 				videoRecord := logStruct.SessionRecord //strings.Split(logStruct.AppID, ":")
 				//home, _ := hdir.Dir()
-				directoryBuilder := fmt.Sprintf("/tmp/trasa/accessproxy/http/%s", sessionID)
+				directoryBuilder := filepath.Join(utils.GetTmpDir(), "trasa", "accessproxy", "http", sessionID)
 				if videoRecord == true {
 
 					// convert to png
@@ -339,7 +340,7 @@ func sessionWriter(sessionID, shots string) {
 
 					utils.CreateDirIfNotExist(directoryBuilder)
 
-					filenameBuilder := fmt.Sprintf("%s/%s.png", directoryBuilder, counterAndImage[0])
+					filenameBuilder := filepath.Join(directoryBuilder, fmt.Sprintf("%s.png", counterAndImage[0]))
 					//fmt.Println("writing to file: ", filenameBuilder)
 
 					outputFile, err := os.Create(filenameBuilder)
@@ -359,7 +360,7 @@ func sessionWriter(sessionID, shots string) {
 					outputFile.Close()
 					// return at last
 				}
-				logPath := fmt.Sprintf("%s/%s.http-raw", directoryBuilder, sessionID)
+				logPath := filepath.Join(directoryBuilder, fmt.Sprintf("%s.http-raw", sessionID))
 				file, err := os.OpenFile(logPath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0755)
 				if err != nil {
 					logger.Debug(err)
@@ -417,7 +418,7 @@ func logoutSequence(sessionID string) {
 	// 3) create video file from image file
 
 	deleteDirectory := false
-	directory := fmt.Sprintf("/tmp/trasa/accessproxy/http/%s", sessionID)
+	directory := filepath.Join(utils.GetTmpDir(), "trasa", "accessproxy", "http", sessionID)
 
 	SessionRecord := logStruct.SessionRecord
 	if SessionRecord == true {
@@ -438,7 +439,7 @@ func logoutSequence(sessionID string) {
 		if err != nil {
 			logger.Error(err)
 		}
-		videoSource := fmt.Sprintf("%s/%s", directory, videoFileName)
+		videoSource := filepath.Join(directory, videoFileName)
 
 		// 4) upload video file to minio
 		err = uploadToMinio(videoSource, logStruct)
@@ -446,7 +447,7 @@ func logoutSequence(sessionID string) {
 			logger.Error(err)
 		}
 
-		rawSource := fmt.Sprintf("%s/%s", directory, rawFileName)
+		rawSource := filepath.Join(directory, rawFileName)
 
 		// 5) upload raw log file to minio
 		err = uploadToMinio(rawSource, logStruct)
