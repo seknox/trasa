@@ -6,7 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import React from 'react';
 // import DashImage from '../../static/img/trasa-bluebg.svg';
-import ThemeBase from './muiTheme';
+import ThemeBase from '../muiTheme';
 
 const useStyles = makeStyles((theme) => ({
   background: {
@@ -55,25 +55,23 @@ export default function MainCta() {
             </Typography>
             <Grid item xs={12}>
               <Grid container spacing={0} direction="row" alignItems="center" justify="center">
-                {/* <Grid item xs={4}>
+                <Grid item xs={4}>
                   <Link
                     className={clsx('button  button--md', classes.contained)}
                     to={useBaseUrl('blog/')}
                   >
                     Why do I need this?
                   </Link>
-                </Grid> */}
+                </Grid>
 
                 <Grid item xs={4}>
                   <Link
-                    className={clsx('button  button--lg', classes.contained)}
+                    className={clsx('button  button--md', classes.contained)}
                     to={useBaseUrl('docs/')}
                   >
                     Get Started
                   </Link>
                 </Grid>
-
-                {/* <Button className={classes.contained}  href={useBaseUrl('docs/')} >Get Started</Button> */}
               </Grid>
             </Grid>
           </div>

@@ -1,10 +1,10 @@
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+import { Typography } from '@material-ui/core';
 import Layout from '@theme/Layout';
 import clsx from 'clsx';
 import React from 'react';
-// import Button from '../comps/button'
-import PrimaryCTA from '../components/landing/primary';
 import styles from './styles.module.css';
+import Disclosure from '../components/security/disclosure';
 
 function Home() {
   const context = useDocusaurusContext();
@@ -16,7 +16,7 @@ function Home() {
     >
       <header className={clsx('hero hero--primary', styles.heroBanner)}>
         <div className="container">
-          <PrimaryCTA />
+          <Disclosure />
         </div>
       </header>
 

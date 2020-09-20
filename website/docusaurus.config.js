@@ -3,7 +3,7 @@ module.exports = {
   tagline: 'Manage, control and monitor access to your internal infrastructure',
   url: 'https://www.trasa.io',
   baseUrl: '/',
-  favicon: 'img/seknoxIcon.png',
+  favicon: 'img/trasa-icon.png',
   organizationName: 'Seknox',
   projectName: 'TRASA',
   onBrokenLinks: 'ignore',
@@ -25,8 +25,9 @@ module.exports = {
         src: 'img/trasa-bluebg.svg',
       },
       items: [
-        // { to: 'blog', label: 'Blog', position: 'right' },
-        // { to: 'security', label: 'Security', position: 'right' },
+        { to: 'blog', label: 'Blog', position: 'right' },
+        { to: 'security', label: 'Security', position: 'right' },
+        { to: 'community', label: 'Community', position: 'right' },
         {
           to: 'docs/',
           activeBasePath: 'docs',
@@ -120,23 +121,7 @@ module.exports = {
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
         },
-        // guides: {
-        //   // It is recommended to set document id as docs home page (`docs/` path).
-        //   homePageId: 'guides/admin/users/create-user',
-        //   sidebarPath: require.resolve('./sidebars.js'),
-        //   // Please change this to your repo.
-        //   editUrl: 'https://github.com/facebook/docusaurus/edit/master/website/',
-        // },
       },
-      // {
-      //   guides: {
-      //     // It is recommended to set document id as docs home page (`docs/` path).
-      //     homePageId: 'guides/admin/users/create-user',
-      //     sidebarPath: require.resolve('./sidebars.js'),
-      //     // Please change this to your repo.
-      //     editUrl: 'https://github.com/facebook/docusaurus/edit/master/website/',
-      //   },
-      // },
     ],
   ],
 };

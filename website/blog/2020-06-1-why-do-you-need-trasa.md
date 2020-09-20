@@ -1,6 +1,6 @@
 ---
-id: why-we-built-trasa
-title: Why we built TRASA
+id: why-trasa
+title: Why you need TRASA
 author: Sakshyam Shah
 author_title: TRASA core maintainer
 author_url: https://github.com/sshahcodes
@@ -13,9 +13,3 @@ Regardless of organization size and compliance mandates, access control is core 
 <!--truncate-->
 
 ## How the project came to existence
-
-
-
-
-
-

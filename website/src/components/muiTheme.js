@@ -46,13 +46,13 @@ let theme = createMuiTheme({
       letterSpacing: 0.5,
       padding: 12,
     },
-    // p: {
-    //   fontWeight: 700,
-    //   fontSize: 14,
-    //   letterSpacing: 0.5,
-    //   color: '#404854',
-    //   padding: 12,
-    // },
+    body1: {
+      fontWeight: 600,
+      fontSize: 18,
+      letterSpacing: 0.5,
+      color: '#404854',
+      padding: 12,
+    },
     button: {
       textTransform: 'none',
       fontFamily: 'Open Sans, Rajdhani',
