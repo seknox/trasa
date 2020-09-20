@@ -10,7 +10,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function MainCta() {
+export default function Disclosure() {
   const classes = useStyles();
   return (
     <ThemeBase>

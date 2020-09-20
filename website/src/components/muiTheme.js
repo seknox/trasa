@@ -14,7 +14,7 @@ let theme = createMuiTheme({
       color: '#000066',
     },
     h2: {
-      fontWeight: 600,
+      fontWeight: 700,
       fontSize: 36,
       letterSpacing: 0.5,
       color: '#000080',
@@ -36,22 +36,23 @@ let theme = createMuiTheme({
     },
     h5: {
       fontWeight: 600,
-      fontSize: 18,
+      fontSize: 20,
       letterSpacing: 0.5,
       padding: 13,
     },
     h6: {
       fontWeight: 700,
-      fontSize: 14,
+      fontSize: 20,
       letterSpacing: 0.5,
       padding: 12,
     },
     body1: {
       fontWeight: 600,
-      fontSize: 18,
+      fontSize: 20,
       letterSpacing: 0.5,
       color: '#404854',
       padding: 12,
+      textAlign: 'justify',
     },
     button: {
       textTransform: 'none',

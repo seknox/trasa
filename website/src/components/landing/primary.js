@@ -19,7 +19,8 @@ const useStyles = makeStyles((theme) => ({
   sideImage: {
     boxShadow: '0 0 20px 0 rgba(0,0,0,0.12)',
     marginTop: theme.spacing(3),
-    padding: theme.spacing(2),
+    // padding: theme.spacing(2),
+    // backgroundColor: 'white',
   },
   contained: {
     color: 'white',
@@ -40,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function MainCta() {
-  const imgUrl = useBaseUrl('arch/trasa-access-proxy.png');
+  const imgUrl = useBaseUrl('dash/dash2.png');
   const classes = useStyles();
   return (
     <ThemeBase>
@@ -51,7 +52,7 @@ export default function MainCta() {
               zero trust access
             </Typography>
             <Typography variant="h3" component="h3">
-              manage secure remote access to Web, SSH, RDP and Database services
+              secure remote access to Web, SSH, RDP and Database services
             </Typography>
             <Grid item xs={12}>
               <Grid container spacing={0} direction="row" alignItems="center" justify="center">

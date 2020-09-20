@@ -22,7 +22,7 @@ module.exports = {
       title: '',
       logo: {
         alt: 'TRASA Logo',
-        src: 'img/trasa-bluebg.svg',
+        src: 'img/trasa.svg',
       },
       items: [
         { to: 'blog', label: 'Blog', position: 'right' },
