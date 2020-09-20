@@ -59,7 +59,7 @@ export default function MainCta() {
                 <Grid item xs={4}>
                   <Link
                     className={clsx('button  button--md', classes.contained)}
-                    to={useBaseUrl('blog/')}
+                    to={useBaseUrl('blog/2020/09/22/why-zero-trust-network-access-ztna')}
                   >
                     Why do I need this?
                   </Link>
