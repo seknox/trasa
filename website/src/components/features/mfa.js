@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Features() {
-  const imgUrl = useBaseUrl('../../../static/img/features/tfa.svg');
+  const imgUrl = useBaseUrl('features/tfa.svg');
   const classes = useStyles();
   return (
     <ThemeBase>

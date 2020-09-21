@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Features() {
-  const imgUrl = useBaseUrl('../../../static/img/features/sso.svg');
+  const imgUrl = useBaseUrl('features/sso.svg');
   const classes = useStyles();
   return (
     <ThemeBase>

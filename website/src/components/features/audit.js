@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Features() {
-  const imgUrl = useBaseUrl('../../../static/img/features/audit2.png');
+  const imgUrl = useBaseUrl('features/audit2.png');
   const classes = useStyles();
   return (
     <ThemeBase>
