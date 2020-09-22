@@ -9,6 +9,17 @@ import TabItem from '@theme/TabItem';
 
 You can access SSH service either via Browser or SSH client.
 
+### Using Browser
+
+* Login into your TRASA account
+* Search for the service you want to connect
+* Click connect and choose service username
+* Enter password and TOTP 
+> You may be asked to save new host key
+
+
+
+
 ### Using SSH clients
 
 #### Download User Key (Optional)
@@ -101,12 +112,4 @@ If you have been using google cloud, gcloud saves private key in `~/.ssh/google_
 
 
 
-
-### Using Browser
-
-* Login into your TRASA account
-* Search for the service you want to connect
-* Click connect and choose service username
-* Enter password and TOTP 
-> You may be asked to save new host key
 
