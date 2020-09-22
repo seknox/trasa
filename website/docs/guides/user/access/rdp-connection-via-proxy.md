@@ -12,6 +12,8 @@ When windows server or workstation is protected with TRASA 2FA agent, just after
 
 
 ### RDP via TRASA access proxy
-Login to dashboard with your user account.
-
+* Login into your TRASA account
+* Search for the service you want to connect
+* Click connect and choose service username
+* Enter password and TOTP 
 
