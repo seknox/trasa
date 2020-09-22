@@ -15,7 +15,8 @@ You can access SSH service either via Browser or SSH client.
 * Search for the service you want to connect
 * Click connect and choose service username
 * Enter password and TOTP 
-> You may be asked to save new host key
+> You may be asked to save the new host key
+
 
 
 
@@ -28,7 +29,7 @@ You can access SSH service either via Browser or SSH client.
 * Click the "get ssh private key" button" to download key
 
 :::tip 
-If you're using Putty, use PuTTYgen to convert downloaded key `id_rsa` into `id_rsa.ppk`
+If you're using Putty, use PuTTYgen to convert the downloaded key `id_rsa` into `id_rsa.ppk`.
 :::
 
 
@@ -62,7 +63,7 @@ If you're using Putty, use PuTTYgen to convert downloaded key `id_rsa` into `id_
 * `trasacli -u username`
 * Enter TRASA URL if asked     
 * Enter TRASA email and password   
-* Enter IP address of service you want to connect to   
+* Enter the IP address of service you want to connect to   
 * Enter TOTP code or leave it blank for U2F   
 * Enter Service password   
 
@@ -90,12 +91,10 @@ If you're using Putty, use PuTTYgen to convert downloaded key `id_rsa` into `id_
 
 ##### Agent forwarding.
 
-Since TRASA ssh gateway doesn't have access to user private key you need to enable agent forwarding to use private keys/certificate while logging into upstream server
+Since TRASA ssh gateway doesn't have access to the user private key, you need to enable agent forwarding to use private keys/certificate while logging into the upstream server.
 
 >SSH Agent forwarding is not recommended since it allows proxy server to use your SSH keys and also eavesdrop on your ongoing session.
->But in our case TRASA ssh proxy should and is able to record all the traffic. So you need to trust TRASA server.
-
-
+>But in our case, TRASA ssh proxy should and can record all the traffic. So you need to trust the TRASA server.
 * Add the private key to ssh agent `ssh-add <private_key_path>`
 * Use -A flag `ssh -A -i <private_key_path> root@trasa.hostname -p 8022`
 

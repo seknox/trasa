@@ -8,19 +8,19 @@ sidebar_label: Getting Started
 
 ## Hi !
 
-If your security team has deployed TRASA in your infrastructure and all of a sudden you are required to use TRASA for remote access, this guide is for you to get started.
+If your security team has deployed TRASA in your infrastructure and all of a sudden, you are required to use TRASA for remote access, this guide is for you to get started.
 
 
-When you log into TRASA dashboard, you will be redirected into your account page. If you are admin user,
+When you log into the TRASA dashboard, you will be redirected to your account page. If you are an admin user,
 * Click your initials on the top right corner
-* Click on "My Account" 
+* Click on the "My Account" button. 
 
 
 ### Services 
 It displays all the services you are assigned to. You can access them from here.
 
 ### Account
-It displays your account details. You can change your password and download ssh key from here.
+It displays your account details. You can change your password and download the SSH key from here.
 
 ### Device
 It Displays your current devices and lets you delete them or enroll new devices.
@@ -28,3 +28,4 @@ It Displays your current devices and lets you delete them or enroll new devices.
 
 ### Access Stats
 It shows your authentication logs.
+

@@ -8,26 +8,23 @@ title: FreeIPA Users
 
 # **FreeIPA**
 
-FreeIPA is an integrated Identity and Authentication solution for Linux/UNIX networked environments. A FreeIPA server provides centralized authentication, authorization and account information by storing data about user, groups, hosts and other objects necessary to manage the security aspects of a network of computers. 
+FreeIPA is an integrated Identity and Authentication solution for Linux/UNIX networked environments. A FreeIPA server provides centralized authentication, authorization, and account information by storing data about users, groups, hosts, and other objects necessary to manage the security aspects of a network of computers. 
  
-TRASA has pre-built integration with freeIPA using Light Weight Directory Access protocol or LDAP.
-
+TRASA has pre-built integration with freeIPA using Light Weight Directory Access Protocol or LDAP.
 
 ## Create FreeIPA IDP
 
 ![create freeIPA idp](./create-freeipa.png 'create freeIPA idp')
 
 ## Configure FreeIPA integration
-As freeIPA integration is done via standard LDAP integraion, it is required to have general understanding of LDAP.  [Digital ocean](https://www.digitalocean.com/community/tutorials/understanding-the-ldap-protocol-data-hierarchy-and-entry-components) and [ldap.com](https://ldap.com/basic-ldap-concepts/) has excellent artical to understand basic LDAP. Make sure to read them first.
+As freeIPA integration is done via standard LDAP integraion, it is required to have general understanding of LDAP.  [Digital ocean](https://www.digitalocean.com/community/tutorials/understanding-the-ldap-protocol-data-hierarchy-and-entry-components) and [ldap.com](https://ldap.com/basic-ldap-concepts/) has an excellent article to understand basic LDAP. Make sure to read them first.
 
-As minimum requirements to configure integration between TRASA and FreeIPA,
-you will need server address (domain name) of freeIPA server, root DN for LDAP, search base for LDAP, service account name and password for LDAP binding. Details in image below shows samples value that should be similar to your requirements. It is easy if you test with ldapsearch first and configure trasa with similer parameters.
+As minimum requirements to configure the integration between TRASA and FreeIPA,
+you will need the server address (domain name) of freeIPA server, root DN for LDAP, search base for LDAP, service account name, and password for LDAP binding. Details in the image below shows samples value that should be similar to your requirements. It is easy if you test with ldapsearch first and configure TRASA with similar parameters.
 ![configure-freeipa-idp](./configure-freeipa.png 'configure-freeipa-idp')
 
 The update action will first try to validate your values and only update Idp data.
 If all values are correct, LDAP details will be saved and will be used to perform user imports and user authentication.
-
-
 
 <br /><br />  
 

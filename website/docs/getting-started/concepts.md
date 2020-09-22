@@ -5,11 +5,11 @@ sidebar_label: Concepts
 description: Basic concepts for using TRASA
 ---
 
-TRASA is unique in a sense that it bundles lots of access control features into single platform and as such allows to acheive zero trust access control strategies in your infrastructure. 
+TRASA is unique in the sense that it bundles lots of access control features into a single platform and, as such, allows you to achieve zero trust access control strategies in your infrastructure. 
 
 ## Baseline security concept
 
-TRASA is build upon baseline security concept which adheres to zero trust access control paradigm.
+TRASA is build upon the baseline security concept, which adheres to zero trust access control paradigm.
 
 ### 1. Whitelisted entry point for remote access
 
@@ -27,7 +27,7 @@ So granting access to servers and services based on user devices' security hygie
 
 ### 3. Monitoring trusted access
 
-Almost every security compromises involve the misuse of trusted credentials, trusted networks, and trusted devices. There must be complete visibility to an active authorized session so that any malicious intent hidden in trusted access can be audited in real-time or in the future.
+Almost every security compromises involve the misuse of trusted credentials, trusted networks, and trusted devices. There must be complete visibility to an active authorized session so that any malicious intent hidden in trusted access can be audited in realtime or in the future.
 
 
 ### 4. Realtime view of remote access
@@ -39,12 +39,12 @@ Almost every security compromises involve the misuse of trusted credentials, tru
 
 ## TRASA implementation
 
-TRASA Access Proxy is a drop in updgrade for your homegrown bastian/jump server.
-Whether you are using linux server (configured as Jump server) or Microsoft Remote Desktop Gateway, TRASA offers all those features along with best practices enabled and configurable by default.
+TRASA Access Proxy is a drop in upgrade for your homegrown bastian/jump server.
+Whether you are using a linux server (configured as Jump server) or Microsoft Remote Desktop Gateway, TRASA offers all those features along with best practices enabled and configurable by default.
 
 ### TRASA server as an access point for your internal infrastructure
-Access Proxy is just a reverse proxy that happens to know RDP, SSH, HTTP and Database protocols and makes forwarding decision based on policy defined by administrator. For TRASA access proxy to work, network must be configured in a way such that every remote access to your server and services are only allowed from server IP address in which TRASA is installed.
+Access Proxy is just a reverse proxy that happens to know RDP, SSH, HTTP, and Database protocols and makes a forwarding decision based on the administrator's policy. For TRASA access proxy to work, the network must be configured in a way such that every remote access to your server and services are only allowed from the server IP address in which TRASA is installed.
 
 ### Configuring your network
-+ Make changes in your network firewall such that ingress traffic to your server and services listening for SSH, RDP, HTTPs and DB traffic are only allowed from TRASA server IP address.
++ Make changes in your network firewall such that ingress traffic to your server and services listening for SSH, RDP, HTTPs, and DB traffic are only allowed from TRASA server IP address.
  

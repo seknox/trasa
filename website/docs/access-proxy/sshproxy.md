@@ -13,16 +13,16 @@ import TabItem from '@theme/TabItem';
 
 
 
-TRASA can serve as gateway between client and upstream service.
+TRASA can serve as a gateway between the client and the upstream service.
 TRASA will
-There are different methods for accessing services through TRASA ssh proxy.
+There are different methods for accessing services through the TRASA ssh proxy.
 
 
 
 
 
 ## Upstream Service Authentication
-TRASA supports password, private key and certificate to authenticate upstream server.
+TRASA supports password, private key, and certificate to authenticate the upstream server.
 
 
 ### 1. Saving Credentials in Vault
@@ -31,19 +31,19 @@ You can [store private key of a service or password in vault](https://trasa.io/d
 
 
 ### 2. Using SSH Certificates
-You can use TRASA as a ssh CA
+You can use TRASA as a SSH CA
 
 #### 2.1 Initialize CA
 To use SSH certificates you must first  [initialise CA](/trasa/docs/guides/ca) (if you haven't already) from TRASA dashboard
 
 #### 2.2 Using User Certificates
 TRASA ssh proxy will generate and use a temporary certificate signed by itself while connecting any upstream service.
-So to make use of that user certificate, you must tell each upstream server to trust any certificate signed our CA.
+To make use of that user certificate, you must tell each upstream server to trust any certificate signed by our CA.
 To do that,
 ##### 2.2.1 Distribute CA public keys
 * Download client CA  from dashboard (Providers->Certificate Authority->Download SSH client CA)
 * Copy the downloaded ssh keys into upstream servers
-* Edit /etc/ssh/sshd_config of upstream server and add the folowing
+* Edit /etc/ssh/sshd_config of upstream server and add the following
 `TrustedUserCAKeys <path to ca public key>`
 * Restart ssh daemon
 `sudo systemctl restart sshd`
