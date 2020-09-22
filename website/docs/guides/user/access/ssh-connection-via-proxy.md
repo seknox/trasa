@@ -3,6 +3,9 @@ id: ssh-connection-via-proxy
 title: Access SSH Service
 sidebar_label: SSH
 ---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 
 You can access SSH service either via Browser or SSH client.
 
@@ -88,11 +91,12 @@ Since TRASA ssh gateway doesn't have access to user private key you need to enab
 
 
 :::tip
-You can use trasa private key and service private key at the same time. `ssh -A -i <trasa_private_key_path> -i <service_private_key_path> root@trasa.hostname -p 8022`
+You can use trasa private key and service private key at the same time.   
+`ssh -A -i <trasa_private_key_path> -i <service_private_key_path> root@trasa.hostname -p 8022`
 :::
 
 :::tip
-* If you have been using google cloud, gcloud saves private key in `~/.ssh/google_compute_engine`. You can use that to login through TRASA.
+If you have been using google cloud, gcloud saves private key in `~/.ssh/google_compute_engine`. You can use that to login through TRASA.
 :::
 
 
