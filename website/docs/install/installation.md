@@ -106,5 +106,5 @@ seknox/trasa:v0.0.1
 
 
 :::info
-Go through [config reference](../reference/config) to run TRASA in environment  according to your need
+Go through [config reference](../system/config-reference) to run TRASA in environment  according to your need
 :::

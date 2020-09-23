@@ -7,7 +7,7 @@ description: Words and their meaning used in TRASA
 
 ## User
 
-A user is a profile of anyone who accesses remote servers and services. Typically they are the profile of your employees, 3rd party contractors, DevOps teams, or service accounts.
+A user is a profile of anyone who accesses remote servers and services. Typically, they are your employees' profile, 3rd party contractors, DevOps teams, or service accounts.
 
 ## User Identity Provider (uIDP)
 
@@ -23,15 +23,15 @@ An Upstream Service is an actual service that runs behind TRASA. E.g., include S
 
 ## Service Identity Provider (sIDP)
 
-A service IDP is the source which TRASA uses to import and manage service profile. A service profile can be directly created in TRASA or can be imported from cloud service providers such as AWS, GCP, Digital Ocean.
+A service IDP is the source which TRASA uses to import and manage service profile. A service profile can be directly created in TRASA or imported from cloud service providers such as AWS, GCP, Digital Ocean.
 
 ## Privilege
 
 A privilege is a username or role which your users use to access service.
-Privilege typically has roles, permissions, and policies attached to them managed by server and service that privilege belongs.
+Privilege typically has roles, permissions, and policies attached to them managed by the server and service that privilege belongs.
 e.g.:
-+ `root` is a privilege usually found in Linux OS. A user with email _james@nepsec.com_ logs into centOS server as `root` privilege.
-+ `Administrator` is a privilege usually found in Windows systems. A user with email _james@nepsec.com_ access windows server as `Administrator` privilege.
++ `root` is a privilege usually found in Linux OS. A user with email _james@nepsec.com_ logs into the centOS server as `root` privilege.
++ `Administrator` is a privilege usually found in Windows systems. A user with email _james@nepsec.com_ access the windows server as `Administrator` privilege.
 
 ## Access Proxy
 
@@ -50,7 +50,7 @@ A policy defines constraints and restriction which directs TRASA to either block
 
 ### Static Policy
 
-Based on time, location and health of device hygiene
+Based on time, location, and health of device hygiene.
 
 ### Dynamic Policy
 
@@ -63,7 +63,7 @@ Adhoc permission enables explicit permission management to access service.
 
 ## Access Map
 
-Access Map defines how a user can access a service with specific privileges. The how is directed via policy. Before a user can access a service, TRASA administrator must assign a user to that service along with privilege and policy.
+Access Map defines how a user can access a service with specific privileges. The how is directed via policy. Before a user can access a service, the TRASA administrator must assign a user to that service along with privilege and policy.
 
 ## Vault
 
@@ -71,4 +71,4 @@ A vault is where TRASA stores secrets. There are two types of secrets that TRASA
 + **Upstream Service Secrets -** Passwords and Keys of upstream services.
 + **Integration Keys -** Secrets and Keys of external services that TRASA connects during the process of integration.
   
-TRASA has built-in vault named `TsxVault` which can be used to store both of the secrets mentioned above. While Integration Keys are alawys store in `TsxVault`, Upstream Service Secrets can be also be stored in external secret storage provider such as HashiCorp Vault, AWS KMS, GCP KMS.
+TRASA has a built-in vault named `TsxVault`, which can be used to store both of the secrets mentioned above. While Integration Keys are always stored in `TsxVault`, Upstream Service Secrets can also be stored in external secret storage providers such as HashiCorp Vault, AWS KMS, and GCP KMS.

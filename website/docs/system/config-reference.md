@@ -1,5 +1,5 @@
 ---
-id: config
+id: config-reference
 title: Config reference
 sidebar_label: Config
 ---
@@ -28,9 +28,8 @@ sidebar_label: Config
 
 #### `dbtype`
 * type: `enum string {"postgres","cockroachdb"}`  
-* default: `cockroachdb`
-
-    Database password
+* default: `cockroachdb`  
+    Database type
 
 
 #### `server`
@@ -54,11 +53,27 @@ sidebar_label: Config
     Database ssl status
 
 
-#### `sslenabled`
-* type: `bool`  
-* default: `false`
+#### `usercert`
+* type: `string`  
+* default: ``
 
-    Database ssl status
+    Database ssl user certificate file path (only applicable if `sslenabled=true`). 
+
+
+#### `userkey`
+* type: `string`  
+* default: ``
+
+    Database ssl user private key file path (only applicable if `sslenabled=true`). 
+
+
+#### `cacert`
+* type: `string`  
+* default: ``
+
+    Database ssl ca certificate file path (only applicable if `sslenabled=true`). 
+
+
 
 ---
 ### Logging
@@ -117,7 +132,7 @@ sidebar_label: Config
 * type: `bool`  
 * default: `false`  
     Skip ssl verify while making http requests.
-    
+---     
 ### Trasa
 
 #### `autoCert`
@@ -130,13 +145,26 @@ sidebar_label: Config
 #### `listenAddr`
 * type: `string`  
 * default: `localhost`  
-
-
+    Listen address of TRASA server
  
 #### `cloudServer`
 * type: `string`  
 * default: `https://sg.cpxy.trasa.io`  
     Address of proxy server to forward U2F requests
+
+
+#### `proxyDashboard`
+* type: `bool`  
+* default: `false`  
+    If enabled TRASA server will proxy dashboard instead of serving. It is useful during development when dashboard is served using `npm start` command.
+    
+#### `dashboardAddr`
+* type: `bool`  
+* default: `localhost:3000`  
+    If proxyDashboard is enabled TRASA server will proxy dashboard from this address.
+    
+
+
 
 ---
 

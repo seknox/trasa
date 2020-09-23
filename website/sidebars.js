@@ -41,14 +41,13 @@ module.exports = {
       ],
       'Secret Vault': ['secret-vault/index'],
 
-      'System Configurations': ['system/index'],
-      Reference: ['reference/config'],
+      'System Configurations': ['system/index', 'system/config-reference'],
     },
   ],
   guides: [
     'guides/getting-started',
     {
-      Account: ['guides/user/account/password-setup', 'guides/user/account/view-access-stats'],
+      Account: ['guides/user/account/password-setup'],
       Device: [
         'guides/user/device/enrol-2fa-device',
         'guides/user/device/install-trasa-device-agent',
