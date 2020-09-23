@@ -12,10 +12,12 @@
 - Run the binary
 `sudo ./server`
 
-- Edit `/etc/trasa/config/config.toml` file and change `trasa.proxyDashboard` as ` true`
+- Edit `/etc/trasa/config/config.toml` file and   
+    - change `trasa.proxyDashboard` to ` true`
+    - change `trasa.dashboardAddr` to `http://localhost:3000`
 - Open TRASA dashboard at http://localhost:3000
 
-- Go through the wiki to get overview of codebase. 
+> Go through the [wiki](https://github.com/seknox/trasa/wiki) to get overview of codebase. 
 
 
 # Code convensions 
@@ -70,7 +72,6 @@ Type: One of these:
 2. feat : New feature 
 2. cfeat : Change feature (breaking changes)
 3. ref : Refractor (no change in structure/unit tests)
-4. ntc : Nothing to commit
 
 Scope: Scope of change. example: service/creds.go, dbstore
 
@@ -85,6 +86,6 @@ Description: Long description
 1. Ensure unit test and integration-test passes.
 2. Use go fmt to format your code
 2. If you have added exported functions/packages, update wiki and comments.
-4. You may merge the Pull Request in once you have the sign-off of two other developers, or if you 
+4. You may merge the Pull Request in once you have the sign-off of one other developer, or if you 
    do not have permission to do that, you may request the second reviewer to merge it for you.
 
