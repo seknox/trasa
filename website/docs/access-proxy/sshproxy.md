@@ -58,7 +58,7 @@ To do that,
 * Copy its contents to /etc/ssh/ssh_known_hosts
 
 ##### 2.3.2 Configure Upstream Server
-* Go to authapp page in dashboard
+* Go to service page in dashboard
 * In App Config tab, download "Generate and Download" button
 * Copy the downloaded zip file to upstream server
 * Extract the files into /etc/ssh

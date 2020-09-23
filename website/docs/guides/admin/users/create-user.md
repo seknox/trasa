@@ -18,7 +18,7 @@ TRASA users have roles of either `orgAdmin` or `selfUser`.
 
 
 ## 2. Privilege
-Authapp users are TRASA users mapped to authorized application or service that is local to particular service.
+Privilege are TRASA users mapped to authorized application or service that is local to particular service.
 
 For example, TRASA user `james@nepsec.org` can be assigned to `winserver001` service authorized to log in as `Administrator`.
-Authapp users are often mapped to services with [TRASA Policy](https://seknox.com/trasa/docs/concepts/permissions-policies)
+Privilege are often mapped to services with [TRASA Policy](https://seknox.com/trasa/docs/concepts/permissions-policies)
