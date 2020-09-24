@@ -39,7 +39,7 @@ module.exports = {
         'native-tfa/windows/windows-two-factor-authentication',
         'native-tfa/linux-two-factor-authentication',
       ],
-      'Secret Vault': ['secret-vault/index'],
+      'Secret Vault': ['providers/secret-vault/index'],
 
       'System Configurations': ['system/index', 'system/config-reference'],
     },
