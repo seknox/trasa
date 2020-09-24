@@ -6,13 +6,14 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
-	"github.com/seknox/trasa/server/utils"
-	"github.com/spf13/viper"
 	"net"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/seknox/trasa/server/utils"
+	"github.com/spf13/viper"
 
 	"github.com/minio/minio-go"
 	"github.com/sirupsen/logrus"

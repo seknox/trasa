@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"os"
+	"path/filepath"
 	"sync"
 
 	"github.com/seknox/trasa/server/api/services"
@@ -36,6 +38,23 @@ func PrepareProxyConfig() {
 	proxyConfigMutex.Unlock()
 
 	return
+
+}
+
+// OxyLog is logging instance for oxy with default error level.
+var OxyLog *logrus.Logger
+
+func PrepareOxyLogger() {
+	OxyLog = logrus.New()
+	level, _ := logrus.ParseLevel("error")
+	OxyLog.SetLevel(level)
+
+	f, err := os.OpenFile(filepath.Join(utils.GetVarDir(), "log", "trasa.log"), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+	if err != nil {
+		panic(err)
+	}
+
+	OxyLog.SetOutput(f)
 
 }
 
@@ -86,6 +105,7 @@ func Proxy() http.HandlerFunc {
 		fwd, err := forward.New(
 			forward.PassHostHeader(proxyConfig[r.Host].PassHostheader),
 			forward.RoundTripper(transport),
+			forward.Logger(OxyLog),
 		)
 
 		if err != nil {
