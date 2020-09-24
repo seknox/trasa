@@ -15,7 +15,6 @@ module.exports = {
       // Tutorial: ['tutorial/tutorial'],
       Install: ['install/installation', 'install/initial-setup'],
       QuickStart: ['quickstarts/quickstart'],
-      Providers: [{ users: ['providers/users/ldap/ldap'] }],
       Users: [
         'users/users',
         'users/creating-updating-users',
@@ -41,6 +40,9 @@ module.exports = {
         'native-tfa/linux-two-factor-authentication',
       ],
       'Secret Vault': ['providers/secret-vault/index'],
+      'Cloud Providers': ['cloud/amazon-web-services', 'cloud/google-cloud', 'cloud/digital-ocean'],
+      Providers: [{ users: ['providers/users/ldap/ldap'] }],
+
 
       'System Configurations': ['system/index', 'system/config-reference'],
     },

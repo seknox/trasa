@@ -31,3 +31,51 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 
+
+
+
+
+<Tabs
+    defaultValue="openssh"
+    values={[
+  
+            {label: 'AWS', value: 'aws'},
+            {label: 'GCP', value: 'gcp'},
+            {label: 'Digital Ocean', value: 'do'},
+            {label: 'Azure', value: 'azure'},
+        ]}
+>
+
+
+<TabItem value="do">
+
+
+DO 
+
+</TabItem>
+
+<TabItem value="gcp">
+
+GCP
+
+</TabItem>
+
+
+<TabItem value="aws">
+
+In EC2 management console,
+* Go to Security groups
+<img  alt="main-menu" src={useBaseUrl('img/docs/main-menu.png')} />  
+
+
+</TabItem>
+
+<TabItem value="aws">
+TODO
+</TabItem>
+
+
+
+
+</Tabs>
+
