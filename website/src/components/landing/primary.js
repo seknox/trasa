@@ -10,17 +10,21 @@ import ThemeBase from '../muiTheme';
 
 const useStyles = makeStyles((theme) => ({
   background: {
+    // padding: theme.spacing(6),
+    // maxWidth: 1500,
+    // marginLeft: 'auto',
+    // marginRight: 'auto',
     // background: '#f5f6ff',
   },
   ctaPad: {
-    marginTop: 100,
+    marginTop: 20,
   },
 
   sideImage: {
     boxShadow: '0 0 20px 0 rgba(0,0,0,0.12)',
     marginTop: theme.spacing(3),
     // padding: theme.spacing(2),
-    // backgroundColor: 'white',
+    backgroundColor: 'white',
   },
   contained: {
     color: 'white',
@@ -41,33 +45,45 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function MainCta() {
-  const imgUrl = useBaseUrl('dash/dash2.png');
+  const imgUrl = useBaseUrl('dash/access-stats.png');
   const classes = useStyles();
   return (
     <ThemeBase>
-      <Grid container spacing={2} className={classes.background}>
+      <Grid
+        container
+        spacing={2}
+        direction="row"
+        justify="center"
+        alignItems="center"
+        className={classes.background}
+      >
         <Grid item xs={12} sm={12} md={5}>
           <div className={classes.ctaPad}>
             <Typography variant="h1" component="h1">
               zero trust access
             </Typography>
-            <Typography variant="h3" component="h3">
+            {/* <Typography variant="h3" component="h3">
+              secure remote access to Web, SSH, RDP and Database services
+            </Typography> */}
+
+            <Typography variant="subtitle1" style={{ textAlign: 'center' }}>
               secure remote access to Web, SSH, RDP and Database services
             </Typography>
+
             <Grid item xs={12}>
               <Grid container spacing={0} direction="row" alignItems="center" justify="center">
-                <Grid item xs={4}>
+                {/* <Grid item xs={4}>
                   <Link
                     className={clsx('button  button--md', classes.contained)}
                     to={useBaseUrl('blog/2020/09/22/why-zero-trust-network-access-ztna')}
                   >
                     Why do I need this?
                   </Link>
-                </Grid>
+                </Grid> */}
 
                 <Grid item xs={4}>
                   <Link
-                    className={clsx('button  button--md', classes.contained)}
+                    className={clsx('button  button--lg', classes.contained)}
                     to={useBaseUrl('docs/')}
                   >
                     Get Started

@@ -5,8 +5,10 @@ import React from 'react';
 // import Button from '../comps/button'
 import PrimaryCTA from '../components/landing/primary';
 import SecondaryCTA from '../components/landing/secondary';
-import Features from '../components/features';
 import styles from './styles.module.css';
+import UseCase from '../components/landing/usecase';
+import Features from '../components/landing/features';
+import Showcase from '../components/landing/showcase';
 
 function Home() {
   const context = useDocusaurusContext();
@@ -24,13 +26,13 @@ function Home() {
 
       <main>
         <section className={styles.features}>
+          {/* <Features /> */}
+          {/* <UseCase /> */}
+          <SecondaryCTA />
           <div className="container">
-            <SecondaryCTA />
-            <Features />
+            <Showcase />
           </div>
         </section>
-
-        {/* <Features /> */}
       </main>
     </Layout>
   );

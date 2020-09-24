@@ -20,6 +20,19 @@
   font-family: 'Rajdhani', sans-serif;
 }
 
+.container {
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  max-width: 1500;
+  padding-left: var(--ifm-spacing-horizontal);
+  padding-right: var(--ifm-spacing-horizontal);
+
+  &--fluid {
+    max-width: 1500;
+  }
+}
+
 .navbar {
   background-color: #ffffff;
   /* 03052b */
@@ -62,7 +75,7 @@
 }
 
 .hero {
-  background-image: url('/static/img/bgs/3325193.jpg');
+  /* background-image: url('/static/bgs/3325193.jpg'); */
   background-color: #ffffff;
   background-size: cover;
   /* background-position: center; */

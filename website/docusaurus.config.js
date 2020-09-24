@@ -25,9 +25,50 @@ module.exports = {
         src: 'img/trasa.svg',
       },
       items: [
-        { to: 'blog', label: 'Blog', position: 'right' },
-        { to: 'security', label: 'Security', position: 'right' },
-        { to: 'community', label: 'Community', position: 'right' },
+        // { to: 'use-cases', label: 'Use Cases', position: 'right' },
+        {
+          label: 'Use Cases',
+          position: 'left',
+          items: [
+            {
+              to: 'zero-trust-service-access',
+              label: 'Zero Trust Service Access',
+              position: 'right',
+            },
+            {
+              to: 'privileged-access-managemend',
+              label: 'Unified Internal Service Access',
+              position: 'right',
+            },
+            {
+              to: 'privileged-access-managemend',
+              label: 'Device Trust',
+              position: 'right',
+            },
+            {
+              to: 'two-factor-authentication',
+              label: 'Multi Factor Authentication',
+              position: 'right',
+            },
+            {
+              to: 'privileged-access-managemend',
+              label: 'Privileged Access Management',
+              position: 'right',
+            },
+          ],
+        },
+
+        {
+          label: 'Community',
+          position: 'left',
+          items: [
+            { to: 'blog', label: 'Blog', position: 'right' },
+            { to: 'https://discuss.trasa.io', label: 'Contribute', position: 'right' },
+            { to: 'https://discuss.trasa.io', label: 'Forum', position: 'right' },
+          ],
+        },
+        { to: 'features', label: 'Features', position: 'left' },
+        { to: 'security', label: 'Security', position: 'left' },
         {
           to: 'docs/',
           activeBasePath: 'docs',
@@ -52,10 +93,9 @@ module.exports = {
           href: 'https://github.com/seknox/trasa',
           className: 'signup-link',
           position: 'right',
-          label: 'Free Trial',
+          label: 'Try Now',
           'aria-label': 'GitHub repository',
         },
-        // {to: 'features', label: 'Downloads', position: 'right'},
       ],
     },
     // announcementBar: {
@@ -108,7 +148,7 @@ module.exports = {
       {
         docs: {
           // It is recommended to set document id as docs home page (`docs/` path).
-          homePageId: 'getting-started/overview',
+          // homePageId: 'getting-started/overview',
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
           editUrl: 'https://github.com/facebook/docusaurus/edit/master/website/',

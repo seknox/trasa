@@ -11,6 +11,7 @@ let theme = createMuiTheme({
       fontSize: 46,
       letterSpacing: 0.5,
       padding: 10,
+      textAlign: 'center',
       color: '#000066',
     },
     h2: {
@@ -49,6 +50,14 @@ let theme = createMuiTheme({
     body1: {
       fontWeight: 600,
       fontSize: 20,
+      letterSpacing: 0.5,
+      color: 'black',
+      padding: 12,
+      textAlign: 'justify',
+    },
+    subtitle1: {
+      fontWeight: 600,
+      fontSize: 24,
       letterSpacing: 0.5,
       color: '#404854',
       padding: 12,
