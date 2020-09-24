@@ -1,0 +1,7 @@
+{
+  "name": "trasaWrkstnAgent",
+  "description": "Native helper for TRASA browser extension.",
+  "path": "/usr/local/bin/trasaWrkstnAgent",
+  "type": "stdio",
+  "allowed_extensions": ["trasa.brsr.ext@seknox.com"]
+}
