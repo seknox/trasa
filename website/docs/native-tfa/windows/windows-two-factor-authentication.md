@@ -51,7 +51,7 @@ If you checked on "Launch TrasaWIn to configure now" checkbox, configuration app
 - Skip TLS verification: Allows to connect to TRASA server if self signed certificate is used at port 443.
   ![Configuring value from service profile](/img/docs/tfa/windows/config-from-trasa.png 'Configuring TRASA TFA agent')
 
-In following image, you can see appID appsecret and api hostname entered as per auth app created earlier. Note api host name "api.trasa.seknox.com" always remains same for TRASA SaaS users and can be custom url for self hosted (On-Premise) TRASA users.
+In following image, you can see appID appsecret and api hostname entered as per auth app created earlier. Note api host name "app.trasa.io" always remains same for TRASA SaaS users and can be custom url for self hosted (On-Premise) TRASA users.
 
 Below is example on how configuration would look like.
 ![Configuring TRASA TFA agent](/img/docs/tfa/windows/configure-trasawin-tfa.png 'Configuring TRASA TFA agent')

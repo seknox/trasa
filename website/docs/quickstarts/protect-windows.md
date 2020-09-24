@@ -36,13 +36,13 @@ Click "verify my account" button and you will be redirected to trasa dashboard t
 
 
 ### 2. Login to trasa dashboard
-Head over to [login page](https://trasa.seknox.com/login) and enter your credentials which you receive earlier in email.
+Head over to [login page](https://app.trasa.io/login) and enter your credentials which you receive earlier in email.
 <!-- ![](https://storage.cloud.google.com/trasa-website-static/login.png) -->
 
 
 
 ### 3. Create TRASA auth app  
-Once you log in, proceed to creating [auth agents](https://trasa.seknox.com/authapps) . Auth agents are lightwieght authenticators which protects your system by adding two factor authentication. Auth agents are also responsible to collect event metrics which are populated in analytical dashboard.
+Once you log in, proceed to creating [auth agents](https://app.trasa.io/services) . Auth agents are lightwieght authenticators which protects your system by adding two factor authentication. Auth agents are also responsible to collect event metrics which are populated in analytical dashboard.
 <!-- ![](https://storage.googleapis.com/trasa-website-static/create-auth-app.png) -->
  1) Click on auth Agents which can be found in side menu of dashboard
  2) Click create Auth Agent button
@@ -73,7 +73,7 @@ Log into trasa authenticator. you will need to enter OTP code in the process. ch
 
 
 
-Visit [Enrol Device Page](https://trasa.seknox.com/woa/enrol/device). Once you enter your email and password, you will be presented with QR code. Scan the QR code with *Login with QR code option* and your device will be automatically synced with your account.
+Visit [Enrol Device Page](https://app.trasa.io/woa/enrol/device). Once you enter your email and password, you will be presented with QR code. Scan the QR code with *Login with QR code option* and your device will be automatically synced with your account.
 
 
 
@@ -88,7 +88,7 @@ Visit [Enrol Device Page](https://trasa.seknox.com/woa/enrol/device). Once you e
 Download [TrasaWIN](https://storage.googleapis.com/trasa-public-download-assets/trasa-installers/TrasaWINv2.5.msi). Install it into windows workstation/serevr you want to protect with Trasa.
 Once you finish installation, Open trasaWIN application as administrator.
 Head back to your dashboard and note appID and appSecret of authentication app from auth app page (which we created earlier in step 3).
-In following image, you can see appID appsecret and api hostname entered as per auth app created earlier. Note api host name "api.trasa.seknox.com" always remains same for TRASA SaaS users and can be custom url for self hosted (On-Premise) TRASA users.
+In following image, you can see appID appsecret and api hostname entered as per auth app created earlier. Note api host name "app.trasa.io" always remains same for TRASA SaaS users and can be custom url for self hosted (On-Premise) TRASA users.
 
 
 <!-- https://storage.googleapis.com/trasa-website-static/quickstart/configure-trasawin.png -->

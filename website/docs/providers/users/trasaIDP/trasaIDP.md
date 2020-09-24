@@ -11,12 +11,12 @@ export const Hlt = ({children, color}) => ( <span style={{
       padding: '0.2rem',
     }}>{children}</span> );
 
-TRASA IDP is builtin default user identity provider.
+TRASA IDP is a builtin default user identity provider.
 
 ## Creating User
 
 :::important
-TRASA expects unique email and username across the organization.
+TRASA expects unique emails and usernames across the organization.
 :::
 
 :::tip
@@ -35,7 +35,7 @@ Assign short and easy to use username. Emails are usually lengthy, so short user
 
 ## Updating or deleting user
 
-+ You can update the user profile by clicking on `:` menu icon in user profile card.
++ You can update the user profile by clicking on `:` menu icon in the user profile card.
 
 ![Update User](/img/docs/users/trasa/update-user.png 'Update User')
 
