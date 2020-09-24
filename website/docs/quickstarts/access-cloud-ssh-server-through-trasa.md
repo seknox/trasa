@@ -30,30 +30,4 @@ To use TRASA as access proxy, you must setup firewall/ network security rules to
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-<Tabs
-  defaultValue="linux"
-  values={[
-    {label: 'GCP', value: 'gcp'},
-    {label: 'AWS', value: 'aws'},
-    {label: 'Digital Ocean', value: 'do'},
-  ]}>
-  
-<TabItem value="aws">
-* Create a new security rule
-* Give it a friendly name 
-* On protocol choose tcp and on port choose 22
-* On Source IP enter IP of TRASA server
-<TabItem/>
-
-<TabItem value="gcp">
-GCP
-<TabItem/>
-
-<TabItem value="do">
-DO
-<TabItem/>
-
-
-
-<Tabs/>
 

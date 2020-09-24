@@ -14,7 +14,7 @@ module.exports = {
       ],
       // Tutorial: ['tutorial/tutorial'],
       Install: ['install/installation', 'install/initial-setup'],
-      QuickStart: ['quickstarts/quickstart-cloud-ssh'],
+      QuickStart: ['quickstarts/quickstart'],
       Providers: [{ users: ['providers/users/ldap/ldap'] }],
       Users: [
         'users/users',
