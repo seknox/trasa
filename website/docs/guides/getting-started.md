@@ -26,10 +26,14 @@ QR code will appear on screen.
 
 
 * Open TRASA mobile app and press + button on bottom right and then press QR icon
-<img alt="mobile-app-add-qr" src={useBaseUrl('img/docs/quickstart/mobile-app-add-qr.png')} />  
+
+<img width="20%" alt="mobile-app-add-qr" src={useBaseUrl('img/docs/quickstart/mobile-app-add-qr.png')} />  
+
 * Scan the QR code on the browser
 * If everything goes well, you will see the following icon on your app
-<img  alt="mobile-app-added-totp" src={useBaseUrl('img/docs/quickstart/mobile-app-added-totp.png')} />  
+
+<img width="20%" alt="mobile-app-added-totp" src={useBaseUrl('img/docs/quickstart/mobile-app-added-totp.png')} />  
+
 * Press the icon to get TOTP codes
 
 

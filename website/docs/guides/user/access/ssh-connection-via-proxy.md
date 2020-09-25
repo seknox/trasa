@@ -98,7 +98,7 @@ If you're using Putty, use PuTTYgen to convert the downloaded key `id_rsa` into 
 Ask your administrator to save the private key in vault.
 
 #### Using agent forwarding
->SSH Agent forwarding is not recommended since it allows server to use your SSH keys.
+>SSH Agent forwarding is not recommended since it allows user with root priviglege in server to use your SSH keys.
 * Add the private key to ssh agent `ssh-add <private_key_path>`
 * Use -A flag `ssh -A -i <private_key_path> root@trasa.hostname -p 8022`
 
