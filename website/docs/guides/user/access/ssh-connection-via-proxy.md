@@ -6,7 +6,7 @@ sidebar_label: SSH
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-
+## Access methods
 You can access SSH service either via Browser or SSH client.
 
 ### Using Browser
