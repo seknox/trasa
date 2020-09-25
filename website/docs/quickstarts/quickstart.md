@@ -71,7 +71,9 @@ Now 2FA device is added.
 <img  alt="assign-user-btn" src={useBaseUrl('img/docs/quickstart/assign-user-btn.png')} />  
 * Choose the user and policy you just created.
 <img  alt="assign-user-dialog" src={useBaseUrl('img/docs/quickstart/assign-user-dialog.png')} />  
+
 > Right now you are assigning yourself to the service. You can assign other users too when you [create](../users/crud.md) them.
+
 * On privilege, enter the username of the upstream server
 * Click submit
 
