@@ -23,10 +23,13 @@ You can access SSH service either via Browser or SSH client.
 
 ### Using SSH clients
 
-#### Download User Key (Optional)
+#### Download TRASA User Key (Optional)
 * Go to dashboard and go to "Account" tab
 * Click the menu to get dropdown menu items
 * Click the "get ssh private key" button" to download key
+
+>This key is used to authenticate to TRASA server NOT upstream SSH server.
+>So, you might still be asked for upstream password.
 
 :::tip 
 If you're using Putty, use PuTTYgen to convert the downloaded key `id_rsa` into `id_rsa.ppk`.
@@ -89,12 +92,13 @@ If you're using Putty, use PuTTYgen to convert the downloaded key `id_rsa` into 
 </Tabs>
 
 
-##### Agent forwarding.
+### Using private key instead of password
 
-Since TRASA ssh gateway doesn't have access to the user private key, you need to enable agent forwarding to use private keys/certificate while logging into the upstream server.
+#### Save private keys in vault (Recommended)
+Ask your administrator to save the private key in vault.
 
->SSH Agent forwarding is not recommended since it allows proxy server to use your SSH keys and also eavesdrop on your ongoing session.
->But in our case, TRASA ssh proxy should and can record all the traffic. So you need to trust the TRASA server.
+#### Using agent forwarding
+>SSH Agent forwarding is not recommended since it allows server to use your SSH keys.
 * Add the private key to ssh agent `ssh-add <private_key_path>`
 * Use -A flag `ssh -A -i <private_key_path> root@trasa.hostname -p 8022`
 
@@ -103,10 +107,6 @@ Since TRASA ssh gateway doesn't have access to the user private key, you need to
 :::tip
 You can use trasa private key and service private key at the same time.   
 `ssh -A -i <trasa_private_key_path> -i <service_private_key_path> root@trasa.hostname -p 8022`
-:::
-
-:::tip
-If you have been using google cloud, gcloud saves private key in `~/.ssh/google_compute_engine`. You can use that to login through TRASA.
 :::
 
 
