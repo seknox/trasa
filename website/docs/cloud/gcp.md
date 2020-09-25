@@ -23,7 +23,29 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 Use this firewall rule to give ssh access to all instances.
 
 
-## Getting SSH private key
-If you are using google cloud, chances are you are using gcloud cli tool to access ssh.
-gcloud stores your private key as `~/.ssh/google_compute_engine`. 
+## Configuring SSH keys in Google Cloud
+By default google cloud uses OS Login which uses google identity to manage SSH keys.
+To use TRASA to manage your SSH keys, you need to disable OS Login.
+Then you need to add ssh keys to the instance or project.
+
+
+* Go to [google cloud compute instances page](https://console.cloud.google.com/compute/instances) and click on the instance you want to configure. 
+* Click the "Edit" button
+<img  alt="edit-instance-btn" src={useBaseUrl('img/docs/cloud/gcp/edit-instance-btn.png')} />
+
+* Generate a new ssh key
+`ssh-keygen -t rsa -b 4096  -f ~/.ssh/[KEY_FILENAME] -C [USERNAME]`
+* Scroll down to the "custom metadata" section and add a new key `enable-oslogin`:`FALSE`
+* Click the "add item" button under SSH Keys section
+* Copy the contents of [KEY_FILENAME].pub into the field
+<img  alt="instance-level-metadata" src={useBaseUrl('img/docs/cloud/gcp/instance-level-metadata.png')} />
+* Click Save
+* [Save the contents of [KEY_FILENAME] in TRASA vault](../providers/secret-vault/index.md#storing-service-credentials)
+
+:::tip
+If you want to configure this for all instances of a project, go to [Metadata](https://console.cloud.google.com/compute/metadata) menu in Compute Engiene page
+ <img  alt="project-level-metadata" src={useBaseUrl('img/docs/cloud/gcp/project-level-metadata.png')} />
+
+:::
+
 
