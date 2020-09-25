@@ -31,7 +31,7 @@ module.exports = {
         'services/ssh/ssh-service',
         'services/radius/radius-server',
       ],
-      Policies: ['policies/policy-introduction', 'policies/basic-policy', 'policies/device-policy'],
+      Policies: ['policies/policy-introduction', 'policies/basic-policy', 'policies/device-policy','policies/adhoc-policy'],
       'Access Map': ['access-map/access-mapping'],
       'Access Proxy': ['access-proxy/introduction', 'access-proxy/sshproxy'],
       'Two Factor Authentication': [
