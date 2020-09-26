@@ -31,8 +31,13 @@ module.exports = {
         'services/ssh/ssh-service',
         'services/radius/radius-server',
       ],
-      Policies: ['policies/policy-introduction', 'policies/basic-policy', 'policies/device-policy','policies/adhoc-policy'],
-      'Access Map': ['access-map/access-mapping'],
+      Policies: [
+        'policies/policy-introduction',
+        'policies/basic-policy',
+        'policies/device-policy',
+        'policies/adhoc-policy',
+      ],
+      'Access Map': ['access-map/access-mapping', 'access-map/dynamic-access'],
       'Access Proxy': ['access-proxy/introduction', 'access-proxy/sshproxy'],
       'Two Factor Authentication': [
         'native-tfa/two-factor-authentication',
@@ -42,7 +47,6 @@ module.exports = {
       'Secret Vault': ['providers/secret-vault/index'],
       'Cloud Providers': ['cloud/amazon-web-services', 'cloud/google-cloud', 'cloud/digital-ocean'],
       Providers: [{ users: ['providers/users/ldap/ldap'] }],
-
 
       'System Configurations': ['system/index', 'system/config-reference'],
     },

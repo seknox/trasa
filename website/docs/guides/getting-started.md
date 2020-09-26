@@ -45,6 +45,8 @@ Now 2FA device is added.
 
 When you log into the TRASA dashboard, you will be redirected to your account page. 
 
+If admin has assigned services to your account, you can see them. Click "connect" to access them.
+
 ### Services 
 It displays all the services you are assigned to. You can access them from here.
 

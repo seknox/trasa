@@ -19,3 +19,7 @@ Port: 1812
 Shared Secret: Service secret
 ```
 
+:::tip
+You can get the service secret in the service settings.
+:::
+
