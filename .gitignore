@@ -12,7 +12,11 @@ devenv/
 build/etc/trasa/certs/
 build/etc/trasa/static/
 
-
+#############################
+# wrkstn 
+#############################
+wrkstn.exe
+wrkstn/wrkstn
 
 #############################
 #       app      #####
