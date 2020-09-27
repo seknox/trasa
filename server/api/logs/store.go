@@ -324,7 +324,7 @@ func (s logStore) UploadHTTPLogToMinio(file *os.File, login AuthLog) error {
 	loginTime := time.Unix(0, login.LoginTime)
 	objectNamePrefix := filepath.Join(login.OrgID, strconv.Itoa(loginTime.Year()), strconv.Itoa(int(loginTime.Month())), strconv.Itoa(loginTime.Day()))
 
-	objectName := objectNamePrefix + filepath.Base(file.Name())
+	objectName := filepath.Join(objectNamePrefix, filepath.Base(file.Name()))
 
 	// Upload log file to minio
 	err := s.PutIntoMinio(objectName, filePath, bucketName)
