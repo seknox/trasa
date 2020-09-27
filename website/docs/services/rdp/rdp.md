@@ -9,7 +9,7 @@ There are two ways to protect RDP servers.
 
 #### 1. Native 2FA agents
 You need to install and configure 2fa agents in all RDP servers you want to protect.
-[This guide](../../native-tfa/windows/windows-two-factor-authentication.md) will help you configure native agents.
+[This guide](../../native-tfa/windows/windows-two-factor-authentication.md) will help you configure native agents in windows.
 
 
 #### 2. RDP Access Proxy
