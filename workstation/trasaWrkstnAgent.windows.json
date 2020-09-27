@@ -1,0 +1,7 @@
+{
+  "name": "trasaWrkstnAgent",
+  "description": "Native helper for TRASA browser extension.",
+  "path": "C:\\Program Files\\trasaWrkstnAgent\\trasaWrkstnAgent.exe",
+  "type": "stdio",
+  "allowed_extensions": ["trasa.brsr.ext@seknox.com"]
+}

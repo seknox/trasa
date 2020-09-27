@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="D3955C0C-D785-46D9-869A-0EBDDF7C04FD" Name="trasaWrkstnAgent" Language="1033" Version="1.0" Manufacturer="Seknox Pte Ltd" UpgradeCode="9ab77166-102d-4cfd-92db-84c0767b09e5">
+    <Package InstallerVersion="305" Compressed="yes" InstallPrivileges="elevated" InstallScope="perMachine" Platform="x64"  />
+
+    <!-- WIX config vars -->
+    <Icon Id="icon.ico" SourceFile="assets\img\info.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="icon.ico" />
+
+    <WixVariable Id="WixUILicenseRtf" Value=".\assets\License.rtf" />
+    <WixVariable Id="WixUIBannerBmp" Value=".\assets\img\nbannerimage.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value=".\assets\img\ndialogue.bmp" />
+    <WixVariable Id="WixUIExclamationIco" Value=".\assets\img\info.ico" />
+    <WixVariable Id="WixUIInfoIco" Value=".\assets\img\info.ico" />
+    <WixVariable Id="WixUINewIco" Value=".\assets\img\new.ico" />
+    <WixVariable Id="WixUIUpIco" Value=".\assets\img\new.ico" />
+
+    <UI>
+      <UIRef Id="WixUI_Minimal" />
+      <Property Id="WIXUI_EXITDIALOGOPTIONALTEXT" Value="Note - This program works in conjunction with TRASA browser extension." />
+    </UI>
+
+
+
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+
+    <MediaTemplate EmbedCab="yes" />
+
+    <Feature Id="ProductFeature" Title="TrasaWrkstnAgent" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+      <ComponentGroupRef Id="RegComponents" />
+      <ComponentRef Id="ApplicationShortcut" />
+    </Feature>
+
+  </Product>
+
+
+  <!-- Step 1: Define the directory structure -->
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFiles64Folder">
+        <Directory Id="INSTALLFOLDER" Name="TrasaWrkstnAgent" />
+      </Directory>
+
+
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="TrasaWrkstnAgent"/>
+      </Directory>
+
+
+    </Directory>
+  </Fragment>
+
+  <!-- Configuration winEXE and json utility file that needs to be copied to INSTALLFOLDER @program files\TrasaWin -->
+  <Fragment>
+
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER" >
+
+      <Component Id="FILE_TracaExtNative" Guid="06BD6A4F-B592-4F70-B6A0-C5A6ED1B40B7" Win64="yes"  >
+        <File Id="FILE_TracaExtNative" Source=".\assets\trasaWrkstnAgent.exe" KeyPath="yes" ProcessorArchitecture="x64" />
+      </Component>
+      <Component Id="FILE_TracaExtNativeConfig" Guid="B62D7AD1-00C0-498B-8E31-B70D83C9B7AC" Win64="yes"  >
+        <File Id="FILE_TracaExtNativeConfig" Source=".\assets\trasaWrkstnAgent.json" KeyPath="yes" ProcessorArchitecture="x64" />
+      </Component>
+
+
+      <!-- bitlocker files -->
+      <Component Id="FILE_BLstatusexe" Guid="3FC06E4A-4D8E-4DA0-9821-EBCD16D2D359" Win64="yes"  >
+        <File Id="FILE_BLstatusexe" Source=".\assets\bitlockerstatus\bitlocker-status.exe" KeyPath="yes" ProcessorArchitecture="x64" />
+      </Component>
+
+      <Component Id="FILE_BLstatusexeconfig" Guid="484C03EF-BDD3-4048-B2A5-551FE7C0698A" Win64="yes"  >
+        <File Id="FILE_BLstatusexeconfig" Source=".\assets\bitlockerstatus\bitlocker-status.exe.config" KeyPath="yes" ProcessorArchitecture="x64" />
+      </Component>
+
+      <Component Id="FILE_BLstatuspdb" Guid="9EFCD3ED-BDE7-4DE9-82A4-913CB71E2628" Win64="yes"  >
+        <File Id="FILE_BLstatuspdb" Source=".\assets\bitlockerstatus\bitlocker-status.pdb" KeyPath="yes" ProcessorArchitecture="x64" />
+      </Component>
+
+      <Component Id="FILE_BLWindowsAPICodePack" Guid="04CE4002-73C3-42BC-A2E2-ADFD2146052A" Win64="yes"  >
+        <File Id="FILE_BLWindowsAPICodePack" Source=".\assets\bitlockerstatus\Microsoft.WindowsAPICodePack.dll" KeyPath="yes" ProcessorArchitecture="x64" />
+      </Component>
+
+      <Component Id="FILE_BLWindowsAPICodePackExtendedLinguisticServices" Guid="66C5EB75-6EAB-43D2-A9DC-48FC724A2991" Win64="yes"  >
+        <File Id="FILE_BLWindowsAPICodePackExtendedLinguisticServices" Source=".\assets\bitlockerstatus\Microsoft.WindowsAPICodePack.ExtendedLinguisticServices.dll" KeyPath="yes" ProcessorArchitecture="x64" />
+      </Component>
+
+      <Component Id="FILE_BLWindowsAPICodePackSensors" Guid="A67E9C74-94E5-4A79-B607-173F69B8F4BE" Win64="yes"  >
+        <File Id="FILE_BLWindowsAPICodePackSensors" Source=".\assets\bitlockerstatus\Microsoft.WindowsAPICodePack.Sensors.dll" KeyPath="yes" ProcessorArchitecture="x64" />
+      </Component>
+
+      <Component Id="FILE_BLWindowsAPICodePackShell" Guid="BCC11099-2379-4BEC-BC46-BE7A2096E36B" Win64="yes"  >
+        <File Id="FILE_BLWindowsAPICodePackShell" Source=".\assets\bitlockerstatus\Microsoft.WindowsAPICodePack.Shell.dll" KeyPath="yes" ProcessorArchitecture="x64" />
+      </Component>
+
+      <Component Id="FILE_BLWindowsAPICodePackShellExtensions" Guid="FC7D3842-54FB-48EF-8E42-FF3A9A17924B" Win64="yes"  >
+        <File Id="FILE_BLWindowsAPICodePackShellExtensions" Source=".\assets\bitlockerstatus\Microsoft.WindowsAPICodePack.ShellExtensions.dll" KeyPath="yes" ProcessorArchitecture="x64" />
+      </Component>
+
+
+    </ComponentGroup>
+  </Fragment>
+
+
+
+
+  <!-- TRASA registry components -->
+  <Fragment>
+    <ComponentGroup Id="RegComponents" Directory="TARGETDIR">
+      <!-- registering trasaWrkstnAgent -->
+      <Component Id="cmp865C1D5F24AF49AAB36006A6EC15A9BD" Guid="{8DD30391-87B4-4AD0-B1DF-82DAE55844EB}" KeyPath="yes" Win64="yes">
+        <RegistryKey Key="SOFTWARE\Mozilla\NativeMessagingHosts\trasaWrkstnAgent" Root="HKLM">
+          <RegistryValue Value="C:\\Program Files\\TrasaWrkstnAgent\\trasaWrkstnAgent.json" Type="string" />
+        </RegistryKey>
+      </Component>
+
+    </ComponentGroup>
+  </Fragment>
+
+
+  <!-- On uninstall -->
+  <Fragment>
+    <DirectoryRef Id="ApplicationProgramsFolder">
+      <Component Id="ApplicationShortcut" Guid="3888951C-5AED-4DBC-B1AB-20610CCD12C6" Win64="yes">
+
+        <RemoveFolder Id="CleanUpShortCut" Directory="ApplicationProgramsFolder" On="uninstall"/>
+        <RemoveFolder Id="rmTrasaWINDir" Directory="ApplicationProgramsFolder" On="uninstall"/>
+
+
+        <RegistryValue Root="HKCU" Key="Software\Microsoft\TrasaWin" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+
+
+
+</Wix>
