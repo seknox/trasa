@@ -88,10 +88,10 @@ export default function LoginPage(props) {
       browserExtensions: exts,
     };
 
-    // native message trasaExtNative to register device.
+    // native message trasaWrkstnAgent to register device.
     let message = { intent: 'enrolDevice', data: enrolDeviceData };
 
-    // chrome.runtime.sendNativeMessage('trasaextnative',
+    // chrome.runtime.sendNativeMessage('trasaWrkstnAgent',
     // { text: "Hello" },
     // function(response) {
     //   console.log("Received " + response);
@@ -101,7 +101,7 @@ export default function LoginPage(props) {
     //   console.error(chrome.runtime.lastError);
     // }
 
-    var sending = browser.runtime.sendNativeMessage('trasaextnative', message);
+    var sending = browser.runtime.sendNativeMessage('trasaWrkstnAgent', message);
     let resp = await sending.then(rcvd, onError);
 
     if (resp.status === true) {
@@ -153,7 +153,7 @@ export default function LoginPage(props) {
         ) : (
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <Typography className={classes.title}>Register your browser </Typography>
+              <Typography variant="h6">Register your browser </Typography>
               <br />
               {loading ? (
                 <div>

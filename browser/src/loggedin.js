@@ -1,5 +1,6 @@
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
+import { makeStyles } from '@material-ui/styles';
 import Shield from '@material-ui/icons/Security';
 import axios from 'axios';
 import React, { useState } from 'react';
@@ -70,12 +71,11 @@ function LoggedIn() {
   const classes = useStyles();
 
   return (
-    <Grid container spacing={2} direction="column" alignItems="center" justify="center">
+    <Grid container spacing={4} direction="column" alignItems="center" justify="center">
       <Grid item xs={12}>
         <Shield fontSize="large" className={classes.icon} />
         <br />
         <div>Device cyber hygiene managed by TRASA</div>
-        <br />
 
         {failed ? (
           <div>
@@ -99,24 +99,28 @@ function LoggedIn() {
         )}
       </Grid>
 
-      <Grid container direction="row" justify="center" spacing={2}>
-        <Grid item xs={3}>
-          <Button variant="contained" className={classes.button} size="small" onClick={getExt}>
-            Sync
-          </Button>
+      <Grid item xs={12}>
+        <Grid container direction="row" justify="center" spacing={2}>
+          <Grid item xs={6}>
+            <Button variant="contained" className={classes.button} size="small" onClick={getExt}>
+              Sync
+            </Button>
+            <br />
+          </Grid>
+
+          <Grid item xs={6}>
+            <Button
+              variant="contained"
+              className={classes.button}
+              size="small"
+              onClick={deregister}
+            >
+              deregister
+            </Button>
+          </Grid>
+
           <br />
         </Grid>
-
-        <Grid item xs={3}>
-          <Button variant="contained" className={classes.button} size="small" onClick={deregister}>
-            deregister
-          </Button>
-        </Grid>
-
-        <br />
-      </Grid>
-      <Grid item xs={12}>
-        v30.03.2020
       </Grid>
     </Grid>
   );

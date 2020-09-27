@@ -33,7 +33,7 @@ async function GetDeviceHygiene(pubKey) {
 
   let message = { intent: 'getHygiene', data: getHygieneReq };
 
-  var sending = browser.runtime.sendNativeMessage('trasaextnative', message);
+  var sending = browser.runtime.sendNativeMessage('trasaWrkstnAgent', message);
   let resp = await sending.then(rcvd, onErr);
   // console.log('resp: ', JSON.parse(resp))
   return JSON.parse(resp);

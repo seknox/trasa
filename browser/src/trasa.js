@@ -2,48 +2,40 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import LoggedIn from './loggedin';
 import LoginPage from './login';
-
-//import TRASALogo from './assets/trasa-ni.svg'
+import { Grid } from '@material-ui/core';
+import TRASALogo from './assets/trasa.png';
 
 //var browser = require("webextension-polyfill");
 
-// window.browser = (function () {
-//   return window.msBrowser ||
-//     window.browser ||
-//     window.chrome;
-// })();
+function Home() {
+  const [loggedIn, setLoggedIn] = React.useState(false);
 
-class Trasa extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      loggedIn: false,
-    };
+  React.useEffect(() => {
+    browser.storage.local.get().then(function (token) {
+      if (token.extID) {
+        setLoggedIn(true);
+      }
+    });
+  }, []);
+
+  function setLoginTrue() {
+    setLoggedIn(true);
   }
 
-  async componentDidMount() {
-    let token = await browser.storage.local.get();
-    //console.log('tokens: ', token)
-    if (token.extID) {
-      this.setState({ loggedIn: true });
-    }
-  }
-
-  setLoginTrue = () => {
-    this.setState({ loggedIn: true });
-  };
-
-  click = () => {
-    this.setState({ loggedIn: !this.state.loggedIn });
-  };
-  render() {
-    return (
-      <div>
-        {/* <img src={TRASALogo} alt="trasa-logo" /> */}
-        {this.state.loggedIn ? <LoggedIn /> : <LoginPage setLoginTrue={this.setLoginTrue} />}
-      </div>
-    );
-  }
+  return (
+    <Grid container spacing={2} direction="column" justify="center" alignItems="center">
+      <Grid item xs={12}>
+        <br />
+        <img src={TRASALogo} alt="trasa-logo" width={150} />
+      </Grid>
+      <Grid item xs={12}>
+        {loggedIn ? <LoggedIn /> : <LoginPage setLoginTrue={setLoginTrue} />}
+      </Grid>
+      <Grid item xs={12}>
+        v1.0
+      </Grid>
+    </Grid>
+  );
 }
 
-ReactDOM.render(<Trasa />, document.getElementById('app'));
+ReactDOM.render(<Home />, document.getElementById('app'));

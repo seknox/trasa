@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: 'white', //'#d0d3d4', // //rgba(1,1,35,1)
   },
   icon: {
-    marginLeft: '40%',
+    marginLeft: '45%',
     color: 'navy',
   },
   paper: {
@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
     color: 'teal',
   },
   button: {
-    backgroundColor: '#1A237E',
+    backgroundColor: 'navy',
     color: 'white',
   },
   errorText: {

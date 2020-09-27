@@ -17,20 +17,30 @@ module.exports = {
   },
   module: {
     // This transpiles all code (except for third party modules) using Babel.
-    rules: [{
-      exclude: /node_modules/,
-      test: /\.js$/,
-      // Babel options are in .babelrc
-      use: ['babel-loader'],
-    }],
+    rules: [
+      {
+        exclude: /node_modules/,
+        test: /\.js$/,
+        // Babel options are in .babelrc
+        use: ['babel-loader'],
+      },
+      // {
+      //   exclude: /node_modules/,
+      //   test: /\.(png|jpe?g|gif)$/i,
+      //   use: ['file-loader'],
+      // },
+      {
+        test: /\.(jpg|png)$/,
+        use: {
+          loader: 'url-loader',
+        },
+      },
+    ],
   },
   resolve: {
     // This allows you to import modules just like you would in a NodeJS app.
     extensions: ['.js', '.jsx'],
-    modules: [
-      'src',
-      'node_modules',
-    ],
+    modules: ['src', 'node_modules'],
   },
   plugins: [
     // Since some NodeJS modules expect to be running in Node, it is helpful
