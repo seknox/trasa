@@ -38,8 +38,8 @@ module.exports = {
         'policies/adhoc-policy',
       ],
       'Access Map': ['access-map/access-mapping', 'access-map/dynamic-access'],
-      'Access Proxy': ['access-proxy/introduction', 'access-proxy/sshproxy'],
-      'Two Factor Authentication': [
+      'Access Proxy': ['access-proxy/introduction'],
+      'Native Agents': [
         'native-tfa/two-factor-authentication',
         'native-tfa/windows/windows-two-factor-authentication',
         'native-tfa/linux-two-factor-authentication',
@@ -48,7 +48,7 @@ module.exports = {
       'Cloud Providers': ['cloud/amazon-web-services', 'cloud/google-cloud', 'cloud/digital-ocean'],
       Providers: [{ users: ['providers/users/ldap/ldap'] }],
 
-      'System Configurations': ['system/index', 'system/config-reference'],
+      'System Configurations': ['system/fcm-setup','system/email-setup', 'system/config-reference'],
     },
   ],
   guides: [

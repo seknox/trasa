@@ -5,7 +5,10 @@ sidebar_label: Introduction
 ---
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
-TRASA uses Vault to store secret credentials and keys. 
+TRASA stores all keys and secrets in secure vault known as TsxVault.
+
+  _Passwords_, _Secret keys_, _API tokens_ etc. are needed by TRASA to integrate with 3rd party services. For example, FCM tokens, Email config settings, IDP integration keys.
+
 
 
 ### Initialize Vault (one time only)
