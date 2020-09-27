@@ -6,12 +6,25 @@ import (
 	"github.com/seknox/trasa/tests/server/crudtest"
 	"github.com/seknox/trasa/tests/server/notiftest"
 	"github.com/seknox/trasa/tests/server/providerstest"
+	"github.com/seknox/trasa/tests/server/systemtest"
 	"github.com/seknox/trasa/tests/server/testutils"
+	"github.com/seknox/trasa/tests/server/vaulttest"
 	"testing"
 	"time"
 )
 
 func TestServer(t *testing.T) {
+
+	vaulttest.InitVault(t)
+
+	t.Run("test system settings", func(t *testing.T) {
+		systemtest.UpdateSettings(t)
+		systemtest.SystemStatus(t)
+		systemtest.UpdateSecurityRules(t)
+		systemtest.GetSecurityRules(t)
+
+	})
+
 	t.Run("test inapp notifications", func(t *testing.T) {
 		n := notiftest.AddNotif(t)
 		notiftest.GetPendingNotif(t, n)
