@@ -35,9 +35,10 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/rs/cors v1.7.0
 	github.com/satori/go.uuid v1.2.1-0.20181028125025-b2ce2384e17b
+	github.com/seknox/fireser v0.0.0-20200913072715-2c8854a8f0e3
 	github.com/seknox/guacamole v0.0.0-20200729194451-d3df4ebf9f6a
 	github.com/seknox/ssh v0.0.0-20200729180628-0439c2427e43
-	github.com/shirou/gopsutil v2.20.7+incompatible
+	github.com/shirou/gopsutil v2.20.8+incompatible
 	github.com/sirupsen/logrus v1.6.0
 	github.com/spf13/cobra v0.0.3
 	github.com/spf13/viper v1.7.0
