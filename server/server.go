@@ -100,6 +100,7 @@ func StartServr() {
 		closeChan <- true
 	}()
 
+	webproxy.PrepareOxyLogger()
 	webproxy.PrepareProxyConfig()
 
 	// Init chi router
@@ -254,7 +255,7 @@ func CoreAPIRouter(r *chi.Mux) chi.Router {
 				return
 			}
 			req.URL = url
-			fwd, err := forward.New(forward.RoundTripper(transport))
+			fwd, err := forward.New(forward.RoundTripper(transport), forward.Logger(webproxy.OxyLog))
 
 			if err != nil {
 				logrus.Error(err)
