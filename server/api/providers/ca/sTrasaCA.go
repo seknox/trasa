@@ -2,6 +2,7 @@ package ca
 
 import (
 	"database/sql"
+	"github.com/seknox/trasa/server/api/providers/vault/tsxvault"
 
 	"github.com/pkg/errors"
 	"github.com/seknox/trasa/server/consts"
@@ -17,6 +18,12 @@ import (
 // StoreCert inserts certificate detail in cert_holderv1. If cert for service_id or type already exists,
 // StoreCert should update the value.
 func (s cryptStore) StoreCert(ch models.CertHolder) error {
+
+	var err error
+	ch.Key, err = tsxvault.Store.AesEncrypt(ch.Key)
+	if err != nil {
+		return errors.Errorf("cannot encrypt ca key: %v", err)
+	}
 
 	storedCert, err := s.GetCertDetail(ch.OrgID, ch.EntityID, ch.CertType)
 	if errors.Is(err, sql.ErrNoRows) {
@@ -94,6 +101,10 @@ func (s cryptStore) GetCertHolder(certType, entityID, orgID string) (models.Cert
 		Scan(&certHolder.CertID, &certHolder.OrgID, &certHolder.EntityID, &certHolder.Cert, &certHolder.Key, &certHolder.Csr, &certHolder.CertType, &certHolder.CreatedAt, &certHolder.LastUpdated)
 	if err != nil {
 		return certHolder, err
+	}
+	certHolder.Key, err = tsxvault.Store.AesDecrypt(certHolder.Key)
+	if err != nil {
+		return certHolder, errors.Errorf("cannot encrypt ca key: %v", err)
 	}
 	return certHolder, nil
 }
