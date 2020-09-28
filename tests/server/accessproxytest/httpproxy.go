@@ -17,7 +17,6 @@ import (
 )
 
 func prepareProxy(t *testing.T, done chan bool) {
-	webproxy.PrepareOxyLogger()
 	webproxy.PrepareProxyConfig()
 
 	prouter := chi.NewRouter()
