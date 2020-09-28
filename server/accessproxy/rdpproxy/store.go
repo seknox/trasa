@@ -43,7 +43,7 @@ func (s GWStore) uploadSessionLog(authlog *logs.AuthLog) error {
 	} else {
 		err = os.Remove(filepath.Join(tempFileDir, authlog.SessionID+".guac"))
 		if err != nil {
-			logrus.Errorf("could not delete mp4 file: %v", err)
+			logrus.Errorf("could not delete guac file: %v", err)
 		}
 		logrus.Tracef("%s.guac file converted and deleted", sessionID)
 
@@ -57,9 +57,9 @@ func (s GWStore) uploadSessionLog(authlog *logs.AuthLog) error {
 	} else {
 		err = os.Remove(filepath.Join(tempFileDir, authlog.SessionID+".guac.m4v"))
 		if err != nil {
-			logrus.Errorf("could not delete mp4 file: %v", err)
+			logrus.Errorf("could not delete guac.mp4 file: %v", err)
 		}
-		logrus.Tracef("%s.guacamole.mp4 file converted and deleted", sessionID)
+		logrus.Tracef("%s.guac.mp4 file converted and deleted", sessionID)
 
 	}
 
@@ -88,7 +88,7 @@ func (s GWStore) uploadSessionLog(authlog *logs.AuthLog) error {
 func getGuacencCmd(sessionID string) *exec.Cmd {
 	if os.Getenv("GUACENC_INSTALLED") == "true" {
 		guacencCmdStr := fmt.Sprintf(
-			"/usr/local/guacamole/bin/guacenc -f /tmp/trasa/accessproxy/guac/%s.guac", sessionID)
+			"nice -n 10 /usr/local/guacamole/bin/guacenc -f /tmp/trasa/accessproxy/guac/%s.guac", sessionID)
 
 		return exec.Command("/bin/sh", "-c", guacencCmdStr)
 
@@ -96,18 +96,24 @@ func getGuacencCmd(sessionID string) *exec.Cmd {
 
 	if runtime.GOOS == "windows" {
 		guacencCmdStr := fmt.Sprintf(
-			"docker.exe exec  guacd /usr/local/guacamole/bin/guacenc -f /tmp/trasa/accessproxy/guac/%s.guac", sessionID)
+			"docker.exe exec  guacd nice -n 10  /usr/local/guacamole/bin/guacenc -f /tmp/trasa/accessproxy/guac/%s.guac", sessionID)
 
 		return exec.Command("powershell", "-c", guacencCmdStr)
 	}
 
 	guacencCmdStr := fmt.Sprintf(
-		"sudo docker exec  guacd /usr/local/guacamole/bin/guacenc -f /tmp/trasa/accessproxy/guac/%s.guac", sessionID)
+		"sudo docker exec  guacd nice -n 10 /usr/local/guacamole/bin/guacenc -f /tmp/trasa/accessproxy/guac/%s.guac", sessionID)
 	return exec.Command("/bin/bash", "-c", guacencCmdStr)
 
 }
 
 func getFFMPEGcmd(tempFileDir, sessionID string) *exec.Cmd {
+
+	if os.Getenv("GUACENC_INSTALLED") == "true" {
+		ffmpegCmdStr := fmt.Sprintf("nice -n 10 ffmpeg -i %s/%s.guac.m4v %s/%s.mp4", tempFileDir, sessionID, tempFileDir, sessionID)
+		return exec.Command("/bin/bash", "-c", ffmpegCmdStr)
+
+	}
 
 	if runtime.GOOS == "windows" {
 		ffmpegCmdStr := fmt.Sprintf(`ffmpeg.exe -i %s\%s.guac.m4v %s\%s.mp4`, tempFileDir, sessionID, tempFileDir, sessionID)
@@ -115,7 +121,7 @@ func getFFMPEGcmd(tempFileDir, sessionID string) *exec.Cmd {
 
 	}
 
-	ffmpegCmdStr := fmt.Sprintf("sudo ffmpeg -i %s/%s.guac.m4v %s/%s.mp4", tempFileDir, sessionID, tempFileDir, sessionID)
+	ffmpegCmdStr := fmt.Sprintf("sudo nice -n 10 ffmpeg -i %s/%s.guac.m4v %s/%s.mp4", tempFileDir, sessionID, tempFileDir, sessionID)
 	return exec.Command("/bin/bash", "-c", ffmpegCmdStr)
 
 }

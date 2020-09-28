@@ -1,0 +1,7 @@
+{
+  "name": "trasaWrkstnAgent",
+  "description": "TRASA DEVICE HYGIENE AGENT",
+  "path": "C:\\Program Files\\TrasaWrkstnAgent\\trasaWrkstnAgent.exe",
+  "type": "stdio",
+  "allowed_extensions": ["trasa.brsr.ext@seknox.com"]
+}
