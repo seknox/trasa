@@ -104,7 +104,7 @@ func (s cryptStore) GetCertHolder(certType, entityID, orgID string) (models.Cert
 	}
 	certHolder.Key, err = tsxvault.Store.AesDecrypt(certHolder.Key)
 	if err != nil {
-		return certHolder, errors.Errorf("cannot encrypt ca key: %v", err)
+		return certHolder, errors.Errorf("cannot decrypt ca key: %v", err)
 	}
 	return certHolder, nil
 }
