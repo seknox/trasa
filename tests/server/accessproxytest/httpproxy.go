@@ -2,20 +2,22 @@ package accessproxytest
 
 import (
 	"encoding/json"
+	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+	"time"
+
 	"github.com/go-chi/chi"
 	"github.com/go-chi/hostrouter"
 	webproxy "github.com/seknox/trasa/server/accessproxy/http"
 	"github.com/seknox/trasa/server/api/auth/serviceauth"
 	"github.com/seknox/trasa/server/models"
 	"github.com/seknox/trasa/tests/server/testutils"
-	"io/ioutil"
-	"net/http"
-	"net/http/httptest"
-	"testing"
-	"time"
 )
 
 func prepareProxy(t *testing.T, done chan bool) {
+	webproxy.PrepareOxyLogger()
 	webproxy.PrepareProxyConfig()
 
 	prouter := chi.NewRouter()
