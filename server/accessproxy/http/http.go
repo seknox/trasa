@@ -86,6 +86,7 @@ func Proxy() http.HandlerFunc {
 		fwd, err := forward.New(
 			forward.PassHostHeader(proxyConfig[r.Host].PassHostheader),
 			forward.RoundTripper(transport),
+			forward.Logger(global.OxyLog),
 		)
 
 		if err != nil {

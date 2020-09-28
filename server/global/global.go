@@ -6,13 +6,14 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
-	"github.com/seknox/trasa/server/utils"
-	"github.com/spf13/viper"
 	"net"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/seknox/trasa/server/utils"
+	"github.com/spf13/viper"
 
 	"github.com/minio/minio-go"
 	"github.com/sirupsen/logrus"
@@ -92,7 +93,8 @@ func InitDBSTOREWithConfig(conf Config) *State {
 	config = conf
 	level, _ := logrus.ParseLevel(config.Logging.Level)
 	logOutputToFile := flag.Bool("f", false, "Write to file")
-
+	OxyLog = logrus.New()
+	OxyLog.SetLevel(logrus.ErrorLevel)
 	flag.Parse()
 	if *logOutputToFile {
 		f, err := os.OpenFile(filepath.Join(utils.GetVarDir(), "log", "trasa.log"), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
@@ -100,6 +102,7 @@ func InitDBSTOREWithConfig(conf Config) *State {
 			panic(err)
 		}
 
+		OxyLog.SetOutput(f)
 		logrus.SetOutput(f)
 	} else {
 		logrus.SetOutput(os.Stdout)
@@ -441,3 +444,6 @@ type Gstate struct {
 	config         Config
 	redisClient    *redis.Client
 }
+
+// OxyLog is logging instance for oxy with default error level.
+var OxyLog *logrus.Logger

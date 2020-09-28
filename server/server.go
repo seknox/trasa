@@ -254,7 +254,7 @@ func CoreAPIRouter(r *chi.Mux) chi.Router {
 				return
 			}
 			req.URL = url
-			fwd, err := forward.New(forward.RoundTripper(transport))
+			fwd, err := forward.New(forward.RoundTripper(transport), forward.Logger(global.OxyLog))
 
 			if err != nil {
 				logrus.Error(err)
