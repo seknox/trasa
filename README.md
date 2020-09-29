@@ -25,6 +25,9 @@
 [![Actions Status](https://github.com/seknox/trasa/workflows/Build/badge.svg?branch=master)](https://github.com/seknox/trasa/actions)
 [![Actions Status](https://github.com/seknox/trasa/workflows/Test/badge.svg?branch=master)](https://github.com/seknox/trasa/actions)
 
+<br />
+<img alt="TRASA" width='800' src="https://www.trasa.io/dash/access-stats.png">
+
 </div>
 
 <!-- TABLE OF CONTENTS -->
@@ -35,6 +38,7 @@
 - [About The Project](#about-the-project)
   - [Immediate use cases and benefits](#immediate-use-cases-and-benefits)
 - [Getting Started](#getting-started)
+- [Contributing](#contributing)
 - [License](#license)
 - [Contact](#contact)
 
@@ -42,18 +46,14 @@
 
 ## About The Project
 
-TRASA is a unified access control platform with three access control features built into a single platform:
+TRASA is a unified access control platform with identity-aware access proxy, privileged access management, two-factor authentication, device trust, and access policy features that enable secure remote access to Web, SSH, RDP, and Database services.
 
-1. Two factor authentication (implemented with native agents)
-2. Privilege access management (implemented with identity aware access proxy)
-3. User device hygiene based access policies (implemented with user device security hygiene scanning agent)
-
-These features cumulatively enables **zero trust access control** (we have a fancy word for it, zTAC) security model to every remote access endpoints.
+These features cumulatively enables **zero trust access control** security model to every remote access endpoints.
 
 ### Immediate use cases and benefits
 
-- Secure remote access to internal infrastructure by internal team.
-- Secure remote access to internal infrastructure for 3rd party vendors.
+- Secure remote access to internal infrastructure and services by internal team.
+- Secure remote access to internal infrastructure and services for 3rd party vendors.
 - Follow best practice security for remote access.
 
 <!-- GETTING STARTED -->
@@ -70,7 +70,9 @@ We encourage to checkout <a href="https://www.trasa.io/docs"><strong>TRASA websi
 
 <!-- CONTRIBUTING -->
 
-<!-- ## Contributing -->
+## Contributing
+
+See [Contributing Guidelines](https://github.com/seknox/trasa/blob/master/CONTRIBUTING.md)
 
 <!-- LICENSE -->
 
@@ -82,4 +84,4 @@ Distributed under the Mozilla Public License v2 License. See `LICENSE` for more 
 
 ## Contact
 
-React out to Seknox team at secure at seknox dot com
+Reach out to Seknox team at secure at seknox dot com.
