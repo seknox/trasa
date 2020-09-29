@@ -3,7 +3,7 @@ module.exports = {
     // 'overview',
     // 'concepts',
     // 'glossary',
-    'quickstarts/quickstart',
+    // 'quickstarts/quickstart',
     {
       'Getting Started': [
         'getting-started/overview',
@@ -13,8 +13,8 @@ module.exports = {
 
         'getting-started/how-to',
       ],
-      // Tutorial: ['tutorial/tutorial'],
       Install: ['install/installation', 'install/initial-setup'],
+      Quickstarts: ['quickstarts/protect-ssh'],
       Users: [
         'users/users',
         'users/creating-updating-users',
@@ -39,13 +39,13 @@ module.exports = {
       ],
       'Access Map': ['access-map/access-mapping', 'access-map/dynamic-access'],
       'Access Proxy': ['access-proxy/introduction'],
-      'Native Agents': [
+      'Two Factor Authentication': [
         'native-tfa/two-factor-authentication',
         'native-tfa/windows/windows-two-factor-authentication',
         'native-tfa/linux-two-factor-authentication',
       ],
       'Secret Vault': ['providers/secret-vault/index'],
-      'Cloud Providers': ['cloud/amazon-web-services', 'cloud/google-cloud', 'cloud/digital-ocean'],
+      // 'Cloud Providers': ['cloud/amazon-web-services', 'cloud/google-cloud', 'cloud/digital-ocean'],
       Providers: [{ users: ['providers/users/ldap/ldap'] }],
 
       'System Configurations': [
