@@ -257,7 +257,7 @@ export default function ProxySetting(props: ProxySettingProps) {
     <Grid container spacing={2} alignItems="center" direction="row" justify="flex-start">
       <Grid item xs={12}>
         <Typography variant="h2"> Proxy settings </Typography>
-        <Typography variant="h4"> (only for HTTPs applications) </Typography>
+        <Typography variant="h4"> (only for HTTPs services) </Typography>
       </Grid>
       <Grid item xs={12}>
         <br />
