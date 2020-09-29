@@ -3,6 +3,7 @@ id: radius-server
 title: Radius Server
 sidebar_label: Radius Server
 ---
+
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
 
@@ -23,7 +24,7 @@ Shared Secret: Service key
 
 :::tip
 You can get the service key in the service settings.
-<img  alt="service-secret" src={useBaseUrl('img/docs/services/service-secret.png')} />
+<img  alt="service-secret" src={('/img/docs/services/service-secret.png')} />
 
 :::
 

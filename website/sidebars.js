@@ -3,6 +3,7 @@ module.exports = {
     // 'overview',
     // 'concepts',
     // 'glossary',
+    'quickstarts/quickstart',
     {
       'Getting Started': [
         'getting-started/overview',
@@ -14,7 +15,6 @@ module.exports = {
       ],
       // Tutorial: ['tutorial/tutorial'],
       Install: ['install/installation', 'install/initial-setup'],
-      QuickStart: ['quickstarts/quickstart'],
       Users: [
         'users/users',
         'users/creating-updating-users',
@@ -48,7 +48,11 @@ module.exports = {
       'Cloud Providers': ['cloud/amazon-web-services', 'cloud/google-cloud', 'cloud/digital-ocean'],
       Providers: [{ users: ['providers/users/ldap/ldap'] }],
 
-      'System Configurations': ['system/fcm-setup','system/email-setup', 'system/config-reference'],
+      'System Configurations': [
+        'system/fcm-setup',
+        'system/email-setup',
+        'system/config-reference',
+      ],
     },
   ],
   guides: [

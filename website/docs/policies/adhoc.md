@@ -3,6 +3,7 @@ id: adhoc-policy
 title: Adhoc Policy
 sidebar_label: Adhoc Policy
 ---
+
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
 Ad Hoc policy is a temporary policy given by administrator when requested. 
@@ -16,9 +17,9 @@ If you enforce ad hoc policy on a certain service, then users need to request ad
 To do that,
 * Go to service settings
 * Click edit icon in "Configuration" card
-<img  alt="edit-service" src={useBaseUrl('img/docs/policies/edit-service.png')} />
+<img  alt="edit-service" src={('/img/docs/policies/edit-service.png')} />
 * Enable the ad hoc switch
-<img  alt="adhoc-switch" src={useBaseUrl('img/docs/policies/adhoc-switch.png')} />
+<img  alt="adhoc-switch" src={('/img/docs/policies/adhoc-switch.png')} />
 
 * Click submit.
 
