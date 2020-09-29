@@ -12,7 +12,22 @@ devenv/
 build/etc/trasa/certs/
 build/etc/trasa/static/
 
+###########################
+# Nodejs
+###########################
+# Ignore build artifacts and other files.
+.DS_Store
+yarn.lock
+dist
+build
+node_modules
+package-lock.json
 
+#############################
+# workstation 
+#############################
+workstation.exe
+workstation/workstation
 
 #############################
 #       app      #####

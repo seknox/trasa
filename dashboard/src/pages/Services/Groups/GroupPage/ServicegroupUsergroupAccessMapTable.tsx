@@ -215,7 +215,7 @@ export default function ServicegroupUsergroupMapTable(props: any) {
       },
     },
     {
-      name: 'Assigned Username',
+      name: 'Assigned Privilege',
       options: {
         filter: true,
         customBodyRender: (value: any, tableMeta: MUIDataTableMeta) => {
@@ -265,7 +265,7 @@ export default function ServicegroupUsergroupMapTable(props: any) {
       },
     },
     {
-      name: 'Edit Username ',
+      name: 'Edit Privilege',
       options: {
         filter: true,
         customBodyRender: (value: any, tableMeta: MUIDataTableMeta) => {

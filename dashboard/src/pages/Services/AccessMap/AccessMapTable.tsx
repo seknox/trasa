@@ -130,7 +130,7 @@ export default function AppuserTable(props: any) {
       },
     },
     {
-      name: 'Assigned Username',
+      name: 'Assigned Privilege',
       options: {
         filter: true,
         customBodyRender: (value: any, tableMeta: MUIDataTableMeta) => {
@@ -176,7 +176,7 @@ export default function AppuserTable(props: any) {
       },
     },
     {
-      name: 'Edit Username',
+      name: 'Edit Privilege',
       options: {
         filter: true,
         customBodyRender: (
