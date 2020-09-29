@@ -37,6 +37,7 @@ import (
 func TestMain(m *testing.M) {
 	state := setupTestEnv()
 	logrus.SetLevel(logrus.TraceLevel)
+	global.OxyLog = logrus.New()
 	m.Run()
 	tearDown(state)
 }

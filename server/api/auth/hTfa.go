@@ -160,17 +160,19 @@ func TfaHandler(w http.ResponseWriter, r *http.Request) {
 		logrus.Error(err)
 	}
 
-	// we set session token in HTTPonly cookie and expect csrf token in http header.
-	xSESSION := http.Cookie{
-		Name:     "X-SESSION",
-		Value:    sessionToken,
-		HttpOnly: true,
-		SameSite: http.SameSiteStrictMode,
-		Secure:   true,
-		Path:     "/",
-	}
+	if req.Intent == consts.AUTH_REQ_DASH_LOGIN {
+		// we set session token in HTTPonly cookie and expect csrf token in http header.
+		xSESSION := http.Cookie{
+			Name:     "X-SESSION",
+			Value:    sessionToken,
+			HttpOnly: true,
+			SameSite: http.SameSiteStrictMode,
+			Secure:   true,
+			Path:     "/",
+		}
 
-	http.SetCookie(w, &xSESSION)
+		http.SetCookie(w, &xSESSION)
+	}
 
 	utils.TrasaResponse(w, 200, status, reason, intent, respData)
 	return
