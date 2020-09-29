@@ -59,7 +59,7 @@ sudo ./trasa/trasa-server
 - Run guacamole proxy if you use rdp
 
 ```shell script
-sudo docker run -d --rm --name guacd -p 127.0.0.1:4822:4822 -v /tmp/trasa/accessproxy/guac:/tmp/trasa/accessproxy/guac  seknox/guacd:v0.0.1
+sudo docker run -d --rm --name guacd -p 127.0.0.1:4822:4822 -v /tmp/trasa/accessproxy/guac:/tmp/trasa/accessproxy/guac --user root seknox/guacd:v0.0.1
 ```
 
    </TabItem>
@@ -80,20 +80,20 @@ sudo docker run -d -p 6379:6379 --name redis redis
 - Run guacamole proxy if you use RDP
 
 ```shell script
-sudo docker run -d --rm --name guacd -p 127.0.0.1:4822:4822 -v /tmp/trasa/accessproxy/guac:/tmp/trasa/accessproxy/guac   seknox/guacd:v0.0.1
+sudo docker run -d --rm --name guacd -p 127.0.0.1:4822:4822 -v /tmp/trasa/accessproxy/guac:/tmp/trasa/accessproxy/guac --user root  seknox/guacd:v0.0.1
 ```
 
 - Run trasa-server
 
 ```shell script
 sudo docker run --link db:db \
---link guacd:guacd \             # Needed for RDP
+--link guacd:guacd \
 --link redis:redis \
 -p 443:443 \
 -p 80:80 \
--p 8022:8022 \                   # SSH proxy
--e TRASA.LISTENADDR=app.trasa \  # Replace app.trasa with your TRASA hostname.
--v /tmp/trasa/accessproxy/guac:/tmp/trasa/accessproxy/guac \       # Needed for RDP
+-p 8022:8022 \
+-e TRASA.LISTENADDR=app.trasa \
+-v /tmp/trasa/accessproxy/guac:/tmp/trasa/accessproxy/guac \
 seknox/trasa:v0.0.1
 ```
 
