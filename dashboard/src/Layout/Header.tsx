@@ -323,10 +323,10 @@ export default function MainHeaderBar(props: any) {
               </StyledMenuItem>
 
               <StyledMenuItem
-                href="https://www.trasa.io"
+                href="https://www.trasa.io/docs"
                 target="_blank"
                 onClick={() => {
-                  window.location.href = 'https://www.trasa.io ';
+                  window.location.href = 'https://www.trasa.io/docs ';
                 }}
               >
                 <ListItemIcon>
