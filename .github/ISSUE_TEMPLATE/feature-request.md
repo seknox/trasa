@@ -11,10 +11,10 @@ assignees: ''
 
 A clear and concise description of what the feature is.
 
-**Describe why this feature is important:**
+**Describe why this feature is needed:**
 
 
-**Scope of issue:**
+**Scope of feature:**
 
 - [ ] TRASA codebase
 - [ ] dashboard
