@@ -25,45 +25,49 @@ module.exports = {
         src: 'img/trasa.svg',
       },
       items: [
-        // { to: 'use-cases', label: 'Use Cases', position: 'right' },
-        {
-          label: 'Use Cases',
-          position: 'left',
-          items: [
-            {
-              to: 'use-cases/zero-trust-service-access',
-              label: 'Zero Trust Service Access',
-              position: 'right',
-            },
-            {
-              to: 'use-cases/device-trust',
-              label: 'Device Trust',
-              position: 'right',
-            },
-            {
-              to: 'use-cases/two-factor-authentication',
-              label: 'Two Factor Authentication',
-              position: 'right',
-            },
-            {
-              to: 'use-cases/privileged-access-management',
-              label: 'Privileged Access Management',
-              position: 'right',
-            },
-          ],
-        },
+        // {
+        //   label: 'Use Cases',
+        //   position: 'left',
+        //   items: [
+        //     {
+        //       to: 'use-cases/zero-trust-service-access',
+        //       label: 'Zero Trust Service Access',
+        //       position: 'right',
+        //     },
+        //     {
+        //       to: 'use-cases/device-trust',
+        //       label: 'Device Trust',
+        //       position: 'right',
+        //     },
+        //     {
+        //       to: 'use-cases/two-factor-authentication',
+        //       label: 'Two Factor Authentication',
+        //       position: 'right',
+        //     },
+        //     {
+        //       to: 'use-cases/privileged-access-management',
+        //       label: 'Privileged Access Management',
+        //       position: 'right',
+        //     },
+        //   ],
+        // },
 
         {
           label: 'Community',
-          position: 'left',
+          position: 'right',
           items: [
             { to: 'blog', label: 'Blog', position: 'right' },
-            { to: 'https://discuss.trasa.io', label: 'Contribute', position: 'right' },
+            {
+              to:
+                'https://github.com/seknox/trasa/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22',
+              label: 'Contribute',
+              position: 'right',
+            },
             { to: 'https://discuss.trasa.io', label: 'Forum', position: 'right' },
           ],
         },
         // { to: 'features', label: 'Features', position: 'left' },
-        { to: 'security', label: 'Security', position: 'left' },
+        // { to: 'security', label: 'Security', position: 'left' },
         {
           to: 'docs/',
           activeBasePath: 'docs',
@@ -85,7 +89,7 @@ module.exports = {
           'aria-label': 'GitHub repository',
         },
         {
-          href: 'https://github.com/seknox/trasa',
+          href: 'http://localhost:3000/docs/install/installation',
           className: 'signup-link',
           position: 'right',
           label: 'Try Now',

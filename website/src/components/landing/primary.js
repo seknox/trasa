@@ -67,7 +67,9 @@ export default function MainCta() {
             </Typography> */}
 
             <Typography variant="subtitle1" style={{ textAlign: 'center' }}>
-              secure remote access to Web, SSH, RDP and Database services
+              Identity aware access proxy, privileged access management, two-factor authentication,
+              device trust, and policies that enable secure remote access to Web, SSH, RDP, and
+              Database services.
             </Typography>
 
             <Grid item xs={12}>

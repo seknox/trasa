@@ -16,7 +16,7 @@ function Home() {
   return (
     <Layout
       title={`${siteConfig.title}`}
-      description="Description will go into a meta tag in <head />"
+      description="Identity aware access proxy for secure remote access to Web, SSH, RDP and Database services"
     >
       <header className={clsx('hero hero--primary', styles.heroBanner)}>
         <div className="container">

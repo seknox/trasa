@@ -72,56 +72,38 @@ export default function ZeroTrustServiceAccess() {
                   <img src={zeroTrust} width={500} alt="zero trust access" />
                 </Grid>
 
-                <Typography variant="body1">
-                  Seknox zero trust access controller controls access based on risk rather than
-                  static trusted policies. Stolen credentials? Compromised network? Compromised user
-                  devices? Zero trust access controller can detect malicious access hidden between
-                  trusted parameters and blocks it near real-time. <br />
-                  We profile users, user devices and health of service to dynamically score risk for
-                  access being requested. This makes any stolen credentials or comprmised accounts
-                  useless for hackers to get unauthorized access.
-                </Typography>
+                <Grid item xs={12} sm={12} md={8}>
+                  <Typography variant="h2">Identity Aware</Typography>
 
-                <Typography variant="h2">The perimiter we know has changed.</Typography>
+                  <Typography variant="body1">
+                    Control access based on JIT (just in time) risk calculated by user's profile and
+                    user devices.
+                  </Typography>
 
-                <Typography variant="body1">
-                  Access control based on VPN leads to security design based on trust. While the
-                  benefits up VPN has helped users securely connect to protected services, it has
-                  also let attackers misuse this trust and compromise more easlity. Afterall, all
-                  that is needed to compromise is one trusted credential and than everything is
-                  over.
-                </Typography>
+                  <Typography variant="h2">Application Layer conrol</Typography>
 
-                <Typography variant="h2">Identity Aware</Typography>
+                  <Typography variant="body1">
+                    Being Layer 7 proxy, Trasa IAP understands user's sessions in more detail. This
+                    is powerfull to identify malicious user actions even though was authenticated
+                    within common trust.
+                  </Typography>
 
-                <Typography variant="body1">
-                  Control access based on JIT (just in time) risk calculated by user's profile and
-                  user devices.
-                </Typography>
+                  <Typography variant="h2">Privilege Access Management features</Typography>
 
-                <Typography variant="h2">Application Layer conrol</Typography>
+                  <Typography variant="body1">
+                    TRASA IAP is PAM capable. Meaning it can manage Privilege sessions, record it,
+                    control it. Hackers and malicious insiders are known to exploit trust and
+                    perform malicious actions once authorized. Our system performs deep action
+                    audits to identify malicious actions performed within authorized session.
+                  </Typography>
 
-                <Typography variant="body1">
-                  Being Layer 7 proxy, Trasa IAP understands user's sessions in more detail. This is
-                  powerfull to identify malicious user actions even though was authenticated within
-                  common trust.
-                </Typography>
+                  <Typography variant="h2"> Proactive Monitoring</Typography>
 
-                <Typography variant="h2">Privilege Access Management features</Typography>
-
-                <Typography variant="body1">
-                  TRASA IAP is PAM capable. Meaning it can manage Privilege sessions, record it,
-                  control it. Hackers and malicious insiders are known to exploit trust and perform
-                  malicious actions once authorized. Our system performs deep action audits to
-                  identify malicious actions performed within authorized session.
-                </Typography>
-
-                <Typography variant="h2"> Proactive Monitoring</Typography>
-
-                <Typography variant="body1">
-                  We continuously monitor threats to your organization's internal services and
-                  compromised user accounts in both surface and deep web.
-                </Typography>
+                  <Typography variant="body1">
+                    We continuously monitor threats to your organization's internal services and
+                    compromised user accounts in both surface and deep web.
+                  </Typography>
+                </Grid>
               </Grid>
             </ThemeBase>
           </div>
