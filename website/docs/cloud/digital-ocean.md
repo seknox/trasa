@@ -16,11 +16,11 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 * Fill in the names and description
 * Enter TRASA IP as source IP in inbound rules
-<img  alt="new-firewall-rule" src={('/img/docs/cloud/gcp/new-firewall-rule.png')} />
+<img  alt="inbound-rule" src={('/img/docs/cloud/do/inbound-rule.png')} />
 
 * Enter a tag name to apply this rule.
 * Click the "Create Firewall" button 
-<img  alt="new-firewall-rule" src={('/img/docs/cloud/gcp/new-firewall-rule.png')} />
+<img  alt="create" src={('/img/docs/cloud/do/create.png')} />
 
 Use this firewall rule to give ssh access to all instances.
 
