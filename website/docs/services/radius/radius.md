@@ -3,6 +3,8 @@ id: radius-server
 title: Radius Server
 sidebar_label: Radius Server
 ---
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
 
 TRASA has a built-in radius server.
 
@@ -16,6 +18,12 @@ To configure a server/device to use TRASA as RADIUS,
 ```
 RADIUS server address: hostname/IP of TRASA
 Port: 1812
-Shared Secret: Service secret
+Shared Secret: Service key
 ```
+
+:::tip
+You can get the service key in the service settings.
+<img  alt="service-secret" src={useBaseUrl('img/docs/services/service-secret.png')} />
+
+:::
 

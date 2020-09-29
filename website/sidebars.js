@@ -14,7 +14,7 @@ module.exports = {
       ],
       // Tutorial: ['tutorial/tutorial'],
       Install: ['install/installation', 'install/initial-setup'],
-      Providers: [{ users: ['providers/users/ldap/ldap'] }],
+      QuickStart: ['quickstarts/quickstart'],
       Users: [
         'users/users',
         'users/creating-updating-users',
@@ -31,17 +31,24 @@ module.exports = {
         'services/ssh/ssh-service',
         'services/radius/radius-server',
       ],
-      Policies: ['policies/policy-introduction', 'policies/basic-policy', 'policies/device-policy'],
-      'Access Map': ['access-map/access-mapping'],
-      'Access Proxy': ['access-proxy/introduction', 'access-proxy/sshproxy'],
-      'Two Factor Authentication': [
+      Policies: [
+        'policies/policy-introduction',
+        'policies/basic-policy',
+        'policies/device-policy',
+        'policies/adhoc-policy',
+      ],
+      'Access Map': ['access-map/access-mapping', 'access-map/dynamic-access'],
+      'Access Proxy': ['access-proxy/introduction'],
+      'Native Agents': [
         'native-tfa/two-factor-authentication',
         'native-tfa/windows/windows-two-factor-authentication',
         'native-tfa/linux-two-factor-authentication',
       ],
-      'Secret Vault': ['secret-vault/index'],
+      'Secret Vault': ['providers/secret-vault/index'],
+      'Cloud Providers': ['cloud/amazon-web-services', 'cloud/google-cloud', 'cloud/digital-ocean'],
+      Providers: [{ users: ['providers/users/ldap/ldap'] }],
 
-      'System Configurations': ['system/index', 'system/config-reference'],
+      'System Configurations': ['system/fcm-setup','system/email-setup', 'system/config-reference'],
     },
   ],
   guides: [

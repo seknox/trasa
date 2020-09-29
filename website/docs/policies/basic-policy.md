@@ -5,7 +5,6 @@ sidebar_label: Basic Policy
 ---
 "Basic Policy" supports time and location-based policy along with control over two-factor authentication, option for session recording, and permission for file transfers. 
 
-## Creating Policy
 
 1. Second Factor Auth 
    + Enforce mandatory 2FA

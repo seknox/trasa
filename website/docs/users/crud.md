@@ -12,7 +12,7 @@ export const Hlt = ({children, color}) => ( <span style={{
     }}>{children}</span> );
 
 
-## # Creating User
+## Creating User
 
 TRASA IDP is builtin default user identity provider.
 
@@ -36,7 +36,7 @@ Sample of a user profile
 ![User Profile](/img/docs/users/user-profile.png 'User Profile')
 
 
-## # Updating or deleting user
+##  Updating or deleting user
 
 + You can update the user profile by clicking on `:` menu icon in user profile card.
 
