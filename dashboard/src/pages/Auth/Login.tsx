@@ -174,7 +174,7 @@ export default function LoginPage(props: LoginProps): ReactElement {
       </CardContent>
 
       <div className={classes.padMiddle}>
-        <div className={classes.cprightText}> Trasa Dashboard v20.6.1 by Seknox </div>{' '}
+        <div className={classes.cprightText}> Trasa Dashboard v1.1.0 by Seknox </div>{' '}
       </div>
 
       {/* <OrgSelect orgs={orgs} submitLoginRequest={sendLoginRequest} /> */}

@@ -250,7 +250,7 @@ export default function Servicesetting(props: ServicesettingProps) {
 
         <Grid container spacing={2}>
           <Grid item xs={5} sm={5} md={5}>
-            <div className={classes.settingHeader}>Application Type :</div>
+            <div className={classes.settingHeader}>Service Type :</div>
           </Grid>
           <Grid item xs={7} sm={7} md={7}>
             <FormControl fullWidth variant="outlined" size="small">
