@@ -26,9 +26,9 @@ export default function Features() {
           <IAM />
         </Grid>
         <br /> <br />
-        <Grid item xs={12} sm={12} md={12}>
+        {/* <Grid item xs={12} sm={12} md={12}>
           <Mfa />
-        </Grid>
+        </Grid> */}
         <br /> <br />
         <Grid item xs={12} sm={12} md={12}>
           <Vault />

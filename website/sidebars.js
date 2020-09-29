@@ -48,7 +48,11 @@ module.exports = {
       'Cloud Providers': ['cloud/amazon-web-services', 'cloud/google-cloud', 'cloud/digital-ocean'],
       Providers: [{ users: ['providers/users/ldap/ldap'] }],
 
-      'System Configurations': ['system/fcm-setup','system/email-setup', 'system/config-reference'],
+      'System Configurations': [
+        'system/fcm-setup',
+        'system/email-setup',
+        'system/config-reference',
+      ],
     },
   ],
   guides: [

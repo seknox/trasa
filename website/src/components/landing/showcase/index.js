@@ -1,4 +1,3 @@
-import { Typography } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
@@ -6,7 +5,7 @@ import React from 'react';
 import ThemeBase from '../../muiTheme';
 import Overview from './overview';
 import Providers from './providers';
-import Tfa from './mfa';
+import UACL from './unified-access-control';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -29,13 +28,13 @@ export default function Features() {
         className={classes.root}
       >
         <Grid item xs={12} sm={12} md={12}>
-          <Tfa />
+          <UACL />
         </Grid>
         <br /> <br />
-        <Grid item xs={12} sm={12} md={12}>
+        {/* <Grid item xs={12} sm={12} md={12}>
           <Overview />
         </Grid>
-        <br /> <br />
+        <br /> <br /> */}
         <Grid item xs={12} sm={12} md={12}>
           <Providers />
         </Grid>

@@ -31,27 +31,22 @@ module.exports = {
           position: 'left',
           items: [
             {
-              to: 'zero-trust-service-access',
+              to: 'use-cases/zero-trust-service-access',
               label: 'Zero Trust Service Access',
               position: 'right',
             },
             {
-              to: 'privileged-access-managemend',
-              label: 'Unified Internal Service Access',
-              position: 'right',
-            },
-            {
-              to: 'privileged-access-managemend',
+              to: 'use-cases/device-trust',
               label: 'Device Trust',
               position: 'right',
             },
             {
-              to: 'two-factor-authentication',
-              label: 'Multi Factor Authentication',
+              to: 'use-cases/two-factor-authentication',
+              label: 'Two Factor Authentication',
               position: 'right',
             },
             {
-              to: 'privileged-access-managemend',
+              to: 'use-cases/privileged-access-management',
               label: 'Privileged Access Management',
               position: 'right',
             },
@@ -67,7 +62,7 @@ module.exports = {
             { to: 'https://discuss.trasa.io', label: 'Forum', position: 'right' },
           ],
         },
-        { to: 'features', label: 'Features', position: 'left' },
+        // { to: 'features', label: 'Features', position: 'left' },
         { to: 'security', label: 'Security', position: 'left' },
         {
           to: 'docs/',
