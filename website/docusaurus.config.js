@@ -3,7 +3,7 @@ module.exports = {
   tagline: 'Manage, control and monitor access to your internal infrastructure',
   url: 'https://www.trasa.io',
   baseUrl: '/',
-  favicon: 'img/seknoxIcon.png',
+  favicon: 'img/trasa-icon.png',
   organizationName: 'Seknox',
   projectName: 'TRASA',
   onBrokenLinks: 'ignore',
@@ -22,11 +22,52 @@ module.exports = {
       title: '',
       logo: {
         alt: 'TRASA Logo',
-        src: 'img/trasa-bluebg.svg',
+        src: 'img/trasa.svg',
       },
       items: [
-        // { to: 'blog', label: 'Blog', position: 'right' },
-        // { to: 'security', label: 'Security', position: 'right' },
+        // {
+        //   label: 'Use Cases',
+        //   position: 'left',
+        //   items: [
+        //     {
+        //       to: 'use-cases/zero-trust-service-access',
+        //       label: 'Zero Trust Service Access',
+        //       position: 'right',
+        //     },
+        //     {
+        //       to: 'use-cases/device-trust',
+        //       label: 'Device Trust',
+        //       position: 'right',
+        //     },
+        //     {
+        //       to: 'use-cases/two-factor-authentication',
+        //       label: 'Two Factor Authentication',
+        //       position: 'right',
+        //     },
+        //     {
+        //       to: 'use-cases/privileged-access-management',
+        //       label: 'Privileged Access Management',
+        //       position: 'right',
+        //     },
+        //   ],
+        // },
+
+        {
+          label: 'Community',
+          position: 'right',
+          items: [
+            { to: 'blog', label: 'Blog', position: 'right' },
+            {
+              to:
+                'https://github.com/seknox/trasa/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22',
+              label: 'Contribute',
+              position: 'right',
+            },
+            { to: 'https://discuss.trasa.io', label: 'Forum', position: 'right' },
+          ],
+        },
+        // { to: 'features', label: 'Features', position: 'left' },
+        // { to: 'security', label: 'Security', position: 'left' },
         {
           to: 'docs/',
           activeBasePath: 'docs',
@@ -48,13 +89,12 @@ module.exports = {
           'aria-label': 'GitHub repository',
         },
         {
-          href: 'https://github.com/seknox/trasa',
+          href: 'http://localhost:3000/docs/install/installation',
           className: 'signup-link',
           position: 'right',
-          label: 'Free Trial',
+          label: 'Try Now',
           'aria-label': 'GitHub repository',
         },
-        // {to: 'features', label: 'Downloads', position: 'right'},
       ],
     },
     // announcementBar: {
@@ -107,36 +147,20 @@ module.exports = {
       {
         docs: {
           // It is recommended to set document id as docs home page (`docs/` path).
-          homePageId: 'getting-started/overview',
+          // homePageId: 'getting-started/overview',
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
-          editUrl: 'https://github.com/facebook/docusaurus/edit/master/website/',
+          editUrl: 'https://github.com/seknox/trasa/edit/master/website/',
         },
         blog: {
           showReadingTime: true,
           // Please change this to your repo.
-          editUrl: 'https://github.com/facebook/docusaurus/edit/master/website/blog/',
+          editUrl: 'https://github.com/seknox/trasa/edit/master/website/blog/',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
         },
-        // guides: {
-        //   // It is recommended to set document id as docs home page (`docs/` path).
-        //   homePageId: 'guides/admin/users/create-user',
-        //   sidebarPath: require.resolve('./sidebars.js'),
-        //   // Please change this to your repo.
-        //   editUrl: 'https://github.com/facebook/docusaurus/edit/master/website/',
-        // },
       },
-      // {
-      //   guides: {
-      //     // It is recommended to set document id as docs home page (`docs/` path).
-      //     homePageId: 'guides/admin/users/create-user',
-      //     sidebarPath: require.resolve('./sidebars.js'),
-      //     // Please change this to your repo.
-      //     editUrl: 'https://github.com/facebook/docusaurus/edit/master/website/',
-      //   },
-      // },
     ],
   ],
 };

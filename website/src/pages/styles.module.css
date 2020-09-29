@@ -12,6 +12,10 @@
   overflow: hidden;
 }
 
+/* .container {
+  background-color: #ffffff;
+} */
+
 @media screen and (max-width: 966px) {
   .heroBanner {
     padding: 2rem;
@@ -25,10 +29,9 @@
 }
 
 .features {
-  display: flex;
+  /* display: flex; */
   align-items: center;
-  padding: 2rem 0;
-  width: 100%;
+  justify-content: center;
 }
 
 .featureImage {

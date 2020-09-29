@@ -4,7 +4,7 @@ title: Access Mapping
 sidebar_label: Access Mapping
 ---
 
-Access Mapping is a workflow in TRASA where administrators explicitely assigns users or user groups to service profile. This 
+Access Mapping is a workflow in TRASA where administrators explicitly assign users or user groups to a service profile. This 
 
 
 ## Prerequisite 
@@ -15,7 +15,7 @@ Access Mapping is a workflow in TRASA where administrators explicitely assigns u
 
 ## Three ways of access mapping
 
-1. Mapping single user to a service.
+1. Mapping a single user to a service.
 2. Mapping user group to a service.
 3. Mapping user group to a service group.
 

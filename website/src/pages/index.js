@@ -1,12 +1,14 @@
-import Link from '@docusaurus/Link';
-import useBaseUrl from '@docusaurus/useBaseUrl';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import clsx from 'clsx';
 import React from 'react';
-import styles from './styles.module.css';
 // import Button from '../comps/button'
-import MainCta from '../comps/main';
+import PrimaryCTA from '../components/landing/primary';
+import SecondaryCTA from '../components/landing/secondary';
+import styles from './styles.module.css';
+
+import Showcase from '../components/landing/showcase';
+import OssEnterprise from '../components/landing/oss-enterprise';
 
 function Home() {
   const context = useDocusaurusContext();
@@ -14,28 +16,25 @@ function Home() {
   return (
     <Layout
       title={`${siteConfig.title}`}
-      description="Description will go into a meta tag in <head />"
+      description="Identity aware access proxy for secure remote access to Web, SSH, RDP and Database services"
     >
       <header className={clsx('hero hero--primary', styles.heroBanner)}>
         <div className="container">
-          {/* <h1 className="hero__title">zero trust access manager </h1>
-          <p className="hero__subtitle">manage secure remote access to web apps, SSH, RDP and database services</p>
-          <p className="hero__subtitle">zero trust</p>
-          <div className={styles.buttons}>
-            <Link
-              className={clsx(
-                'button button--outline button--secondary button--lg',
-                styles.getStarted,
-              )}
-              to={useBaseUrl('docs/')}>
-              Get Started
-            </Link>
-          </div> */}
-          <MainCta />
+          <PrimaryCTA />
         </div>
       </header>
 
-      <main />
+      <main>
+        <section className={styles.features}>
+          {/* <Features /> */}
+          {/* <UseCase /> */}
+          <SecondaryCTA />
+          <div className="container">
+            <Showcase />
+          </div>
+          <OssEnterprise />
+        </section>
+      </main>
     </Layout>
   );
 }

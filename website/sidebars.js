@@ -3,6 +3,7 @@ module.exports = {
     // 'overview',
     // 'concepts',
     // 'glossary',
+    // 'quickstarts/quickstart',
     {
       'Getting Started': [
         'getting-started/overview',
@@ -12,9 +13,8 @@ module.exports = {
 
         'getting-started/how-to',
       ],
-      // Tutorial: ['tutorial/tutorial'],
       Install: ['install/installation', 'install/initial-setup'],
-      Providers: [{ users: ['providers/users/ldap/ldap'] }],
+      Quickstarts: ['quickstarts/protect-ssh'],
       Users: [
         'users/users',
         'users/creating-updating-users',
@@ -31,24 +31,34 @@ module.exports = {
         'services/ssh/ssh-service',
         'services/radius/radius-server',
       ],
-      Policies: ['policies/policy-introduction', 'policies/basic-policy', 'policies/device-policy'],
-      'Access Map': ['access-map/access-mapping'],
-      'Access Proxy': ['access-proxy/introduction', 'access-proxy/sshproxy'],
+      Policies: [
+        'policies/policy-introduction',
+        'policies/basic-policy',
+        'policies/device-policy',
+        'policies/adhoc-policy',
+      ],
+      'Access Map': ['access-map/access-mapping', 'access-map/dynamic-access'],
+      'Access Proxy': ['access-proxy/introduction'],
       'Two Factor Authentication': [
         'native-tfa/two-factor-authentication',
         'native-tfa/windows/windows-two-factor-authentication',
         'native-tfa/linux-two-factor-authentication',
       ],
-      'Secret Vault': ['secret-vault/index'],
+      'Secret Vault': ['providers/secret-vault/index'],
+      // 'Cloud Providers': ['cloud/amazon-web-services', 'cloud/google-cloud', 'cloud/digital-ocean'],
+      Providers: [{ users: ['providers/users/ldap/ldap'] }],
 
-      'System Configurations': ['system/index'],
-      Reference: ['reference/config'],
+      'System Configurations': [
+        'system/fcm-setup',
+        'system/email-setup',
+        'system/config-reference',
+      ],
     },
   ],
   guides: [
     'guides/getting-started',
     {
-      Account: ['guides/user/account/password-setup', 'guides/user/account/view-access-stats'],
+      Account: ['guides/user/account/password-setup'],
       Device: [
         'guides/user/device/enrol-2fa-device',
         'guides/user/device/install-trasa-device-agent',
