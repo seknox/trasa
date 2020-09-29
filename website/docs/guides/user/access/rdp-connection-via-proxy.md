@@ -2,6 +2,7 @@
 id: rdp-connection-via-proxy
 title: Windows logon or RDP Service
 ---
+
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
 
@@ -24,11 +25,11 @@ When the windows server or workstation is protected with TRASA 2FA agent, just a
 
 #### RDP Console Menu
 When accessing RDP using a browser, you can open the console menu by clicking the gear icon on top.
-<img  alt="console-toggle" src={useBaseUrl('img/docs/user-guides/access/console-toggle.png')} />
+<img  alt="console-toggle" src={('/img/docs/user-guides/access/console-toggle.png')} />
 
 
 You can see "Clipboard","File Transfer" and "Keyboard Events" section
-<img  alt="console-menu" src={useBaseUrl('img/docs/user-guides/access/console-menu.png')} />
+<img  alt="console-menu" src={('/img/docs/user-guides/access/console-menu.png')} />
 
 ##### Clipboard
 > During a RDP session, your keyboard input is captured by the RDP console. So Ctrl+C/Ctrl+V only works on the remote RDP server.
@@ -49,7 +50,7 @@ To Copy from your local PC to remote RDP server,
 If you have file transfer access, TRASA shared drive will be mounted on the remote RDP server when you access them.
 * In remote RDP server, go to "This PC".
 * You will see the TRASA shared drive.
-<img  alt="trasa-shared-drive" src={useBaseUrl('img/docs/user-guides/access/trasa-shared-drive.png')} />
+<img  alt="trasa-shared-drive" src={('/img/docs/user-guides/access/trasa-shared-drive.png')} />
 
 
 
@@ -65,7 +66,7 @@ To download a file from a remote RDP server to a local PC,
 * Click download.
 * You will see the file list in your TRASA shared drive.
 * Click the download icon to download the file.
-<img  alt="file-download-btn" src={useBaseUrl('img/docs/user-guides/access/file-download-btn.png')} />
+<img  alt="file-download-btn" src={('/img/docs/user-guides/access/file-download-btn.png')} />
 
 
 

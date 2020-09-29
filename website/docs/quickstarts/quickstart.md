@@ -3,6 +3,7 @@ id: quickstart
 title: TRASA Quickstart guide
 sidebar_label: Quickstart
 ---
+
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
 
@@ -24,12 +25,12 @@ QR code will appear on the screen.
 
 * Open TRASA mobile app and press + button on the bottom right and then press the QR icon.
 
-<img width="20%" alt="mobile-app-add-qr" src={useBaseUrl('img/docs/quickstart/mobile-app-add-qr.png')} />  
+<img width="20%" alt="mobile-app-add-qr" src={('/img/docs/quickstart/mobile-app-add-qr.png')} />  
 
 * Scan the QR code on the browser.
 * If everything goes well, you will see the following icon on your app.
 
-<img  width="20%"  alt="mobile-app-added-totp" src={useBaseUrl('img/docs/quickstart/mobile-app-added-totp.png')} />
+<img  width="20%"  alt="mobile-app-added-totp" src={('/img/docs/quickstart/mobile-app-added-totp.png')} />
   
 * Press the icon to get TOTP codes.
 
@@ -42,19 +43,19 @@ Now 2FA device is added.
 
 ### STEP 3 Create Policy
 * Click the menu button on top left to open main menu drawer.
-<img  alt="main-menu" src={useBaseUrl('img/docs/main-menu.png')} />  
+<img  alt="main-menu" src={('/img/docs/main-menu.png')} />  
 * Click the Control menu to open policy page.
 * Click the "Create new policy" button.
-<img  alt="create-policy-btn" src={useBaseUrl('img/docs/quickstart/create-policy-btn.png')} />  
+<img  alt="create-policy-btn" src={('/img/docs/quickstart/create-policy-btn.png')} />  
 * Enter a policy name and click next.
 * Click the "Mandatory 2FA" switch to enable second factor authentication
-<img  alt="2fa-enable" src={useBaseUrl('img/docs/quickstart/2fa-enable.png')} />  
+<img  alt="2fa-enable" src={('/img/docs/quickstart/2fa-enable.png')} />  
 * Click the "Session Recording" menu and enable it.
-<img  alt="session-recording-enable" src={useBaseUrl('img/docs/quickstart/session-recording-enable.png')} />  
+<img  alt="session-recording-enable" src={('/img/docs/quickstart/session-recording-enable.png')} />  
 * Click "Day and Time" to configure weekday and time specific policy.
 * Select week days and time range to allow access.
 * Click "add" button.
-<img  alt="add-day-time-policy" src={useBaseUrl('img/docs/quickstart/add-day-time-policy.png')} />  
+<img  alt="add-day-time-policy" src={('/img/docs/quickstart/add-day-time-policy.png')} />  
 * Click next and review the policy to be created. 
 * If everything looks good, click the "Submit" button.
 
@@ -65,16 +66,16 @@ Go to [policies reference](../policies/basic-policy.md) to know more about stati
 ### STEP 4 Create Service
 * Open main menu and click Services
 * Click "Create new service" button.
-<img  alt="create-service-btn" src={useBaseUrl('img/docs/quickstart/create-service-btn.png')} />  
+<img  alt="create-service-btn" src={('/img/docs/quickstart/create-service-btn.png')} />  
 * A drawer will slide from the left. Fill in the details of upstream server you want to connect through TRASA.
-<img  alt="create-new-service" src={useBaseUrl('img/docs/quickstart/create-new-service.png')} />  
+<img  alt="create-new-service" src={('/img/docs/quickstart/create-new-service.png')} />  
 * Click submit. You will be redirected to the newly created service page.
 * Click the "Access Map" tab.
-<img  alt="access-map-tab" src={useBaseUrl('img/docs/quickstart/access-map-tab.png')} />  
+<img  alt="access-map-tab" src={('/img/docs/quickstart/access-map-tab.png')} />  
 * Click the "Assign user" button.
-<img  alt="assign-user-btn" src={useBaseUrl('img/docs/quickstart/assign-user-btn.png')} />  
+<img  alt="assign-user-btn" src={('/img/docs/quickstart/assign-user-btn.png')} />  
 * Choose the user and policy you just created.
-<img  alt="assign-user-dialog" src={useBaseUrl('img/docs/quickstart/assign-user-dialog.png')} />  
+<img  alt="assign-user-dialog" src={('/img/docs/quickstart/assign-user-dialog.png')} />  
 
 > Right now you are assigning yourself to the service. You can assign other users too when you [create](../users/crud.md) them.
 
@@ -85,9 +86,9 @@ Go to [policies reference](../policies/basic-policy.md) to know more about stati
 ### STEP 5 Access
 
 * Click the dropdown button on the top right and click on "My Account" menu.
- <img  alt="my-account-btn" src={useBaseUrl('img/docs/quickstart/my-account-btn.png')} />  
+ <img  alt="my-account-btn" src={('/img/docs/quickstart/my-account-btn.png')} />  
 * You will see the newly assigned service.
- <img  alt="my-service" src={useBaseUrl('img/docs/quickstart/my-service.png')} />  
+ <img  alt="my-service" src={('/img/docs/quickstart/my-service.png')} />  
 * Click connect and then the privilege (username) you configured earlier.
 * Allow pop-up if your browser blocks it.
 * Enter password.

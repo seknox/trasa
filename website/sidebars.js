@@ -3,6 +3,7 @@ module.exports = {
     // 'overview',
     // 'concepts',
     // 'glossary',
+    'quickstarts/quickstart',
     {
       'Getting Started': [
         'getting-started/overview',
@@ -14,7 +15,6 @@ module.exports = {
       ],
       // Tutorial: ['tutorial/tutorial'],
       Install: ['install/installation', 'install/initial-setup'],
-      QuickStart: ['quickstarts/quickstart'],
       Users: [
         'users/users',
         'users/creating-updating-users',
