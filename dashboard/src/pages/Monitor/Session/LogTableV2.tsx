@@ -220,13 +220,14 @@ export function LogTableV2(props: logtableProps) {
         dataArr = data.map(function (n: any) {
           return [
             n.eventID,
-            n.email ? n.email : n.userName,
+            n.email,
             n.privilege ,
             !n.serviceName ? 'Dashboard' : n.serviceName,
             !n.serviceType ? 'Dashboard' : n.serviceType,
             n.userIP,
             n.userAgent,
             n.status,
+            n.failedReason,
             n.loginTime,
             n.logoutTime,
             n.guests,
@@ -275,13 +276,14 @@ export function LogTableV2(props: logtableProps) {
           dataArr = data.data[0].map(function (n: any) {
             return [
               n.eventID,
-              n.email ? n.email : n.userName,
+              n.email,
               n.privilege ,
               !n.serviceName ? 'Dashboard' : n.serviceName,
               !n.serviceType ? 'Dashboard' : n.serviceType,
               n.userIP,
               n.userAgent,
               n.status,
+                n.failedReason,
               n.loginTime,
               n.logoutTime,
               n.guests,
@@ -394,7 +396,7 @@ export function LogTableV2(props: logtableProps) {
       },
     },
     {
-      name: 'App Type',
+      name: 'Service Type',
       options: {
         filter: false,
         display: false,
@@ -432,6 +434,17 @@ export function LogTableV2(props: logtableProps) {
         },
       },
     },
+      {
+      name: 'Failed Reason',
+      options: {
+        filter: true,
+        filterOptions: [false, true],
+        customBodyRender: (value: any) => {
+          return (value);
+        },
+      },
+    },
+
     {
       name: 'Logged In Time',
       options: {
@@ -473,12 +486,12 @@ export function LogTableV2(props: logtableProps) {
           updateValue: (value: string) => void,
         ) {
           // let d=Moment(tableMeta.rowData[8],"YYYY-MM-DDTHH:mm:ssZ")
-          const d = Moment.unix(tableMeta.rowData[8] / 1000000000);
+          const d = Moment.unix(tableMeta.rowData[9] / 1000000000);
           //  d.month(d.month()+1)
           const month = d.month() + 1;
           return (
             <div>
-              {tableMeta.rowData[13] ? (
+              {tableMeta.rowData[14] ? (
                 <Button
                   className={classes.viewButton}
                   variant="outlined"
