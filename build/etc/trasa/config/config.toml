@@ -5,6 +5,7 @@
 [database]
   cacert = "/etc/trasa/certs/ca.crt"
   dbname = "trasadb"
+  dbtype = "postgres"
   dbuser = "trasauser"
   dbpass = "trasauser"
   port = "5432"
