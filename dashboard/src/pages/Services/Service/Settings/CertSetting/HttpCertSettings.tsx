@@ -159,7 +159,7 @@ export default function TlsConfig(props: any) {
     <Grid container spacing={2} alignItems="center" direction="column" justify="center">
       <Grid item xs={12}>
         <Typography variant="h2"> Tls Cert </Typography>
-        <Typography variant="h4"> (only for HTTPs applications) </Typography>
+        <Typography variant="h4"> (only for HTTPs services) </Typography>
       </Grid>
 
       <Grid item xs={12}>

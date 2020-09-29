@@ -630,7 +630,7 @@ function PolicyTab(props: any) {
         aria-label="styled tabs example"
       >
         <StyledTab label="Basic Policy" />
-        <StyledTab label="Device Hygiene (Beta)" />
+        <StyledTab label="Device Hygiene" />
       </StyledTabs>
       <TabPanel value={tabValue} index={0}>
         <TrasaUAC
@@ -748,7 +748,7 @@ export function ReviewAccess(props: reviewAccessProps) {
         aria-label="styled tabs example"
       >
         <StyledTab label="Basic Policy" />
-        <StyledTab label="Device Hygiene (Beta)" />
+        <StyledTab label="Device Hygiene" />
       </StyledTabs>
       {/* Basic Policy */}
       <TabPanel value={tabValue} index={0}>

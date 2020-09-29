@@ -448,7 +448,7 @@ function ServiceDetail(props: any) {
       <Grid item xs={12}>
         <Grid container spacing={2}>
           <Grid item xs={5}>
-            <div className={classes.settingHeader}>Application Type :</div>
+            <div className={classes.settingHeader}>Service Type :</div>
           </Grid>
           <Grid item xs={7}>
             <Typography component="h4" className={classes.proxyVals}>
@@ -812,7 +812,7 @@ function CertStatus(props: any) {
           <Grid item xs={12}>
             <div className={classes.settingHeader}>
               {' '}
-              Configure certificate for this application{' '}
+              Configure certificate for this serviice{' '}
             </div>
           </Grid>
           {/* <Grid item xs={7}>

@@ -255,7 +255,7 @@ export default function MainHeaderBar(props: any) {
           <Grid item>
             <div className={classes.version}>
               <Typography className={classes.link} component="a" href="#" variant="h6">
-                v20.6.1
+                v1.1.0
               </Typography>
             </div>
           </Grid>
@@ -323,10 +323,10 @@ export default function MainHeaderBar(props: any) {
               </StyledMenuItem>
 
               <StyledMenuItem
-                href="https://www.trasa.io"
+                href="https://www.trasa.io/docs"
                 target="_blank"
                 onClick={() => {
-                  window.location.href = 'https://www.trasa.io ';
+                  window.location.href = 'https://www.trasa.io/docs ';
                 }}
               >
                 <ListItemIcon>

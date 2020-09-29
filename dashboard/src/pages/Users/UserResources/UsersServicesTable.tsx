@@ -62,7 +62,7 @@ export default function UsersAppTable(props: any) {
 
   function getTitle(arr: any) {
     const count = arr.length;
-    return `Users authorized apps and services (Total: ${count})`;
+    return `Users authorized services (Total: ${count})`;
   }
 
   return (
