@@ -4,7 +4,8 @@ import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
 // import DashImage from '../../static/img/trasa-bluebg.svg';
-import ThemeBase from '../../muiTheme';
+import ThemeBase from '../../../muiTheme';
+import AllIntegrations from './all-integrations';
 
 const useStyles = makeStyles((theme) => ({
   background: {
@@ -21,32 +22,36 @@ const useStyles = makeStyles((theme) => ({
     // color: 'white',
     fontFamily: 'Open Sans, Rajdhani',
     // paddingLeft: '40%',
-    // padding: theme.spacing(2),
+    padding: theme.spacing(2),
     // background: 'linear-gradient(to left, #1a2980, #26d0ce)',
   },
   image: {
-    // boxShadow: '0 0 20px 0 rgba(0,0,0,0.12)',
+    boxShadow: '0 0 20px 0 rgba(0,0,0,0.12)',
   },
 }));
 
 export default function Features() {
-  const imgUrl = useBaseUrl('dash/access-stats.png');
+  const imgUrl = useBaseUrl('features/tfa.svg');
   const classes = useStyles();
   return (
     <ThemeBase>
-      <Grid container spacing={2}>
-        <Grid item xs={12} sm={12} md={5}>
+      <Grid container spacing={6}>
+        <Grid item xs={12} sm={12} md={6} className={classes.image}>
+          <AllIntegrations />
+        </Grid>
+
+        <Grid item xs={12} sm={12} md={6}>
           <Paper className={classes.paper} elevation={0}>
-            <Typography variant="h2"> Unified Access Control Platform</Typography>
+            <Typography variant="h2"> Integrations with services you already use </Typography>
             <br />
             <Typography variant="body1">
-              A unified security platform that can address every access control security
-              requirements for your team.
+              TRASA securely controls user's access to protected services. In most cases, user's
+              identities are managed by identity providers like active directory, LDAP servers, and
+              service identities are managed in cloud service providers or data center
+              virtualization platforms. TRASA integrates with these service platforms (providers) to
+              seamlessly integrate with existing workflows.
             </Typography>
           </Paper>
-        </Grid>
-        <Grid item xs={12} sm={12} md={7} className={classes.image}>
-          unified graphic
         </Grid>
       </Grid>
     </ThemeBase>

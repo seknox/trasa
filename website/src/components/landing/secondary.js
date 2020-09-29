@@ -41,11 +41,11 @@ export default function Enterprise() {
             </Typography>
           </div>
         </Grid>
-        <Grid item xs={12}>
+        {/* <Grid item xs={12}>
           <Link className={clsx('button  button--lg', classes.contained)} to={useBaseUrl('docs/')}>
             Learn more about features
           </Link>
-        </Grid>
+        </Grid> */}
       </Grid>
     </ThemeBase>
   );

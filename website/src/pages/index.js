@@ -6,9 +6,9 @@ import React from 'react';
 import PrimaryCTA from '../components/landing/primary';
 import SecondaryCTA from '../components/landing/secondary';
 import styles from './styles.module.css';
-import UseCase from '../components/landing/usecase';
-import Features from '../components/landing/features';
+
 import Showcase from '../components/landing/showcase';
+import OssEnterprise from '../components/landing/oss-enterprise';
 
 function Home() {
   const context = useDocusaurusContext();
@@ -32,6 +32,7 @@ function Home() {
           <div className="container">
             <Showcase />
           </div>
+          <OssEnterprise />
         </section>
       </main>
     </Layout>

@@ -2,7 +2,7 @@ import { Typography, Paper } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
-import ThemeBase from '../muiTheme';
+import ThemeBase from '../../../muiTheme';
 import clsx from 'clsx';
 import Link from '@docusaurus/Link';
 import useBaseUrl from '@docusaurus/useBaseUrl';
@@ -61,11 +61,11 @@ export default function Enterprise() {
   return (
     <ThemeBase>
       <Grid container spacing={2} direction="row" justify="center" alignItems="center">
-        <Grid item xs={12}>
+        {/* <Grid item xs={12}>
           <div className={classes.ctaPad}>
             <Typography variant="h1">Features</Typography>
           </div>
-        </Grid>
+        </Grid> */}
 
         <Grid item xs={6} sm={4}>
           <Paper className={classes.paper} elevation={0}>
@@ -133,14 +133,14 @@ export default function Enterprise() {
           </Paper>
         </Grid>
 
-        <Grid item xs={12} style={{ textAlign: 'center' }}>
+        {/* <Grid item xs={12} style={{ textAlign: 'center' }}>
           <Link
             className={clsx('button  button--lg', classes.contained)}
             to={useBaseUrl('features/')}
           >
             Learn more about features
           </Link>
-        </Grid>
+        </Grid> */}
       </Grid>
     </ThemeBase>
   );
