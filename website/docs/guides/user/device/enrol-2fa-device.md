@@ -16,12 +16,12 @@ If you want to enroll a new device,
 * Go to "My Account" page
 * Click the "Device" tab
 * Click the "Enroll 2FA device" button
-<img  alt="enroll-device" src={useBaseUrl('img/docs/user-guides/device/enroll-device.png')} />
+<img  alt="enroll-device" src={('/img/docs/user-guides/device/enroll-device.png')} />
 * Enter credentials and authenticate the second factor
 * You will be shown a QR Code
-<img  alt="qr-code" src={useBaseUrl('img/docs/user-guides/device/qr-code.png')} />
+<img  alt="qr-code" src={('/img/docs/user-guides/device/qr-code.png')} />
 * Open TRASA mobile app and click on + sign on the bottom right   
 
-<img width="20%" alt="mobile-app-add-qr" src={useBaseUrl('img/docs/quickstart/mobile-app-add-qr.png')} />  
+<img width="20%" alt="mobile-app-add-qr" src={('/img/docs/quickstart/mobile-app-add-qr.png')} />  
 
 * Click the QR icon and scan the QR code on your browser

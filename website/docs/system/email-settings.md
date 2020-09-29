@@ -12,6 +12,6 @@ TRASA supports mailgun and authenticated SMTP protocol to forwarded emails gener
 * Open the main menu and click in "System".
 * Click the "settings" tab.
 * Click the "Email Setting" section.
-<img alt="email-settings" src={useBaseUrl('img/docs/system/email-settings.png')} />  
+<img alt="email-settings" src={('/img/docs/system/email-settings.png')} />  
 
 * Fill in the configurations and click "Save".

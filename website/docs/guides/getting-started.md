@@ -15,7 +15,7 @@ If your security team has deployed TRASA in your infrastructure and all of a sud
 
 
 * You probably got a link from your administrator. It will take you to initial password setup page.
-<img  alt="password-setup" src={useBaseUrl('img/docs/user-guides/account/password-setup.png')} />
+<img  alt="password-setup" src={('/img/docs/user-guides/account/password-setup.png')} />
 
 
 * Then you will be redirected to TRASA login page. Before you login, install TRASA mobile app from [Play Store](https://play.google.com/store/apps/details?id=com.trasa&hl=en) or [App Store](https://apps.apple.com/np/app/trasa/id1411267389).
@@ -23,17 +23,17 @@ If your security team has deployed TRASA in your infrastructure and all of a sud
 
 Since this is your first time logging into TRASA, you have  not yet added your 2FA device yet.
 QR code will appear on screen.
-<img  alt="qr-code" src={useBaseUrl('img/docs/user-guides/device/qr-code.png')} />
+<img  alt="qr-code" src={('/img/docs/user-guides/device/qr-code.png')} />
 
 
 * Open TRASA mobile app and press + button on bottom right and then press QR icon
 
-<img width="20%" alt="mobile-app-add-qr" src={useBaseUrl('img/docs/quickstart/mobile-app-add-qr.png')} />  
+<img width="20%" alt="mobile-app-add-qr" src={('/img/docs/quickstart/mobile-app-add-qr.png')} />  
 
 * Scan the QR code on the browser
 * If everything goes well, you will see the following icon on your app
 
-<img width="20%" alt="mobile-app-added-totp" src={useBaseUrl('img/docs/quickstart/mobile-app-added-totp.png')} />  
+<img width="20%" alt="mobile-app-added-totp" src={('/img/docs/quickstart/mobile-app-added-totp.png')} />  
 
 * Press the icon to get TOTP codes
 

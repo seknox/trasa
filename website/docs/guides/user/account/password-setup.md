@@ -15,6 +15,9 @@ If you need to change password,
 * Go to your account and click on the "Account" tab
 * Click on the menu
 * Click "Change Password" item
+
+<img  alt="change-pass" src={('/img/docs/user-guides/account/change-pass.png')} />
+
 * Enter your current password
 * Authenticate the second factor
 * You will get a link through email which will get you on a page to set a new password

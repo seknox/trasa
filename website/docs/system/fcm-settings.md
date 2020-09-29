@@ -20,7 +20,7 @@ To configure Seknox's Cloud server as FCM proxy,
 * Open the main menu and click in "System".
 * Click the "settings" tab.
 * Click the "FCM Setting" section.
-<img alt="fcm-settings" src={useBaseUrl('img/docs/system/fcm-settings.png')} />  
+<img alt="fcm-settings" src={('/img/docs/system/fcm-settings.png')} />  
 
 * On cloud proxy address, enter `https://sg.cpxy.trasa.io`. 
 * Enter your email and click "Request Access".

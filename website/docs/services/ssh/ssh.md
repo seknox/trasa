@@ -39,13 +39,13 @@ This makes remote access very easy and secure since user doesn't need ko know pa
 To use SSH certificates you must first  [initialise CA](/trasa/docs/guides/ca) (if you haven't already) from TRASA dashboard
 
 * Go to Providers -> Certificate Authority page
-<img alt="download-user-ca" src={useBaseUrl('img/docs/providers/providers-menu.png')} />  
-<img alt="ca-tab" src={useBaseUrl('img/docs/providers/ca/ca-tab.png')} />  
+<img alt="download-user-ca" src={('/img/docs/providers/providers-menu.png')} />  
+<img alt="ca-tab" src={('/img/docs/providers/ca/ca-tab.png')} />  
 
 * Click the "Generate certs" button
-<img alt="generate-ca-btn" src={useBaseUrl('img/docs/providers/ca/generate-ca-btn.png')} />  
+<img alt="generate-ca-btn" src={('/img/docs/providers/ca/generate-ca-btn.png')} />  
 * Generate both "SSH User CA" and "SSH Host CA"
-<img alt="generate-ca-dialog" src={useBaseUrl('img/docs/providers/ca/generate-ca-dialog.png')} />  
+<img alt="generate-ca-dialog" src={('/img/docs/providers/ca/generate-ca-dialog.png')} />  
 
 
 #### Using User Certificates
@@ -56,7 +56,7 @@ To do that,
 
 * Download client CA  from dashboard (Providers->Certificate Authority->Download SSH client CA)
 
-<img alt="download-user-ca" src={useBaseUrl('img/docs/providers/ca/download-user-ca.png')} />  
+<img alt="download-user-ca" src={('/img/docs/providers/ca/download-user-ca.png')} />  
 
 * Download client CA
 
@@ -73,7 +73,7 @@ To do that,
 
 ##### Configure Client Device
 * Download host CA  from dashboard (manage->Certificate Authority->Download SSH host CA)
-<img alt="download-host-ca" src={useBaseUrl('img/docs/providers/ca/download-host-ca.png')} />  
+<img alt="download-host-ca" src={('/img/docs/providers/ca/download-host-ca.png')} />  
 
 * Copy its contents to /etc/ssh/ssh_known_hosts
 
