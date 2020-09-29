@@ -123,42 +123,92 @@ func (s logStore) LogLogin(log *AuthLog, reason consts.FailedReason, status bool
 
 func (s logStore) GetLoginEvents(entityType, entityID, orgID string) (logEvents []AuthLog, err error) {
 
-	sqlStr := ""
+	sb := sqlbuilder.NewSelectBuilder()
+	sb.Select(`auth_logs.id`,
+		`session_id`,
+		`access_device_id`,
+		`tfa_device_id`,
+		`service_id`,
+		`service_name`,
+		`service_type`,
+		`COALESCE(nullif(users.email,''),users.username)`,
+		`failed_reason `,
+		`geo_location`,
+		`login_time `,
+		`logout_time `,
+		`auth_logs.org_id  `,
+		` server_ip `,
+		`session_duration `,
+		`auth_logs.status `,
+		`user_agent `,
+		`user_id`,
+		`user_ip`,
+		`privilege`,
+		`guests`,
+		`recorded_session`)
 
-	if entityType == "user" {
-		sqlStr = fmt.Sprintf(`SELECT %s FROM auth_logs WHERE org_id=$1 AND user_id=$2 ORDER BY login_time DESC LIMIT 100`, logparams)
-
-	} else if entityType == "service" {
-		sqlStr = fmt.Sprintf(`SELECT %s FROM auth_logs WHERE org_id=$1 AND service_id=$2 ORDER BY login_time DESC LIMIT 100`, logparams)
-	} else if entityType == "org" {
-		sqlStr = fmt.Sprintf(`SELECT %s FROM auth_logs WHERE org_id=$1 AND org_id=$2 ORDER BY login_time DESC LIMIT 100`, logparams)
-	} else {
-		return logEvents, nil
+	//JOIN users u on auth_logs.user_id = u.id`)
+	sb.From("auth_logs")
+	sb.Join(`users`, `auth_logs.user_id = users.id`)
+	if entityType == "service" {
+		sb.Where(sb.Equal("service_id", entityID))
+	} else if entityType == "user" {
+		sb.Where(sb.Equal("auth_logs.user_id", entityID))
 	}
+	sb.Where(sb.Equal(`auth_logs.org_id`, orgID))
+	sb.Limit(100)
 
-	return querySQLAuth(s.DB, sqlStr, orgID, entityID)
+	sqlStr, args := sb.BuildWithFlavor(sqlbuilder.PostgreSQL)
+
+	return querySQLAuth(s.DB, sqlStr, args...)
 
 }
 
 func (s logStore) GetLoginEventsByPage(entityType, entityID, orgID string, page int, size int, dateFrom, dateTo int64) ([]AuthLog, error) {
 
-	sqlStr := ``
+	sb := sqlbuilder.NewSelectBuilder()
+	sb.Select(`auth_logs.id`,
+		`session_id`,
+		`access_device_id`,
+		`tfa_device_id`,
+		`service_id`,
+		`service_name`,
+		`service_type`,
+		`COALESCE(nullif(users.email,''),users.username)`,
+		`failed_reason `,
+		`geo_location`,
+		`login_time `,
+		`logout_time `,
+		`auth_logs.org_id  `,
+		` server_ip `,
+		`session_duration `,
+		`auth_logs.status `,
+		`user_agent `,
+		`user_id`,
+		`user_ip`,
+		`privilege`,
+		`guests`,
+		`recorded_session`)
 
-	if entityType == "user" {
-		sqlStr = fmt.Sprintf(`SELECT %s FROM auth_logs WHERE org_id=$1 AND user_id=$2 AND login_time>$3 AND login_time<$4 ORDER BY login_time DESC LIMIT $5 OFFSET $6`, logparams)
-		return querySQLAuth(s.DB, sqlStr, orgID, entityID, dateFrom, dateTo, size, page)
-
-	} else if entityType == "service" {
-
-		sqlStr = fmt.Sprintf(`SELECT %s FROM auth_logs WHERE org_id=$1 AND service_id=$2 AND login_time>$3 AND login_time<$4 ORDER BY login_time DESC LIMIT $5 OFFSET $6`, logparams)
-		return querySQLAuth(s.DB, sqlStr, orgID, entityID, dateFrom, dateTo, size, page)
-
-	} else {
-		sqlStr = fmt.Sprintf(`SELECT %s FROM auth_logs WHERE org_id=$1 AND login_time>$2 AND login_time<$3 ORDER BY login_time DESC LIMIT $4 OFFSET $5`, logparams)
-		return querySQLAuth(s.DB, sqlStr, orgID, dateFrom, dateTo, size, page)
-
+	//JOIN users u on auth_logs.user_id = u.id`)
+	sb.From("auth_logs")
+	sb.Join(`users`, `auth_logs.user_id = users.id`)
+	if entityType == "service" {
+		sb.Where(sb.Equal("service_id", entityID))
+	} else if entityType == "user" {
+		sb.Where(sb.Equal("auth_logs.user_id", entityID))
 	}
+	sb.Where(sb.Equal(`auth_logs.org_id`, orgID))
+	sb.Where(sb.GreaterThan(`auth_logs.login_time`, dateFrom))
+	sb.Where(sb.LessThan(`auth_logs.login_time`, dateTo))
+	sb.OrderBy(`login_time`)
+	sb.Desc()
+	sb.Offset(page)
+	sb.Limit(size)
 
+	sqlStr, args := sb.BuildWithFlavor(sqlbuilder.PostgreSQL)
+
+	return querySQLAuth(s.DB, sqlStr, args...)
 }
 
 func querySQLAuth(conn *sql.DB, sqlStr string, arg ...interface{}) ([]AuthLog, error) {
