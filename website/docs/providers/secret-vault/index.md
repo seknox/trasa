@@ -3,6 +3,7 @@ id: index
 title: Secret Vault
 sidebar_label: Introduction
 ---
+
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
 TRASA stores all keys and secrets in secure vault known as TsxVault.

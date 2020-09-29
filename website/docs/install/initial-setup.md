@@ -3,6 +3,7 @@ id: initial-setup
 title: Initial Setup
 sidebar_label: Initial Setup
 ---
+
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
 > If you signed up for TRASA Cloud service, you can skip this guide.

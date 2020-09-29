@@ -3,6 +3,7 @@ id: enrol-2fa-device
 title: Enrol 2fa Device
 sidebar_label: Enrol 2fa Device
 ---
+
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
 

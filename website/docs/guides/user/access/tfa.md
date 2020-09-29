@@ -3,6 +3,7 @@ id: tfa
 title: Second Step Verification
 sidebar_label: Second Step Verification (2FA)
 ---
+
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
 

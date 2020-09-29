@@ -3,6 +3,7 @@ id: getting-started
 title: TRASA User Guides
 sidebar_label: Getting Started
 ---
+
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
 > If you are looking to install and configure TRASA, look at our [Administrative  Docs](https://www.trasa.io/docs/ "Administrative Docs")

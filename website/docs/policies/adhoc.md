@@ -3,6 +3,7 @@ id: adhoc-policy
 title: Adhoc Policy
 sidebar_label: Adhoc Policy
 ---
+
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
 Ad Hoc policy is a temporary policy given by administrator when requested. 

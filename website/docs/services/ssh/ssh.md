@@ -19,7 +19,7 @@ You need to install and configure 2fa agents in all SSH servers you want to prot
 
 
 #### 2. SSH Access Proxy
-By default TRASA will listen at port 8022. You can change that in [config](../system/config-reference.md#sshlistenaddr) if you want.
+By default TRASA will listen at port 8022. You can change that in [config](../../system/config-reference.md#sshlistenaddr) if you want.
 
 
 
