@@ -1,6 +1,6 @@
 ---
 id: rdp-connection-via-proxy
-title: Windows logon or RDP Service
+title: Windows/RDP
 ---
 
 import useBaseUrl from '@docusaurus/useBaseUrl';
@@ -12,11 +12,16 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
  If the access proxy is not configured and only the TRASAWIN 2fa agent is configured, you can access remote computers with any regular RDP client you have been using.
 
-### Windows logon TFA Prompt
-When the windows server or workstation is protected with TRASA 2FA agent, just after the username(privilege) and password is validated in the windows logon screen, a prompt will appear on your screen. You will have to enter your trasaID(email or username) and select the TFA method in order to perform second step verification.
+### Direct Access
+When the windows server or workstation is protected with TRASA 2FA agent, just after the username(privilege) and password is validated in the windows logon screen, a prompt will appear on your screen. 
+
+<img alt="trasa-credprov" src={('/img/docs/user-guides/access/trasa-credprov.png')} />  
+You will have to enter your trasaID(email or username) and select the TFA method in order to perform second step verification.
+<img alt="trasa-tfa-prompt" src={('/img/docs/user-guides/access/trasa-tfa-prompt.png')} />  
 
 
-### RDP via TRASA access proxy
+
+### Via TRASA access proxy
 * Login into your TRASA account
 * Search for the service you want to connect
 * Click connect and choose service username
