@@ -48,6 +48,11 @@ When you log into the TRASA dashboard, you will be redirected to your account pa
 
 If admin has assigned services to your account, you can see them. Click "connect" to access them.
 
+:::note
+You can also access with native clients depending on the configuration.  
+Learn more about accessing [SSH](./user/access/ssh-connection-via-proxy.md) and [RDP](./user/access/rdp-connection-via-proxy.md).
+:::
+
 ### Services 
 It displays all the services you are assigned to. You can access them from here.
 
