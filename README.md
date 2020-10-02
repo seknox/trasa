@@ -62,7 +62,7 @@ These features cumulatively enables **zero trust access control** security model
 
 We encourage to checkout <a href="https://www.trasa.io/docs"><strong>TRASA website »</strong></a> for latest information on getting started with TRASA.
 
-- Concepts : <a href="https://www.trasa.io/docs/getting-started/concepts"><strong>Basic Cocnepts »</strong></a>
+- Concepts : <a href="https://www.trasa.io/docs/getting-started/concepts"><strong>Basic Concepts »</strong></a>
 - Getting Started : <a href="https://www.trasa.io/docs"><strong>Getting Started »</strong></a>
 - Installtion: <a href="https://www.trasa.io/docs/install/installation"><strong>Installation »</strong></a>
 - Admin Manual: <a href="https://www.trasa.io/docs"><strong>Admin Docs »</strong></a>
