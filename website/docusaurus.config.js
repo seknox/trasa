@@ -89,7 +89,7 @@ module.exports = {
           'aria-label': 'GitHub repository',
         },
         {
-          href: 'http://localhost:3000/docs/install/installation',
+          href: 'https://www.trasa.io/docs/install/installation/',
           className: 'signup-link',
           position: 'right',
           label: 'Try Now',
