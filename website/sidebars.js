@@ -1,9 +1,5 @@
 module.exports = {
   docs: [
-    // 'overview',
-    // 'concepts',
-    // 'glossary',
-    // 'quickstarts/quickstart',
     {
       'Getting Started': [
         'getting-started/overview',

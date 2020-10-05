@@ -78,20 +78,30 @@ Since this is your first time logging into TRASA, you have not yet added your 2F
 QR code will appear on screen.
 <img alt="qr-code" src={('/img/docs/user-guides/device/qr-code.png')} />
 
-- Open TRASA mobile app and press + button on bottom right and then press QR icon
+### Enrol Steps:
 
-<img width="20%" alt="mobile-app-add-qr" src={('/img/docs/quickstart/mobile-app-add-qr.png')} />
+<img alt="enrol device" src={('/img/docs/tutorial/enrol-mobile-device.svg')} />
 
-- Scan the QR code on the browser
-- If everything goes well, you will see the following icon on your app
+1. Press the `+` button (buttom right).
+2. Press QR image icon button. This will open in-app camera.
+3. Scan the QR image from TRASA dashbaord
+4. If everything goes well, you will see the following icon on your app
 
-<img width="20%" alt="mobile-app-added-totp" src={('/img/docs/quickstart/mobile-app-added-totp.png')} />
+<img alt="enrol device" src={('/img/docs/tutorial/device-enroled.svg')} />
 
 - Press the icon to get TOTP codes
 
-Now 2FA device is added.
+## Login with root account
 
-- Try logging in again
-- Now you need to choose TOTP and enter TOTP code from the mobile app
+Press `login` button in dashboard page (where QR code is shown), you will be redirected to Login page again.
 
-When you log into the TRASA dashboard, you will be redirected to your account page.
+1. Enter root account credentials
+2. Once the credentials are validated, you will see **second-step verification page**
+   <img alt="enrol device" src={('/img/docs/tutorial/dashboard-totp.svg')} />
+3. From your TRASA mobile app, note totp code and enter in dashboard to proceed login.
+   <img alt="enrol device" src={('/img/docs/tutorial/enter-totp.svg')} />
+
+4. Server will validate your totp code and will redirecto to dashboard overview page.
+   <img alt="enrol device" src={('/img/docs/tutorial/first-dashboard.png')} />
+
+## [Next - Create User accounts](create-users)
