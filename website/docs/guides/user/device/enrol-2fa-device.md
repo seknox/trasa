@@ -7,7 +7,7 @@ sidebar_label: Enrol 2fa Device
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
 
-TRASA supports TRASA mobile apps (android and ios) and Yubikey U2F tokens as a 2FA device.
+TRASA supports TRASA mobile apps (android and iOS) and Yubikey U2F tokens as a 2FA device.
 
 If you haven't enrolled any devices yet, you will be asked to enroll one during the login process.
 
@@ -18,7 +18,7 @@ If you want to enroll a new device,
 * Click the "Enroll 2FA device" button
 <img  alt="enroll-device" src={('/img/docs/user-guides/device/enroll-device.png')} />
 * Enter credentials and authenticate the second factor
-* You will be shown a QR Code
+* You will be shown a QR Code.
 <img  alt="qr-code" src={('/img/docs/user-guides/device/qr-code.png')} />
 * Open TRASA mobile app and click on + sign on the bottom right   
 

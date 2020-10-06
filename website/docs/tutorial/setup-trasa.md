@@ -57,7 +57,7 @@ seknox/trasa:v0.0.1
 ## Setup Root Account
 
 TRASA server should be ready from previous step.
-Enter [TRASA_URL](/docs/getting-started/glossary#trasa_url) in your browser.
+Enter [TRASA_HOST](/docs/getting-started/glossary#TRASA_HOST) in your browser.
 
 In our case, we setup domain `nepsec.trasa.io` so we enter this address in browser.
 <img alt="dashboard login" src={('/img/docs/tutorial/dashboard-login.png')} />

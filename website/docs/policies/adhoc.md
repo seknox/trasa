@@ -16,7 +16,7 @@ Users need to request ad hoc policy when
 If you enforce ad hoc policy on a certain service, then users need to request administrator every time they access the service.
 To do that,
 * Go to service settings
-* Click edit icon in "Configuration" card
+* Click edit icon in "Configurations" section.
 <img  alt="edit-service" src={('/img/docs/policies/edit-service.png')} />
 * Enable the ad hoc switch
 <img  alt="adhoc-switch" src={('/img/docs/policies/adhoc-switch.png')} />

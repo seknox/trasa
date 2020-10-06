@@ -14,15 +14,15 @@ Unless explicitly disabled by administrator, users require to perform second ste
 > verification process is same for both Android and IOS app
 
 
-When you try to login using TRASA, you will be asked to enter TOTP code
+When you try to login using TRASA, you will be asked to choose a second step verification method.
 <img  alt="2fa-prompt" src={('/img/docs/user-guides/2fa/2fa-prompt.png')} />
 
 ### Using TOTP (offline mode)
-* Open TRASA app in your phone and press the icon with your organization name under "TRASA" section
+* Open the TRASA app on your phone and press the icon with your organization name under the "TRASA" section.
 
 <img width="20%"  alt="mobile-app-added-totp" src={('/img/docs/quickstart/mobile-app-added-totp.png')} />
 
-* Use the code from TOTP generator page
+* Use the code from the TOTP generator page.
 
 <img width="20%" alt="totp" src={('/img/docs/user-guides/2fa/totp.png')} />
 
@@ -32,4 +32,4 @@ When you try to login using TRASA, you will be asked to enter TOTP code
 * Open the notification.
 <img width="20%" alt="u2f" src={('/img/docs/user-guides/2fa/u2f.png')} />
 
-* Press "Authorise" to login.
+* Press the "Authorise" button to login.

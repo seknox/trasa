@@ -14,10 +14,10 @@ import TabItem from '@theme/TabItem';
 ## 1. Root account setup
 
 - Download TRASA mobile app from [App Store](https://apps.apple.com/us/app/trasa/id1411267389) or [Play Store](https://play.google.com/store/apps/details?id=com.trasa)
-- Open TRASA_URL in your browser.
+- Open [TRASA_HOST](/docs/getting-started/glossary#TRASA_HOST) in your browser.
 - Use default credentials to login (root:changeme)
 
-Since this is your first time logging into TRASA, you have not yet added your 2FA device yet.
+Since this is your first time logging into TRASA, you have not added your 2FA device yet.
 QR code will appear on the screen.
 
 - Open TRASA mobile app and press + button on the bottom right and then press the QR icon.
@@ -34,7 +34,7 @@ QR code will appear on the screen.
 Now 2FA device is added.
 
 - Try logging in again.
-- Now you need to choose TOTP and enter TOTP code from the mobile app.
+- Now, you need to choose TOTP and enter the TOTP code from the mobile app.
 
 <br />
 
@@ -56,7 +56,7 @@ To use all features of TRASA, you need to setup
 
 <br />
 
-## 3. Firewall configuration (Optional)
+## 3. Firewall configuration (Recommended)
 
 <!-- ######################################################################################## -->
 

@@ -14,9 +14,9 @@ In fact, The sole purpose of using TRASA is to protect these services from unaut
 
 
 ## Creating a new Service
-You need to create a profile of SSH,RDP of HTTP service to start protecting them with TRASA.
+You need to create a profile of SSH, RDP, or HTTP service to start protecting them with TRASA.
 
-* Go to Services page and click "Create new service" button.
+* Go to the Services page and click the "Create new service" button.
 <img alt="create-a-service" src={('/img/docs/quickstart/create-new-service.png')} />  
 * Give it a friendly name.
 * Choose service type.
@@ -24,5 +24,6 @@ You need to create a profile of SSH,RDP of HTTP service to start protecting them
 * Click Submit.
 
 You will be redirected to the newly created service page.
+
 
 ![service profile](./service-profile.png 'Example of Web Service Profile')

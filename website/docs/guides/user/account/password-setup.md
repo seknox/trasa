@@ -13,7 +13,7 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 ## Change password
 If you need to change password,
 * Go to your account and click on the "Account" tab
-* Click on the menu
+* Click on the menu icon.
 * Click "Change Password" item
 
 <img  alt="change-pass" src={('/img/docs/user-guides/account/change-pass.png')} />
