@@ -30,15 +30,17 @@ A service IDP is the source which TRASA uses to import and manage service profil
 A privilege is a username or role which your users use to access service.
 Privilege typically has roles, permissions, and policies attached to them managed by the server and service that privilege belongs.
 e.g.:
-+ `root` is a privilege usually found in Linux OS. A user with email _james@nepsec.com_ logs into the centOS server as `root` privilege.
-+ `Administrator` is a privilege usually found in Windows systems. A user with email _james@nepsec.com_ access the windows server as `Administrator` privilege.
+
+- `root` is a privilege usually found in Linux OS. A user with email _james@nepsec.com_ logs into the centOS server as `root` privilege.
+- `Administrator` is a privilege usually found in Windows systems. A user with email _james@nepsec.com_ access the windows server as `Administrator` privilege.
 
 ## Access Proxy
 
 Access Proxy is a reverse proxy server which has two purposes:
-+ Manage access to your server and services,
-+ Control and block unauthorized access
-TRASA access proxy currently supports HTTPs, SSH, RDP, and Database protocols.
+
+- Manage access to your server and services,
+- Control and block unauthorized access
+  TRASA access proxy currently supports HTTPs, SSH, RDP, and Database protocols.
 
 ## Device Hygiene
 
@@ -56,7 +58,6 @@ Based on time, location, and health of device hygiene.
 
 Based on risk scoring scored by TRASA AI (only available in enterprise edition)
 
-
 ## Adhoc permission
 
 Adhoc permission enables explicit permission management to access service.
@@ -68,7 +69,12 @@ Access Map defines how a user can access a service with specific privileges. The
 ## Vault
 
 A vault is where TRASA stores secrets. There are two types of secrets that TRASA manages.
-+ **Upstream Service Secrets -** Passwords and Keys of upstream services.
-+ **Integration Keys -** Secrets and Keys of external services that TRASA connects during the process of integration.
-  
+
+- **Upstream Service Secrets -** Passwords and Keys of upstream services.
+- **Integration Keys -** Secrets and Keys of external services that TRASA connects during the process of integration.
+
 TRASA has a built-in vault named `TsxVault`, which can be used to store both of the secrets mentioned above. While Integration Keys are always stored in `TsxVault`, Upstream Service Secrets can also be stored in external secret storage providers such as HashiCorp Vault, AWS KMS, and GCP KMS.
+
+## TRASA_URL
+
+URL address (usually a domain name) which points to TRASA server.

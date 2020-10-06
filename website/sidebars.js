@@ -1,9 +1,5 @@
 module.exports = {
   docs: [
-    // 'overview',
-    // 'concepts',
-    // 'glossary',
-    // 'quickstarts/quickstart',
     {
       'Getting Started': [
         'getting-started/overview',
@@ -14,7 +10,15 @@ module.exports = {
         'getting-started/how-to',
       ],
       Install: ['install/installation', 'install/initial-setup'],
-      Quickstarts: ['quickstarts/protect-ssh'],
+      Tutorial: [
+        'tutorial/intro',
+        'tutorial/setup-trasa',
+        'tutorial/create-users',
+        'tutorial/create-policy',
+        'tutorial/protect-ssh',
+        'tutorial/protect-rdp',
+        'tutorial/protect-web-service',
+      ],
       Users: [
         'users/users',
         'users/creating-updating-users',

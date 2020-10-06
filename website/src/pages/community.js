@@ -25,7 +25,7 @@ function Home() {
   return (
     <Layout
       title={`${siteConfig.title}`}
-      description="Description will go into a meta tag in <head />"
+      description="TRASA community discussion, contribution and support"
     >
       <header className={clsx('hero hero--primary', styles.heroBanner)}>
         <div className="container">

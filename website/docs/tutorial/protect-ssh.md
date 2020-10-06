@@ -1,7 +1,7 @@
 ---
 id: protect-ssh
-title: TRASA Quickstart guide
-sidebar_label: Protect SSH
+title: Part 4 - Protect SSH Access
+sidebar_label: Part 4 - Protect SSH Access
 ---
 
 :::note
