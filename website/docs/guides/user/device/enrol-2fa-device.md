@@ -20,8 +20,11 @@ If you want to enroll a new device,
 * Enter credentials and authenticate the second factor
 * You will be shown a QR Code.
 <img  alt="qr-code" src={('/img/docs/user-guides/device/qr-code.png')} />
-* Open TRASA mobile app and click on + sign on the bottom right   
+* Open TRASA mobile app and press the + button on the bottom right and then press the QR icon.
 
-<img width="20%" alt="mobile-app-add-qr" src={('/img/docs/quickstart/mobile-app-add-qr.png')} />  
+<img alt="enrol device" src={('/img/docs/tutorial/enrol-mobile-device.svg')} />
 
-* Click the QR icon and scan the QR code on your browser
+* Scan the QR code on the browser.
+* If everything goes well, you will see the following icon on your app.
+
+<img alt="enrol device" src={('/img/docs/tutorial/device-enroled.svg')} />
