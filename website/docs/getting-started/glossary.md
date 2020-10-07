@@ -78,3 +78,7 @@ TRASA has a built-in vault named `TsxVault`, which can be used to store both of 
 ## TRASA_URL
 
 URL address (usually a domain name) which points to TRASA server.
+
+## My Route
+
+Dashboard pages and server APIs(non-admin) that are specific to user account and profile. User's with selfUser privilege in TRASA have access to only these pages and APIs.
