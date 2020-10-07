@@ -12,12 +12,13 @@ module.exports = {
       Install: ['install/installation', 'install/initial-setup'],
       Tutorial: [
         'tutorial/intro',
-        'tutorial/setup-trasa',
+        'tutorial/setup-trasa-server',
         'tutorial/create-users',
         'tutorial/create-policy',
-        'tutorial/protect-ssh',
-        'tutorial/protect-rdp',
-        'tutorial/protect-web-service',
+        'tutorial/protect-services',
+        'tutorial/test-access-to-services',
+        'tutorial/monitor-access',
+        'tutorial/advance-configurations',
       ],
       Users: [
         'users/users',
