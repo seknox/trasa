@@ -42,7 +42,7 @@ module.exports = {
         'policies/adhoc-policy',
       ],
       'Access Map': ['access-map/access-mapping', 'access-map/dynamic-access'],
-      'Access Proxy': ['access-proxy/introduction'],
+      'Access Proxy': ['access-proxy/introduction', 'access-proxy/proxy-vs-direct'],
       'Two Factor Authentication': [
         'native-tfa/two-factor-authentication',
         'native-tfa/windows/windows-two-factor-authentication',
