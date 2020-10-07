@@ -1,7 +1,7 @@
 ---
-id: setup-trasa
-title: Part 1 - Setup TRASA
-sidebar_label: Part 1 - Setup TRASA
+id: setup-trasa-server
+title: Part 1 - Setup TRASA server and root account
+sidebar_label: Part 1 - Setup TRASA server and root account
 ---
 
 In this first part, we will cover installation and setup of TRASA server.
@@ -42,9 +42,9 @@ sudo docker run --link db:db \
 -p 443:443 \
 -p 80:80 \
 -p 8022:8022 \
--e TRASA.LISTENADDR=<NEPSEC.TRASA.IO> \ # <- Replace it with your preferred trasa domain name.
+-e TRASA.LISTENADDR=TRASA.NEPSEC.IO \ # <- Replace it with your preferred trasa domain name.
 -v /tmp/trasa/accessproxy/guac:/tmp/trasa/accessproxy/guac \
-seknox/trasa:v0.0.1
+seknox/trasa:v1.1.0
 
 ```
 
@@ -67,12 +67,14 @@ In our case, we setup domain `nepsec.trasa.io` so we enter this address in brows
 When TRASA is installed, default system account `root` is created for you with default password `changeme`.
 Enter username and password (root account) in login box.
 
-:::note
+:::important
 TRASA requires two factor authentication by default and TRASA mobile app is default supported authenticator. Since this is your first login, you need to enrol device first:
 
 Get TRASA authenticator from [Play Store](https://play.google.com/store/apps/details?id=com.trasa&hl=en) or [App Store](https://apps.apple.com/np/app/trasa/id1411267389).
 
 :::
+
+## Enrol Mobile Device
 
 Since this is your first time logging into TRASA, you have not yet added your 2FA device yet.
 QR code will appear on screen.
@@ -102,6 +104,40 @@ Press `login` button in dashboard page (where QR code is shown), you will be red
    <img alt="enrol device" src={('/img/docs/tutorial/enter-totp.svg')} />
 
 4. Server will validate your totp code and will redirecto to dashboard overview page.
-   <img alt="enrol device" src={('/img/docs/tutorial/first-dashboard.png')} />
+   <img alt="dashbaord overview" src={('/img/docs/tutorial/first-dashboard.png')} />
+
+---
+
+## Enrol workstation
+
+:::note
+Only Firefox browser supported at this time.
+Supported OS includes windows 10, mac and ubuntu linux.
+:::
+
+### Install TRASA browser extension
+
+Get your [firefox extension](https://addons.mozilla.org/en-US/firefox/addon/trasa-browser-extension/?utm_source=addons.mozilla.org&utm_medium=referral&utm_content=search). When installing the addon, make sure you allow it on private browsing window as well.
+
+### Install TRASA workstation agent
+
+Get agent installer for [Workstation agent](https://storage.googleapis.com/trasa-public-download-assets/trasa-installers/v1.0/trasaWrkstnAgent-v1.0.msi). Install it in your workstation once downloaded.
+
+:::caution
+Always download agents and installer for TRASA from links provided in trasa.io website (this website) only.
+:::
+
+### Register your device
+
+<iframe src="/img/docs/tutorial/enrol-browser.mp4" frameborder="0" allowfullscreen width="100%" height='600'></iframe>
+
+---
+
+<br /><br />
+
+:::tip
+You can always view your enroled and active device in your account page **device** tab.
+:::
+<img alt="my devices" src={('/img/docs/tutorial/my-devices.png')} />
 
 ## [Next - Create User accounts](create-users)
