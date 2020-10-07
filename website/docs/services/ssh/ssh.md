@@ -7,11 +7,14 @@ sidebar_label: SSH
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
 
-
+## Setup Methods
 
 There are two ways to protect SSH servers.
-1. Through TRASA access proxy
-2. Native 2FA agents 
+1. Native 2FA agents 
+2. Via TRASA access proxy
+
+
+Either way, you need to [create a service](../index.md#creating-a-new-service) first.
 
 ### 1. Native 2FA agents
 You need to install and configure 2fa agents in all SSH servers you want to protect.
@@ -23,7 +26,7 @@ To use TRASA as an SSH proxy, you need to [configure firewall rules](../../insta
 
 Now users need to SSH into TRASA proxy instead of the upstream server.
 ```shell script
-ssh user@TRASA_HOSTNAME -p 8022
+ssh user@TRASA_HOST -p 8022
 ``` 
 Here the port 8022 is the default port of TRASA proxy.
 :::tip 
@@ -35,22 +38,14 @@ Learn more about accessing SSH proxy [here](../../guides/user/access/ssh-connect
 
 
 
-## Configuring SSH Authentication (Optional)
-If you configure SSH authentication, users don't need to enter upstream server password while accessing through TRASA proxy.
 
-You can 
-* Store password in vault
-* Store private key in vault
-* Configure SSH User CA
-
-### Store Password/Keys in vault
+## Store Password/Keys in vault
+If you save password or ssh keys in TRASA vault , users don't need to enter upstream server password while accessing through TRASA proxy.  
 Follow [this guide](../../providers/secret-vault/index.md#storing-service-credentials) to configure and store credentials in vault
 
-### Using SSH Certificates
-
-You can use TRASA as a SSH CA. TRASA access proxy injects a temporary signed certificate with expiry of few minutes. 
-If you configure upstream servers to trust TRASA CA, they will accept any ssh key(certificate) signed by TRASA CA.
-This makes remote access very easy and secure since user doesn't need ko know password or store keys.
+## SSH Certificates
+ 
+You can use TRASA as a SSH CA.
 
 
 
@@ -59,18 +54,24 @@ This makes remote access very easy and secure since user doesn't need ko know pa
 #### Initialize CA
 To use SSH certificates you must first  [initialise CA](/trasa/docs/guides/ca) (if you haven't already) from TRASA dashboard
 
-* Go to Providers -> Certificate Authority page
-<img alt="download-user-ca" src={('/img/docs/providers/providers-menu.png')} />  
-<img alt="ca-tab" src={('/img/docs/providers/ca/ca-tab.png')} />  
+* Go to Providers page.
+<img alt="download-user-ca" src={('/img/docs/providers/providers-menu.svg')} />  
 
-* Click the "Generate certs" button
-<img alt="generate-ca-btn" src={('/img/docs/providers/ca/generate-ca-btn.png')} />  
+* Click "Certificate Authority" tab.
+* Click the "Generate certs" button.
+
+<img alt="ca-tab" src={('/img/docs/providers/ca/ca-tab.svg')} />  
 * Generate both "SSH User CA" and "SSH Host CA"
 <img alt="generate-ca-dialog" src={('/img/docs/providers/ca/generate-ca-dialog.png')} />  
 
 
-#### Using User Certificates
-TRASA ssh proxy will generate and use a temporary certificate signed by itself while connecting any upstream service.
+#### User Certificates
+
+User certificates are used to authenticate ssh users.
+
+TRASA access proxy injects a temporary signed certificate with expiry of few minutes. 
+This makes remote access very easy and secure since user doesn't need ko know password or store keys.
+
 To make use of that user certificate, you must tell each upstream server to trust any certificate signed by our CA.
 To do that,
 
@@ -91,6 +92,10 @@ To do that,
 
 
 #### Host Certificates
+
+User certificates are used to authenticate ssh servers.
+
+
 TRASA proxy will automatically validate host keys and certificates when accessing through TRASA proxy.
 
 ##### Configure Client Device

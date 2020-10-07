@@ -12,7 +12,6 @@ Dynamic access feature allows you to create services and accessmaps automaticall
 To enable dynamic access,
 * Go to Services page.
 * Click on "Settings" tab.
-<img  alt="service-settings" src={('/img/docs/access-map/service-settings.png')} />
 
 * Click on "Dynamic Access" section
 * Enable the status checkbox.

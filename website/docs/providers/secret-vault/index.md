@@ -24,7 +24,7 @@ TRASA stores all keys and secrets in secure vault known as TsxVault.
 
 
 :::tip
-If the trasa-server restarts, you need to decrypt the Vault using any three of these five keys.
+If the TRASA server restarts, you need to decrypt the Vault using any three of these five keys.
 :::
 
 
