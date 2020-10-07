@@ -5,7 +5,7 @@ sidebar_label: Overview
 ---
 
 
-Services are profiles of web, SSH, RDP, database and are the fundamental component of TRASA. 
+Services are profiles of web, SSH, RDP, and database services. They are the fundamental component of TRASA. 
 
 
 
