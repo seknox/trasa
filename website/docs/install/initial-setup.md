@@ -22,12 +22,12 @@ QR code will appear on the screen.
 
 - Open TRASA mobile app and press + button on the bottom right and then press the QR icon.
 
-<img width="40%" alt="mobile-app-add-qr" src={('/img/docs/quickstart/mobile-app-add-qr.png')} />
+<img alt="enrol device" src={('/img/docs/tutorial/enrol-mobile-device.svg')} />
 
 - Scan the QR code on the browser.
 - If everything goes well, you will see the following icon on your app.
 
-<img width="40%" alt="mobile-app-added-totp" src={('/img/docs/quickstart/mobile-app-added-totp.png')} />
+<img alt="enrol device" src={('/img/docs/tutorial/device-enroled.svg')} />
 
 - Press the icon to get TOTP codes.
 
@@ -83,11 +83,10 @@ In EC2 management console,
 
 - Fill in the names and description
 - On Inbound rules, click the "add rule" button
-  <img alt="add-rule" src={('/img/docs/cloud/aws/add-rule.png')} />
 
 - Choose "SSH" type and "Custom" source
 - Add TRASA IP on source IP field
-  <img alt="add-rule" src={('/img/docs/cloud/aws/add-rule.png')} />
+  <img alt="inbound-rule-sample" src={('/img/docs/cloud/aws/inbound-rule-sample.png')} />
 
 Now use this security group to allow SSH in all instances.
 </TabItem>

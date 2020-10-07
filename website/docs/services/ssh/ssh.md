@@ -54,12 +54,13 @@ You can use TRASA as a SSH CA.
 #### Initialize CA
 To use SSH certificates you must first  [initialise CA](/trasa/docs/guides/ca) (if you haven't already) from TRASA dashboard
 
-* Go to Providers -> Certificate Authority page
-<img alt="download-user-ca" src={('/img/docs/providers/providers-menu.png')} />  
-<img alt="ca-tab" src={('/img/docs/providers/ca/ca-tab.png')} />  
+* Go to Providers page.
+<img alt="download-user-ca" src={('/img/docs/providers/providers-menu.svg')} />  
 
-* Click the "Generate certs" button
-<img alt="generate-ca-btn" src={('/img/docs/providers/ca/generate-ca-btn.png')} />  
+* Click "Certificate Authority" tab.
+* Click the "Generate certs" button.
+
+<img alt="ca-tab" src={('/img/docs/providers/ca/ca-tab.svg')} />  
 * Generate both "SSH User CA" and "SSH Host CA"
 <img alt="generate-ca-dialog" src={('/img/docs/providers/ca/generate-ca-dialog.png')} />  
 
