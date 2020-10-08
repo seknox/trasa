@@ -6,10 +6,8 @@ sidebar_label: SSH
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-## Access methods
 
-
-### Direct Access
+## Direct Access
 When the linux server or workstation is protected with TRASA 2FA agent, just after the username(privilege) and password validation in the login screen, a prompt will appear on your screen. 
 ```shell script
 $ ssh root@host
@@ -20,10 +18,10 @@ $ Choose TFA method (enter blank for U2F):
 You will have to enter your trasaID(email or username) and enter the TOTP code to perform second step verification.
 
 
-### Via TRASA access proxy
+## Via TRASA access proxy
 You can access the SSH service either via Browser or SSH client.
 
-#### Using Browser
+### Using Browser
 
 * Login into your TRASA account.
 * Search for the service you want to connect to.
@@ -35,7 +33,7 @@ You can access the SSH service either via Browser or SSH client.
 
 
 
-#### Using SSH clients
+### Using SSH clients
 
 * `ssh -i <private_key_path> root@TRASA_HOST -p 8022`     
 <img alt="ssh-proxy-email" src={('/img/docs/user-guides/access/ssh-proxy-email.png')} />  
@@ -135,12 +133,12 @@ If you have dowloaded the TRASA user key
 
 
 
-#### Using private key instead of password
+## Using private key instead of password
 
-##### Save private keys in vault (Recommended)
+### Save private keys in vault (Recommended)
 Ask your administrator to save the private key in the vault.
 
-##### Using agent forwarding
+### Using agent forwarding
 >SSH Agent forwarding is not recommended since it allows users with root privilege in the server to use your SSH keys.
 
 * Add the private key to ssh agent `ssh-add <private_key_path>`
