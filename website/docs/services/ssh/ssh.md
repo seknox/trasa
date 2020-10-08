@@ -40,8 +40,8 @@ Learn more about accessing SSH proxy [here](../../guides/user/access/ssh-connect
 
 
 ## Store Password/Keys in vault
-If you save password or ssh keys in TRASA vault , users don't need to enter upstream server password while accessing through TRASA proxy.  
-Follow [this guide](../../providers/secret-vault/index.md#storing-service-credentials) to configure and store credentials in vault
+If you save password or ssh keys in the TRASA vault, users don't need to enter the upstream server password while accessing through the TRASA proxy.  
+Follow [this guide](../../providers/secret-vault/index.md#storing-service-credentials) to configure and store credentials in the vault.
 
 ## SSH Certificates
  
@@ -70,7 +70,7 @@ CA private keys are stored in the vault, so the vault must be [initialized](../.
 
 ### User Certificates
 
-User certificates are used to authenticate ssh users. It can be used instead of password or private key.  
+User certificates are used to authenticate ssh users. It can be used instead of a password or a private key.  
 
 If you configure user certificates, you don't need to store password or private keys in the vault.
 During SSH access through TRASA access proxy, a temporary certificate is used to make an upstream connection. This makes remote access very easy and secure since the user doesn't need to know password or store keys.
@@ -99,10 +99,10 @@ To do that,
 Host certificates are used to authenticate ssh servers (hosts).
 
 
-TRASA proxy will automatically validate host keys and certificates when accessing through TRASA proxy.
+TRASA proxy will automatically validate host keys and certificates when accessing through the TRASA proxy.
 
 #### Configure Client Device
-Configuring client device is applicable when accessing SSH server directly instead through TRASA proxy. 
+Configuring client device is applicable when accessing SSH servers directly instead through the TRASA proxy. 
 
 * Go to Providers page and click the "Certificate Authority" tab.
 
@@ -113,7 +113,7 @@ Configuring client device is applicable when accessing SSH server directly inste
 `@cert-authority *  <public key content>`
 
 #### Configure Upstream Server
-* Go to service page in TRASA dashboard.
+* Go to the service page in TRASA dashboard.
 * Click the Edit icon in "Certificates" section.
 <img alt="services-page" src={('/img/docs/providers/ca/services-page.png')} />  
 
@@ -121,12 +121,12 @@ Configuring client device is applicable when accessing SSH server directly inste
 <img alt="service-certificate-slider" src={('/img/docs/providers/ca/service-certificate-slider.png')} />  
 
 
-* Copy the downloaded zip file to upstream server
-* Extract the files into /etc/ssh
-* Edit /etc/ssh/sshd_config and add the following
+* Copy the downloaded zip file to upstream server.
+* Extract the files into /etc/ssh.  
+* Edit /etc/ssh/sshd_config and add the following.  
 `HostKey /etc/ssh/id_rsa`
 `HostCertificate /etc/ssh/id_rsa-cert.pub`
-* Restart sshd daemon
+* Restart sshd daemon.  
 `sudo systemctl restart sshd`
 
 

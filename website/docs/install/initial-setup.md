@@ -84,11 +84,11 @@ In EC2 management console,
 - Click the "Create security group" button.
   <img alt="create-security-grp-btn" src={('/img/docs/cloud/aws/create-security-grp-btn.png')} />
 
-- Fill in the names and description.
+- Fill in the name and description.
 - On Inbound rules, click the "add rule" button.
 
-- Choose "SSH" type and "Custom" source.
-- Add TRASA IP on source IP field.
+- Choose the "SSH" type and "Custom" source.
+- Add TRASA IP on the "source IP" field.
   <img alt="inbound-rule-sample" src={('/img/docs/cloud/aws/inbound-rule-sample.png')} />
 
 Now use this security group to allow SSH in all instances.
@@ -160,7 +160,7 @@ Then you need to add ssh keys to the instance or project.
 - [Save the contents of [KEY_FILENAME] in TRASA vault](../providers/secret-vault/index.md#storing-service-credentials)
 
 :::tip
-If you want to configure this for all instances of a project, go to [Metadata](https://console.cloud.google.com/compute/metadata) menu in Compute Engiene page
+If you want to configure this for all instances of a project, go to the [Metadata](https://console.cloud.google.com/compute/metadata) menu on Compute Engine page.
 <img alt="project-level-metadata" src={('/img/docs/cloud/gcp/project-level-metadata.png')} />
 
 :::
@@ -172,11 +172,11 @@ If you want to configure this for all instances of a project, go to [Metadata](h
 
 ### Create a firewall rule for TRASA
 
-- Go to Networking-> Firewalls on Main menu
-- Click the "Create Firewall" button
+- Go to Networking-> Firewalls on the Main menu.
+- Click the "Create Firewall" button.
   <img alt="network-firewall-create" src={('/img/docs/cloud/do/network-firewall-create.png')} />
 
-- Fill in the names and description
+- Fill in the name and description
 - Enter TRASA IP as source IP in inbound rules
   <img alt="inbound-rule" src={('/img/docs/cloud/do/inbound-rule.png')} />
 

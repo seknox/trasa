@@ -24,7 +24,7 @@ If users directly access the service, it won't be protected with TRASA.
 Pros of using access proxy:
 * Easier to implement. No need to install and configure agents in each server.
 * Session can be recorded (text or video log).
-* Can autofill saved passwords and keys from vault.
+* Can autofill the saved passwords and keys from the vault.
 
 
 ### Direct Access with 2FA agent
