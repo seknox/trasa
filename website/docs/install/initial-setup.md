@@ -58,6 +58,9 @@ To use all features of TRASA, you need to setup
 
 ## 3. Firewall configuration (Recommended)
 
+To use TRASA as an access proxy, you need to enforce remote access to services through TRASA only.
+To do that, you need to configure firewall rules accordingly.
+
 <!-- ######################################################################################## -->
 
 <Tabs
@@ -75,17 +78,17 @@ values={[
 
 In EC2 management console,
 
-- Go to Security groups
+- Go to Security groups.
   <img alt="security-groups-menu" src={('/img/docs/cloud/aws/security-groups-menu.png')} />
 
-- Click the "Create security group" button
+- Click the "Create security group" button.
   <img alt="create-security-grp-btn" src={('/img/docs/cloud/aws/create-security-grp-btn.png')} />
 
-- Fill in the names and description
-- On Inbound rules, click the "add rule" button
+- Fill in the name and description.
+- On Inbound rules, click the "add rule" button.
 
-- Choose "SSH" type and "Custom" source
-- Add TRASA IP on source IP field
+- Choose the "SSH" type and "Custom" source.
+- Add TRASA IP on the "source IP" field.
   <img alt="inbound-rule-sample" src={('/img/docs/cloud/aws/inbound-rule-sample.png')} />
 
 Now use this security group to allow SSH in all instances.
@@ -97,7 +100,6 @@ Now use this security group to allow SSH in all instances.
 
 ### Create a firewall rule for TRASA
 
-To use TRASA properly, we need to allow ssh access from the TRASA server only. To do that, we are going to create firewall rules in GCP.
 
 We will make two rules, one to block all remote access requests (`block-all-remote`) and one to allow requests from TRASA (`allow-from-trasa`).
 
@@ -158,7 +160,7 @@ Then you need to add ssh keys to the instance or project.
 - [Save the contents of [KEY_FILENAME] in TRASA vault](../providers/secret-vault/index.md#storing-service-credentials)
 
 :::tip
-If you want to configure this for all instances of a project, go to [Metadata](https://console.cloud.google.com/compute/metadata) menu in Compute Engiene page
+If you want to configure this for all instances of a project, go to the [Metadata](https://console.cloud.google.com/compute/metadata) menu on Compute Engine page.
 <img alt="project-level-metadata" src={('/img/docs/cloud/gcp/project-level-metadata.png')} />
 
 :::
@@ -170,11 +172,11 @@ If you want to configure this for all instances of a project, go to [Metadata](h
 
 ### Create a firewall rule for TRASA
 
-- Go to Networking-> Firewalls on Main menu
-- Click the "Create Firewall" button
+- Go to Networking-> Firewalls on the Main menu.
+- Click the "Create Firewall" button.
   <img alt="network-firewall-create" src={('/img/docs/cloud/do/network-firewall-create.png')} />
 
-- Fill in the names and description
+- Fill in the name and description
 - Enter TRASA IP as source IP in inbound rules
   <img alt="inbound-rule" src={('/img/docs/cloud/do/inbound-rule.png')} />
 

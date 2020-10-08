@@ -69,7 +69,7 @@ module.exports = {
         'guides/user/device/install-trasa-device-agent',
       ],
       Access: [
-        'guides/user/access/dashboard-login',
+      //  'guides/user/access/dashboard-login',
         'guides/user/access/adhoc-access',
         'guides/user/access/tfa',
         'guides/user/access/ssh-connection-via-proxy',

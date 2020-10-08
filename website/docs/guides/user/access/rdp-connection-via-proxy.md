@@ -6,13 +6,11 @@ title: Windows/RDP
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
 
-## Access methods
-
  When your administrator configures the access proxy, you can access RDP service only via the TRASA dashboard.
 
  If the access proxy is not configured and only the TRASAWIN 2fa agent is configured, you can access remote computers with any regular RDP client you have been using.
 
-### Direct Access
+## Direct Access
 When the windows server or workstation is protected with TRASA 2FA agent, just after the username(privilege) and password is validated in the windows logon screen, a prompt will appear on your screen. 
 
 <img alt="trasa-credprov" src={('/img/docs/user-guides/access/trasa-credprov.png')} />  
@@ -21,14 +19,14 @@ You will have to enter your trasaID(email or username) and select the TFA method
 
 
 
-### Via TRASA access proxy
+## Via TRASA access proxy
 * Login in to your TRASA account.
 * Search for the service you want to connect.
 * Click the "Connect" button and choose service username.
 * Enter password and TOTP. 
 
 
-#### RDP Console Menu
+### RDP Console Menu
 When accessing RDP using a browser, you can open the console menu by clicking the gear icon on top.
 <img  alt="console-toggle" src={('/img/docs/user-guides/access/console-toggle.png')} />
 
@@ -36,7 +34,7 @@ When accessing RDP using a browser, you can open the console menu by clicking th
 You can see "Clipboard","File Transfer" and "Keyboard Events" section
 <img  alt="console-menu" src={('/img/docs/user-guides/access/console-menu.png')} />
 
-##### Clipboard
+### Clipboard
 > During an RDP session, your keyboard input is captured by the RDP console. So Ctrl+C/Ctrl+V only works on the remote RDP server.
 
 To copy from the RDP server to your local PC,
@@ -51,7 +49,7 @@ To Copy from your local PC to remote RDP server,
 * Right-click on the clipboard and paste it.
 * Now you can paste the text on the remote computer.
 
-##### File Transfer 
+### File Transfer 
 If you have file transfer access, TRASA shared drive will be mounted on the remote RDP server when you access them.
 * In remote RDP server, go to "This PC".
 * You will see the TRASA shared drive.

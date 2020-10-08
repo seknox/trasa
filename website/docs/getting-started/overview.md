@@ -11,7 +11,7 @@ Welcome to TRASA docs. Before anything, let's answer your first question.
 
 ## What is TRASA?
 
-TRASA is an open-source zero trust access control platform built by Seknox.
+TRASA is an open-source zero trust access control platform built by [Seknox](https://seknox.com).
 
 **What is zero trust?** It is probably your first question when you read above.
 
