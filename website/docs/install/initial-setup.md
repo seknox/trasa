@@ -75,17 +75,17 @@ values={[
 
 In EC2 management console,
 
-- Go to Security groups
+- Go to Security groups.
   <img alt="security-groups-menu" src={('/img/docs/cloud/aws/security-groups-menu.png')} />
 
-- Click the "Create security group" button
+- Click the "Create security group" button.
   <img alt="create-security-grp-btn" src={('/img/docs/cloud/aws/create-security-grp-btn.png')} />
 
-- Fill in the names and description
-- On Inbound rules, click the "add rule" button
+- Fill in the names and description.
+- On Inbound rules, click the "add rule" button.
 
-- Choose "SSH" type and "Custom" source
-- Add TRASA IP on source IP field
+- Choose "SSH" type and "Custom" source.
+- Add TRASA IP on source IP field.
   <img alt="inbound-rule-sample" src={('/img/docs/cloud/aws/inbound-rule-sample.png')} />
 
 Now use this security group to allow SSH in all instances.
