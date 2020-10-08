@@ -11,15 +11,15 @@ TRASA stores all keys and secrets in secure vault known as TsxVault.
   _Passwords_, _Secret keys_, _API tokens_ etc. are needed by TRASA to integrate with 3rd party services. For example, FCM tokens, Email config settings, IDP integration keys.
 
 ### Vault States
-* Uninitialised
-* Initialised
+* Uninitialized
+* Initialized
     - Encrypted
     - Decrypted
 
-Initially, after installation, the vault is in the "Uninitialised" state. You need to initialize the vault.
+Initially, after installation, the vault is in the "Uninitialized" state. You need to initialize the vault.
 
-Now vault decryption keys are generated, and the vault will be in the "Decrypted" state. 
-The decryption keys are stored in memory. So if the TRASA service restarts, the vault will be in the "Decrypted" state.
+When the vault is initialized,  decryption keys are generated, and the vault will be in the "Decrypted" state. 
+The decryption keys are stored in memory. So if the TRASA service restarts, the vault will be in the "Encrypted" state.
 You need to decrypt the vault using the decryption keys to start using it again.
 
 
@@ -30,7 +30,7 @@ You need to decrypt the vault using the decryption keys to start using it again.
 * Go to "Secret Storage" tab
 * Click the Initialise button 
 <img alt="initialise" src={('/img/docs/providers/secret-vault/initialise.png')} />
-* Copy the keys and keep them safely
+* Copy the decryption keys and keep them safely
 <img alt="keys" src={('/img/docs/providers/secret-vault/keys.png')} />
 
 

@@ -58,6 +58,9 @@ To use all features of TRASA, you need to setup
 
 ## 3. Firewall configuration (Recommended)
 
+To use TRASA as an access proxy, you need to enforce remote access to services through TRASA only.
+To do that, you need to configure firewall rules accordingly.
+
 <!-- ######################################################################################## -->
 
 <Tabs
@@ -97,7 +100,6 @@ Now use this security group to allow SSH in all instances.
 
 ### Create a firewall rule for TRASA
 
-To use TRASA properly, we need to allow ssh access from the TRASA server only. To do that, we are going to create firewall rules in GCP.
 
 We will make two rules, one to block all remote access requests (`block-all-remote`) and one to allow requests from TRASA (`allow-from-trasa`).
 
