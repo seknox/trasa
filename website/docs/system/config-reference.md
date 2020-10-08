@@ -137,7 +137,7 @@ sidebar_label: Config
 
 #### `autoCert`
 * type: `bool`  
-* default: `false`  
+* default: `true`  
     Use autoCert to generate signed certificates from Let's Encrypt.
 
 

@@ -37,7 +37,7 @@
   dashboard = "http://app.trasa"
   listenaddr = "app.trasa"
   orgID = ""
-
+  autoCert = true
 
 [proxy]
   sshlistenAddr = "127.0.0.1:8022"
