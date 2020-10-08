@@ -1,10 +1,11 @@
 ---
 id: introduction
-title: Access Proxies
+title: Access Proxy
 sidebar_label: Introduction
 ---
 Access proxies are core server components in TRASA. Users typically access protected services via access proxies. 
 Access proxies give us full visibility at the application layer (Layer 7 OSI) and enforce more granular policies. 
+
 
 Currently, TRASA supports four types of protocol.
 1. HTTPs

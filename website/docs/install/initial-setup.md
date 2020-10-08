@@ -14,27 +14,27 @@ import TabItem from '@theme/TabItem';
 ## 1. Root account setup
 
 - Download TRASA mobile app from [App Store](https://apps.apple.com/us/app/trasa/id1411267389) or [Play Store](https://play.google.com/store/apps/details?id=com.trasa)
-- Open TRASA_URL in your browser.
+- Open [TRASA_HOST](/docs/getting-started/glossary#TRASA_HOST) in your browser.
 - Use default credentials to login (root:changeme)
 
-Since this is your first time logging into TRASA, you have not yet added your 2FA device yet.
+Since this is your first time logging into TRASA, you have not added your 2FA device yet.
 QR code will appear on the screen.
 
 - Open TRASA mobile app and press + button on the bottom right and then press the QR icon.
 
-<img width="40%" alt="mobile-app-add-qr" src={('/img/docs/quickstart/mobile-app-add-qr.png')} />
+<img alt="enrol device" src={('/img/docs/tutorial/enrol-mobile-device.svg')} />
 
 - Scan the QR code on the browser.
 - If everything goes well, you will see the following icon on your app.
 
-<img width="40%" alt="mobile-app-added-totp" src={('/img/docs/quickstart/mobile-app-added-totp.png')} />
+<img alt="enrol device" src={('/img/docs/tutorial/device-enroled.svg')} />
 
 - Press the icon to get TOTP codes.
 
 Now 2FA device is added.
 
 - Try logging in again.
-- Now you need to choose TOTP and enter TOTP code from the mobile app.
+- Now, you need to choose TOTP and enter the TOTP code from the mobile app.
 
 <br />
 
@@ -56,7 +56,7 @@ To use all features of TRASA, you need to setup
 
 <br />
 
-## 3. Firewall configuration (Optional)
+## 3. Firewall configuration (Recommended)
 
 <!-- ######################################################################################## -->
 
@@ -83,11 +83,10 @@ In EC2 management console,
 
 - Fill in the names and description
 - On Inbound rules, click the "add rule" button
-  <img alt="add-rule" src={('/img/docs/cloud/aws/add-rule.png')} />
 
 - Choose "SSH" type and "Custom" source
 - Add TRASA IP on source IP field
-  <img alt="add-rule" src={('/img/docs/cloud/aws/add-rule.png')} />
+  <img alt="inbound-rule-sample" src={('/img/docs/cloud/aws/inbound-rule-sample.png')} />
 
 Now use this security group to allow SSH in all instances.
 </TabItem>

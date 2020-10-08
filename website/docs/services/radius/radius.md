@@ -14,17 +14,16 @@ So if you configure a device to use TRASA as a RADIUS server, TRASA will handle 
 TRASA listens on port 1812 for RADIUS requests. 
 
 To configure a server/device to use TRASA as RADIUS, 
-* Create a service of type RADIUS and correct hostname/IP
-* Enable RADIUS authentication on the device/server with
+* Create a service of type RADIUS with correct hostname/IP
+* Copy Service Key from service configuration.
+
+<img  alt="service-secret" src={('/img/docs/services/service-secret.png')} />
+
+* Enable RADIUS authentication on the device/server with following config
 ```
 RADIUS server address: hostname/IP of TRASA
 Port: 1812
 Shared Secret: Service key
 ```
 
-:::tip
-You can get the service key in the service settings.
-<img  alt="service-secret" src={('/img/docs/services/service-secret.png')} />
-
-:::
 
