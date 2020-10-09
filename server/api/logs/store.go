@@ -134,12 +134,12 @@ func (s logStore) GetLoginEvents(entityType, entityID, orgID string) (logEvents 
 		`COALESCE(nullif(users.email,''),users.username)`,
 		`failed_reason `,
 		`geo_location`,
-		`login_time `,
-		`logout_time `,
-		`auth_logs.org_id  `,
-		` server_ip `,
-		`session_duration `,
-		`auth_logs.status `,
+		`login_time`,
+		`logout_time`,
+		`auth_logs.org_id`,
+		`server_ip`,
+		`session_duration`,
+		`auth_logs.status`,
 		`user_agent `,
 		`user_id`,
 		`user_ip`,
@@ -156,6 +156,8 @@ func (s logStore) GetLoginEvents(entityType, entityID, orgID string) (logEvents 
 		sb.Where(sb.Equal("auth_logs.user_id", entityID))
 	}
 	sb.Where(sb.Equal(`auth_logs.org_id`, orgID))
+	sb.OrderBy(`login_time`)
+	sb.Desc()
 	sb.Limit(100)
 
 	sqlStr, args := sb.BuildWithFlavor(sqlbuilder.PostgreSQL)
