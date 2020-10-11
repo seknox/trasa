@@ -147,7 +147,7 @@ e.g. To override logging.level, you need to set env variable LOGGING.LEVEL
 
 #### `autoCert`
 * type: `bool`  
-* default: `false`  
+* default: `true`  
     Use autoCert to generate signed certificates from Let's Encrypt.
 
 
