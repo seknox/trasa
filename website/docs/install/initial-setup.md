@@ -46,7 +46,7 @@ Now 2FA device is added.
 
 To use all features of TRASA, you need to setup
 
-1.  [Secret Store](../providers/secret-vault/index.md)
+1.  [Secret Store](/docs/providers/vault/tsxvault)
 2.  [FCM](../system/fcm-settings.md)
 3.  [Email](../system/email-settings.md)
 
@@ -74,7 +74,7 @@ values={[
 <!-- ######################################################################################## -->
 <TabItem value="aws">
 
-### Create a security group for TRASA
+**Create a security group for TRASA**
 
 In EC2 management console,
 
@@ -98,8 +98,7 @@ Now use this security group to allow SSH in all instances.
 
 <TabItem value="gcp">
 
-### Create a firewall rule for TRASA
-
+**Create a firewall rule for TRASA**
 
 We will make two rules, one to block all remote access requests (`block-all-remote`) and one to allow requests from TRASA (`allow-from-trasa`).
 
@@ -140,7 +139,7 @@ Learn more about priority [here](https://cloud.google.com/vpc/docs/firewalls#pri
 
 Use these two firewall rules for all instances.
 
-### Configuring SSH keys in Google Cloud
+**Configuring SSH keys in Google Cloud**
 
 By default, google cloud uses OS Login, which uses google identity to manage SSH keys.
 To use TRASA to manage your SSH keys, you need to disable OS Login.
@@ -157,7 +156,7 @@ Then you need to add ssh keys to the instance or project.
 - Copy the contents of [KEY_FILENAME].pub into the field
   <img alt="instance-level-metadata" src={('/img/docs/cloud/gcp/instance-level-metadata.png')} />
 - Click Save
-- [Save the contents of [KEY_FILENAME] in TRASA vault](../providers/secret-vault/index.md#storing-service-credentials)
+- [Save the contents of [KEY_FILENAME] in TRASA vault](/docs/providers/vault/tsxvault)
 
 :::tip
 If you want to configure this for all instances of a project, go to the [Metadata](https://console.cloud.google.com/compute/metadata) menu on Compute Engine page.
@@ -170,7 +169,7 @@ If you want to configure this for all instances of a project, go to the [Metadat
 
 <TabItem value="digitalocean">
 
-### Create a firewall rule for TRASA
+**Create a firewall rule for TRASA**
 
 - Go to Networking-> Firewalls on the Main menu.
 - Click the "Create Firewall" button.
