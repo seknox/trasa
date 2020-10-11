@@ -8,7 +8,7 @@ We will define 3 policies to control access to Nepsec services.
 
 1. Full time access with two factor authentication, session recording
 2. Friday (11am-5pm) only from fixed IP address and two factor authentication and disabled file transfer.
-3. Device hygiene with two factor authentication
+3. Full access with device hygiene and two factor authentication
 
 ## 1. Full time access with two factor authentication, session recording
 
@@ -18,7 +18,7 @@ We will define 3 policies to control access to Nepsec services.
 
 <iframe src="/img/docs/tutorial/policy2.mp4" frameborder="0" allowfullscreen width="100%" height='600'></iframe>
 
-## 3. Device hygiene with two factor authentication
+## 3. Full access with device hygiene and two factor authentication
 
 <iframe src="/img/docs/tutorial/policy3.mp4" frameborder="0" allowfullscreen width="100%" height='600'></iframe>
 

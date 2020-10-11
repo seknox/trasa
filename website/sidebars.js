@@ -20,6 +20,10 @@ module.exports = {
         'tutorial/monitor-access',
         'tutorial/advance-configurations',
       ],
+      Providers: [
+        'providers/providers',
+        { users: ['providers/users/ldap/ldap'], vault: ['providers/vault/tsxvault'] },
+      ],
       Users: [
         'users/users',
         'users/creating-updating-users',
@@ -49,9 +53,8 @@ module.exports = {
         'native-tfa/windows/windows-two-factor-authentication',
         'native-tfa/linux-two-factor-authentication',
       ],
-      'Secret Vault': ['providers/secret-vault/index'],
+      // 'Secret Vault': ['providers/secret-vault/index'],
       // 'Cloud Providers': ['cloud/amazon-web-services', 'cloud/google-cloud', 'cloud/digital-ocean'],
-      Providers: [{ users: ['providers/users/ldap/ldap'] }],
 
       'System Configurations': [
         'system/fcm-setup',

@@ -3,13 +3,14 @@ package logs
 import (
 	"database/sql"
 	"fmt"
-	"github.com/seknox/trasa/server/global"
 	"io"
 	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/seknox/trasa/server/global"
 
 	"github.com/sirupsen/logrus"
 

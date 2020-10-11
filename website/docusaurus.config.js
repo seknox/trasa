@@ -12,7 +12,7 @@ module.exports = {
     colorMode: {
       disableSwitch: true,
     },
-    sidebarCollapsible: false,
+    // sidebarCollapsible: false,
     googleAnalytics: {
       trackingID: 'UA-126179756-2',
       // Optional fields.
