@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "TRASA",
-  "version": "1.0",
+  "version": "1.0.0",
   "author": "Sakshyam Shah @sshahcodes |seknox.com|",
   "browser_specific_settings": {
     "gecko": {
