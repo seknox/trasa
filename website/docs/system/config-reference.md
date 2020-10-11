@@ -4,7 +4,17 @@ title: Config reference
 sidebar_label: Config
 ---
 
-### Database 
+
+Config file is located at `/etc/trasa/config/config.toml`
+
+:::tip
+You can override config file values with environment variables.
+e.g. To override logging.level, you need to set env variable LOGGING.LEVEL
+:::
+
+
+
+### database 
 
 #### `dbname`
 * type: `string`  
@@ -76,7 +86,7 @@ sidebar_label: Config
 
 
 ---
-### Logging
+### logging
 
 #### `level`
 * type: `string`  
@@ -84,7 +94,7 @@ sidebar_label: Config
     log level
     
  ---
-### Minio
+### minio
 
 #### `status`
 * type: `bool`  
@@ -115,7 +125,7 @@ sidebar_label: Config
     
  
 ---
-### Redis
+### redis
 
 #### `server`
 * type: `string`  
@@ -126,18 +136,18 @@ sidebar_label: Config
 
 
 ---
-### Security
+### security
 
 #### `insecureSkipVerify`
 * type: `bool`  
 * default: `false`  
     Skip ssl verify while making http requests.
 ---     
-### Trasa
+### trasa
 
 #### `autoCert`
 * type: `bool`  
-* default: `false`  
+* default: `true`  
     Use autoCert to generate signed certificates from Let's Encrypt.
 
 
@@ -168,7 +178,7 @@ sidebar_label: Config
 
 ---
 
-### Proxy
+### proxy
 
 #### `sshlistenAddr`
 * type: `string`  
@@ -189,7 +199,7 @@ sidebar_label: Config
      
 ---
 
-### Vault
+### vault
 
 #### `tsxvault`
 * type: `bool`  

@@ -11,13 +11,13 @@ All of these device policies are blocking i.e. user access is denied if any one 
     + Block all the devices which are not manually marked as "trusted" by admin. 
 
 2. Autologin enabled:
-    + Block if the user device can be logged in without a password.
+    + Block if the user can log in without a password.
 
 3. Idle screen lock disabled:
     + Block if screen-lock is disabled.
 
 4. Remote login enabled (Workstation):
-    + Block if remote access (RDP, SSH) is enabled in the user device
+    + Block if remote access (RDP, SSH) is enabled in the device
 
 5. Jailbroken device (Mobile device):
     + Block if the mobile device is jailbroken or rooted.
