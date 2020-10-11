@@ -22,7 +22,7 @@ If you install a native 2fa agent, the 2FA prompt will be shown in local login a
 :::
 
 ### 2. RDP Access Proxy
-To use TRASA as an RDP proxy, you need to [configure firewall rules](../../install/initial-setup.md#3-firewall-configuration-optional) to enforce RDP access from TRASA only.
+To use TRASA as an RDP proxy, you need to [configure firewall rules](../../install/initial-setup.md#3-firewall-configuration-recommended) to enforce RDP access from TRASA only.
 
 We only support access through RDP proxy from a browser. So, users need to log into the TRASA dashboard(web app) to access RDP. 
 Learn more about accessing RDP proxy [here](../../guides/user/access/rdp-connection-via-proxy.md).
