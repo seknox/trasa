@@ -33,7 +33,7 @@ func Update(w http.ResponseWriter, r *http.Request) {
 	// parse json value into struct
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "invalid request", "Update", nil, nil)
+		utils.TrasaResponse(w, 200, "failed", "invalid request", "failed to update account details", nil, nil)
 		return
 	}
 
@@ -47,6 +47,6 @@ func Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.TrasaResponse(w, 200, "success", "", "Update", req)
+	utils.TrasaResponse(w, 200, "success", "", "account details updated", req)
 
 }
