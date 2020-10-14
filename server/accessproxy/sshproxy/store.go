@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/hex"
 	"fmt"
+	"github.com/seknox/trasa/server/api/orgs"
 	"net"
 	"os"
 	"path/filepath"
@@ -298,7 +299,7 @@ func (s Store) uploadSessionLog(authlog *logs.AuthLog) error {
 	bucketName := "trasa-ssh-logs"
 	sessionID := authlog.SessionID
 
-	loginTime := time.Unix(0, authlog.LoginTime)
+	loginTime := time.Unix(0, authlog.LoginTime).In(orgs.GetTimeLocation(authlog.OrgID))
 	authlog.LogoutTime = time.Now().UnixNano()
 
 	objectName := filepath.Join(authlog.OrgID, fmt.Sprintf("%d", loginTime.Year()), fmt.Sprintf("%d", int(loginTime.Month())), fmt.Sprintf("%d", loginTime.Day()), fmt.Sprintf("%s.session", sessionID))

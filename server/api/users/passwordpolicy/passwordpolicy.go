@@ -100,17 +100,7 @@ func checkisExpired(thenTime int64, timeZone, days string) bool {
 	// parse unix timestamp
 	then := time.Unix(thenTime, 0)
 
-	// parse time based on org current timezone
-	loc, err := time.LoadLocation(timeZone)
-	if err != nil {
-		logrus.Errorf("load location: %v", err)
-		loc, err = time.LoadLocation("UTC")
-		if err != nil {
-			logrus.Errorf("load location: %v", err)
-			return true
-		}
-	}
-	current := time.Now().In(loc)
+	current := time.Now()
 
 	// parse elapsed duration since last update based on current timezone
 	dur := current.Sub(then)

@@ -3,6 +3,7 @@ package logs
 import (
 	"database/sql"
 	"fmt"
+	"github.com/seknox/trasa/server/api/orgs"
 	"io"
 	"os"
 	"path/filepath"
@@ -374,7 +375,7 @@ func (s logStore) UploadHTTPLogToMinio(file *os.File, login AuthLog) error {
 
 	bucketName := "trasa-https-logs"
 	filePath := file.Name()
-	loginTime := time.Unix(0, login.LoginTime)
+	loginTime := time.Unix(0, login.LoginTime).In(orgs.GetTimeLocation(login.OrgID))
 	objectNamePrefix := filepath.Join(login.OrgID, strconv.Itoa(loginTime.Year()), strconv.Itoa(int(loginTime.Month())), strconv.Itoa(loginTime.Day()))
 
 	objectName := filepath.Join(objectNamePrefix, filepath.Base(file.Name()))

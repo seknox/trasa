@@ -2,6 +2,7 @@ package rdpproxy
 
 import (
 	"fmt"
+	"github.com/seknox/trasa/server/api/orgs"
 	"github.com/seknox/trasa/server/utils"
 	"os"
 	"os/exec"
@@ -25,9 +26,8 @@ func (s GWStore) uploadSessionLog(authlog *logs.AuthLog) error {
 	tempFileDir := filepath.Join(utils.GetTmpDir(), "trasa", "accessproxy", "guac")
 	bucketName := "trasa-guac-logs"
 	sessionID := authlog.SessionID
-	logrus.Debugf("sessionID is %s", sessionID)
 
-	loginTime := time.Unix(0, authlog.LoginTime)
+	loginTime := time.Unix(0, authlog.LoginTime).In(orgs.GetTimeLocation(authlog.OrgID))
 
 	//TODO @sshahcodes
 
