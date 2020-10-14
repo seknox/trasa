@@ -25,14 +25,14 @@ func InitSSHCA(w http.ResponseWriter, r *http.Request) {
 	privateKey, err := utils.GeneratePrivateKey(4096)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "invalid request", " CA not generated", nil, nil)
+		utils.TrasaResponse(w, 200, "failed", "invalid request", "SSH CA not initialised", nil, nil)
 		return
 	}
 
 	pubKey, err := utils.GeneratePublicKey(&privateKey.PublicKey)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "invalid request", " CA not generated", nil, nil)
+		utils.TrasaResponse(w, 200, "failed", "invalid request", "SSH CA not initialised", nil, nil)
 		return
 	}
 
@@ -53,10 +53,10 @@ func InitSSHCA(w http.ResponseWriter, r *http.Request) {
 	err = Store.StoreCert(ca)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "invalid request", " CA not generated", nil, nil)
+		utils.TrasaResponse(w, 200, "failed", "invalid request", "SSH CA not initialised", nil, nil)
 		return
 	}
-	utils.TrasaResponse(w, 200, "success", "CA successfully generated", " CA generated", nil, nil)
+	utils.TrasaResponse(w, 200, "success", "CA successfully generated", "SSH CA initialised", nil, nil)
 
 }
 
@@ -69,7 +69,7 @@ func InitCA(w http.ResponseWriter, r *http.Request) {
 
 	if err := utils.ParseAndValidateRequest(r, req); err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "invalid request", "failed to save password")
+		utils.TrasaResponse(w, 200, "failed", "invalid request", "failed to initialise CA")
 		return
 	}
 
@@ -83,7 +83,7 @@ func InitCA(w http.ResponseWriter, r *http.Request) {
 	cert, csr, key, err := initca.New(req)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "invalid request", "InitCA-initca.New")
+		utils.TrasaResponse(w, 200, "failed", "invalid request", "failed to initialise CA")
 		return
 	}
 
@@ -101,14 +101,14 @@ func InitCA(w http.ResponseWriter, r *http.Request) {
 	err = Store.StoreCert(ca)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "invalid request", "InitCA-initca.New")
+		utils.TrasaResponse(w, 200, "failed", "invalid request", "failed to initialise CA")
 		return
 	}
 
 	ca.Csr = []byte("")
 	ca.Key = []byte("")
 	ca.Cert = []byte("")
-	utils.TrasaResponse(w, 200, "success", "CA created", "InitCA-initca.New", ca)
+	utils.TrasaResponse(w, 200, "success", "CA created", "CA initialised", ca)
 }
 
 //GetHttpCADetail returns HTTP CA details
@@ -228,7 +228,7 @@ func UploadCA(w http.ResponseWriter, r *http.Request) {
 	err := utils.ParseAndValidateRequest(r, &req)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "Json parse error", "Upload CA")
+		utils.TrasaResponse(w, 200, "failed", "Json parse error", "CA not uploaded")
 		return
 	}
 
@@ -246,12 +246,12 @@ func UploadCA(w http.ResponseWriter, r *http.Request) {
 	err = Store.StoreCert(ca)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "invalid request", "UploadCA-UploadCA.New")
+		utils.TrasaResponse(w, 200, "failed", "invalid request", "CA not uploaded")
 		return
 	}
 
 	ca.Csr = []byte("")
 	ca.Key = []byte("")
 	ca.Cert = []byte("")
-	utils.TrasaResponse(w, 200, "success", "CA created", "IniUploadCAtCA-UploadCA.New", ca)
+	utils.TrasaResponse(w, 200, "success", "CA created", "CA uploaded", ca)
 }

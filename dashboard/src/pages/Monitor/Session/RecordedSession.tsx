@@ -178,7 +178,9 @@ function RecordedSessionRaw(props: any) {
     <div style={{ whiteSpace: 'pre-wrap' }}>
       {loading ? 'Loading ...' : null}
       {(props.sessionType === 'ssh' || props.sessionType === 'guac-ssh') && !loading ? (
+
         <SSHLogXterm sessionLog={props.data} />
+ 
       ) : (
         props.data
       )}
@@ -186,7 +188,7 @@ function RecordedSessionRaw(props: any) {
   );
 }
 
-// "http://192.168.0.100:3339/api/v1/events/sessionlog?sessionID=f82585772437fbddeaa802322582bc770a&type=http"
+// sample - "http://192.168.0.100:3339/api/v1/events/sessionlog?sessionID=f82585772437fbddeaa802322582bc770a&type=http"
 function RecordedSessionVideo(props: any) {
   const reqVal = `${Constants.TRASA_HOSTNAME}/api/v1/logs/vsessionlog?sessionID=${props.sessionID}&type=${props.sessionType}&ssKey=${props.sskey}&orgID=${props.orgID}&day=${props.day}&month=${props.month}&year=${props.year}`;
 
@@ -202,14 +204,6 @@ function RecordedSessionVideo(props: any) {
   );
 }
 
-// type TParams = {
-//   sessionID: string;
-//   type: string;
-//   orgID: string;
-//   day: string;
-//   month: string;
-//   year: string;
-// };
 
 type TParams = {
   sessionID: string | string[] | null | undefined;
@@ -225,10 +219,10 @@ const RecordedSessionViewer = (props: any) => {
   const [data, setData] = React.useState<any>({sessionID:'',type: '', day: '', month: '', year: '' })
   React.useEffect(() => {
     const hashed = QueryString.parse(props.location.hash);
-    console.log('ProxyDomain: ', hashed);
+    // console.log('ProxyDomain: ', hashed);
     if (hashed) {
       setData({sessionID: hashed.sessionID,type: hashed.type, day: hashed.day, month: hashed.month, year: hashed.year})
-      console.log('ProxyDomain: ', hashed);
+      // console.log('ProxyDomain: ', hashed);
     }
   }, [props.location.hash])
   return (
@@ -245,20 +239,4 @@ const RecordedSessionViewer = (props: any) => {
 };
 
 
-// const RecordedSessionViewer = ({ match }: RouteComponentProps<TParams>) => {
-//   return (
-//     <div>
-//       <RecordedSession
-//         sessionID={match.params.sessionID}
-//         sessionType={match.params.type}
-//         // orgID={match.params.orgID}
-//         day={match.params.day}
-//         month={match.params.month}
-//         year={match.params.year}
-//       />
-//     </div>
-//   );
-// };
-
-// userarray={location.state.userdetail}   userdetail userarray={location.state.user}
 export default RecordedSessionViewer;
