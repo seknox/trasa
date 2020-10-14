@@ -30,7 +30,7 @@ func (s statStore) GetTotalManagedUsers(entityType, entityID, orgID string) (cou
 	sqlStr = utils.SqlReplacer(sqlStr)
 	err = s.DB.QueryRow(sqlStr, args...).Scan(&managedAcc)
 
-	return len(strings.Split(managedAcc, ",")), err
+	return len(strings.Split(managedAcc, ",")) - 1, err
 }
 
 func (s statStore) GetPoliciesOfService(serviceID, orgID string) (count int, err error) {
