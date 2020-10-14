@@ -11,7 +11,7 @@ import (
 var (
 	fullDayTime = []models.DayAndTimePolicy{{
 		Days:     []string{"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"},
-		FromTime: "01:00",
+		FromTime: "00:00",
 		ToTime:   "23:59",
 	}}
 )
@@ -35,7 +35,7 @@ func TestCheckTrasaUAC(t *testing.T) {
 				PolicyName: "full",
 				DayAndTime: []models.DayAndTimePolicy{{
 					Days:     []string{"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"},
-					FromTime: "01:00",
+					FromTime: "00:00",
 					ToTime:   "23:59",
 				}},
 				IPSource:         "0.0.0.0/0",
@@ -52,7 +52,7 @@ func TestCheckTrasaUAC(t *testing.T) {
 				PolicyName: "full",
 				DayAndTime: []models.DayAndTimePolicy{{
 					Days:     []string{time.Now().Weekday().String()},
-					FromTime: "01:00",
+					FromTime: "00:00",
 					ToTime:   "23:59",
 				}},
 				IPSource:         "0.0.0.0/0",
@@ -69,7 +69,7 @@ func TestCheckTrasaUAC(t *testing.T) {
 				PolicyName: "full",
 				DayAndTime: []models.DayAndTimePolicy{{
 					Days:     []string{},
-					FromTime: "01:00",
+					FromTime: "00:00",
 					ToTime:   "23:59",
 				}},
 				IPSource:         "0.0.0.0/0",
