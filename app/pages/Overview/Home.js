@@ -233,6 +233,7 @@ const BottomFabs = (props)=> {
                 <Icon name="add" />
                 <Button
                     onPress={() => {
+                        setFabActive(false);
                         goToScanPage();
                     }}
                     style={{backgroundColor: '#0e0343'}}
@@ -242,6 +243,7 @@ const BottomFabs = (props)=> {
                 </Button>
                 <Button
                     onPress={() => {
+                        setFabActive(false);
                         goToCodeInputPage();
                     }}
                     style={{backgroundColor: '#0e0343'}}>
