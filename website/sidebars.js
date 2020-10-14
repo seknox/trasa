@@ -1,9 +1,5 @@
 module.exports = {
   docs: [
-    // 'overview',
-    // 'concepts',
-    // 'glossary',
-    // 'quickstarts/quickstart',
     {
       'Getting Started': [
         'getting-started/overview',
@@ -14,7 +10,20 @@ module.exports = {
         'getting-started/how-to',
       ],
       Install: ['install/installation', 'install/initial-setup'],
-      Quickstarts: ['quickstarts/protect-ssh'],
+      Tutorial: [
+        'tutorial/intro',
+        'tutorial/setup-trasa-server',
+        'tutorial/create-users',
+        'tutorial/create-policy',
+        'tutorial/protect-services',
+        'tutorial/test-access-to-services',
+        'tutorial/monitor-access',
+        'tutorial/advance-configurations',
+      ],
+      Providers: [
+        'providers/providers',
+        { users: ['providers/users/ldap/ldap'], vault: ['providers/vault/tsxvault'] },
+      ],
       Users: [
         'users/users',
         'users/creating-updating-users',
@@ -38,15 +47,14 @@ module.exports = {
         'policies/adhoc-policy',
       ],
       'Access Map': ['access-map/access-mapping', 'access-map/dynamic-access'],
-      'Access Proxy': ['access-proxy/introduction'],
+      'Access Proxy': ['access-proxy/introduction', 'access-proxy/proxy-vs-direct'],
       'Two Factor Authentication': [
         'native-tfa/two-factor-authentication',
         'native-tfa/windows/windows-two-factor-authentication',
         'native-tfa/linux-two-factor-authentication',
       ],
-      'Secret Vault': ['providers/secret-vault/index'],
+      // 'Secret Vault': ['providers/secret-vault/index'],
       // 'Cloud Providers': ['cloud/amazon-web-services', 'cloud/google-cloud', 'cloud/digital-ocean'],
-      Providers: [{ users: ['providers/users/ldap/ldap'] }],
 
       'System Configurations': [
         'system/fcm-setup',
@@ -64,7 +72,7 @@ module.exports = {
         'guides/user/device/install-trasa-device-agent',
       ],
       Access: [
-        'guides/user/access/dashboard-login',
+      //  'guides/user/access/dashboard-login',
         'guides/user/access/adhoc-access',
         'guides/user/access/tfa',
         'guides/user/access/ssh-connection-via-proxy',
