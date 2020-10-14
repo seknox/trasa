@@ -106,29 +106,10 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	request.User.ID = utils.GetUUID()
 	request.User.CreatedAt = time.Now().Unix()
 	prepareUserStruct(&request, uc)
-	// If request has password method selfPassSetup, we generate activation link which will reqiure user to setup their own password.
-	// If password method is autoGenPass, we generate password and return it in response.
 
-	// generate password hash
-	// hashedpass, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	// while previously we created temporary password for users and send it to them via email,
 	// we now will generate a short lived token which will be presented in a link.
 	// this will allow us to verify user account as well and let the user setup password as soon as the token is validated.
-	verifyToken := utils.GetRandomString(12)
-
-	// config fie should provide full url scheme
-
-	err := redis.Store.Set(
-		verifyToken,
-		consts.TOKEN_EXPIRY_SIGNUP,
-		"orguser", fmt.Sprintf("%s:%s", uc.Org.ID, request.User.ID),
-		"intent", string(consts.VERIFY_TOKEN_CHANGEPASS),
-		"createdAt", time.Now().String(),
-	)
+	verifyToken, err := redis.SetVerifyToken(uc.Org.ID, request.User.ID)
 
 	if err != nil {
 		logrus.Error(err)
