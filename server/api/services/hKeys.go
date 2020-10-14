@@ -30,7 +30,7 @@ func UpdateSSLCerts(w http.ResponseWriter, r *http.Request) {
 	err := utils.ParseAndValidateRequest(r, &req)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "json parse error", "UpdateAppCerts", nil)
+		utils.TrasaResponse(w, 200, "failed", "json parse error", "failed to update SSL certs", nil)
 		return
 	}
 
@@ -42,7 +42,7 @@ func UpdateSSLCerts(w http.ResponseWriter, r *http.Request) {
 	err = Store.UpdateSSLCerts(req.CaCert, "", req.SslCert, "", req.ServiceID, userContext.Org.ID)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "could not update certs", "UpdateAppCerts", nil)
+		utils.TrasaResponse(w, 200, "failed", "could not update certs", "failed to update SSL certs", nil)
 		return
 	}
 	//var s models.ServiceSecretVault
@@ -58,7 +58,7 @@ func UpdateSSLCerts(w http.ResponseWriter, r *http.Request) {
 	//
 	//err:=vault.Store.StoreKey(s)
 
-	utils.TrasaResponse(w, 200, "success", "", "UpdateAppCerts", nil)
+	utils.TrasaResponse(w, 200, "success", "", "SSL certs updated", nil)
 	return
 
 }
@@ -76,25 +76,25 @@ func UpdateHostCerts(w http.ResponseWriter, r *http.Request) {
 	err := utils.ParseAndValidateRequest(r, &req)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", err.Error(), "Upload file", nil)
+		utils.TrasaResponse(w, 200, "failed", err.Error(), "failed to update host certs", nil)
 		return
 	}
 
 	_, _, _, _, err = ssh.ParseAuthorizedKey([]byte(req.CertVal))
 	if err != nil && req.CertVal != "" {
 		logrus.Debug(err)
-		utils.TrasaResponse(w, 200, "failed", "Invalid format. Make sure it is in ssh known hosts format", "Upload file", nil)
+		utils.TrasaResponse(w, 200, "failed", "Invalid format. Make sure it is in ssh known hosts format", "failed to update host certs", nil)
 		return
 	}
 
 	err = Store.UpdateHostCert(req.CertVal, req.ServiceID, userContext.Org.ID)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "Could not update certs", "UpdateAppCerts", nil)
+		utils.TrasaResponse(w, 200, "failed", "Could not update certs", "failed to update host certs", nil)
 		return
 	}
 
-	utils.TrasaResponse(w, 200, "success", "successfully updated host key", "UpdateAppCerts")
+	utils.TrasaResponse(w, 200, "success", "successfully updated host key", "host certs updated")
 	return
 
 }
@@ -108,14 +108,14 @@ func DownloadHostCerts(w http.ResponseWriter, r *http.Request) {
 	privateKey, err := utils.GeneratePrivateKey(bitSize)
 	if err != nil {
 		logrus.Errorf(`could not generate private key: %v`, err)
-		utils.TrasaResponse(w, http.StatusOK, "failed", "could not generate private key", "GenerateKeyPair", nil)
+		utils.TrasaResponse(w, http.StatusOK, "failed", "could not generate private key", "failed to download SSH host cert", nil)
 		return
 	}
 
 	sshHostCA, err := ca.Store.GetCertHolder(consts.CERT_TYPE_SSH_CA, "host", userContext.Org.ID)
 	if err != nil {
 		logrus.Debugf(`could not get CA key: %v`, err)
-		utils.TrasaResponse(w, http.StatusOK, "failed", "could not get CA key", "GenerateKeyPair", nil)
+		utils.TrasaResponse(w, http.StatusOK, "failed", "could not get CA key", "failed to download SSH host cert", nil)
 		return
 	}
 	caKeyStr := sshHostCA.Key
@@ -123,7 +123,7 @@ func DownloadHostCerts(w http.ResponseWriter, r *http.Request) {
 	publicKeySSH, err := ssh.NewPublicKey(&privateKey.PublicKey)
 	if err != nil {
 		logrus.Errorf(`could not generate public key: %v`, err)
-		utils.TrasaResponse(w, http.StatusOK, "failed", "could not generate public key", "GenerateKeyPair", nil)
+		utils.TrasaResponse(w, http.StatusOK, "failed", "could not generate public key", "failed to download SSH host cert", nil)
 		return
 	}
 
@@ -132,7 +132,7 @@ func DownloadHostCerts(w http.ResponseWriter, r *http.Request) {
 	caKey, err := ssh.ParsePrivateKey(caKeyStr)
 	if err != nil {
 		logrus.Errorf(`Could not parse CA private key: %v`, err)
-		utils.TrasaResponse(w, http.StatusOK, "failed", "Could not parse CA private key", "GenerateKeyPair", nil)
+		utils.TrasaResponse(w, http.StatusOK, "failed", "Could not parse CA private key", "failed to download SSH host cert", nil)
 		return
 	}
 
@@ -140,7 +140,7 @@ func DownloadHostCerts(w http.ResponseWriter, r *http.Request) {
 	_, err = rand.Read(buf)
 	if err != nil {
 		logrus.Errorf("failed to read random bytes: %v", err)
-		utils.TrasaResponse(w, http.StatusOK, "failed", "failed to read random bytes", "GenerateKeyPair", nil)
+		utils.TrasaResponse(w, http.StatusOK, "failed", "failed to read random bytes", "failed to download SSH host cert", nil)
 
 		return
 	}
@@ -152,7 +152,7 @@ func DownloadHostCerts(w http.ResponseWriter, r *http.Request) {
 	appDetail, err := Store.GetFromID(serviceID)
 	if err != nil {
 		logrus.Errorf("failed to get host principals: %v", err)
-		utils.TrasaResponse(w, http.StatusOK, "failed", "failed to get host principals", "GenerateKeyPair", nil)
+		utils.TrasaResponse(w, http.StatusOK, "failed", "failed to get host principals", "failed to download SSH host cert", nil)
 		return
 	}
 
@@ -174,7 +174,7 @@ func DownloadHostCerts(w http.ResponseWriter, r *http.Request) {
 	err = cert.SignCert(rand.Reader, caKey)
 	if err != nil {
 		logrus.Errorf(`could not sign public key: %v`, err)
-		utils.TrasaResponse(w, http.StatusOK, "failed", "could not sign public key", "GenerateKeyPair", nil)
+		utils.TrasaResponse(w, http.StatusOK, "failed", "could not sign public key", "failed to download SSH host cert", nil)
 		return
 	}
 
@@ -182,7 +182,7 @@ func DownloadHostCerts(w http.ResponseWriter, r *http.Request) {
 	certBytes := ssh.MarshalAuthorizedKey(&cert)
 	if len(certBytes) == 0 {
 		logrus.Errorf("failed to marshal signed certificate, empty result")
-		utils.TrasaResponse(w, http.StatusOK, "failed", "failed to marshal signed certificate, empty result", "GenerateKeyPair", nil)
+		utils.TrasaResponse(w, http.StatusOK, "failed", "failed to marshal signed certificate, empty result", "failed to download SSH host cert", nil)
 		return
 	}
 

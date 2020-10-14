@@ -91,7 +91,7 @@ func CreateService(w http.ResponseWriter, r *http.Request) {
 
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "invalid request", "invalid request", nil)
+		utils.TrasaResponse(w, 200, "failed", "invalid request", "failed to create service", nil)
 		return
 	}
 
@@ -102,7 +102,7 @@ func CreateService(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logrus.Error(err)
 		reason := utils.GetConstraintErrorMessage(err)
-		utils.TrasaResponse(w, 200, "failed", reason, "failed to create new app")
+		utils.TrasaResponse(w, 200, "failed", reason, "failed to create service")
 		return
 	}
 
@@ -148,7 +148,7 @@ func UpdateService(w http.ResponseWriter, r *http.Request) {
 	err := Store.Update(&req)
 	if err != nil {
 		reason := utils.GetConstraintErrorMessage(err)
-		utils.TrasaResponse(w, 200, "success", reason, fmt.Sprintf("service %s NOT updated", req.Name))
+		utils.TrasaResponse(w, 200, "success", reason, fmt.Sprintf("service %s not updated", req.Name))
 		return
 	}
 	utils.TrasaResponse(w, 200, "success", "Service profile updated", fmt.Sprintf("service %s updated", req.Name))
@@ -169,7 +169,7 @@ func UpdateHTTPProxy(w http.ResponseWriter, r *http.Request) {
 
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "invalid request", "service not failed", nil, nil)
+		utils.TrasaResponse(w, 200, "failed", "invalid request", "service not updated", nil, nil)
 		return
 	}
 
@@ -178,7 +178,7 @@ func UpdateHTTPProxy(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logrus.Error(err)
 		reason := utils.GetConstraintErrorMessage(err)
-		utils.TrasaResponse(w, 200, "success", reason, fmt.Sprintf("service %s NOT updated", req.Name))
+		utils.TrasaResponse(w, 200, "success", reason, fmt.Sprintf("service %s not updated", req.Name))
 		return
 	}
 	utils.TrasaResponse(w, 200, "success", "reverse proxy configured", fmt.Sprintf("service %s updated", req.Name))
@@ -193,18 +193,18 @@ func DeleteService(w http.ResponseWriter, r *http.Request) {
 
 	if err := json.NewDecoder(r.Body).Decode(&newApp); err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "invalid request", "failed to deleted  service ", nil, nil)
+		utils.TrasaResponse(w, 200, "failed", "invalid request", "failed to delete service", nil, nil)
 		return
 	}
 
 	appName, err := Store.Delete(newApp.ID, userContext.User.OrgID)
 	if err != nil {
 		logrus.Errorf("delete app: %v", err)
-		utils.TrasaResponse(w, 200, "failed", "failed to delete service", "failed to deleted  service ")
+		utils.TrasaResponse(w, 200, "failed", "failed to delete service", "failed to delete service ")
 		return
 	}
 
-	utils.TrasaResponse(w, 200, "success", "", fmt.Sprintf(" service  %s deleted", appName))
+	utils.TrasaResponse(w, 200, "success", "", fmt.Sprintf("service  %s deleted", appName))
 
 }
 
@@ -216,7 +216,7 @@ func CheckAppConfigs(w http.ResponseWriter, r *http.Request) {
 
 	if err := utils.ParseAndValidateRequest(r, &remoteLogin); err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, http.StatusOK, "failed", "invalid request", "")
+		utils.TrasaResponse(w, http.StatusOK, "failed", "service config check failed", "")
 		return
 	}
 
@@ -224,18 +224,18 @@ func CheckAppConfigs(w http.ResponseWriter, r *http.Request) {
 	serviceDetailFromDB, err := Store.GetFromID(remoteLogin.ServiceID)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, http.StatusOK, "failed", "invalid service ID", "")
+		utils.TrasaResponse(w, http.StatusOK, "failed", "invalid service ID", "service config check failed")
 		return
 	}
 
 	if remoteLogin.ServiceKey != serviceDetailFromDB.SecretKey {
 		logrus.Debug("invalid secret")
-		utils.TrasaResponse(w, http.StatusOK, "failed", "invalid service secret or ID", "CheckAppConfigs", nil)
+		utils.TrasaResponse(w, http.StatusOK, "failed", "invalid service secret or ID", "service config check failed", nil)
 		return
 	}
 
 	// if we are here, this means config values were successfully validated and we return success response
-	utils.TrasaResponse(w, http.StatusOK, "success", "valid integration data", "CheckAppConfigs", nil)
+	utils.TrasaResponse(w, http.StatusOK, "success", "valid integration data", "service config check successful", nil)
 	return
 
 }

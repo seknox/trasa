@@ -97,7 +97,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	// parse json value into struct
 	if err := utils.ParseAndValidateRequest(r, &request); err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "invalid request", "CreateUser", nil, nil)
+		utils.TrasaResponse(w, 200, "failed", "invalid request", "user not created", nil, nil)
 		return
 	}
 
@@ -157,7 +157,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	if err := utils.ParseAndValidateRequest(r, &request); err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "invalid request", "UpdateUser", nil, nil)
+		utils.TrasaResponse(w, 200, "failed", "invalid request", "user not updated")
 		return
 	}
 	uc := r.Context().Value("user").(models.UserContext)
@@ -197,21 +197,21 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	email, userRole, err := Store.Delete(userID, uc.Org.ID) //createUser(&user)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "failed deleting user", "delete user", nil)
+		utils.TrasaResponse(w, 200, "failed", "failed deleting user", "user not deleted", nil)
 		return
 	}
 
 	err = Store.DeleteAllUserAccessMaps(userID, uc.Org.ID)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "failed deleting user.", "delete user", nil)
+		utils.TrasaResponse(w, 200, "failed", "failed deleting user.", "user not deleted", nil)
 		return
 	}
 
 	err = Store.DeregisterUserDevices(userID, uc.Org.ID)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "failed deleting user.", "delete user", nil)
+		utils.TrasaResponse(w, 200, "failed", "failed deleting user.", "user not deleted", nil)
 		return
 	}
 
