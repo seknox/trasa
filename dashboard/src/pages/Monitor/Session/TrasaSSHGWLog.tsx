@@ -10,15 +10,17 @@ export default function TrasaSSHGWLog(props: any) {
 
   React.useEffect(() => {
     const term = termRef.current;
-    const fitAddon = new FitAddon();
 
-    term.loadAddon(fitAddon);
-    fitAddon.fit();
 
     const container = document.getElementById('xterm');
     if (container) {
       term.open(container);
     }
+
+    const fitAddon = new FitAddon();
+
+    term.loadAddon(fitAddon);
+    fitAddon.fit();
 
     const d1 = props.sessionLog.replace(/\[3J/g, '');
     const d2 = d1.replace(/\[2J/g, '');
@@ -35,7 +37,7 @@ export default function TrasaSSHGWLog(props: any) {
 
   return (
     <div>
-      <div id="xterm">{props.TrasaSSHGWLog === '' ? <LinearProgress /> : null}</div>
+      <div id="xterm" style={{ position: 'absolute', bottom: 0, right: 0, left: 0, top: 100 }}>{props.TrasaSSHGWLog === '' ? <LinearProgress /> : null}</div>
     </div>
   );
 }
