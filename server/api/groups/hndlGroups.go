@@ -188,10 +188,9 @@ func UpdateServiceGroup(w http.ResponseWriter, r *http.Request) {
 	group, err := Store.Get(req.GroupID, userContext.User.OrgID)
 	if err != nil || group.GroupID == "" {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "error fetching group detail", "UpdateServiceGroup")
+		utils.TrasaResponse(w, 200, "failed", "error fetching group detail", "could not update service group")
 		return
 	}
-	logrus.Debug("update ssss ", req.ServiceIDs)
 	if req.UpdateType == "add" {
 		logrus.Debug("update type is add ", req.ServiceIDs)
 		var sgMap models.ServiceGroupMap
@@ -224,7 +223,7 @@ func UpdateServiceGroup(w http.ResponseWriter, r *http.Request) {
 		err := Store.RemoveServicesFromGroup(req.GroupID, userContext.User.OrgID, req.ServiceIDs)
 		if err != nil {
 			logrus.Error(err)
-			utils.TrasaResponse(w, 200, "failed", "could not remove services", "update service group")
+			utils.TrasaResponse(w, 200, "failed", "could not remove services", "could not remove services from group")
 			return
 		}
 

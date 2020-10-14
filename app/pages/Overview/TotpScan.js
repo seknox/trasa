@@ -32,30 +32,13 @@ import AsyncStorage from '@react-native-community/async-storage';
 import {CommonActions} from '@react-navigation/native';
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    //    backgroundColor: 'black',
-  },
-  preview: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-  },
+
   camera: {
     flex: 1,
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
-  capture: {
-    flex: 0,
-    //     backgroundColor: '#fff',
-    borderRadius: 5,
-    padding: 15,
-    paddingHorizontal: 20,
-    alignSelf: 'center',
-    margin: 20,
-  },
+
 });
 class TotpScan extends Component {
   constructor(props) {
@@ -255,7 +238,7 @@ class TotpScan extends Component {
         ) : (
           <RNCamera
             style={styles.camera}
-            onBarCodeRead={!this.state.done?this.barCodeRead:null}
+            onBarCodeRead={this.barCodeRead}
           //  onGoogleVisionBarcodesDetected={this.barCodeRead}
             autoFocusPointOfInterest={{x: 0.5, y: 0.5}}
             captureAudio={false}

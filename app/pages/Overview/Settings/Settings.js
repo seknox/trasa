@@ -158,29 +158,33 @@ export default class Settings extends Component {
     }
   };
   exportCodes = async () => {
-    if (await this.checkWritePermission()) {
+    if (await this.checkWritePermission() && await this.checkReadPermission()) {
       //console.log(RNFS.ExternalStorageDirectoryPath+"/Trasa/",RNFS.exists(RNFS.ExternalStorageDirectoryPath +"/Trasa/"))
       RNFS.mkdir(RNFS.ExternalStorageDirectoryPath + '/Trasa/')
         .then((result) => {
           //console.log('result', result);
+          const path =
+              RNFS.ExternalStorageDirectoryPath +
+              '/Trasa/trasaTotp' +
+              new Date().toISOString().replace(/:/g,"-") +
+              '.trasa';
+
+
+          AsyncStorage.getItem('TOTPlist').then((list) => {
+            RNFS.writeFile(path, list, 'utf8')
+                .then(() => {
+                  alert('Exported to ' + path);
+                })
+                .catch((reason) => {
+                  console.error(reason)
+                  alert(reason);
+                });
+          });
+
         })
         .catch((err) => {
           console.log('err', err);
         });
-      const path =
-        RNFS.ExternalStorageDirectoryPath +
-        '/Trasa/trasaTotp' +
-        Date.now().toString() +
-        '.trasa';
-      AsyncStorage.getItem('TOTPlist').then((list) => {
-        RNFS.writeFile(path, list, 'utf8')
-          .then(() => {
-            alert('Exported to ' + path);
-          })
-          .catch((reason) => {
-            alert(reason);
-          });
-      });
 
       //var path = RNFS.DocumentDirectoryPath +"/"+Date.now().toString()+ 'test.txt';
     }
@@ -210,35 +214,35 @@ export default class Settings extends Component {
               <Text>Preferences</Text>
             </Separator>
 
-            {/*<ListItem icon onPress={this.exportCodes}>*/}
-            {/*  <Left>*/}
-            {/*    <Button>*/}
-            {/*      <Icon*/}
-            {/*        type={'MaterialIcons'}*/}
-            {/*        name={'unarchive'}*/}
-            {/*        style={{fontSize: 30}}*/}
-            {/*      />*/}
-            {/*    </Button>*/}
-            {/*  </Left>*/}
-            {/*  <Body>*/}
-            {/*    <Text>Export Secrets</Text>*/}
-            {/*  </Body>*/}
-            {/*</ListItem>*/}
+            <ListItem icon onPress={this.exportCodes}>
+              <Left>
+                <Button>
+                  <Icon
+                    type={'MaterialIcons'}
+                    name={'unarchive'}
+                    style={{fontSize: 30}}
+                  />
+                </Button>
+              </Left>
+              <Body>
+                <Text>Export Secrets</Text>
+              </Body>
+            </ListItem>
 
-            {/*<ListItem icon onPress={this.importCodes}>*/}
-            {/*  <Left>*/}
-            {/*    <Button>*/}
-            {/*      <Icon*/}
-            {/*        type={'MaterialIcons'}*/}
-            {/*        name={'archive'}*/}
-            {/*        style={{fontSize: 30}}*/}
-            {/*      />*/}
-            {/*    </Button>*/}
-            {/*  </Left>*/}
-            {/*  <Body>*/}
-            {/*    <Text>Import Secrets</Text>*/}
-            {/*  </Body>*/}
-            {/*</ListItem>*/}
+            <ListItem icon onPress={this.importCodes}>
+              <Left>
+                <Button>
+                  <Icon
+                    type={'MaterialIcons'}
+                    name={'archive'}
+                    style={{fontSize: 30}}
+                  />
+                </Button>
+              </Left>
+              <Body>
+                <Text>Import Secrets</Text>
+              </Body>
+            </ListItem>
 
 
 
