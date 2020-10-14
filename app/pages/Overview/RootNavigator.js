@@ -4,9 +4,6 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import Settings from './Settings/Settings';
 import ScanPage, { CodeInput } from './TotpScan';
-import HelpPage from './InfoPages/HelpPage';
-import AboutSeknox from './InfoPages/AboutSeknox';
-import AboutTrasa from './InfoPages/AboutTrasa';
 import TwoFA from '../Extra/2FA';
 import OrgPage from './OrgPage';
 import { Home } from './Home';
@@ -37,13 +34,6 @@ function RootNavigator() {
           component={SplashScreen}
           options={{ headerShown: false }}
         />
-        <Drawer.Screen name="Help" component={HelpPage} options={{ headerShown: false }} />
-        <Drawer.Screen
-          name="AboutSeknox"
-          component={AboutSeknox}
-          options={{ headerShown: false }}
-        />
-        <Drawer.Screen name="AboutTrasa" component={AboutTrasa} options={{ headerShown: false }} />
         <Drawer.Screen name="Home" component={Home} options={{ headerShown: false }} />
         <Drawer.Screen name="OrgPage" component={OrgPage} options={{ headerShown: false }} />
         <Drawer.Screen
