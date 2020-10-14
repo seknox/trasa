@@ -24,7 +24,7 @@ func EnforcePasswordPolicyNow(w http.ResponseWriter, r *http.Request) {
 	allUsers, err := users.Store.GetAll(userContext.User.OrgID)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "error fetching users", "EnforcePasswordPolicyNow-GetUsersAll", nil, nil)
+		utils.TrasaResponse(w, 200, "failed", "error fetching users", "failed to enforce password policy", nil, nil)
 		return
 	}
 
@@ -47,7 +47,7 @@ func EnforcePasswordPolicyNow(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	utils.TrasaResponse(w, 200, "success", "Password policy enforced", "EnforcePasswordPolicyNow", nil, nil)
+	utils.TrasaResponse(w, 200, "success", "Password policy enforced", "password policy enforced", nil, nil)
 
 }
 
@@ -104,7 +104,7 @@ func checkisExpired(thenTime int64, timeZone, days string) bool {
 	loc, err := time.LoadLocation(timeZone)
 	if err != nil {
 		logrus.Errorf("load location: %v", err)
-		loc, err = time.LoadLocation("Asia/Kathmandu")
+		loc, err = time.LoadLocation("UTC")
 		if err != nil {
 			logrus.Errorf("load location: %v", err)
 			return true
