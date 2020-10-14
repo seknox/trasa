@@ -86,6 +86,25 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// We set "changeme" as a default passsword for root account during installation. This password should be changed in first login
+	// and should never be used within TRASA accounts. If password validation succeeds and password value is "changeme" we will force
+	// user to change password.
+
+	if loginRequest.Password == "changeme" {
+		// we now will generate a short lived token which will be sent in following success response.
+		// this will let the user setup password only when token is validated.
+		verifyToken, err := redis.SetVerifyToken(userDetails.OrgID, userDetails.ID)
+
+		if err != nil {
+			logrus.Error(err)
+			utils.TrasaResponse(w, 200, "failed", "Could not set change pass token", "set token", nil)
+			return
+		}
+
+		utils.TrasaResponse(w, 200, "success", "change default password", consts.AUTH_RESP_RESET_PASS, verifyToken)
+		return
+	}
+
 	// if we are here, it means username password validation succeeded.
 	// 1st) lets check is the user password has expired. If true, we set enforce password change policy here.
 	// @@@ pending TODO

@@ -25,7 +25,7 @@ func JoinSSHSession(params models.ConnectionParams, uc models.UserContext, conn 
 
 	//Do not defer conn.Close() because it will immediately close the websocket connection and the live session will not work.
 	//All the guest joined connections are closed in WrappedTunnel.Close() method
-	conn.WriteMessage(1, []byte("Connecting..."))
+	conn.WriteMessage(1, []byte("\n\rConnecting...\n\r"))
 
 	checkAndInitParams(&uc, &params)
 	params.IsSharedSession = true
@@ -34,7 +34,7 @@ func JoinSSHSession(params models.ConnectionParams, uc models.UserContext, conn 
 	service, err := services.Store.GetFromHostname(params.Hostname, "ssh", "", params.OrgID)
 	if err != nil {
 		logrus.Error(err)
-		conn.WriteMessage(1, []byte("Service not created"))
+		conn.WriteMessage(1, []byte("\n\rService not created\n\r"))
 		return
 	}
 
@@ -56,12 +56,12 @@ func JoinSSHSession(params models.ConnectionParams, uc models.UserContext, conn 
 	newViewer, err := SSHStore.GetGuestChannel(sessionID)
 	if err != nil || newViewer == nil {
 		logrus.Error(err)
-		conn.WriteMessage(1, []byte("No such connection"))
+		conn.WriteMessage(1, []byte("\n\rNo such connection\n\r"))
 		//	conn.Write([]byte("No such connection"))
 		conn.Close()
 		return
 	}
-	conn.WriteMessage(1, []byte(`Connected to SSH session.`))
+	conn.WriteMessage(1, []byte("\n\rConnected to SSH session.\n\r"))
 	newViewer <- guest
 
 	//
@@ -78,7 +78,7 @@ func JoinSSHSession(params models.ConnectionParams, uc models.UserContext, conn 
 func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *websocket.Conn) {
 
 	defer conn.Close()
-	conn.WriteMessage(1, []byte("Connecting..."))
+	conn.WriteMessage(1, []byte("\n\rConnecting...\n\r"))
 
 	params.AccessDeviceID = uc.DeviceID
 	params.BrowserID = uc.BrowserID
@@ -104,14 +104,14 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 		if err != nil {
 			logrus.Errorf("dynamic access: %v", err)
 			authlog.FailedReason = consts.REASON_DYNAMIC_SERVICE_FAILED
-			conn.WriteMessage(1, []byte("Service not created"))
+			conn.WriteMessage(1, []byte("\n\rService not created\n\r"))
 			return
 		}
 
 	} else if err != nil {
 		logrus.Errorf("get service from hostname: %v", err)
 		authlog.FailedReason = consts.REASON_INVALID_SERVICE_CREDS
-		conn.WriteMessage(1, []byte("Service does  not created"))
+		conn.WriteMessage(1, []byte("\n\rService does  not created\n\r"))
 		return
 	}
 
@@ -122,7 +122,7 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 	creds, err := services.GetUpstreamCreds(params.Privilege, service.ID, "ssh", uc.Org.ID)
 	if err != nil {
 		logrus.Error(err)
-		conn.WriteMessage(1, []byte("\x1bcSomething is wrong\r"))
+		conn.WriteMessage(1, []byte("\n\rSomething is wrong\n\r"))
 		return
 	}
 
@@ -140,7 +140,7 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 	var signer ssh.Signer
 	cert, ok := publicKey.(*ssh.Certificate)
 	if !ok {
-		logrus.Debug("Invalid user certificate")
+		logrus.Debug("\n\rInvalid user certificate\n\r")
 		if privateKeyParseErr == nil {
 			signer = privateKey
 		}
@@ -158,7 +158,7 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 
 	if creds.EnforceStrongPass && creds.ClientKey == "" {
 		if passwordStreanght.Score < creds.ZxcvbnScore || len(params.Password) < creds.MinimumChar {
-			conn.WriteMessage(1, []byte("\x1bcPassword policy failed, weak password\r"))
+			conn.WriteMessage(1, []byte("\n\rPassword policy failed, weak password\n\r"))
 			logrus.Debug("Weak Password")
 			err := logs.Store.LogLogin(&authlog, consts.REASON_PASSWORD_POLICY_FAILED, false)
 			if err != nil {
@@ -181,7 +181,7 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 	}
 
 	var hostConfirmFunc = func(message string) bool {
-		err := conn.WriteMessage(1, []byte(message+" Press \"y\" to ignore and save it.\n"))
+		err := conn.WriteMessage(1, []byte("\r\n"+message+"\n\rPress \"y\" to ignore and save it.\n\r"))
 		if err != nil {
 			logrus.Error(err)
 			return false
@@ -193,7 +193,7 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 			return false
 		}
 		if strings.ToLower(string(ans)) == "y" {
-			conn.WriteMessage(1, []byte("Saving new host key..."))
+			conn.WriteMessage(1, []byte("\r\nSaving new host key...\n\r"))
 			return true
 		}
 		return false
@@ -203,7 +203,7 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 	clientConfig.HostKeyCallback = HandleHostKeyCallback(creds, service.ID, uc.Org.ID, hostConfirmFunc)
 
 	if params.Password == "" || creds.Password != "" {
-		conn.WriteMessage(1, []byte("Using password from vault."))
+		conn.WriteMessage(1, []byte("\n\rUsing password from vault.\n\r"))
 		clientConfig.Auth = append(clientConfig.Auth, ssh.Password(creds.Password))
 	} else {
 		clientConfig.Auth = append(clientConfig.Auth, ssh.Password(params.Password))
@@ -213,23 +213,23 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 		params.Hostname = params.Hostname + ":22"
 	}
 
-	conn.WriteMessage(1, []byte("Authenticating..."))
+	conn.WriteMessage(1, []byte("\n\rAuthenticating...\n\r"))
 
 	sshClient, err := ssh.Dial("tcp", params.Hostname, &clientConfig)
 	if err != nil {
 		//logrus.Debug(err)
 		if strings.Contains(err.Error(), "ssh: unable to authenticate") {
 			logrus.Debug(err)
-			conn.WriteMessage(1, []byte("Invalid credentials."))
+			conn.WriteMessage(1, []byte("\r\nInvalid credentials.\n\r"))
 			err = logs.Store.LogLogin(&authlog, consts.REASON_INVALID_USER_CREDS, false)
 
 		} else if strings.Contains(err.Error(), "ssh: handshake failed: Could not verify upstream host key") {
 			logrus.Debug(err)
-			conn.WriteMessage(1, []byte("Invalid host key."))
+			conn.WriteMessage(1, []byte("\n\rInvalid host key.\n\r"))
 			err = logs.Store.LogLogin(&authlog, consts.REASON_INVALID_HOST_KEY, false)
 		} else if strings.Contains(err.Error(), ErrVerifyHost.Error()) {
 			logrus.Debug(err)
-			conn.WriteMessage(1, []byte("Invalid host key."))
+			conn.WriteMessage(1, []byte("\n\rInvalid host key.\n\r"))
 			err = logs.Store.LogLogin(&authlog, consts.REASON_INVALID_HOST_KEY, false)
 		} else {
 			logrus.Error(err)
@@ -246,18 +246,18 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 
 	defer sshClient.Close()
 
-	conn.WriteMessage(1, []byte("Checking policy..."))
+	conn.WriteMessage(1, []byte("\n\rChecking policy...\n\r"))
 
 	policy, reason, err := SSHStore.checkPolicy(&params)
 	if err != nil {
 		logrus.Debug(err)
-		conn.WriteMessage(1, []byte("Policy check failed. "+reason))
+		conn.WriteMessage(1, []byte("\n\rPolicy check failed: "+reason+"\n\r"))
 		logs.Store.LogLogin(&authlog, reason, false)
 		return
 	}
 
 	if policy.TfaRequired {
-		conn.WriteMessage(1, []byte("Authenticating 2nd Factor"))
+		conn.WriteMessage(1, []byte("\n\rAuthenticating 2nd Factor\n\r"))
 		deviceID, reason, ok := tfa.HandleTfaAndGetDeviceID(nil,
 			params.TfaMethod,
 			params.TotpCode,
@@ -268,7 +268,7 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 			uc.Org.OrgName,
 			uc.Org.ID)
 		if !ok {
-			conn.WriteMessage(1, []byte("\x1bc2FA failed  "+reason))
+			conn.WriteMessage(1, []byte("\n\r2FA failed: "+reason+"\n\r"))
 			err = logs.Store.LogLogin(&authlog, reason, false)
 			if err != nil {
 				logrus.Error(err)
@@ -285,7 +285,7 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 	}
 
 	if !ok {
-		conn.WriteMessage(1, []byte("\x1bc Device policy failed\r "+reason))
+		conn.WriteMessage(1, []byte("\n\rDevice policy failed: "+reason+"\n\r"))
 		err = logs.Store.LogLogin(&authlog, reason, false)
 		if err != nil {
 			logrus.Error(err)
