@@ -38,7 +38,7 @@
     "react-native-circular-progress": "^1.3.3",
     "react-native-device-info": "^4.0.1",
     "react-native-document-picker": "^3.2.4",
-    "react-native-elements": "^2.0.0",
+    "react-native-elements": "^2.3.2",
     "react-native-fs": "^2.14.1",
     "react-native-gesture-handler": "^1.6.1",
     "react-native-grid-component": "^2.0.0",

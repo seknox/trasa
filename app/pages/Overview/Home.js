@@ -1,6 +1,6 @@
 import React from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
-import {ScrollView, StyleSheet, View} from 'react-native';
+import {Image, ScrollView, StyleSheet, TouchableOpacity, View} from 'react-native';
 import Avatar from 'react-native-badge-avatar';
 import getLogoSource from './Logos/Logos';
 import {
@@ -73,51 +73,6 @@ export function Home(props) {
     //   setState({totpList:this.totpList.filter(item=>item.issuer.toUpperCase().includes(q.toUpperCase()))})
   };
 
-  //this is a built in function of react-native-grid-component
-  //it returns a single item
-  const _renderItem = (data, i) => {
-    let name = data.issuer;
-    if (
-      'angellist, codepen, envelope, etsy, facebook, flickr, foursquare, github-alt, github, gitlab, instagram, linkedin, medium, pinterest, quora, reddit-alien, soundcloud, stack-overflow, steam, stumbleupon, tumblr, twitch, twitter, google, google-plus-official, vimeo, vk, weibo, wordpress, youtube'.includes(
-        data.issuer.toLowerCase(),
-      )
-    ) {
-      name = name.toLowerCase();
-      return (
-        <View key={i} style={styles.item}>
-          <SocialIcon
-            // placeholder={(<SocialIcon type={data.issuer}/>)}
-            type={name}
-            size={50}
-            style={{alignSelf: 'flex-start'}}
-            onPress={() => {
-              goToOrgPage(data.issuer, data.secret, data.account, data.type);
-            }}
-            badge={0}
-          />
-
-          <Text>{data.issuer}</Text>
-        </View>
-      );
-    } else {
-      return (
-        <View key={i} style={styles.item}>
-          <Avatar
-            placeholder={getLogoSource(name)}
-            size={50}
-            style={{alignSelf: 'flex-start'}}
-            onPress={() => {
-              goToOrgPage(data.issuer, data.secret, data.account, data.type);
-            }}
-            badge={0}
-          />
-          <Text>{data.issuer}</Text>
-        </View>
-      );
-    }
-  };
-
-  const _renderPlaceholder = (i) => <View style={styles.item} key={i} />;
 
   // const onGetTagetRef = (ref) => {
   //   this.setState({qrFabRef: ref});
@@ -158,7 +113,7 @@ export function Home(props) {
 
           <Card padder>
             <CardItem header bordered>
-              <H1 style={{fontFamily:"Rajdhani-Bold"}}> Trasa</H1>
+              <H1 style={{fontFamily:"Rajdhani-Bold"}}> TRASA Accounts</H1>
             </CardItem>
             <CardItem cardBody bordered>
               {privateList.length ? null : (
@@ -166,13 +121,30 @@ export function Home(props) {
                     <Text>Looks like you are not enrolled to TRASA.</Text>
                   </View>
               )}
-              <Grid
-                  style={styles.list}
-                  renderItem={_renderItem}
-                  renderPlaceholder={_renderPlaceholder}
-                  data={privateList}
-                  itemsPerRow={4}
-              />
+              <View style={styles.list} >
+                {privateList.map((item,i)=>(
+                    <TouchableOpacity key={i} style={styles.item}  onPress={() => {
+                        goToOrgPage(item.issuer, item.secret, item.account, item.type);
+                    }}>
+                        <View style={styles.issuer}>
+                            <Image
+                                source={require('../Icons/trasa.png')}
+                                resizeMethod={'scale'}
+                                width={10}
+                                height={10}
+                                size={10}
+                                style={styles.icons}
+
+                                badge={0}
+                            />
+
+                            <Text >{item.issuer}</Text>
+                        </View>
+
+
+                    </TouchableOpacity>
+                ))}
+              </View>
             </CardItem>
           </Card>
 
@@ -180,11 +152,9 @@ export function Home(props) {
             <CardItem />
           </Card>
 
-
-
           <Card padder>
             <CardItem header bordered>
-              <H1 style={{fontFamily:"Rajdhani-Bold"}}> Personal Services</H1>
+              <H1 style={{fontFamily:"Rajdhani-Bold"}}> Personal Accounts</H1>
             </CardItem>
             <CardItem cardBody bordered>
               {publicList.length ? null : (
@@ -192,13 +162,55 @@ export function Home(props) {
                   You can use this app for 2FA in your personal accounts
                 </Text>
               )}
-              <Grid
-                style={styles.list}
-                renderItem={_renderItem}
-                renderPlaceholder={_renderPlaceholder}
-                data={publicList}
-                itemsPerRow={4}
-              />
+              <View style={styles.list} >
+                {publicList.map((item,i)=>(
+                    <View key={i} style={styles.item}>
+
+                        {
+                            ['angellist','codepen','envelope','etsy','facebook','flickr','foursquare','github-alt','github','gitlab','instagram','linkedin','medium','pinterest','quora','reddit-alien','soundcloud','stack-overflow','steam','stumbleupon','tumblr','twitch','twitter','google','google-plus-official','vimeo','vk','weibo','wordpress','youtube'].
+                            includes(item.issuer.toLowerCase())?
+                                (
+                                    <View style={styles.issuer}>
+                                        <SocialIcon
+                                            // placeholder={(<SocialIcon type={data.issuer}/>)}
+                                            type={item.issuer.toLowerCase()}
+                                            light
+                                            raised
+                                            iconSize={30}
+                                            style={styles.icons}
+                                            onPress={() => {
+                                                goToOrgPage(item.issuer, item.secret, item.account, item.type);
+                                            }}
+                                            badge={0}
+                                        />
+                                        <Text >{item.issuer}</Text>
+                                    </View>
+                                ):
+                                (
+                                    <View key={i} style={styles.issuer}>
+                                        <Avatar
+                                            placeholder={getLogoSource('default')}
+                                            size={50}
+                                            style={styles.icons}
+                                            onPress={() => {
+                                                goToOrgPage(item.issuer, item.secret, item.account, item.type);
+                                            }}
+                                            badge={0}
+                                        />
+                                        <Text>{item.issuer}</Text>
+                                    </View>
+                                )
+
+
+                        }
+
+
+
+
+
+                    </View>
+                ))}
+              </View>
             </CardItem>
           </Card>
 
@@ -267,68 +279,47 @@ export function Home(props) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-  },
-  modal: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  containerItem: {
-    flex: 1,
-    flexDirection: 'column',
-    //     backgroundColor: '#fcfcfc',
-    padding: 10,
-    //      borderBottomColor: '#ddd',
-    borderBottomWidth: 1,
-  },
-  itemContent: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  title: {
-    //     color: '#3c80f7',
-    fontSize: 40,
-  },
-  user: {
-    flex: 1,
-    fontSize: 14,
-    //      color: '#666',
-    marginTop: 5,
-    marginRight: 5,
-  },
-  time: {
-    //        color: '#666',
-    fontSize: 14,
-    marginTop: 5,
-  },
-  icon: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  noData: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingBottom: 100,
-    //      backgroundColor: '#eeeeec'
-  },
-  listView: {
-    //      backgroundColor: '#eeeeec'
-  },
+
+    list: {
+      marginVertical: 10,
+        // marginHorizontal: 5,
+         flex: 1,
+        flexDirection:'row',
+
+        flexWrap: 'wrap',
+
+        justifyContent:'flex-start',
+        alignContent: 'flex-start',
+
+    },
   item: {
-    flex: 1,
-    //height: 160,
-    margin: 1,
+    // flex: 1,
+    flexDirection:'column',
+      width: 100,
+      height: 100,
+    minHeight: 90,
+      minWidth: 80,
+      maxHeight: 100,
+
+
+      alignItems: 'flex-start',
+      justifyContent: 'space-evenly',
+      alignContent: 'flex-start',
+
+
   },
-  list: {
-    flex: 1,
-  },
-  navBar: {
-    //       backgroundColor:'#1582dc',
-  },
+
+    icons: {
+
+        // alignItems: 'center',
+        // alignSelf: 'flex-start',
+        height: 50,
+        width: 50,
+    },
+    issuer: {
+      alignItems: 'center'
+    },
+
 });
+
+

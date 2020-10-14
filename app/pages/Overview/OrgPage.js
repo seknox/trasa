@@ -25,6 +25,8 @@ import CircleProgress from '../Extra/Components/CircleProgress';
 import OTP from 'otp-client';
 import Device from '../Device/Device';
 import {CommonActions} from '@react-navigation/native';
+import {SocialIcon} from "react-native-elements";
+import Avatar from "react-native-badge-avatar";
 
 export default class OrgPage extends Component {
   constructor(props) {
@@ -101,10 +103,39 @@ export default class OrgPage extends Component {
           <Card>
             <CardItem>
               <Left>
-                <Image
-                  source={getLogoSource(name)}
-                  style={{width: 30, height: 30}}
-                />
+                {
+                  ['angellist','codepen','envelope','etsy','facebook','flickr','foursquare','github-alt','github','gitlab','instagram','linkedin','medium','pinterest','quora','reddit-alien','soundcloud','stack-overflow','steam','stumbleupon','tumblr','twitch','twitter','google','google-plus-official','vimeo','vk','weibo','wordpress','youtube'].
+                  includes(name.toLowerCase())?
+                      (
+
+                            <SocialIcon
+                                // placeholder={(<SocialIcon type={data.issuer}/>)}
+                                type={name.toLowerCase()}
+                                light
+                                raised
+                                iconSize={30}
+
+
+                                badge={0}
+                            />
+
+
+                      ):
+                      (
+
+                            <Avatar
+                                placeholder={getLogoSource('default')}
+                                size={50}
+
+                                badge={0}
+                            />
+
+
+                      )
+
+
+                }
+
                 <Body>
                   <Text> {name}</Text>
                   <Text note>{acc}</Text>

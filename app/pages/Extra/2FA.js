@@ -76,7 +76,7 @@ export default function TwoFA (props){
 
     return (
       <Container>
-        <Header style={styles.navBar}>
+        <Header >
           <Left>
             <Button transparent>
               <Icon
@@ -153,7 +153,7 @@ export default function TwoFA (props){
         </ScrollView>
 
         <Footer>
-          <FooterTab style={styles.navBar}>
+          <FooterTab >
             <Button full>
               <Text>Proudly A Product Of SEKNOX</Text>
             </Button>
@@ -165,12 +165,7 @@ export default function TwoFA (props){
 }
 
 const styles = StyleSheet.create({
-  navBar: {
-    //           backgroundColor:'#1582dc',
-  },
-  headerCard: {
-    marginTop: 70,
-  },
+
   buttonContainer: {
     flex: 1,
     marginTop: 20,
@@ -254,15 +249,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     //margin: 5
   },
-  text: {
-    borderRadius: 5,
-    //                 borderColor: 'teal',
-    borderWidth: 1,
-    width: 250,
-    height: 50,
-    padding: 10,
-    margin: 5,
-    //            color: 'teal',
-    fontSize: 15,
-  },
+
 });
