@@ -12,8 +12,9 @@ TRASA enables centralized access logging and allows you to record security-sensi
 
 ## Viewing recorded session
 
-<iframe src="/img/docs/tutorial/view-auth-log-session.mp4" frameborder="0" allowfullscreen width="100%" height='600'></iframe>
+
+<iframe width="100%" height='600' src="https://www.youtube.com/embed/1VZdkUGfDX4?list=PLZOFebo-o2K44zdkUPWnGO_cTz6KjNAnN" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## Viewing service specific auth logs
 
-<iframe src="/img/docs/tutorial/service-specefic-log.mp4" frameborder="0" allowfullscreen width="100%" height='600'></iframe>
+<iframe width="100%" height='600' src="https://www.youtube.com/embed/V5WdmvAcEJY?list=PLZOFebo-o2K44zdkUPWnGO_cTz6KjNAnN" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
