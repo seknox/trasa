@@ -354,6 +354,11 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 	//sessionMeta.params.Hostname = params.Hostname
 	//sessionMeta.params.Policy=params.Policy
 
+	orgDetail, err := orgs.Store.Get(sessionMeta.params.OrgID)
+	if err != nil {
+		logrus.Error(err)
+	}
+
 	sessionMeta.params.Privilege = conn.User()
 	policy, reason, err := SSHStore.checkPolicy(&models.ConnectionParams{
 		ServiceID: sessionMeta.params.ServiceID,
@@ -364,7 +369,7 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 		SessionID: sessionMeta.ID, //to append adhoc sessions
 
 		//TODO change hard coded value
-		Timezone: "Asia/Kathmandu", //for day time policy check
+		Timezone: orgDetail.Timezone, //for day time policy check
 	})
 	if err != nil {
 		logrus.Debug(err)
@@ -399,10 +404,6 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 	//logrus.Debug(utils.MarshallStruct(sessionMeta.params))
 
 	if sessionMeta.policy.TfaRequired {
-		orgDetail, err := orgs.Store.Get(sessionMeta.params.OrgID)
-		if err != nil {
-			logrus.Error(err)
-		}
 
 		deviceID, reason, ok := tfa.HandleTfaAndGetDeviceID(nil,
 			tfaMethod,

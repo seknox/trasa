@@ -16,7 +16,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import LeftIcon from '@material-ui/icons/ChevronLeft';
 import RightIcon from '@material-ui/icons/ChevronRight';
 import axios from 'axios';
-import Moment from 'moment';
+import Moment from 'moment-timezone';
 import MUIDataTable, {
   MUIDataTableColumn,
   MUIDataTableMeta,
@@ -486,7 +486,7 @@ export function LogTableV2(props: logtableProps) {
           updateValue: (value: string) => void,
         ) {
           // let d=Moment(tableMeta.rowData[8],"YYYY-MM-DDTHH:mm:ssZ")
-          const d = Moment.unix(tableMeta.rowData[9] / 1000000000);
+          const d = Moment.unix(tableMeta.rowData[9] / 1000000000).tz('UTC');
           //  d.month(d.month()+1)
           const month = d.month() + 1;
           return (
