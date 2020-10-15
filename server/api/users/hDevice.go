@@ -69,11 +69,11 @@ func RemoveUserDevice(w http.ResponseWriter, r *http.Request) {
 	err := devices.Store.Deregister(deviceID, userContext.User.OrgID)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "failed to delete user device.", "User device not removed", nil, nil)
+		utils.TrasaResponse(w, 200, "failed", "failed to delete user device.", "failed to remove user device", nil, nil)
 		return
 	}
 
-	utils.TrasaResponse(w, 200, "success", "user device removed", "User device removed", nil, nil)
+	utils.TrasaResponse(w, 200, "success", "user device removed", "user device removed", nil, nil)
 
 }
 
@@ -85,22 +85,22 @@ func TrustUserDevice(w http.ResponseWriter, r *http.Request) {
 	err := utils.ParseAndValidateRequest(r, &dev)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "invalid request", "User device not updated")
+		utils.TrasaResponse(w, 200, "failed", "invalid request", "failed to trust user device")
 		return
 	}
 
 	err = devices.Store.Trust(dev.Trusted, dev.DeviceID, userContext.User.OrgID)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "failed to update user device.", "User device not update", nil, nil)
+		utils.TrasaResponse(w, 200, "failed", "failed to update user device.", "failed to trust user device", nil, nil)
 		return
 	}
 
-	intent := "user device untrusted"
+	intent := "user device marked untrusted"
 	if dev.Trusted {
-		intent = "user device untrusted"
+		intent = "user device marked trusted"
 	}
 
-	utils.TrasaResponse(w, 200, "success", "user device updated", intent, nil, nil)
+	utils.TrasaResponse(w, 200, "success", "user device updated", intent)
 
 }

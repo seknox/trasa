@@ -55,18 +55,18 @@ func StoreServiceCredentials(w http.ResponseWriter, r *http.Request) {
 	err := tsxvault.Store.StoreSecret(s)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "Could not save password", "Could not save password")
+		utils.TrasaResponse(w, 200, "failed", "Could not save password", "failed to save password")
 		return
 	}
 
 	err = Store.AddManagedAccounts(req.ServiceID, userContext.Org.ID, req.Username)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "Could not save password", "Could not save password")
+		utils.TrasaResponse(w, 200, "failed", "Could not save password", "failed to save password")
 		return
 	}
 
-	utils.TrasaResponse(w, 200, "success", "cred stored", fmt.Sprintf(`Password saved for "%s" user `, req.Username), req.Username)
+	utils.TrasaResponse(w, 200, "success", "cred stored", fmt.Sprintf(`password saved for "%s" user `, req.Username), req.Username)
 
 	// we also store user names that has been enrolled in secret store in cockroachdb to reference
 	// managed accounts in that app.
@@ -80,14 +80,14 @@ func ViewCreds(w http.ResponseWriter, r *http.Request) {
 
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "invalid request", "Could not view password", nil, nil)
+		utils.TrasaResponse(w, 200, "failed", "invalid request", "failed to view password", nil, nil)
 		return
 	}
 
 	passCred, err1 := tsxvault.Store.GetSecret(userContext.User.OrgID, req.ServiceID, req.Type, req.Username)
 	if err1 != nil {
 		logrus.Error(err1)
-		utils.TrasaResponse(w, 200, "failed", "Could not view password", "Could not view password", nil, nil)
+		utils.TrasaResponse(w, 200, "failed", "Could not view password", "failed to view password", nil, nil)
 		return
 	}
 
@@ -97,11 +97,11 @@ func ViewCreds(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logrus.Error(err, "invalid service ID in view creds")
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "Invalid service", "Could not view password")
+		utils.TrasaResponse(w, 200, "failed", "Invalid service", "failed to view password")
 		return
 	}
 
-	utils.TrasaResponse(w, 200, "success", "creds fetched", fmt.Sprintf(`Viewed password for "%s" user in "%s" app`, req.Username, service.Name), req)
+	utils.TrasaResponse(w, 200, "success", "creds fetched", fmt.Sprintf(`viewed password for "%s" user in "%s" app`, req.Username, service.Name), req)
 }
 
 // DeleteCreds deletes stored creds from both database and tsxvault.
@@ -112,21 +112,21 @@ func DeleteCreds(w http.ResponseWriter, r *http.Request) {
 
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "false", "invalid request", "Could not delete password")
+		utils.TrasaResponse(w, 200, "false", "invalid request", "failed to delete password")
 		return
 	}
 
 	err := tsxvault.Store.TsxvDeleteSecret(userContext.User.OrgID, req.ServiceID, "password", req.Username)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "DeleteCreds", "Could not delete password")
+		utils.TrasaResponse(w, 200, "failed", "DeleteCreds", "failed to delete password")
 		return
 	}
 
 	err = tsxvault.Store.TsxvDeleteSecret(userContext.User.OrgID, req.ServiceID, "key", req.Username)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "DeleteCreds", "Could not delete password")
+		utils.TrasaResponse(w, 200, "failed", "DeleteCreds", "failed to delete password")
 		return
 	}
 
@@ -135,10 +135,10 @@ func DeleteCreds(w http.ResponseWriter, r *http.Request) {
 	err = Store.RemoveManagedAccounts(req.ServiceID, userContext.Org.ID, req.Username)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "DeleteCreds", "Could not delete password")
+		utils.TrasaResponse(w, 200, "failed", "DeleteCreds", "failed to delete password")
 		return
 	}
 
-	utils.TrasaResponse(w, 200, "success", "creds deleted", fmt.Sprintf(`Password deleted for user "%s"`, req.Username))
+	utils.TrasaResponse(w, 200, "success", "creds deleted", fmt.Sprintf(`password deleted for user "%s"`, req.Username))
 
 }

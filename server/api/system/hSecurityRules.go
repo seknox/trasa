@@ -38,17 +38,17 @@ func UpdateSecurityRule(w http.ResponseWriter, r *http.Request) {
 
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "invalid request format", "UpdateSecurityRule", nil)
+		utils.TrasaResponse(w, 200, "failed", "invalid request format", "failed to update security rule", nil)
 		return
 	}
 
 	err := Store.updateSecurityRule(uc.User.OrgID, req.Status, req.RuleID)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", err.Error(), "UpdateSecurityRule", nil)
+		utils.TrasaResponse(w, 200, "failed", "Failed to update security rule", "failed to update security rule", nil)
 		return
 	}
 
-	utils.TrasaResponse(w, 200, "success", "status updated", "UpdateSecurityRule", nil)
+	utils.TrasaResponse(w, 200, "success", "status updated", "failed to update security rule", nil)
 
 }
