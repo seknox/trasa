@@ -129,7 +129,8 @@ Always download agents and installer for TRASA from links provided in trasa.io w
 
 ### Register your device
 
-<iframe src="/img/docs/tutorial/enrol-browser.mp4" frameborder="0" allowfullscreen width="100%" height='600'></iframe>
+
+<iframe width="100%" height="100%"  height='600' src="https://www.youtube.com/embed/Qsdwzx-_Vl8?list=PLZOFebo-o2K44zdkUPWnGO_cTz6KjNAnN" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ---
 

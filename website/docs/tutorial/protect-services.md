@@ -29,7 +29,8 @@ In the video below,
 1. We will create a service profile for Centos7 which is hosted in digital ocean.
 2. Assign access to administrator with `full access` policy and support with `trusted device` policy.
 
-<iframe src="/img/docs/tutorial/protect-ssh.mp4" frameborder="0" allowfullscreen width="100%" height='600'></iframe>
+
+<iframe width="100%" height='600' src="https://www.youtube.com/embed/M7pmL8h-OXI?list=PLZOFebo-o2K44zdkUPWnGO_cTz6KjNAnN" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 <br /><br />
 
@@ -44,7 +45,8 @@ In the video below,
 1. We will create a service profile for windows 2016 server which is hosted in AWS.
 2. Assign access to administrator with `full access` policy and support with `friday` policy.
 
-<iframe src="/img/docs/tutorial/protect-rdp.mp4" frameborder="0" allowfullscreen width="100%" height='600'></iframe>
+
+<iframe width="100%" height='600' src="https://www.youtube.com/embed/EOUzO9vymug?list=PLZOFebo-o2K44zdkUPWnGO_cTz6KjNAnN" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 <br /><br />
 
@@ -70,7 +72,8 @@ In the video below,
 1. We will create a service profile for Gitlab ce which is hosted in GCP.
 2. Assign access to administrator and security professional with `trusted device` policy.
 
-<iframe src="/img/docs/tutorial/protect-gitlab.mp4" frameborder="0" allowfullscreen width="100%" height='600'></iframe>
+
+<iframe width="100%" height='600' src="https://www.youtube.com/embed/7cxquNp7Lm8?list=PLZOFebo-o2K44zdkUPWnGO_cTz6KjNAnN" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 <br /><br />
 
@@ -85,4 +88,4 @@ In the video below,
 1. We will create a service profile for Gitlab ce which is hosted in GCP.
 2. Assign access to administrator and security professional with `trusted device` policy.
 
-   <iframe src="/img/docs/tutorial/protect-discourse.mp4" frameborder="0" allowfullscreen width="100%" height='600'></iframe>
+   <iframe width="100%" height='600' src="https://www.youtube.com/embed/VzwARHXnLWI?list=PLZOFebo-o2K44zdkUPWnGO_cTz6KjNAnN" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
