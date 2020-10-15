@@ -34,7 +34,7 @@ func GetLoginEvents(w http.ResponseWriter, r *http.Request) {
 		return
 
 	}
-	utils.TrasaResponse(w, http.StatusOK, "success", "invalid size or page", "get org logs by page", events)
+	utils.TrasaResponse(w, http.StatusOK, "success", "invalid size or page", "get org logs by page", events, userContext.Org.Timezone)
 }
 
 //GetLoginEventsByPage returns login events with pagination
