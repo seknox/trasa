@@ -40,7 +40,7 @@ func TestAuthLogs(t *testing.T) {
 
 	var resp struct {
 		models.TrasaResponseStruct
-		Data []interface{} `json:"data"`
+		Data [][]logs.AuthLog `json:"data"`
 	}
 
 	err = json.Unmarshal(rr.Body.Bytes(), &resp)
@@ -55,22 +55,7 @@ func TestAuthLogs(t *testing.T) {
 	if len(resp.Data) == 0 {
 		t.Fatalf(`response data is blank, resp: %s`, string(rr.Body.Bytes()))
 	}
-
-	if resp.Data[1].(string) != "Asia/Kathmandu" {
-		t.Errorf(`incorrect timezone expected %v, got %v`, "Asia/Kathmandu", resp.Data[1].(string))
-	}
-
-	mar, err := json.Marshal(resp.Data[0])
-	if err != nil {
-		t.Fatal(`could not marshall data `)
-	}
-
-	var data []logs.AuthLog
-
-	err = json.Unmarshal(mar, &data)
-	if err != nil {
-		t.Fatal(`could not unmarshall data `)
-	}
+	data := resp.Data[0]
 
 	if len(data) != 100 {
 		t.Fatalf(`incorrect number of logs: got=%d want=%d`, len(data), 100)

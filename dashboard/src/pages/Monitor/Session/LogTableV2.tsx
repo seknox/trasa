@@ -149,7 +149,6 @@ export function LogTableV2(props: logtableProps) {
   const [loading, setLoading] = useState(true);
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
-  const [timezone,setTimezone] = useState('UTC');
 
   const custumFooter = (
     count: any,
@@ -216,7 +215,6 @@ export function LogTableV2(props: logtableProps) {
            data=[]
         }else {
           data  = response.data.data[0];
-          setTimezone(response.data.data[1]);
         }
 
         dataArr = data.map(function (n: any) {
@@ -488,7 +486,7 @@ export function LogTableV2(props: logtableProps) {
           updateValue: (value: string) => void,
         ) {
           // let d=Moment(tableMeta.rowData[8],"YYYY-MM-DDTHH:mm:ssZ")
-          const d = Moment.unix(tableMeta.rowData[9] / 1000000000).tz(timezone);
+          const d = Moment.unix(tableMeta.rowData[9] / 1000000000).tz('UTC');
           //  d.month(d.month()+1)
           const month = d.month() + 1;
           return (
