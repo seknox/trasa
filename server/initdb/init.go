@@ -28,7 +28,6 @@ func InitDB() {
 	//init system settings
 	storeGlobalDynamicServiceSetting()
 	storeGlobalPasswordPolicy()
-	storeGlobalTRASASshAuth()
 	storeGlobalEmailSettings()
 	storeDefaultSecRules()
 	storeDeviceHygieneCheck()
@@ -158,29 +157,6 @@ func storeGlobalEmailSettings() {
 	}
 
 	logrus.Trace("Global Email Setting stored")
-}
-
-func storeGlobalTRASASshAuth() {
-
-	var gssha models.GlobalTrasaSshAuth
-	gssha.MandatoryCertAuth = false
-
-	v, _ := json.Marshal(gssha)
-	var setting models.GlobalSettings
-	setting.SettingValue = string(v)
-	setting.Status = true
-	setting.OrgID = global.GetConfig().Trasa.OrgId
-	setting.UpdatedBy = "SYSTEM"
-	setting.SettingID = utils.GetRandomString(7)
-	setting.SettingType = consts.GLOBAL_TRASA_SSH_CERT_ENFORCE
-	setting.UpdatedOn = time.Now().Unix()
-	err := system.Store.SetGlobalSetting(setting)
-	if err != nil {
-		logrus.Trace(err)
-		return
-	}
-
-	logrus.Trace("Global TRASA SSH auth")
 }
 
 func storeGlobalDynamicServiceSetting() {
