@@ -179,10 +179,6 @@ func (s *Session) Start(ws *websocket.Conn) (errcode string, err error) {
 		return errcode, err
 	}
 
-	//prevent timeout
-
-	//logrus.Debug("auth success,  tfa")
-
 	tfaSuccess := true
 	var tfaDeviceID string
 	tfaSuccess, tfaDeviceID = s.handleTfa(ws, writer)
@@ -202,7 +198,7 @@ func (s *Session) Start(ws *websocket.Conn) (errcode string, err error) {
 		}
 
 		if !ok {
-			return "3339", errors.Errorf("Device policy failed: %v", reason)
+			return "3339", errors.Errorf("device policy failed: %v", reason)
 		}
 
 		ok, reason = Store.CheckPolicy(s.params, s.policy, s.service.Adhoc)
@@ -213,7 +209,7 @@ func (s *Session) Start(ws *websocket.Conn) (errcode string, err error) {
 		s.log.Status = true
 		err = logs.Store.AddNewActiveSession(s.log, s.tunnel.ConnectionID(), "rdp")
 		if err != nil {
-			logrus.Error(err)
+			logrus.Errorf(`failed to add new active session: %v`, err)
 		}
 		defer logs.Store.RemoveActiveSession(s.tunnel.ConnectionID())
 
@@ -229,7 +225,7 @@ func (s *Session) Start(ws *websocket.Conn) (errcode string, err error) {
 	go WSToGuacd(ws, writer, sessionDone)
 	GuacdToWS(ws, reader, sessionDone)
 
-	logrus.Trace("Session ended ", s.isOwner)
+	logrus.Trace("session ended: %v", s.params.SessionID)
 	return "", nil
 }
 
@@ -321,7 +317,7 @@ func WSToGuacd(ws MessageReader, guacd io.Writer, done chan bool) {
 	for {
 		_, data, err := ws.ReadMessage()
 		if err != nil {
-			logrus.Traceln("Error reading message from ws", err)
+			logrus.Traceln("failed to read message from ws", err)
 			return
 		}
 
@@ -331,7 +327,7 @@ func WSToGuacd(ws MessageReader, guacd io.Writer, done chan bool) {
 		}
 
 		if _, err = guacd.Write(data); err != nil {
-			logrus.Traceln("Failed writing to guacd", err)
+			logrus.Traceln("failed to write to guacd", err)
 			return
 		}
 	}
@@ -370,7 +366,7 @@ func GuacdToWS(ws MessageWriter, guacd guacamole.InstructionReader, done chan bo
 				if err == websocket.ErrCloseSent {
 					return
 				}
-				logrus.Traceln("Failed sending message to ws", err)
+				logrus.Traceln("failed to send message to ws", err)
 				return
 			}
 			buf.Reset()

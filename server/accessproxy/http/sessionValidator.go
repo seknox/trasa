@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/seknox/trasa/server/api/redis"
-	logger "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/nacl/secretbox"
 )
 
@@ -29,16 +28,16 @@ func tokenValidator(r *http.Request, userName string, isSSO bool) error {
 		return fmt.Errorf("No TRASA-X-CSRF Header")
 	}
 
-	logger.Tracef("HTTP-Session-Req: %s , %s", sessionToken, csrfToken)
+	//logger.Tracef("HTTP-Session-Req: %s , %s", sessionToken, csrfToken)
 
 	// 2) validate the token. sesionID is stored in redis with key as sessionID:hostname
 	// this key holds extoken value, and secret nacl seal that contains userID and orgID.
 	// this userID and orgID is then verified with extoken values which also contains same.
 	// If userID and orgID doesnot match, false is return. else tokenValidator returns true.
 	orguser, sessionData, sRecord, err := redis.Store.GetHTTPGatewaySession(sessionToken) // (sessionToken, "user", "auth", "sessionRecord")
-	logger.Tracef("HTTP-Session-Redis: %s , %s , %s , %v", orguser, sessionData, sRecord, err)
+	//logger.Tracef("HTTP-Session-Redis: %s , %s , %s , %v", orguser, sessionData, sRecord, err)
 	if err != nil || orguser == "" {
-		return fmt.Errorf("Invalid Session")
+		return fmt.Errorf("invalid session")
 	}
 
 	session := strings.Split(sessionData, ":")
@@ -53,7 +52,7 @@ func tokenValidator(r *http.Request, userName string, isSSO bool) error {
 	copy(decryptNonce[:], decodedCsrf[:24])
 	decrypted, ok := secretbox.Open(nil, []byte(decodedCsrf[24:]), &decryptNonce, &decretkey)
 	if !ok {
-		return fmt.Errorf("Invalid CSRF Token")
+		return fmt.Errorf("invalid CSRF token")
 
 	}
 

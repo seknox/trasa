@@ -85,7 +85,7 @@ func NewSession(serverConn *net.Conn) *Session {
 	authlog := logs.NewEmptyLog("ssh")
 	authlog.UpdateAddr((*serverConn).RemoteAddr())
 
-	logrus.Debug((*serverConn).RemoteAddr())
+	//	logrus.Debug((*serverConn).RemoteAddr())
 	params := models.ConnectionParams{
 		//TODO
 		OrgID: global.GetConfig().Trasa.OrgId,

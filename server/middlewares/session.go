@@ -89,7 +89,7 @@ func SessionValidatorWS(next func(params models.ConnectionParams, uc models.User
 			conn.Close()
 			return
 		}
-		logrus.Trace(uc.DeviceID)
+		//logrus.Trace(uc.DeviceID)
 		params.UserIP = utils.GetIp(r)
 
 		next(params, uc, conn)

@@ -40,7 +40,7 @@ func (s GWStore) uploadSessionLog(authlog *logs.AuthLog) error {
 	if err != nil {
 		return errors.WithMessage(err, "could not convert guac file to m4v. "+string(ll))
 	} else {
-		err = os.Remove(filepath.Join(tempFileDir, authlog.SessionID+".guac"))
+		err = os.Remove(filepath.Join(tempFileDir, sessionID+".guac"))
 		if err != nil {
 			logrus.Errorf("could not delete guac file: %v", err)
 		}
@@ -54,11 +54,11 @@ func (s GWStore) uploadSessionLog(authlog *logs.AuthLog) error {
 	if err != nil {
 		return errors.WithMessage(err, "could not convert m4v file to mp4. "+string(ll))
 	} else {
-		err = os.Remove(filepath.Join(tempFileDir, authlog.SessionID+".guac.m4v"))
+		err = os.Remove(filepath.Join(tempFileDir, sessionID+".guac.m4v"))
 		if err != nil {
-			logrus.Errorf("could not delete guac.mp4 file: %v", err)
+			logrus.Errorf("could not delete m4v file: %v", err)
 		}
-		logrus.Tracef("%s.guac.mp4 file converted and deleted", sessionID)
+		logrus.Tracef("%s.guac.m4v file converted and deleted", sessionID)
 
 	}
 

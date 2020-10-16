@@ -119,7 +119,7 @@ func dayTimeExpiryChecker(timezone string, perm models.DayAndTimePolicy) (bool, 
 		return false, consts.REASON_TIME_POLICY_FAILED
 	}
 
-	// we chcek time
+	// we check time
 
 	fromstr := strings.Split(perm.FromTime, ":")
 	tostr := strings.Split(perm.ToTime, ":")
