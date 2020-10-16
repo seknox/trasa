@@ -43,6 +43,7 @@ RUN apt-get install -y  $(cat /usr/local/guacamole/DEPENDENCIES)
 RUN update-ca-certificates
 COPY --from=gobuilder /go/src/seknox/trasa/server/server .
 COPY --from=dashbuilder /trasa/build /var/trasa/dashboard
+COPY build/etc/trasa /etc/trasa
 COPY build/docker/wait-for-it.sh .
 RUN  chmod +x wait-for-it.sh
 CMD ["bash","/trasa/wait-for-it.sh","db:5432", "--","/trasa/server"]
