@@ -1,2 +1,16 @@
 **/node_modules
 dashboard/build
+
+release
+devenv
+
+
+workstation/
+website/
+app/
+cli/
+browser/
+tfa/
+.idea/
+.github/
+.git/
