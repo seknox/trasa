@@ -225,7 +225,7 @@ func (s *Session) Start(ws *websocket.Conn) (errcode string, err error) {
 	go WSToGuacd(ws, writer, sessionDone)
 	GuacdToWS(ws, reader, sessionDone)
 
-	logrus.Trace("session ended: %v", s.params.SessionID)
+	logrus.Tracef("session ended: %v", s.params.SessionID)
 	return "", nil
 }
 
