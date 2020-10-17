@@ -13,6 +13,7 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     background: '#fafafa',
+    textAlign: 'center',
   },
   ctaPad: {
     marginTop: 50,
@@ -21,12 +22,6 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '24px',
     // color: 'white',
     fontFamily: 'Open Sans, Rajdhani',
-    // paddingLeft: '40%',
-    // padding: theme.spacing(2),
-    // background: 'linear-gradient(to left, #1a2980, #26d0ce)',
-  },
-  image: {
-    boxShadow: '0 0 20px 0 rgba(0,0,0,0.12)',
   },
 }));
 
@@ -36,17 +31,17 @@ export default function Unified() {
   return (
     <ThemeBase>
       <Grid container spacing={2}>
-        <Grid item xs={12} sm={12} md={5}>
+        <Grid item xs={12}>
           <Paper className={classes.paper} elevation={0}>
             <Typography variant="h2"> Unified Access Control Platform</Typography>
             <br />
-            <Typography variant="body1">
+            <Typography variant="body1" style={{ textAlign: 'center' }}>
               A unified security platform that can address every access control security
               requirements for your team. TRASA enbles best practice security by default.
             </Typography>
           </Paper>
         </Grid>
-        <Grid item xs={12} sm={12} md={7} className={classes.image}>
+        <Grid item xs={12}>
           <AllFeatures />
         </Grid>
       </Grid>

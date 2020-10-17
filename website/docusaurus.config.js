@@ -87,6 +87,7 @@ module.exports = {
           className: 'header-github-link',
           position: 'right',
           'aria-label': 'GitHub repository',
+          // label: 'Github',
         },
         {
           href: 'https://www.trasa.io/docs/install/installation/',

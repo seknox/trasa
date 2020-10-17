@@ -63,6 +63,14 @@ let theme = createMuiTheme({
       padding: 12,
       textAlign: 'justify',
     },
+    subtitle2: {
+      fontWeight: 600,
+      fontSize: 16,
+      letterSpacing: 0.5,
+      color: '#404854',
+      padding: 12,
+      textAlign: 'justify',
+    },
     button: {
       textTransform: 'none',
       fontFamily: 'Open Sans, Rajdhani',

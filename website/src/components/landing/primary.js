@@ -7,6 +7,7 @@ import clsx from 'clsx';
 import React from 'react';
 // import DashImage from '../../static/img/trasa-bluebg.svg';
 import ThemeBase from '../muiTheme';
+import GreenCheck from '../../../static/img/icons/green-check.png';
 
 const useStyles = makeStyles((theme) => ({
   background: {
@@ -42,10 +43,20 @@ const useStyles = makeStyles((theme) => ({
       // boxShadow: '0 0 10px #030417',
     },
   },
+  check: {
+    padding: 12,
+  },
+  customGrid: {
+    margin: 0,
+    padding: 0,
+    textAlign: 'center',
+    marginLeft: '10%',
+  },
 }));
 
 export default function MainCta() {
   const imgUrl = useBaseUrl('dash/access-stats.png');
+  // const imgUrl = useBaseUrl('arch/zero-trust-service-access.svg');
   const classes = useStyles();
   return (
     <ThemeBase>
@@ -66,11 +77,52 @@ export default function MainCta() {
               secure remote access to Web, SSH, RDP and Database services
             </Typography> */}
 
-            <Typography variant="subtitle1" style={{ textAlign: 'center' }}>
-              Identity aware access proxy, privileged access management, two-factor authentication,
-              device trust, and policies that enable secure remote access to Web, SSH, RDP, and
-              Database services.
-            </Typography>
+            <Grid container className={classes.customGrid} spacing={1}>
+              <Grid item xs={1}>
+                <img className={classes.check} src={GreenCheck} width={20} />{' '}
+              </Grid>
+              <Grid item xs={11}>
+                <Typography variant="subtitle2" style={{ textAlign: 'justify' }}>
+                  Identity Aware Access Proxy
+                </Typography>
+              </Grid>
+
+              <Grid item xs={1}>
+                <img className={classes.check} src={GreenCheck} width={20} />{' '}
+              </Grid>
+              <Grid item xs={11}>
+                <Typography variant="subtitle2" style={{ textAlign: 'justify' }}>
+                  Privileged Access Management
+                </Typography>
+              </Grid>
+
+              <Grid item xs={1}>
+                <img className={classes.check} src={GreenCheck} width={20} />{' '}
+              </Grid>
+              <Grid item xs={11}>
+                <Typography variant="subtitle2" style={{ textAlign: 'justify' }}>
+                  Two-Factor Authentication
+                </Typography>
+              </Grid>
+
+              <Grid item xs={1}>
+                <img className={classes.check} src={GreenCheck} width={20} />{' '}
+              </Grid>
+              <Grid item xs={11}>
+                <Typography variant="subtitle2" style={{ textAlign: 'justify' }}>
+                  Device Hygiene and Context Aware Policies
+                </Typography>
+              </Grid>
+
+              <Grid item xs={1}>
+                <img className={classes.check} src={GreenCheck} width={20} />{' '}
+              </Grid>
+              <Grid item xs={11}>
+                <Typography variant="subtitle2" style={{ textAlign: 'justify' }}>
+                  Web, SSH, RDP, and Database services.
+                </Typography>
+              </Grid>
+            </Grid>
 
             <Grid item xs={12}>
               <Grid container spacing={0} direction="row" alignItems="center" justify="center">
