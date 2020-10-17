@@ -2,8 +2,8 @@ import { Grid, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
 // import DashImage from '../../static/img/trasa-bluebg.svg';
-import ThemeBase from '../../muiTheme';
 import HubspotForm from 'react-hubspot-form';
+import ThemeBase from '../../muiTheme';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -31,10 +31,10 @@ export default function Features() {
             Open source and Enterprise
           </Typography>
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={7}>
           <Typography variant="body1" component="p">
-            TRASA is opensource project with Mozilla Public License (MPLv2). <br />
-            For Enterprise deployments and support, ping us using form below.
+            TRASA is fully free and open source project distributed under Mozilla Public License
+            (MPLv2). For enterprise deployments and support, send us your interest using form ahead.
           </Typography>
         </Grid>
         <Grid item xs={12}>

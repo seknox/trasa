@@ -123,14 +123,14 @@ export default function MainCta() {
                 </Typography>
               </Grid>
 
-              <Grid item xs={1}>
+              {/* <Grid item xs={1}>
                 <img className={classes.check} src={GreenCheck} width={20} />{' '}
               </Grid>
               <Grid item xs={11}>
                 <Typography variant="subtitle2" style={{ textAlign: 'justify' }}>
                   Free and open source
                 </Typography>
-              </Grid>
+              </Grid> */}
             </Grid>
 
             <Grid item xs={12}>
