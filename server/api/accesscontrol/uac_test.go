@@ -98,6 +98,32 @@ func TestCheckTrasaUAC(t *testing.T) {
 			want1: consts.REASON_TIME_POLICY_FAILED,
 		},
 
+		{name: "time policy should fail when daytime policy is nil",
+			args: args{"Asia/Kathmandu", "1.1.1.1", &models.Policy{
+				PolicyName:       "full",
+				DayAndTime:       nil,
+				IPSource:         "0.0.0.0/0",
+				AllowedCountries: "",
+				DevicePolicy:     models.DevicePolicy{},
+				Expiry:           "2090-01-01",
+			}},
+			want:  false,
+			want1: consts.REASON_TIME_POLICY_FAILED,
+		},
+
+		{name: "time policy should fail when daytime policy is empty array",
+			args: args{"Asia/Kathmandu", "1.1.1.1", &models.Policy{
+				PolicyName:       "full",
+				DayAndTime:       []models.DayAndTimePolicy{},
+				IPSource:         "0.0.0.0/0",
+				AllowedCountries: "",
+				DevicePolicy:     models.DevicePolicy{},
+				Expiry:           "2090-01-01",
+			}},
+			want:  false,
+			want1: consts.REASON_TIME_POLICY_FAILED,
+		},
+
 		{name: "expired",
 			args: args{"Asia/Kathmandu", "1.1.1.1", &models.Policy{
 				DayAndTime:       fullDayTime,

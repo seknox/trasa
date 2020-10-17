@@ -75,12 +75,12 @@ func handlePass(params *models.ConnectionParams) (*models.UpstreamCreds, error) 
 		creds.Password = params.Password
 	}
 
-	passwordStreanght := zxcvbn.PasswordStrength(password, nil)
+	passwordStrength := zxcvbn.PasswordStrength(password, nil)
 
 	if creds.EnforceStrongPass && !params.IsSharedSession {
-		if passwordStreanght.Score < creds.ZxcvbnScore || len(password) < creds.MinimumChar {
-			logrus.Debug("Weak Password")
-			return nil, errors.New("Weak Password")
+		if passwordStrength.Score < creds.ZxcvbnScore || len(password) < creds.MinimumChar {
+			logrus.Debug("weak password")
+			return nil, errors.New("weak password")
 		}
 
 	}
@@ -92,8 +92,7 @@ func handlePass(params *models.ConnectionParams) (*models.UpstreamCreds, error) 
 func handlePolicy(params *models.ConnectionParams, serviceID string) (ok bool, reason consts.FailedReason) {
 	policy, adhoc, err := policies.Store.GetAccessPolicy(params.UserID, serviceID, params.Privilege, params.OrgID)
 	if err != nil {
-		logrus.Error(err)
-		//Dynamic  service
+		logrus.Errorf(`failed to get access policy: %v`, err)
 		return false, consts.REASON_NO_POLICY_ASSIGNED
 	}
 
@@ -117,11 +116,11 @@ func handlePolicy(params *models.ConnectionParams, serviceID string) (ok bool, r
 
 func (s Session) handleTfa(ws *websocket.Conn, guacdWriter io.Writer) (ok bool, tfaDeviceID string) {
 
-	logrus.Debug("sending tfa instruction")
+	logrus.Trace("sending tfa instruction")
 
 	var tfaInstruction *guacamole.Instruction
 	if s.params.Skip2FA {
-		//we need to send tfa instruction with skip argument to tell guacmole client (js) to start capturing input
+		//we need to send tfa instruction with skip argument to tell guacamole client (js) to skip TFA and start capturing input
 		tfaInstruction = guacamole.NewInstruction("tfa", "skip")
 	} else {
 		tfaInstruction = guacamole.NewInstruction("tfa")

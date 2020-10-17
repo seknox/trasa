@@ -1,9 +1,11 @@
 version: '3.8'
 services:
   trasa-server:
-    build:
-      context: ../../..
-      dockerfile: Dockerfile
+    image: seknox/trasa:v1.1.0
+    environment:
+      TRASA.LISTENADDR: localhost
+#      TRASA.AUTOCERT: "FALSE"
+
     ports:
       - "80:80"
       - "443:443"
@@ -19,12 +21,11 @@ services:
         source: temp
         target: /tmp/trasa/accessproxy/guac
 #      - type: bind
-#        source: ./config
+#        source: .
 #        target: /etc/trasa/config
 
   redis:
-    image: redis
-
+    image: redis:6.0.8
 
   guacd:
     image: seknox/guacd:v0.0.1
@@ -35,13 +36,13 @@ services:
         target: /tmp/trasa/accessproxy/guac
 
   db:
-    image: postgres
+    image: postgres:13.0
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
       POSTGRES_USER: trasauser
+      POSTGRES_PASSWORD: trasauser
       POSTGRES_DB: trasadb
 
 
 volumes:
   temp:
-

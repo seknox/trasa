@@ -16,7 +16,6 @@ import (
 
 type GlobalSettingsResp struct {
 	DynamicAccess  models.GlobalSettings `json:"dynamicAccess"`
-	SSHCertSetting models.GlobalSettings `json:"sshCertSetting"`
 	PasswordPolicy models.GlobalSettings `json:"passPolicy"`
 	EmailSettings  models.GlobalSettings `json:"emailSettings"`
 	DeviceHygiene  models.GlobalSettings `json:"deviceHygiene"`
@@ -39,11 +38,6 @@ func GlobalSettings(w http.ResponseWriter, r *http.Request) {
 		logrus.Error(err)
 	}
 
-	sshCertConf, err := Store.GetGlobalSetting(userContext.User.OrgID, consts.GLOBAL_TRASA_SSH_CERT_ENFORCE)
-	if err != nil {
-		logrus.Error(err)
-	}
-
 	resp.DeviceHygiene, err = Store.GetGlobalSetting(userContext.User.OrgID, consts.GLOBAL_DEVICE_HYGIENE_CHECK)
 	if err != nil {
 		logrus.Error(err)
@@ -55,7 +49,6 @@ func GlobalSettings(w http.ResponseWriter, r *http.Request) {
 
 	resp.PasswordPolicy = passPolicy
 	resp.EmailSettings = emailConfigs
-	resp.SSHCertSetting = sshCertConf
 
 	utils.TrasaResponse(w, 200, "success", "global settings fetched", "", resp)
 

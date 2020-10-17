@@ -54,9 +54,6 @@ func (p *Proxy) ServeWS(params models.ConnectionParams, uc models.UserContext, w
 	authlog.OrgID = uc.Org.ID
 	params.SessionID = authlog.SessionID
 
-	logrus.Debugf("params.device ID: %s", params.AccessDeviceID)
-	logrus.Debugf("uc.device ID: %s", uc.DeviceID)
-
 	//If connection is not "joined" one, write authlog
 	//Joined connections have connID, new connection don't
 	if params.ConnID == "" {
@@ -66,6 +63,7 @@ func (p *Proxy) ServeWS(params models.ConnectionParams, uc models.UserContext, w
 	newSession, err := NewSession(&params, &authlog)
 	if err != nil {
 		logrus.Debug(err)
+		// code 3339 is for trasa related errors
 		p.sendError(ws, err.Error(), "3339")
 		ws.WriteMessage(websocket.CloseMessage, nil)
 		return

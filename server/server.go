@@ -89,7 +89,7 @@ func StartServr() {
 
 	initdb.InitDB()
 
-	logrus.Trace("Starting API Server...")
+	logrus.Info("Starting API Server...")
 
 	closeChan := make(chan bool, 1)
 	go func() {
@@ -247,13 +247,13 @@ func CoreAPIRouter(r *chi.Mux) chi.Router {
 				TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 			}
 
-			url, err := url.ParseRequestURI(global.GetConfig().Trasa.DashboardAddr)
+			requestURI, err := url.ParseRequestURI(global.GetConfig().Trasa.DashboardAddr)
 			if err != nil {
 				logrus.Error(err)
 				// TODO respond with error notification?
 				return
 			}
-			req.URL = url
+			req.URL = requestURI
 			fwd, err := forward.New(forward.RoundTripper(transport), forward.Logger(global.OxyLog))
 
 			if err != nil {

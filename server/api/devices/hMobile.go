@@ -186,7 +186,7 @@ func GiveMeDeviceDetail(orguser, deviceID, totpSec string) {
 	if err != nil {
 		//TODO handle error after mobile app is also updated in ios
 		// ignoring error for backward compatibility
-		logrus.Trace(deviceDetail.DeviceFinger)
+		//logrus.Trace(deviceDetail.DeviceFinger)
 		logrus.Error(err)
 	} else {
 		userDevice.DeviceHygiene = devHyg
