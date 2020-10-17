@@ -67,7 +67,8 @@ module.exports = {
           ],
         },
         // { to: 'features', label: 'Features', position: 'left' },
-        // { to: 'security', label: 'Security', position: 'left' },
+        { to: 'security', label: 'Security', position: 'right' },
+        // { to: 'pricing', label: 'Pricing', position: 'right' },
         {
           to: 'docs/',
           activeBasePath: 'docs',
