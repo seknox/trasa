@@ -377,7 +377,7 @@ func checkInitDirsAndFiles() {
 		defer f.Close()
 		f.WriteString(
 			`[backup]
-  backupdir = "$HOME/trasa/backup"
+  backupdir = /var/trasa/backup"
 
 [database]
   cacert = "/etc/trasa/certs/ca.crt"
@@ -390,11 +390,6 @@ func checkInitDirsAndFiles() {
   usercert = "/etc/trasa/certs/client.trasauser.crt"
   userkey = "/etc/trasa/certs/client.trasauser.key"
 
-[dbproxy]
-  listenaddr = "127.0.0.1:8023"
-
-[etcd]
-  server = "http://localhost:2379"
 
 [logging]
   level = "ERROR"
