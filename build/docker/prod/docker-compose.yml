@@ -1,9 +1,10 @@
 version: '3.8'
 services:
   trasa-server:
-    build:
-      context: ../../..
-      dockerfile: Dockerfile
+    image: seknox/trasa:v1.1.0
+    environment:
+      TRASA.LISTENADDR: localhost
+
     ports:
       - "80:80"
       - "443:443"
@@ -25,7 +26,6 @@ services:
   redis:
     image: redis
 
-
   guacd:
     image: seknox/guacd:v0.0.1
     user: root
@@ -44,4 +44,3 @@ services:
 
 volumes:
   temp:
-

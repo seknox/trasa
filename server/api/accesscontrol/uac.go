@@ -42,7 +42,7 @@ cases:
 func CheckTrasaUAC(timezone, clientip string, policy *models.Policy) (bool, consts.FailedReason) {
 
 	allow := false
-	reason := consts.REASON_UNKNOWN
+	reason := consts.REASON_TIME_POLICY_FAILED
 	for _, dayTimePolicy := range policy.DayAndTime {
 		allow, reason = dayTimeExpiryChecker(timezone, dayTimePolicy)
 		logrus.Trace(allow, reason)
@@ -62,7 +62,7 @@ func CheckTrasaUAC(timezone, clientip string, policy *models.Policy) (bool, cons
 
 	//check ip policy
 	allowedIps := strings.Split(policy.IPSource, ",")
-	logrus.Debug(allowedIps, clientip)
+	//logrus.Debug(allowedIps, clientip)
 
 	chk, err := utils.NewChecker(allowedIps)
 	if err != nil {
@@ -119,7 +119,7 @@ func dayTimeExpiryChecker(timezone string, perm models.DayAndTimePolicy) (bool, 
 		return false, consts.REASON_TIME_POLICY_FAILED
 	}
 
-	// we chcek time
+	// we check time
 
 	fromstr := strings.Split(perm.FromTime, ":")
 	tostr := strings.Split(perm.ToTime, ":")

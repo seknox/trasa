@@ -65,13 +65,13 @@ func Proxy() http.HandlerFunc {
 		}
 
 		// let us forward this request to another server
-		url, err := url.ParseRequestURI(upHost)
+		requestURI, err := url.ParseRequestURI(upHost)
 		if err != nil {
 			logrus.Error(err)
 			// TODO respond with error notification?
 			return
 		}
-		r.URL = url
+		r.URL = requestURI
 
 		insecureSkipVerify := false
 		if proxyConfig[r.Host].StrictTLSValidation == false {
