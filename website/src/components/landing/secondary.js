@@ -2,10 +2,10 @@ import { Typography } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
-import ThemeBase from '../muiTheme';
 import clsx from 'clsx';
 import Link from '@docusaurus/Link';
 import useBaseUrl from '@docusaurus/useBaseUrl';
+import ThemeBase from '../muiTheme';
 
 const useStyles = makeStyles(() => ({
   ctaPad: {
@@ -35,9 +35,9 @@ export default function Enterprise() {
               applications and <br /> services, access by internal team or managed service provider;
             </Typography>
             <Typography variant="subtitle1" style={{ textAlign: 'center' }}>
-              <b>TRASA</b> provides modern security features and enables best practice security{' '}
-              <br /> to protect Web, SSH, RDP and Database services from unauthorized or malicious
-              access.
+              <b>TRASA</b> is a free and open source project that provides modern security features
+              and enables best practice security to protect Web, SSH, RDP, and Database services
+              from unauthorized or malicious access.
             </Typography>
           </div>
         </Grid>

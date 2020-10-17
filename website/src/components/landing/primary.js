@@ -122,6 +122,15 @@ export default function MainCta() {
                   Web, SSH, RDP, and Database services.
                 </Typography>
               </Grid>
+
+              <Grid item xs={1}>
+                <img className={classes.check} src={GreenCheck} width={20} />{' '}
+              </Grid>
+              <Grid item xs={11}>
+                <Typography variant="subtitle2" style={{ textAlign: 'justify' }}>
+                  Free and open source
+                </Typography>
+              </Grid>
             </Grid>
 
             <Grid item xs={12}>
