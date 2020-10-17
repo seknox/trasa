@@ -2,25 +2,29 @@
 
 - Clone the repo  
  `git clone https://github.com/seknox/trasa.git && cd trasa`
-- Download [GeoCityLite.mmdb]() and move it to `/etc/trasa/static/GeoCityLite.mmdb`
+- Download [GeoCityLite.mmdb](https://github.com/seknox/trasa/raw/master/build/etc/trasa/static/GeoLite2-City.mmdb) and move it to `/etc/trasa/static/GeoCityLite.mmdb`
 - Install dashboard dependencies   
 `yarn install` inside dashboard directory
 - Start dashboard in dev mode
 `yarn start`
 - Build backend server
 `go build` inside server directory
+- Start database
+`sudo docker run -d -p 5432:5432 --name db -e POSTGRES_PASSWORD=trasauser -e POSTGRES_USER=trasauser -e POSTGRES_DB=trasadb postgres`
+-Start redis
+`sudo docker run -d -p 6379:6379 --name redis redis`
 - Run the binary
 `sudo ./server`
 
 - Edit `/etc/trasa/config/config.toml` file and   
     - change `trasa.proxyDashboard` to ` true`
     - change `trasa.dashboardAddr` to `http://localhost:3000`
-- Open TRASA dashboard at http://localhost:3000
+- Open TRASA dashboard at https://localhost
 
 > Go through the [wiki](https://github.com/seknox/trasa/wiki) to get overview of codebase. 
 
 
-# Code convensions 
+# Code conventions 
 
 
 ## API route
@@ -52,10 +56,10 @@ Read API should have GET method, all other APIs which change state of server sho
 All packages follow same file structure.
 ##### init.go
 init.go contains interfaces, InitStore function and State variable
-##### *hndl.go
-handlers contain http handler functions. eg hndlauth.go, hndlcrud.go
-##### *store.go
-store contains statefull methods of Store struct. eg crudstore.go
+##### h*.go
+handlers contain http handler functions. eg hAuth.go, hTfa.go
+##### store*.go
+store contains stateful methods of Store struct. eg storeSession.go
 
 
 
@@ -89,3 +93,6 @@ Description: Long description
 4. You may merge the Pull Request in once you have the sign-off of one other developer, or if you 
    do not have permission to do that, you may request the second reviewer to merge it for you.
 
+>Before working on an issue,
+> - Check if someone else is already working on it.
+> - Comment before working on an issue. 
