@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     backgroundColor: 'transparent',
-    padding: theme.spacing(2),
+    // padding: theme.spacing(2),
 
     borderColor: '#FFFFFF',
     //   boxShadow: '0 3px 5px 2px white',
@@ -45,28 +45,29 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Features() {
-  const imgUrl = useBaseUrl('arch/providers.svg');
+  const imgUrl = useBaseUrl('arch/geo-spanned.svg');
   const classes = useStyles();
   return (
     <ThemeBase>
       <Grid container spacing={6}>
-        <Grid item xs={12} sm={12} md={6} className={classes.image}>
+        <Grid item xs={12} sm={12} md={6}>
           <Paper className={classes.paper} elevation={0}>
-            <div className={classes.featuresList}>
-              <img src={imgUrl} alt="trasa integrations and providers" />
-            </div>
+            <Typography variant="h2"> Geo spanned access point.</Typography>
+            <br />
+            <Typography variant="body1">
+              Distributed teams and distributed edge computing is the new norm for modern
+              tech-driven teams. TRASA can be deployed as Geo spanned access points, protecting
+              internal infrastructure access with the highest availability. Configure from a single
+              dashboard, and policy will be synced automatically to every access point.
+            </Typography>
           </Paper>
         </Grid>
 
-        <Grid item xs={12} sm={12} md={6}>
+        <Grid item xs={12} sm={12} md={6} className={classes.image}>
           <Paper className={classes.paper} elevation={0}>
-            <Typography variant="h2"> Providers </Typography>
-            <br />
-            <Typography variant="body1">
-              Unlike legacy access control systems, TRASA directly integrates with an existing user
-              identity provider, service identity providers, and secret managers to protect dynamic
-              infrastructure. TRASA adapts to existing workflows.
-            </Typography>
+            <div className={classes.featuresList}>
+              <img src={imgUrl} alt="Geo spanned TRASA" />
+            </div>
           </Paper>
         </Grid>
       </Grid>

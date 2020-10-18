@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     backgroundColor: 'transparent',
-    padding: theme.spacing(2),
+    // padding: theme.spacing(2),
 
     borderColor: '#FFFFFF',
     //   boxShadow: '0 3px 5px 2px white',
@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Features() {
-  const imgUrl = useBaseUrl('arch/providers.svg');
+  const imgUrl = useBaseUrl('arch/zero-trust-service-access.svg');
   const classes = useStyles();
   return (
     <ThemeBase>
@@ -53,19 +53,19 @@ export default function Features() {
         <Grid item xs={12} sm={12} md={6} className={classes.image}>
           <Paper className={classes.paper} elevation={0}>
             <div className={classes.featuresList}>
-              <img src={imgUrl} alt="trasa integrations and providers" />
+              <img src={imgUrl} alt="zero trust service access" />
             </div>
           </Paper>
         </Grid>
 
         <Grid item xs={12} sm={12} md={6}>
           <Paper className={classes.paper} elevation={0}>
-            <Typography variant="h2"> Providers </Typography>
+            <Typography variant="h2">Secure remote access</Typography>
             <br />
             <Typography variant="body1">
-              Unlike legacy access control systems, TRASA directly integrates with an existing user
-              identity provider, service identity providers, and secret managers to protect dynamic
-              infrastructure. TRASA adapts to existing workflows.
+              Identity aware access proxy, privileged access management, two-factor authentication,
+              device trust, and policies that enable secure remote access to Web, SSH, RDP, and
+              Database services.
             </Typography>
           </Paper>
         </Grid>

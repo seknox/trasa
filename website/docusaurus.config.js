@@ -67,7 +67,8 @@ module.exports = {
           ],
         },
         // { to: 'features', label: 'Features', position: 'left' },
-        // { to: 'security', label: 'Security', position: 'left' },
+        { to: 'security', label: 'Security', position: 'right' },
+        // { to: 'pricing', label: 'Pricing', position: 'right' },
         {
           to: 'docs/',
           activeBasePath: 'docs',
@@ -87,6 +88,7 @@ module.exports = {
           className: 'header-github-link',
           position: 'right',
           'aria-label': 'GitHub repository',
+          // label: 'Github',
         },
         {
           href: 'https://www.trasa.io/docs/install/installation/',
