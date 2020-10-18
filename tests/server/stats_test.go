@@ -3,6 +3,7 @@ package server_test
 import (
 	"context"
 	"encoding/json"
+
 	"github.com/go-chi/chi"
 	"github.com/seknox/trasa/server/api/stats"
 	"github.com/seknox/trasa/server/models"
@@ -320,8 +321,8 @@ func TestGetTotalManagedUsers(t *testing.T) {
 	}
 	data := resp.Data[0]
 
-	if data != 2 {
-		t.Errorf(`incorrect managed users, expected:%d got %d`, 2, data)
+	if data != 1 {
+		t.Errorf(`incorrect managed users, expected:%d got %d`, 1, data)
 	}
 
 }
@@ -381,8 +382,8 @@ func TestGetServicePermStats(t *testing.T) {
 	if data.Privileges != 2 {
 		t.Errorf(`incorrect assigned priviliges, expected:%d got %d`, 2, data.Privileges)
 	}
-	if data.Secrets != 2 {
-		t.Errorf(`incorrect stored secrets, expected:%d got %d`, 2, data.Secrets)
+	if data.Secrets != 1 {
+		t.Errorf(`incorrect stored secrets, expected:%d got %d`, 1, data.Secrets)
 	}
 
 }

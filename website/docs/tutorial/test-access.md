@@ -28,12 +28,14 @@ Below is a screenshot of available access applications and services for the Neps
 
 ## Testing SSH access
 
-<iframe src="/img/docs/tutorial/ssh-test.mp4" frameborder="0" allowfullscreen width="100%" height='600'></iframe>
+
+<iframe width="100%" height='600' src="https://www.youtube.com/embed/Ed0ufMo8IlM?list=PLZOFebo-o2K44zdkUPWnGO_cTz6KjNAnN" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## Testing Windows RDP access
 
-<iframe src="/img/docs/tutorial/rdp-test.mp4" frameborder="0" allowfullscreen width="100%" height='600'></iframe>
+<iframe width="100%" height='600' src="https://www.youtube.com/embed/2UjCuYzcrZ8?list=PLZOFebo-o2K44zdkUPWnGO_cTz6KjNAnN" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## Testing Web(Gitlab) access
 
-<iframe src="/img/docs/tutorial/http-test.mp4" frameborder="0" allowfullscreen width="100%" height='600'></iframe>
+
+<iframe width="100%" height='600' src="https://www.youtube.com/embed/uDkXHg7K_Q4?list=PLZOFebo-o2K44zdkUPWnGO_cTz6KjNAnN" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>

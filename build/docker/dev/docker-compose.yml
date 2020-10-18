@@ -14,12 +14,34 @@ services:
     depends_on:
       - redis
       - db
+    volumes:
+      - type: volume
+        source: temp
+        target: /tmp/trasa/accessproxy/guac
+#      - type: bind
+#        source: ./config
+#        target: /etc/trasa/config
+
   redis:
     image: redis
+
+
+  guacd:
+    image: seknox/guacd:v0.0.1
+    user: root
+    volumes:
+      - type: volume
+        source: temp
+        target: /tmp/trasa/accessproxy/guac
+
   db:
     image: postgres
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
-    volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      POSTGRES_USER: trasauser
+      POSTGRES_DB: trasadb
+
+
+volumes:
+  temp:
 

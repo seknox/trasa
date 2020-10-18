@@ -52,6 +52,7 @@ const loginResps = {
   AUTH_RESP_CHANGE_PASS: 'AUTH_RESP_CHANGE_PASS',
   AUTH_RESP_RESET_PASS: 'AUTH_RESP_RESET_PASS',
   AUTH_RESP_TFA_DH_REQUIRED: 'AUTH_RESP_TFA_DH_REQUIRED',
+
 };
 
 // message extension to set session details
@@ -165,6 +166,14 @@ export default function AuthIndex(props: LoginIndexProps) {
         if (response.data.intent === loginResps.AUTH_RESP_NOTIF_LICENSE) {
           window.location.href = '/woa/activate';
         }
+
+        if (response.data.intent === loginResps.AUTH_RESP_RESET_PASS){
+          let verifyURL = `/woa/verify#token=${response.data.data[0]}`
+          window.location.href = verifyURL;
+        }
+
+
+
         if (response.data.intent === loginResps.AUTH_RESP_TFA_REQUIRED) {
           setTfaRequired(true);
           setTfaToken(response.data.data[0]);

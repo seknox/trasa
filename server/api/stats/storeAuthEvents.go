@@ -565,7 +565,7 @@ GROUP BY login_day  ORDER BY login_day DESC LIMIT 45;`, limitTime.UnixNano(), or
 		}
 
 		//TODO move this logic to different testable function
-		event.Date = time.Unix(0, day*86400000000000).Format(time.RFC3339)
+		event.Date = time.Unix(0, day*86400000000000).In(loc).Format(time.RFC3339)
 		event.TotalLogins = event.SuccessfulLogins + event.FailedLogins
 
 		//Filling Missing days
@@ -576,7 +576,7 @@ GROUP BY login_day  ORDER BY login_day DESC LIMIT 45;`, limitTime.UnixNano(), or
 			//		logger.Trace(gap)
 			for i := gap; i > 0; i-- {
 				events = append(events, totalEventsByDate{
-					Date:             time.Unix(0, (day+i)*86400000000000).Format(time.RFC3339),
+					Date:             time.Unix(0, (day+i)*86400000000000).In(loc).Format(time.RFC3339),
 					TotalLogins:      0,
 					SuccessfulLogins: 0,
 					FailedLogins:     0,

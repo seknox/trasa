@@ -132,7 +132,7 @@ func SendU2F(userID, orgID, appName, ip string) (bool, string) {
 			// Send Notification to User Mobile App
 			err := notif.Store.SendPushNotification(v.FcmToken, org.OrgName, appName, ip, format, challenge)
 			if err != nil {
-				logrus.Tracef("failed notifying user: %v", err)
+				logrus.Warnf("failed notifying user: %v", err)
 			}
 
 		}
@@ -205,14 +205,14 @@ func sendNotificationThroughCloudProxy(fcmTokens []string, orgName, serviceName,
 	var unMar []U2f
 	err = json.Unmarshal(mar, &unMar)
 	if err != nil {
-		logrus.Trace("No device detail in 2fa response")
+		logrus.Warn("No device detail in 2fa response")
 		return U2f{}, errors.Errorf("invalid 2fa response: %v", err)
 	}
 
 	//logrus.Tracef("device detail got from U2F: %v", unMar)
 
 	if len(unMar) != 1 {
-		logrus.Trace("No device detail in 2fa response")
+		logrus.Warn("No device detail in 2fa response")
 		return U2f{}, errors.Errorf("no 2fa response: %v", err)
 	}
 
@@ -339,7 +339,7 @@ func HandleTfaAndGetDeviceID(signResponse *u2f.SignResponse, tfaMethod, totpCode
 			// Send Notification to User Mobile App
 			err := notif.Store.SendPushNotification(v.FcmToken, orgName, appName, clientIP, format, challenge)
 			if err != nil {
-				logrus.Tracef("failed notifying user: %v", err)
+				logrus.Warnf("failed notifying user: %v", err)
 			}
 
 		}

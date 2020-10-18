@@ -57,7 +57,7 @@ func Kex(w http.ResponseWriter, r *http.Request) {
 	// gen secret
 	sec := utils.ECDHComputeSecret(priv, &clientPublicKey)
 
-	logrus.Trace("our secret: ", hex.EncodeToString(sec))
+	//logrus.Trace("our secret: ", hex.EncodeToString(sec))
 
 	var kexData = global.KexDerivedKey{
 		DeviceID:  req.DeviceID,

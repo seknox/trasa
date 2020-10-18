@@ -21,7 +21,7 @@ func CreatePolicy(w http.ResponseWriter, r *http.Request) {
 
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "json unmarshal error", "Policy not created")
+		utils.TrasaResponse(w, 200, "failed", "json unmarshal error", "policy not created")
 		return
 	}
 
@@ -35,7 +35,7 @@ func CreatePolicy(w http.ResponseWriter, r *http.Request) {
 	err := Store.CreatePolicy(req)
 	if err != nil {
 		reason := utils.GetConstraintErrorMessage(err)
-		utils.TrasaResponse(w, 200, "failed", reason, "Policy not created")
+		utils.TrasaResponse(w, 200, "failed", reason, "policy not created")
 		return
 	}
 
@@ -52,7 +52,7 @@ func UpdatePolicy(w http.ResponseWriter, r *http.Request) {
 
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "json unmarshall error", "Policy not updated")
+		utils.TrasaResponse(w, 200, "failed", "json unmarshall error", "policy not updated")
 		return
 	}
 
@@ -67,7 +67,7 @@ func UpdatePolicy(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.TrasaResponse(w, 200, "success", "successfully updated policy", fmt.Sprintf(`Policy "%s" updated`, req.PolicyName))
+	utils.TrasaResponse(w, 200, "success", "successfully updated policy", fmt.Sprintf(`policy "%s" updated`, req.PolicyName))
 
 }
 
@@ -133,7 +133,7 @@ func DeletePolicies(w http.ResponseWriter, r *http.Request) {
 	var req policyIDs
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "policy not created", "Policy not deleted")
+		utils.TrasaResponse(w, 200, "failed", "policy not created", "policy not deleted")
 		return
 	}
 
@@ -143,12 +143,12 @@ func DeletePolicies(w http.ResponseWriter, r *http.Request) {
 		err := Store.DeletePolicy(v, userContext.User.OrgID)
 		if err != nil {
 			logrus.Error(err)
-			utils.TrasaResponse(w, 200, "failed", "Could not delete policy", "Policy not deleted")
+			utils.TrasaResponse(w, 200, "failed", "Could not delete policy", "policy not deleted")
 			return
 		}
 		deletedNum = deletedNum + 1
 	}
 
 	// send response
-	utils.TrasaResponse(w, 200, "success", "successfully removed policy", fmt.Sprintf(`%d Policies deleted`, deletedNum))
+	utils.TrasaResponse(w, 200, "success", "successfully removed policy", fmt.Sprintf(`%d policies deleted`, deletedNum))
 }

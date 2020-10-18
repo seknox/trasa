@@ -1,0 +1,48 @@
+version: '3.8'
+services:
+  trasa-server:
+    image: seknox/trasa:v1.1.0
+    environment:
+      TRASA.LISTENADDR: localhost
+#      TRASA.AUTOCERT: "FALSE"
+
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8022:8022"
+    links:
+      - redis
+      - db
+    depends_on:
+      - redis
+      - db
+    volumes:
+      - type: volume
+        source: temp
+        target: /tmp/trasa/accessproxy/guac
+#      - type: bind
+#        source: .
+#        target: /etc/trasa/config
+
+  redis:
+    image: redis:6.0.8
+
+  guacd:
+    image: seknox/guacd:v0.0.1
+    user: root
+    volumes:
+      - type: volume
+        source: temp
+        target: /tmp/trasa/accessproxy/guac
+
+  db:
+    image: postgres:13.0
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_USER: trasauser
+      POSTGRES_PASSWORD: trasauser
+      POSTGRES_DB: trasadb
+
+
+volumes:
+  temp:

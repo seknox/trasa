@@ -377,27 +377,22 @@ func checkInitDirsAndFiles() {
 		defer f.Close()
 		f.WriteString(
 			`[backup]
-  backupdir = "$HOME/trasa/backup"
+  backupdir = /var/trasa/backup"
 
 [database]
-  cacert = "/etc/trasa/certs/app.trasa.io/ca.crt"
+  cacert = "/etc/trasa/certs/ca.crt"
   dbname = "trasadb"
   dbtype = "postgres"
   dbuser = "trasauser"
   dbpass = "trasauser"
   port = "5432"
   server = "localhost"
-  usercert = "/etc/trasa/certs/app.trasa.io/client.trasauser.crt"
-  userkey = "/etc/trasa/certs/app.trasa.io/client.trasauser.key"
+  usercert = "/etc/trasa/certs/client.trasauser.crt"
+  userkey = "/etc/trasa/certs/client.trasauser.key"
 
-[dbproxy]
-  listenaddr = "127.0.0.1:8023"
-
-[etcd]
-  server = "http://localhost:2379"
 
 [logging]
-  level = "TRACE"
+  level = "ERROR"
 
 [minio]
   status = false
@@ -421,14 +416,12 @@ func checkInitDirsAndFiles() {
   guacdEnabled = false
   guacdAddr = "127.0.0.1:4822"
 
-[timezone]
-  location = "Asia/Kathmandu"
 
 [trasa]
+  autoCert = true
   cloudserver = "https://sg.cpxy.trasa.io"
   dashboard = "http://localhost"
   listenaddr = "localhost"
-  ssodomain = "sso.gw.trasa.io"
   orgID = ""
 
 `)

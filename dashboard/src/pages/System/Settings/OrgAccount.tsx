@@ -5,16 +5,19 @@ import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Grid from '@material-ui/core/Grid';
-import { makeStyles } from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 // import CircularProgress from "@material-ui/core/CircularProgress";
-// import classNames from "classnames";
+import MultiSelect from 'react-multi-select-component';
+
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import ProgressHOC from '../../../utils/Components/Progressbar';
 import Constants from '../../../Constants';
+import {Option} from "react-multi-select-component/dist/lib/interfaces";
+import {TimeZones} from "./timezonedata";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -69,21 +72,38 @@ export default function OrgAccountSetting(props: any) {
     timezone: '',
   });
 
+
+  const [selectedTimezones,setSelectedTimezones] = useState<Option[]>([])
+
   function hndlValueChange(e: any) {
     setOrgSetting({ ...orgSetting, [e.target.name]: e.target.value });
   }
 
   React.useEffect(() => {
     setOrgSetting(props.orgData);
+    setSelectedTimezones([{label:props.orgData.timezone,value:props.orgData.timezone}])
   }, [props.orgData]);
+
+  const onTimezoneChange = (selected: Option[])=>{
+
+    if (selected.length > 1) {
+      const last = selected[selected.length - 1];
+      setSelectedTimezones( [last] );
+    }else {
+      setSelectedTimezones( selected );
+
+    }
+  }
 
   const [reqStatus, setReqStatus] = useState(false);
 
   function submitSetting() {
     setReqStatus(true);
+    let d = orgSetting
+    d.timezone=selectedTimezones?selectedTimezones[0].value:'UTC'
 
     axios
-      .post(`${Constants.TRASA_HOSTNAME}/api/v1/org/update`, orgSetting)
+      .post(`${Constants.TRASA_HOSTNAME}/api/v1/org/update`, d)
       .then(() => {
         setReqStatus(false);
       })
@@ -164,16 +184,22 @@ export default function OrgAccountSetting(props: any) {
                     <Typography variant="h4">Timezone : </Typography>
                   </Grid>
                   <Grid item xs={9}>
-                    <TextField
-                      fullWidth
-                      onChange={hndlValueChange}
-                      name="timezone"
-                      value={orgSetting.timezone}
-                      // defaultValue={props.emailSetting.authKey}
-                      // className={ classes.textField }
-                      variant="outlined"
-                      size="small"
+                    <MultiSelect
+                        options={TimeZones}
+                        value={selectedTimezones}
+                        labelledBy={'Set Timezone'}
+                        onChange={onTimezoneChange}
                     />
+                    {/*<TextField*/}
+                    {/*  fullWidth*/}
+                    {/*  onChange={hndlValueChange}*/}
+                    {/*  name="timezone"*/}
+                    {/*  value={orgSetting.timezone}*/}
+                    {/*  // defaultValue={props.emailSetting.authKey}*/}
+                    {/*  // className={ classes.textField }*/}
+                    {/*  variant="outlined"*/}
+                    {/*  size="small"*/}
+                    {/*/>*/}
                   </Grid>
                 </Grid>
               </Grid>

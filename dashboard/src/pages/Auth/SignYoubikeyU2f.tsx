@@ -9,7 +9,7 @@ import axios from 'axios';
 import React from 'react';
 import U2fReIcon from '../../assets/u2fregs.svg';
 import Constants from '../../Constants';
-import { SetPasswordComponent } from './PasswordSetup';
+import { SetPasswordComponent } from '../Publicpages/PasswordSetupReset';
 import { StartTimeout, StopTimeout } from '../Device/Fido/index';
 
 const useStyles = makeStyles((theme) => ({

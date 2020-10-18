@@ -137,7 +137,7 @@ func handleUpstreamPasswordAndKey(username, serviceID, hostname string, challeng
 		password = creds.Password
 		c.Close()
 	} else if strings.Contains(err.Error(), "trasa: could not update cert") {
-		challengeUser("", "Could not verify host", nil, nil)
+		challengeUser("", "could not verify host", nil, nil)
 		return signer, nil, "", errors.New("Could not verify host")
 	} else if strings.Contains(err.Error(), "unable to authenticate") && (strings.Contains(err.Error(), "password")) {
 		//password error
@@ -354,6 +354,11 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 	//sessionMeta.params.Hostname = params.Hostname
 	//sessionMeta.params.Policy=params.Policy
 
+	orgDetail, err := orgs.Store.Get(sessionMeta.params.OrgID)
+	if err != nil {
+		logrus.Error(err)
+	}
+
 	sessionMeta.params.Privilege = conn.User()
 	policy, reason, err := SSHStore.checkPolicy(&models.ConnectionParams{
 		ServiceID: sessionMeta.params.ServiceID,
@@ -364,7 +369,7 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 		SessionID: sessionMeta.ID, //to append adhoc sessions
 
 		//TODO change hard coded value
-		Timezone: "Asia/Kathmandu", //for day time policy check
+		Timezone: orgDetail.Timezone, //for day time policy check
 	})
 	if err != nil {
 		logrus.Debug(err)
@@ -399,10 +404,6 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 	//logrus.Debug(utils.MarshallStruct(sessionMeta.params))
 
 	if sessionMeta.policy.TfaRequired {
-		orgDetail, err := orgs.Store.Get(sessionMeta.params.OrgID)
-		if err != nil {
-			logrus.Error(err)
-		}
 
 		deviceID, reason, ok := tfa.HandleTfaAndGetDeviceID(nil,
 			tfaMethod,
@@ -414,7 +415,7 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 			sessionMeta.params.OrgID)
 
 		if !ok {
-			logrus.Trace("tfa failed ", reason)
+			//logrus.Trace("tfa failed ", reason)
 			sessionMeta.log.FailedReason = reason
 			sessionMeta.log.TfaDeviceID = deviceID
 			sessionMeta.log.Status = false
@@ -423,7 +424,6 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 		}
 	}
 
-	logrus.Trace(sessionMeta.params.AccessDeviceID)
 	reason, ok, err := accesscontrol.CheckDevicePolicy(policy.DevicePolicy, sessionMeta.params.AccessDeviceID, sessionMeta.log.TfaDeviceID, sessionMeta.params.OrgID)
 	if err != nil {
 		logrus.Error(err)

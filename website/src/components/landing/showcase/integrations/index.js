@@ -5,7 +5,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
 // import DashImage from '../../static/img/trasa-bluebg.svg';
 import ThemeBase from '../../../muiTheme';
-import AllIntegrations from './all-integrations';
 
 const useStyles = makeStyles((theme) => ({
   background: {
@@ -28,28 +27,45 @@ const useStyles = makeStyles((theme) => ({
   image: {
     boxShadow: '0 0 20px 0 rgba(0,0,0,0.12)',
   },
+  paper: {
+    backgroundColor: 'transparent',
+    padding: theme.spacing(2),
+
+    borderColor: '#FFFFFF',
+    //   boxShadow: '0 3px 5px 2px white',
+    color: 'white',
+    textAlign: 'center',
+  },
+  featuresList: {
+    paddingTop: 50,
+    color: 'black',
+    fontSize: '18px',
+    fontFamily: 'Open Sans, Rajdhani',
+  },
 }));
 
 export default function Features() {
-  const imgUrl = useBaseUrl('features/tfa.svg');
+  const imgUrl = useBaseUrl('arch/providers.svg');
   const classes = useStyles();
   return (
     <ThemeBase>
       <Grid container spacing={6}>
         <Grid item xs={12} sm={12} md={6} className={classes.image}>
-          <AllIntegrations />
+          <Paper className={classes.paper} elevation={0}>
+            <div className={classes.featuresList}>
+              <img src={imgUrl} alt="trasa integrations and providers" />
+            </div>
+          </Paper>
         </Grid>
 
         <Grid item xs={12} sm={12} md={6}>
           <Paper className={classes.paper} elevation={0}>
-            <Typography variant="h2"> Integrations with services you already use </Typography>
+            <Typography variant="h2"> Providers </Typography>
             <br />
             <Typography variant="body1">
-              TRASA securely controls user's access to protected services. In most cases, user's
-              identities are managed by identity providers like active directory, LDAP servers, and
-              service identities are managed in cloud service providers or data center
-              virtualization platforms. TRASA integrates with these service platforms (providers) to
-              seamlessly integrate with existing workflows.
+              Unlike legacy access control systems, TRASA directly integrates with an existing user
+              identity provider, service identity providers, and secret managers to protect dynamic
+              infrastructure. TRASA adapts to existing workflows.
             </Typography>
           </Paper>
         </Grid>

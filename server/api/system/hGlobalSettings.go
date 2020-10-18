@@ -16,7 +16,6 @@ import (
 
 type GlobalSettingsResp struct {
 	DynamicAccess  models.GlobalSettings `json:"dynamicAccess"`
-	SSHCertSetting models.GlobalSettings `json:"sshCertSetting"`
 	PasswordPolicy models.GlobalSettings `json:"passPolicy"`
 	EmailSettings  models.GlobalSettings `json:"emailSettings"`
 	DeviceHygiene  models.GlobalSettings `json:"deviceHygiene"`
@@ -39,11 +38,6 @@ func GlobalSettings(w http.ResponseWriter, r *http.Request) {
 		logrus.Error(err)
 	}
 
-	sshCertConf, err := Store.GetGlobalSetting(userContext.User.OrgID, consts.GLOBAL_TRASA_SSH_CERT_ENFORCE)
-	if err != nil {
-		logrus.Error(err)
-	}
-
 	resp.DeviceHygiene, err = Store.GetGlobalSetting(userContext.User.OrgID, consts.GLOBAL_DEVICE_HYGIENE_CHECK)
 	if err != nil {
 		logrus.Error(err)
@@ -55,9 +49,8 @@ func GlobalSettings(w http.ResponseWriter, r *http.Request) {
 
 	resp.PasswordPolicy = passPolicy
 	resp.EmailSettings = emailConfigs
-	resp.SSHCertSetting = sshCertConf
 
-	utils.TrasaResponse(w, 200, "success", "global settings fetched", "GlobalSettings", resp)
+	utils.TrasaResponse(w, 200, "success", "global settings fetched", "", resp)
 
 }
 
@@ -74,7 +67,7 @@ func UpdatePasswordPolicy(w http.ResponseWriter, r *http.Request) {
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "error parsing request", "Password policy not updated", nil, nil)
+		utils.TrasaResponse(w, 200, "failed", "error parsing request", "password policy not updated", nil, nil)
 		return
 	}
 
@@ -90,7 +83,7 @@ func UpdatePasswordPolicy(w http.ResponseWriter, r *http.Request) {
 	err := Store.UpdateGlobalSetting(store)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "error updating global settings", "Password policy not updated", nil, nil)
+		utils.TrasaResponse(w, 200, "failed", "error updating global settings", "password policy not updated", nil, nil)
 		return
 	}
 
@@ -99,7 +92,7 @@ func UpdatePasswordPolicy(w http.ResponseWriter, r *http.Request) {
 		reason = "password policy disabled"
 	}
 
-	utils.TrasaResponse(w, 200, "success", reason, "Password policy updated", nil, nil)
+	utils.TrasaResponse(w, 200, "success", reason, "password policy updated", nil, nil)
 
 }
 
@@ -129,11 +122,11 @@ func UpdateDeviceHygieneSetting(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "Could not update  setting", "UpdateDeviceHygieneSetting", nil, nil)
+		utils.TrasaResponse(w, 200, "failed", "Could not update  setting", "device hygiene setting not updated", nil, nil)
 		return
 	}
 
-	utils.TrasaResponse(w, 200, "success", "Setting updated", "UpdateDeviceHygieneSetting", nil, nil)
+	utils.TrasaResponse(w, 200, "success", "Setting updated", "device hygiene setting updated", nil, nil)
 }
 
 //UpdateDynamicAccessSetting updates dynamic access settings
@@ -179,7 +172,7 @@ func UpdateEmailSetting(w http.ResponseWriter, r *http.Request) {
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "error parsing request", "Email setting not updated", nil, nil)
+		utils.TrasaResponse(w, 200, "failed", "error parsing request", "email setting not updated", nil, nil)
 		return
 	}
 
@@ -207,7 +200,7 @@ func UpdateEmailSetting(w http.ResponseWriter, r *http.Request) {
 	_, err := EncryptAndStoreKeyOrToken(key)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "failed to update email settings", "Email settings not updated")
+		utils.TrasaResponse(w, 200, "failed", "failed to update email settings", "email settings not updated")
 		return
 	}
 
@@ -228,11 +221,11 @@ func UpdateEmailSetting(w http.ResponseWriter, r *http.Request) {
 	err = Store.UpdateGlobalSetting(store)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "error updating global settings", "Email settings not updated", nil, nil)
+		utils.TrasaResponse(w, 200, "failed", "error updating global settings", "email settings not updated", nil, nil)
 		return
 	}
 
-	utils.TrasaResponse(w, 200, "success", "successfully updated email setting", "Password policy updated", nil, nil)
+	utils.TrasaResponse(w, 200, "success", "successfully updated email setting", "password policy updated", nil, nil)
 
 }
 
@@ -249,7 +242,7 @@ func StoreCloudProxyKey(w http.ResponseWriter, r *http.Request) {
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "error parsing request", "StoreCloudProxyKey", nil, nil)
+		utils.TrasaResponse(w, 200, "failed", "error parsing request", "cloud proxy key", nil, nil)
 		return
 	}
 
@@ -270,7 +263,7 @@ func StoreCloudProxyKey(w http.ResponseWriter, r *http.Request) {
 	_, err := EncryptAndStoreKeyOrToken(key)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "failed to encrypt key", "CloudProxyKey not updated")
+		utils.TrasaResponse(w, 200, "failed", "failed to encrypt key", "cloud proxy key not updated")
 		return
 	}
 
@@ -296,12 +289,12 @@ func StoreCloudProxyKey(w http.ResponseWriter, r *http.Request) {
 	err = Store.UpdateGlobalSetting(store)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "failed to store key", "CloudProxyKey not updated", nil, nil)
+		utils.TrasaResponse(w, 200, "failed", "failed to store key", "cloud proxy key not updated", nil, nil)
 		return
 	}
 
 	logrus.Trace("CLOUDPROXYADDR: ", global.GetConfig().Trasa.CloudServer)
 
-	utils.TrasaResponse(w, 200, "success", "key stored", "CloudProxyKey updated", nil, nil)
+	utils.TrasaResponse(w, 200, "success", "key stored", "cloud proxy key updated", nil, nil)
 
 }
