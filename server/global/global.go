@@ -422,8 +422,7 @@ func checkInitDirsAndFiles() {
   proxyDashboard = false
   dashboardAddr = "http://localhost:3000"
   cloudServer = "https://sg.cpxy.trasa.io"
-  dashboard = "http://localhost"
-  listenAddr = "localhost"
+  listenAddr = "app.trasa"
 
 `)
 	}
