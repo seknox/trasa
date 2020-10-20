@@ -29,6 +29,8 @@ It will create a config file in `/etc/trasa/config/config.toml`
     Since you will be running trasa locally, you should turn off the autocert.
     
 - Restart the server binary
+
+For dev environment, TRASA expects and listens on domain app.trasa by default, so we need to change local host file to point to TRASA server
 - Add an entry in hostfile pointing app.trasa to 127.0.0.1
 `echo "127.0.0.1 app.trasa" >> /etc/hosts`
 - Open TRASA dashboard at https://app.trasa
