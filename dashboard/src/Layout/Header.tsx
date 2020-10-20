@@ -21,6 +21,7 @@ import PowerSetting from '@material-ui/icons/PowerSettingsNew';
 import axios from 'axios';
 import React from 'react';
 import Constants from '../Constants';
+import packagejson from '../../package.json'
 
 const lightColor = 'rgba(255, 255, 255, 0.7)'; // 'rgba(255, 255, 255, 0.7)'; // '#030417';
 
@@ -255,7 +256,7 @@ export default function MainHeaderBar(props: any) {
           <Grid item>
             <div className={classes.version}>
               <Typography className={classes.link} component="a" href="#" variant="h6">
-                v1.1.0
+                v{packagejson.version}
               </Typography>
             </div>
           </Grid>
