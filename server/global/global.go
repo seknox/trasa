@@ -377,7 +377,7 @@ func checkInitDirsAndFiles() {
 		defer f.Close()
 		f.WriteString(
 			`[backup]
-  backupdir = /var/trasa/backup"
+  backupdir = "/var/trasa/backup"
 
 [database]
   cacert = "/etc/trasa/certs/ca.crt"
@@ -419,10 +419,11 @@ func checkInitDirsAndFiles() {
 
 [trasa]
   autoCert = true
-  cloudserver = "https://sg.cpxy.trasa.io"
+  proxyDashboard = false
+  dashboardAddr = "http://localhost:3000"
+  cloudServer = "https://sg.cpxy.trasa.io"
   dashboard = "http://localhost"
-  listenaddr = "localhost"
-  orgID = ""
+  listenAddr = "localhost"
 
 `)
 	}

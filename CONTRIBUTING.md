@@ -2,7 +2,12 @@
 
 - Clone the repo  
  `git clone https://github.com/seknox/trasa.git && cd trasa`
-- Download [GeoCityLite.mmdb](https://github.com/seknox/trasa/raw/master/build/etc/trasa/static/GeoLite2-City.mmdb) and move it to `/etc/trasa/static/GeoCityLite.mmdb`
+- Copy the GeoCity db file to `/etc/trasa/static/GeoCityLite.mmdb`
+    ```shell script
+  mkdir /etc/trasa
+  cp -r build/etc/trasa/static  /etc/trasa/static
+    ```
+
 - Install dashboard dependencies   
 `yarn install` inside dashboard directory
 - Start dashboard in dev mode
@@ -10,15 +15,20 @@
 - Build backend server
 `go build` inside server directory
 - Start database
-`sudo docker run -d -p 5432:5432 --name db -e POSTGRES_PASSWORD=trasauser -e POSTGRES_USER=trasauser -e POSTGRES_DB=trasadb postgres`
--Start redis
+`sudo docker run -d -p 5432:5432 --name db -e POSTGRES_PASSWORD=trasauser -e POSTGRES_USER=trasauser -e POSTGRES_DB=trasadb postgres`  
+- Start redis
 `sudo docker run -d -p 6379:6379 --name redis redis`
 - Run the binary
 `sudo ./server`
+It will create a config file in `/etc/trasa/config/config.toml`
 
-- Edit `/etc/trasa/config/config.toml` file and   
-    - change `trasa.proxyDashboard` to ` true`
-    - change `trasa.dashboardAddr` to `http://localhost:3000`
+- Edit the config file and change 
+    - `trasa.proxyDashboard` to ` true`
+    This will make server serve dashboard by proxying http://localhost:3000, instead of serving from /var/trasa/dashboard
+    - `trasa.autoCert` to `false`
+    Since you will be running trasa locally, you should turn off the autocert.
+    
+- Restart the server binary
 - Open TRASA dashboard at https://localhost
 
 > Go through the [wiki](https://github.com/seknox/trasa/wiki) to get overview of codebase. 
