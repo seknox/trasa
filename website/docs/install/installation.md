@@ -62,7 +62,11 @@ sudo ./trasa/trasa-server
 
 > Add -f argument while running trasa-server to enable logging to file /var/log/trasa.log
 
-- Edit `/etc/trasa/config/config.toml` if needed and restart trasa-server
+- Edit `/etc/trasa/config/config.toml`
+    - Change `trasa.listenAddr` to the domain/IP of server.
+    - If `trasa.listenAddr` is not a public domain, turn off the autocert in config by setting `trasa.autoCert=false`
+
+- Restart the trasa-server
 
 
    </TabItem>
@@ -102,7 +106,8 @@ seknox/trasa:v1.1.0
 
 
 :::tip
-Replace app.trasa with hostname/IP of TRASA server.
+- Replace app.trasa with hostname/IP of TRASA server.
+- If `TRASA.LISTENADDR` is not a public domain, turn off the autocert by passing `-e TRASA.AUTOCERT="false"`
 :::
 
    </TabItem>
