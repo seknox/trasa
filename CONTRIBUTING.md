@@ -19,16 +19,17 @@
 - Start redis
 `sudo docker run -d -p 6379:6379 --name redis redis`
 - Run the binary
-`sudo ./server`
+`sudo ./server`  
 It will create a config file in `/etc/trasa/config/config.toml`
 
-- Edit the config file and change 
+- Stop the server with `ctrl + C ` and edit the config file as bellow:
     - `trasa.proxyDashboard` to ` true`
-    This will make server serve dashboard by proxying http://localhost:3000, instead of serving from /var/trasa/dashboard
+        > This will make server serve dashboard by proxying http://localhost:3000, instead of serving from /var/trasa/dashboard
     - `trasa.autoCert` to `false`
-    Since you will be running trasa locally, you should turn off the autocert.
+        >Since you will be running trasa locally, you should turn off the autocert.
     
-- Restart the server binary
+- Start the server again
+`sudo ./server`
 
 For dev environment, TRASA expects and listens on domain app.trasa by default, so we need to change local host file to point to TRASA server
 - Add an entry in hostfile pointing app.trasa to 127.0.0.1
