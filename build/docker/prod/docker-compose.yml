@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   trasa-server:
-    image: seknox/trasa:v1.1.0
+    image: seknox/trasa:v1.1.1
     environment:
       TRASA.LISTENADDR: localhost
 #      TRASA.AUTOCERT: "FALSE"

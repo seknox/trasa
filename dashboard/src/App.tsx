@@ -110,15 +110,9 @@ export default class APP extends Component<AppProps, Tstate> {
       return config;
     });
 
-    if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
-      Constants.TRASA_HOSTNAME = 'https://app.trasa';
-      // Constants.TRASA_HOSTNAME = 'https://app.trasa.io';
-      // Constants.TRASA_GUAC_HOSTNAME_WEBSOCKET = 'wss://rc.trasa.io';
-      Constants.TRASA_GUAC_HOSTNAME_WEBSOCKET = 'wss://app.trasa';
-    } else {
       Constants.TRASA_HOSTNAME = `https://${window.location.hostname}`;
       Constants.TRASA_HOSTNAME_WEBSOCKET = `wss://${window.location.hostname}`;
-    }
+
   }
 
   snackClose = (reason: string) => {

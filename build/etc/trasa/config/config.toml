@@ -1,6 +1,6 @@
 
 [backup]
-  backupdir = "$HOME/trasa/backup"
+  backupdir = "/var/trasa/backup"
 
 [database]
   cacert = "/etc/trasa/certs/ca.crt"
@@ -33,9 +33,8 @@
 
 [trasa]
   proxyDashboard = false
-  cloudserver = "https://sg.cpxy.trasa.io"
-  dashboard = "http://app.trasa"
-  listenaddr = "app.trasa"
+  cloudServer = "https://sg.cpxy.trasa.io"
+  listenAddr = "app.trasa"
   orgID = ""
   autoCert = true
 
