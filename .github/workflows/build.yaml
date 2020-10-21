@@ -24,7 +24,19 @@ jobs:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
 
-      - name: Build
+      - name: Build Server
         working-directory: ./server
         run: go build
 
+      - name: Set up node
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: '12'
+
+      - name: Install npm packages
+        working-directory: ./dashboard
+        run: yarn install
+
+      - name: Build Dashboard
+        working-directory: ./dashboard
+        run: yarn run build

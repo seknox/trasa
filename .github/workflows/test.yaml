@@ -5,6 +5,8 @@ on :
     branches:
       - master
       - dev
+      - dashboard-ci
+
   pull_request:
     branches:
       - master
@@ -21,13 +23,18 @@ jobs:
           go-version: ^1.13
         id: go
 
+      - name: Set up node
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: '12'
+
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
 
       - name: Setup config for test
         run: sudo cp -r tests/build/etc/trasa /etc/trasa
 
-      - name: Create necessary directories
+      - name: Create required directories
         run: |
           sudo mkdir -p /var/trasa/minio
           sudo chmod 777 /var/trasa/minio
@@ -39,15 +46,23 @@ jobs:
           sudo chmod 777 /tmp/trasa/accessproxy/ssh
 
 
-      - name: Go get
+      - name: Install go modules
         working-directory: ./server
         run: go get -v ./...
 
-      - name: Unit Test
+      - name: Server Unit Test
         working-directory: ./server
         run: go test -v ./...
 
-      - name: Integration Test
+      - name: Install npm packages
+        working-directory: ./dashboard
+        run: yarn install
+
+      - name: Dashboard Unit test
+        working-directory: ./dashboard
+        run: yarn test --watchAll=false
+
+      - name: Server Integration Test
         working-directory: ./tests
         run: cd build/integration && docker-compose up --build -d && cd ../.. && go test -v  ./server
 
