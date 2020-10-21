@@ -44,7 +44,7 @@ sudo docker run --link db:db \
 -p 8022:8022 \
 -e TRASA.LISTENADDR=TRASA.NEPSEC.IO \ # <- Replace it with your preferred trasa domain name.
 -v /tmp/trasa/accessproxy/guac:/tmp/trasa/accessproxy/guac \
-seknox/trasa:v1.1.0
+seknox/trasa:v1.1.1
 
 ```
 

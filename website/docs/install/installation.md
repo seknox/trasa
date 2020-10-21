@@ -17,10 +17,10 @@ values={[
 
 <TabItem value="linux">
 
-- Download [trasa](https://storage.googleapis.com/trasa-public-download-assets/release/v0.0.1/trasa.tar.gz) binary
+- Download [trasa](https://storage.googleapis.com/trasa-public-download-assets/release/v1.1.1/trasa.tar.gz) binary
 
 ```shell script
-wget https://storage.googleapis.com/trasa-public-download-assets/release/v0.0.1/trasa.tar.gz
+wget https://storage.googleapis.com/trasa-public-download-assets/release/v1.1.1/trasa.tar.gz
 ```
 
 - Extract and place static files into respective dirs
@@ -37,13 +37,13 @@ mv trasa/GeoLite2-City.mmdb /etc/trasa/static/
 - Run [Postgres](https://www.postgresql.org/) or [CockroachDB](https://cockroachlabs.com) on port 5432
 
 ```shell script
-sudo docker run -d -p 5432:5432 --name db -e POSTGRES_PASSWORD=trasauser -e POSTGRES_USER=trasauser -e POSTGRES_DB=trasadb postgres
+sudo docker run -d -p 5432:5432 --name db -e POSTGRES_PASSWORD=trasauser -e POSTGRES_USER=trasauser -e POSTGRES_DB=trasadb postgres:13.0
 ```
 
 - Run [Redis](https://redis.io/download) on port 6379
 
 ```shell script
-sudo docker run -d -p 6379:6379 --name redis redis
+sudo docker run -d -p 6379:6379 --name redis redis:6.0.8
 ```
 
 
@@ -62,7 +62,11 @@ sudo ./trasa/trasa-server
 
 > Add -f argument while running trasa-server to enable logging to file /var/log/trasa.log
 
-- Edit `/etc/trasa/config/config.toml` if needed and restart trasa-server
+- Edit `/etc/trasa/config/config.toml`
+    - Change `trasa.listenAddr` to the domain/IP of server.
+    - If `trasa.listenAddr` is not a public domain, turn off the autocert in config by setting `trasa.autoCert=false`
+
+- Restart the trasa-server
 
 
    </TabItem>
@@ -71,13 +75,13 @@ sudo ./trasa/trasa-server
 - Run [Postgres](https://www.postgresql.org/) or [CockroachDB](https://cockroachlabs.com) on port 5432
 
 ```shell script
-sudo docker run -d -p 5432:5432 --name db -e POSTGRES_PASSWORD=trasauser -e POSTGRES_USER=trasauser -e POSTGRES_DB=trasadb postgres
+sudo docker run -d -p 5432:5432 --name db -e POSTGRES_PASSWORD=trasauser -e POSTGRES_USER=trasauser -e POSTGRES_DB=trasadb postgres:13.0
 ```
 
 - Run [Redis](https://redis.io/download) on port 6379
 
 ```shell script
-sudo docker run -d -p 6379:6379 --name redis redis
+sudo docker run -d -p 6379:6379 --name redis redis:6.0.8
 ```
 
 - Run guacamole proxy if you use RDP
@@ -97,12 +101,13 @@ sudo docker run --link db:db \
 -p 8022:8022 \
 -e TRASA.LISTENADDR=app.trasa \
 -v /tmp/trasa/accessproxy/guac:/tmp/trasa/accessproxy/guac \
-seknox/trasa:v0.0.1
+seknox/trasa:v1.1.1
 ```
 
 
 :::tip
-Replace app.trasa with hostname/IP of TRASA server.
+- Replace app.trasa with hostname/IP of TRASA server.
+- If `TRASA.LISTENADDR` is not a public domain, turn off the autocert by passing `-e TRASA.AUTOCERT="false"`
 :::
 
    </TabItem>
