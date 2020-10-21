@@ -31,16 +31,17 @@ function PasswordStrengthMeter(props: any) {
         value={testedResult.score}
         max="4"
       />
-      <br />
-      <form>
+  
+
         <label className="password-strength-meter-label">
+         
           {password && (
             <div>
               <strong>Password strength:</strong> {createPasswordLabel(testedResult)}
             </div>
           )}
         </label>
-      </form>
+
     </div>
   );
 }

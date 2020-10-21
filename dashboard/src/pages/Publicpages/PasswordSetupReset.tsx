@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
     marginTop: '5%',
-    marginLeft: '30%',
+    marginLeft: '40%',
   },
   checkInbox: {
     fontSize: 15,
@@ -32,22 +32,23 @@ const useStyles = makeStyles((theme) => ({
   },
   // //card
   card: {
-    minWidth: 275,
-    // marginLeft: '50%',
+    minWidth: 250,
+    maxWidth: 300,
+
   },
   textFieldRoot: {
     padding: 1,
     'label + &': {
       marginTop: theme.spacing(3),
     },
+    maxWidth: '200px'
   },
   textFieldInputBig: {
     borderRadius: 4,
     backgroundColor: theme.palette.common.white,
     border: '1px solid #ced4da',
     fontSize: 16,
-    // padding: '10px 100px',
-    // width: 'calc(100% - 4px)',
+
     transition: theme.transitions.create(['border-color', 'box-shadow']),
     '&:focus': {
       borderColor: '#80bdff',
@@ -64,6 +65,7 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 'bold',
     fontFamily: 'Open Sans ,Rajdhani',
   },
+
 }));
 
 type ValidatesetPasswordTokenProps = {
@@ -96,15 +98,14 @@ export default function ValidatesetPasswordToken(props: ValidatesetPasswordToken
 
   return (
     <div>
-      <div>
-        {/* Herein starts inner comopnents. we add create user component and user view component */}
+
 
         {showSetPasswordCard ? (
           <SetPasswordComponent update={false} token={token} />
         ) : (
-          ' Aww Snap. Good guess but your token is invalid '
-        )}
-      </div>
+            ' Aww Snap. Good guess but your token is invalid '
+          )}
+
     </div>
   );
 }
@@ -128,6 +129,10 @@ export function SetPasswordComponent(props: SetPasswordComponentProps) {
   // const [password, setPassword] = useState('');
   const [zscore, setZScore] = useState<zxcvbn.ZXCVBNScore>(0);
 
+  // true means button disabled={true}
+  const [disabledButton, disableButton] = useState(true)
+
+
   const classes = useStyles();
 
   const zxcvbnscore = () => {
@@ -141,10 +146,24 @@ export function SetPasswordComponent(props: SetPasswordComponentProps) {
     // setState({data});
     setData({ ...data, [event.target.name]: event.target.value });
 
-    // setState({country: event.target.value});
+    // set zxcvbn score
     if (event.target.name === 'cpassword') {
       zxcvbnscore();
+
+      // match password equality
+      console.debug(data.password, event.target.value , data.password !== '', data.password === event.target.value )
+      if (data.password !== '' && data.password === event.target.value) {
+        console.debug('reached')
+        console.debug(zscore, zscore >= 2)
+        disableButton(false)
+        // if (zscore >= 2) {
+        //   setShowButton(false)
+        // }
+
+      }
     }
+
+
   };
 
   const handleSubmit = (event: React.FormEvent<{}>) => {
@@ -192,19 +211,20 @@ export function SetPasswordComponent(props: SetPasswordComponentProps) {
                   Good to Login! <br />
                 </Typography>
               ) : (
-                ''
-              )}
+                  ''
+                )}
 
               <br />
               <form onSubmit={handleSubmit}>
                 <Grid container spacing={2} alignItems="center" direction="row" justify="center">
-                  <Grid item xs={6}>
+                  <Grid item xs={12} >
                     <TextField
                       fullWidth
                       label="Password"
                       onChange={handleChange}
                       name="password"
                       type="password"
+                      autoFocus
                       value={data.password}
                       InputProps={{
                         disableUnderline: true,
@@ -219,11 +239,10 @@ export function SetPasswordComponent(props: SetPasswordComponentProps) {
                       }}
                     />
                     <div>
-                      {/* <TextField  className={classes.selectCustom} autoComplete="off" type="password" onChange={e => setState({ password: e.target.value })} /> */}
                       <PassStrength password={data.password} />
                     </div>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item xs={12} >
                     <TextField
                       fullWidth
                       label="Confirm Password"
@@ -244,7 +263,6 @@ export function SetPasswordComponent(props: SetPasswordComponentProps) {
                       }}
                     />
                     <div>
-                      {/* <TextField  className={classes.selectCustom} autoComplete="off" type="password" onChange={e => setState({ password: e.target.value })} /> */}
                       <PassStrength password={data.cpassword} />
                     </div>
                   </Grid>
@@ -252,7 +270,7 @@ export function SetPasswordComponent(props: SetPasswordComponentProps) {
 
                 <Grid container spacing={2} alignItems="center" direction="row" justify="flex-end">
                   <Grid item xs={6}>
-                    <Button disabled={zscore < 2} variant="contained" color="primary" type="submit">
+                    <Button disabled={disabledButton} variant="contained" color="primary" name="submit" type="submit">
                       Submit
                     </Button>
                   </Grid>
