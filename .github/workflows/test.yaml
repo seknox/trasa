@@ -46,13 +46,13 @@ jobs:
           sudo chmod 777 /tmp/trasa/accessproxy/ssh
 
 
-      - name: Install go modules
-        working-directory: ./server
-        run: go get -v ./...
+#      - name: Install go modules
+#        working-directory: ./server
+#        run: go get -v ./...
 
-      - name: Server Unit Test
-        working-directory: ./server
-        run: go test -v ./...
+#      - name: Server Unit Test
+#        working-directory: ./server
+#        run: go test -v ./...
 
       - name: Install npm packages
         working-directory: ./dashboard
@@ -62,12 +62,12 @@ jobs:
         working-directory: ./dashboard
         run: yarn test --watchAll=false
 
-      - name: Server Integration Test
-        working-directory: ./tests
-        run: cd build/integration && docker-compose up --build -d && cd ../.. && go test -v  ./server
-
-      - name: Clean
-        working-directory: ./tests/build/integration
-        run: docker-compose down
+#      - name: Server Integration Test
+#        working-directory: ./tests
+#        run: cd build/integration && docker-compose up --build -d && cd ../.. && go test -v  ./server
+#
+#      - name: Clean
+#        working-directory: ./tests/build/integration
+#        run: docker-compose down
 
 

@@ -5,6 +5,8 @@ on :
     branches:
       - master
       - dev
+      - dashboard-ci
+
   pull_request:
     branches:
       - master
@@ -15,18 +17,18 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
 
-      - name: Set up Go 1.x
-        uses: actions/setup-go@v2
-        with:
-          go-version: ^1.13
-        id: go
+#      - name: Set up Go 1.x
+#        uses: actions/setup-go@v2
+#        with:
+#          go-version: ^1.13
+#        id: go
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
 
-      - name: Build Server
-        working-directory: ./server
-        run: go build
+#      - name: Build Server
+#        working-directory: ./server
+#        run: go build
 
       - name: Set up node
         uses: actions/setup-node@v2-beta
