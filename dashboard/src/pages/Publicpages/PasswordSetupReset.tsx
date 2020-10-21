@@ -129,8 +129,6 @@ export function SetPasswordComponent(props: SetPasswordComponentProps) {
   // const [password, setPassword] = useState('');
   const [zscore, setZScore] = useState<zxcvbn.ZXCVBNScore>(0);
 
-  // true means button disabled={true}
-  const [disabledButton, disableButton] = useState(true)
 
 
   const classes = useStyles();
@@ -142,29 +140,26 @@ export function SetPasswordComponent(props: SetPasswordComponentProps) {
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // const email = e.target.value;
-    // setState({data});
+
     setData({ ...data, [event.target.name]: event.target.value });
-
-    // set zxcvbn score
-    if (event.target.name === 'cpassword') {
-      zxcvbnscore();
-
-      // match password equality
-      if (data.password !== '' && data.password === event.target.value) {
-
-        disableButton(false)
-        // if (zscore >= 2) {
-        //   setShowButton(false)
-        // }
-
-      }
-    }
+    zxcvbnscore()
 
 
   };
 
   const handleSubmit = (event: React.FormEvent<{}>) => {
+    if (data.password !== data.cpassword) {
+      alert('Your passwords does not match')    
+      return
+
+    }
+
+    if (zscore < 2) {
+      alert('Please enter strong password (the password strength should indicate "Good")') 
+      return      
+     }
+
+
     setLoader(true);
     const reqData = data;
     event.preventDefault();
@@ -268,7 +263,7 @@ export function SetPasswordComponent(props: SetPasswordComponentProps) {
 
                 <Grid container spacing={2} alignItems="center" direction="row" justify="flex-end">
                   <Grid item xs={6}>
-                    <Button disabled={disabledButton} variant="contained" color="primary" name="submit" type="submit">
+                    <Button variant="contained" color="primary" name="submit" type="submit">
                       Submit
                     </Button>
                   </Grid>

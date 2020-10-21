@@ -29,7 +29,7 @@ function PasswordStrengthMeter(props: any) {
       <progress
         className={`password-strength-meter-progress strength-${createPasswordLabel(testedResult)}`}
         value={testedResult.score}
-        max="4"
+        max="5"
       />
   
 
