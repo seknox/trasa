@@ -40,5 +40,8 @@ jobs:
         run: yarn install
 
       - name: Build Dashboard
+        #TODO treat warning as errors
+        env:
+          CI: false
         working-directory: ./dashboard
         run: yarn build

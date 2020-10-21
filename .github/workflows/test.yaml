@@ -5,7 +5,7 @@ on :
     branches:
       - master
       - dev
-      - dashboard-ci
+#      - dashboard-ci
 
   pull_request:
     branches:
