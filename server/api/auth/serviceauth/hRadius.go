@@ -1,7 +1,6 @@
 package serviceauth
 
 import (
-	"net"
 	"strings"
 
 	"github.com/seknox/trasa/server/api/accessmap"
@@ -20,13 +19,13 @@ import (
 
 // RadiusLogin is a handler for incoming radius auth request
 func RadiusLogin(w radius.ResponseWriter, r *radius.Request) {
-	logrus.Trace("RadiusLogin login request received")
+	logrus.Trace("RadiusLogin request received")
 
 	remoteUser := rfc2865.UserName_GetString(r.Packet)
-	logrus.Info(remoteUser)
+	//logrus.Info(remoteUser)
 	usernameWithTfaMethod := strings.Split(remoteUser, ":")
 
-	logrus.Info(usernameWithTfaMethod)
+	//logrus.Info(usernameWithTfaMethod)
 	trasaID := usernameWithTfaMethod[0]
 	password := rfc2865.UserPassword_GetString(r.Packet)
 
@@ -36,13 +35,14 @@ func RadiusLogin(w radius.ResponseWriter, r *radius.Request) {
 	if err != nil {
 		logrus.Error(err)
 		w.Write(r.Response(radius.CodeAccessReject))
+		return
 	}
 
 	nativeLogEnabled := true
 
 	logLoginFunc := func(authlog *logs.AuthLog, reason consts.FailedReason, status bool) error {
 		if nativeLogEnabled {
-			return logs.Store.LogLogin(authlog, consts.REASON_INVALID_SERVICE_CREDS, false)
+			return logs.Store.LogLogin(authlog, reason, status)
 		}
 		return nil
 	}
@@ -56,7 +56,7 @@ func RadiusLogin(w radius.ResponseWriter, r *radius.Request) {
 	userDetails, err := auth.Store.GetLoginDetails(trasaID, "domain")
 	if err != nil {
 		usernameExits := accessmap.Store.CheckIfPrivilegeExist(trasaID, service.OrgID, service.ID)
-		logrus.Trace("passthru test ", service.Passthru, usernameExits)
+		logrus.Trace("passthru ", service.Passthru, usernameExits)
 		if service.Passthru == true && !usernameExits {
 			w.Write(r.Response(radius.CodeAccessReject))
 			return
@@ -91,8 +91,6 @@ func RadiusLogin(w radius.ResponseWriter, r *radius.Request) {
 		}
 		return
 	}
-
-	logrus.Debug(service.OrgID)
 
 	orgDetail, err := orgs.Store.Get(service.OrgID)
 	if err != nil {
@@ -164,70 +162,7 @@ func RadiusLogin(w radius.ResponseWriter, r *radius.Request) {
 	}
 
 	w.Write(r.Response(radius.CodeAccessAccept))
-	logrus.Trace("Agent rlogin response returned")
+	logrus.Trace("RADIUS login response returned")
 	return
 
 }
-
-type printIP struct {
-	Framed net.IP
-	LOgin  net.IP
-	Nas    net.IP
-}
-
-//func HandleRadiusReq(w radius.ResponseWriter, r *radius.Request) {
-//	trasaID := rfc2865.UserName_GetString(r.Packet)
-//	password := rfc2865.UserPassword_GetString(r.Packet)
-//
-//	var p printIP
-//	p.Framed = rfc2865.FramedIPAddress_Get(r.Packet)
-//	p.LOgin = rfc2865.LoginIPHost_Get(r.Packet)
-//	p.Nas = rfc2865.NASIPAddress_Get(r.Packet)
-//
-//	v, err := json.Marshal(p)
-//	if err != nil {
-//		logrus.Error(err)
-//	}
-//
-//	fmt.Println(string(v))
-//	// verify password.
-//
-//	fmt.Printf("user: %s, password: %s\n", trasaID, password)
-//
-//	authlog := logs.NewEmptyLog("radius")
-//
-//	// get user info from database
-//	userDetails, err := auth.Store.GetLoginDetails(trasaID, "")
-//	if err != nil {
-//		logrus.Error(err)
-//		err = logs.Store.LogLogin(&authlog, consts.REASON_USER_NOT_FOUND, false)
-//		if err != nil {
-//			logrus.Error(err)
-//		}
-//		w.Write(r.Response(radius.CodeAccessReject))
-//		return
-//	}
-//
-//	authlog.UpdateUser(userDetails)
-//
-//	if !userDetails.Status {
-//		err = logs.Store.LogLogin(&authlog, consts.REASON_USER_DISABLED, false)
-//		if err != nil {
-//			logrus.Error(err)
-//		}
-//
-//		w.Write(r.Response(radius.CodeAccessReject))
-//		return
-//	}
-//
-//	_, err = auth.CheckPassword(userDetails, trasaID, password)
-//	if err != nil {
-//		logrus.Error(err)
-//		err = logs.Store.LogLogin(&authlog, consts.REASON_INVALID_USER_CREDS, false)
-//		if err != nil {
-//			logrus.Error(err)
-//		}
-//	}
-//	w.Write(r.Response(radius.CodeAccessAccept))
-//	return
-//}
