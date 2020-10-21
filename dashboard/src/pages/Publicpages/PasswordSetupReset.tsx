@@ -1,5 +1,5 @@
 /*
-FirstTimePasswordSetup does two things. validate user setPassword token. 
+FirstTimePasswordSetup does two things. validate user setPassword token.
 If the token is validated, present change password card or display invalid token alert.
 
 */
@@ -151,10 +151,8 @@ export function SetPasswordComponent(props: SetPasswordComponentProps) {
       zxcvbnscore();
 
       // match password equality
-      console.debug(data.password, event.target.value , data.password !== '', data.password === event.target.value )
       if (data.password !== '' && data.password === event.target.value) {
-        console.debug('reached')
-        console.debug(zscore, zscore >= 2)
+
         disableButton(false)
         // if (zscore >= 2) {
         //   setShowButton(false)
