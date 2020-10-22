@@ -24,7 +24,7 @@
 [![License: MPL 2.0](https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg)](https://github.com/seknox/trasa/blob/master/LICENSE)
 [![Actions Status](https://github.com/seknox/trasa/workflows/Build/badge.svg?branch=master)](https://github.com/seknox/trasa/actions)
 [![Actions Status](https://github.com/seknox/trasa/workflows/Test/badge.svg?branch=master)](https://github.com/seknox/trasa/actions)
-[![Discord Chat](https://img.shields.io/discord/767929416507457557.svg)](https://discord.gg/4wRmuv9)  
+[![Discord Chat](https://img.shields.io/discord/767929416507457557?color=7289da&logo=discord&logoColor=white)](https://discord.gg/4wRmuv9)  
 
 <br />
 <img alt="TRASA" width='800' src="https://www.trasa.io/dash/access-stats.png">
