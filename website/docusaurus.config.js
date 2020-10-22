@@ -55,16 +55,7 @@ module.exports = {
         {
           label: 'Community',
           position: 'right',
-          items: [
-            { to: 'blog', label: 'Blog', position: 'right' },
-            {
-              to:
-                'https://github.com/seknox/trasa/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22',
-              label: 'Contribute',
-              position: 'right',
-            },
-            { to: 'https://discuss.trasa.io', label: 'Forum', position: 'right' },
-          ],
+          to: 'community',
         },
         // { to: 'features', label: 'Features', position: 'left' },
         { to: 'security', label: 'Security', position: 'right' },
