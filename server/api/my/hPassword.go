@@ -65,8 +65,9 @@ func ForgotPassword(w http.ResponseWriter, r *http.Request) {
 }
 
 type setPassword struct {
-	Token    string `json:"token"`
-	Password string `json:"password"`
+	Token     string `json:"token"`
+	Password  string `json:"password"`
+	CPassword string `json:"cpassword"`
 }
 
 // FirstTimePasswordSetup used in case of forget password and after user account is created for first time.
@@ -77,6 +78,11 @@ func FirstTimePasswordSetup(w http.ResponseWriter, r *http.Request) {
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "failed to validate input", "ChangePassword")
+		return
+	}
+
+	if strings.Compare(req.Password, req.CPassword) != 0 {
+		utils.TrasaResponse(w, 200, "failed", "password mismatch", "ChangePassword")
 		return
 	}
 
@@ -117,6 +123,11 @@ func ChangePassword(w http.ResponseWriter, r *http.Request) {
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "json parse error", "ChangePassword")
+		return
+	}
+
+	if strings.Compare(req.Password, req.CPassword) != 0 {
+		utils.TrasaResponse(w, 200, "failed", "password mismatch", "ChangePassword")
 		return
 	}
 
