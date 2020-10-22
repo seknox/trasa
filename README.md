@@ -39,7 +39,7 @@
 - [About The Project](#about-the-project)
   - [Immediate use cases and benefits](#immediate-use-cases-and-benefits)
 - [Getting Started](#getting-started)
-- [Contributing](#contributing)
+- [Community](#community)
 - [License](#license)
 - [Contact](#contact)
 
@@ -69,11 +69,17 @@ We encourage to checkout <a href="https://www.trasa.io/docs"><strong>TRASA websi
 - Admin Manual: <a href="https://www.trasa.io/docs"><strong>Admin Docs »</strong></a>
 - User Guides: <a href="https://www.trasa.io/docs/guides/getting-started"><strong>User Guides »</strong></a>
 
-<!-- CONTRIBUTING -->
+<!-- COMMUNITY -->
 
-## Contributing
-
-See [Contributing Guidelines](https://github.com/seknox/trasa/blob/master/CONTRIBUTING.md)
+## Community
+### Chat
+Join our [discord server](https://discord.gg/4wRmuv9).
+### Forum
+Join our [discussion forum](https://discuss.trasa.io).
+### Blog
+Read our [blog](https://www.trasa.io/blog).
+### Contribute
+See [Contributing Guidelines](https://github.com/seknox/trasa/blob/master/CONTRIBUTING.md).
 
 <!-- LICENSE -->
 
