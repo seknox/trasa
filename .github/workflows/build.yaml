@@ -5,6 +5,7 @@ on :
     branches:
       - master
       - dev
+
   pull_request:
     branches:
       - master
@@ -24,7 +25,22 @@ jobs:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
 
-      - name: Build
+      - name: Build Server
         working-directory: ./server
         run: go build
 
+      - name: Set up node
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: '14'
+
+      - name: Install npm packages
+        working-directory: ./dashboard
+        run: yarn install
+
+      - name: Build Dashboard
+        #TODO treat warning as errors
+        env:
+          CI: false
+        working-directory: ./dashboard
+        run: yarn build

@@ -15,6 +15,7 @@ import OpenLdapIcon from '../../assets/idp/openldap.png';
 import TrasaLogo from '../../assets/trasa-ni.svg';
 import LinearProgress from '../../utils/Components/Progressbar';
 import { FetchExternalIdps } from './api/auth';
+import packagejson from '../../../package.json'
 
 // STYLES
 const useStyles = makeStyles((theme) => ({
@@ -174,7 +175,7 @@ export default function LoginPage(props: LoginProps): ReactElement {
       </CardContent>
 
       <div className={classes.padMiddle}>
-        <div className={classes.cprightText}> Trasa Dashboard v1.1.0 by Seknox </div>{' '}
+        <div className={classes.cprightText}> Trasa Dashboard v{packagejson.version} by Seknox </div>{' '}
       </div>
 
       {/* <OrgSelect orgs={orgs} submitLoginRequest={sendLoginRequest} /> */}

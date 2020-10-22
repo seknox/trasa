@@ -24,6 +24,7 @@
 [![License: MPL 2.0](https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg)](https://github.com/seknox/trasa/blob/master/LICENSE)
 [![Actions Status](https://github.com/seknox/trasa/workflows/Build/badge.svg?branch=master)](https://github.com/seknox/trasa/actions)
 [![Actions Status](https://github.com/seknox/trasa/workflows/Test/badge.svg?branch=master)](https://github.com/seknox/trasa/actions)
+[![Discord Chat](https://img.shields.io/discord/767929416507457557?color=7289da&logo=discord&logoColor=white)](https://discord.gg/4wRmuv9)  
 
 <br />
 <img alt="TRASA" width='800' src="https://www.trasa.io/dash/access-stats.png">
@@ -38,7 +39,7 @@
 - [About The Project](#about-the-project)
   - [Immediate use cases and benefits](#immediate-use-cases-and-benefits)
 - [Getting Started](#getting-started)
-- [Contributing](#contributing)
+- [Community](#community)
 - [License](#license)
 - [Contact](#contact)
 
@@ -68,11 +69,17 @@ We encourage to checkout <a href="https://www.trasa.io/docs"><strong>TRASA websi
 - Admin Manual: <a href="https://www.trasa.io/docs"><strong>Admin Docs »</strong></a>
 - User Guides: <a href="https://www.trasa.io/docs/guides/getting-started"><strong>User Guides »</strong></a>
 
-<!-- CONTRIBUTING -->
+<!-- COMMUNITY -->
 
-## Contributing
-
-See [Contributing Guidelines](https://github.com/seknox/trasa/blob/master/CONTRIBUTING.md)
+## Community
+### Chat
+Join our [discord server](https://discord.gg/4wRmuv9).
+### Forum
+Join our [discussion forum](https://discuss.trasa.io).
+### Blog
+Read our [blog](https://www.trasa.io/blog).
+### Contribute
+See [Contributing Guidelines](https://github.com/seknox/trasa/blob/master/CONTRIBUTING.md).
 
 <!-- LICENSE -->
 

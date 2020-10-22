@@ -8,15 +8,14 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   inkscape:export-ydpi="96"
-   inkscape:export-xdpi="96"
-   inkscape:export-filename="/home/tree/Pictures/docs/access-proxy/trasa-access-proxy.png"
+   inkscape:export-ydpi="355.06918"
+   inkscape:export-xdpi="355.06918"
+   inkscape:export-filename="D:\dojo\seknox\trasa\website\static\arch\zero-trust-service-access.png"
    sodipodi:docname="zero-trust-service-access.svg"
    inkscape:version="0.92.3 (2405546, 2018-03-11)"
    id="svg8"
    version="1.1"
-   viewBox="0 0 330 200"
->
+   viewBox="0 0 330 200">
   <defs
      id="defs2">
     <linearGradient
@@ -104,8 +103,8 @@
      inkscape:document-rotation="0"
      inkscape:current-layer="layer1"
      inkscape:document-units="mm"
-     inkscape:cy="522.21871"
-     inkscape:cx="291.14934"
+     inkscape:cy="-49.209861"
+     inkscape:cx="59.006483"
      inkscape:zoom="0.7"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
