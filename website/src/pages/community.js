@@ -4,8 +4,8 @@ import clsx from 'clsx';
 import React from 'react';
 import { Typography, Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import styles from './styles.module.css';
 import Link from '@docusaurus/Link';
+import styles from './styles.module.css';
 
 import ThemeBase from '../components/muiTheme';
 
@@ -14,7 +14,8 @@ const useStyles = makeStyles(() => ({
     marginTop: 50,
   },
   link: {
-    fontSize: 30,
+    fontSize: 24,
+    textDecoration: 'underline',
   },
 }));
 
@@ -40,12 +41,60 @@ function Home() {
                   </Typography>
                 </div>
               </Grid>
+
               <Grid item xs={12} sm={12}>
                 <div className={classes.ctaPad}>
-                  <Typography variant="h2">Discussion List</Typography>
-                  <Link className={classes.link} to="https://discuss.seknox.com/c/trasa">
-                    TRASA Community Forum
-                  </Link>
+                  <Typography variant="h2">Discussion Forum</Typography>
+                  <span>
+                    <Typography variant="body1" component="span">
+                      Ask or answer on topics related to TRASA:
+                    </Typography>
+                    <Link className={classes.link} to="https://discuss.trasa.io">
+                      TRASA Community Forum
+                    </Link>
+                  </span>
+                </div>
+              </Grid>
+
+              <Grid item xs={12} sm={12}>
+                <div className={classes.ctaPad}>
+                  <Typography variant="h2">Realtime communication</Typography>
+                  <span>
+                    <Typography variant="body1" component="span">
+                      Chat with others:
+                    </Typography>
+                    <Link className={classes.link} to="https://discord.gg/4wRmuv9">
+                      Join TRASA discord chat
+                    </Link>
+                  </span>
+                </div>
+              </Grid>
+
+              <Grid item xs={12} sm={12}>
+                <div className={classes.ctaPad}>
+                  <Typography variant="h2">Blog</Typography>
+                  <span>
+                    <Typography variant="body1" component="span">
+                      Read and share our blog:
+                    </Typography>
+                    <Link className={classes.link} to="/blog">
+                      TRASA blog
+                    </Link>
+                  </span>
+                </div>
+              </Grid>
+
+              <Grid item xs={12} sm={12}>
+                <div className={classes.ctaPad}>
+                  <Typography variant="h2">Contribute</Typography>
+                  <span>
+                    <Typography variant="body1" component="span">
+                      Contribute to project:
+                    </Typography>
+                    <Link className={classes.link} to="https://github.com/seknox/trasa/issues">
+                      Contribute in Github
+                    </Link>
+                  </span>
                 </div>
               </Grid>
             </Grid>

@@ -44,7 +44,7 @@ export default function Enterprise() {
             </Typography>
           </div>
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={8}>
           <div className={classes.image}>
             <img src={imgUrl} alt="protect internal infrastructure" />
           </div>
