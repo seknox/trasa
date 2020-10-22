@@ -1,11 +1,13 @@
 .password-strength-meter {
+  margin-top: 5px;
+  margin-bottom: 5px;
     text-align: left;
   }
   
   .password-strength-meter-progress {
     -webkit-appearance: none;
     appearance: none;
-    width: 220px;
+    width: 200px;
     height: 8px;
   }
   
@@ -15,6 +17,7 @@
   }
   
   .password-strength-meter-label {
+    position: 'absolute';
     font-size: 14px;
   }
   
