@@ -60,7 +60,7 @@ export default function Features() {
 
         <Grid item xs={12} sm={12} md={6}>
           <Paper className={classes.paper} elevation={0}>
-            <Typography variant="h2"> Providers </Typography>
+            <Typography variant="h2"> Integration with Identity and Secret Providers </Typography>
             <br />
             <Typography variant="body1">
               Unlike legacy access control systems, TRASA directly integrates with an existing user

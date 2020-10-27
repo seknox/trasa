@@ -2,6 +2,7 @@ import { Typography } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import ThemeBase from '../muiTheme';
 
 const useStyles = makeStyles(() => ({
@@ -17,10 +18,15 @@ const useStyles = makeStyles(() => ({
     //  fontSize: '14px',
     boxShadow: 'none',
   },
+  image: {
+    boxShadow: '0 0 20px 0 rgba(0,0,0,0.12)',
+    backgroundColor: 'white',
+  },
 }));
 
 export default function Enterprise() {
   const classes = useStyles();
+  const imgUrl = useBaseUrl('arch/usecase-reference.png');
   return (
     <ThemeBase>
       <Grid container spacing={2} direction="column" justify="center" alignItems="center">
@@ -33,9 +39,14 @@ export default function Enterprise() {
             </Typography>
             <Typography variant="subtitle1" style={{ textAlign: 'center' }}>
               <b>TRASA</b> is a free and open source project that provides modern security features
-              and enables best practice security to protect Web, SSH, RDP, and Database services
-              from unauthorized or malicious access.
+              and enables best practice security to protect internal infrastructure ( Web, SSH, RDP,
+              and Database services) from unauthorized or malicious access.
             </Typography>
+          </div>
+        </Grid>
+        <Grid item xs={8}>
+          <div className={classes.image}>
+            <img src={imgUrl} alt="protect internal infrastructure" />
           </div>
         </Grid>
         {/* <Grid item xs={12}>
