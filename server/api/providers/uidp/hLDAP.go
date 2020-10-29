@@ -169,7 +169,7 @@ func bindSearchImportLdapUsers(uc models.UserContext, uname, pass, domain, searc
 				username := u.GetAttributeValue("sAMAccountName")
 				email := u.GetAttributeValue("userPrincipalName")
 				name := u.GetAttributeValue("name")
-				logrus.Tracef("user: %s", fmt.Sprintf("%x", guid), username, email, name)
+				logrus.Tracef("user: %x, %v, %v, %v", guid, username, email, name)
 
 				for _, v := range sr.Entries {
 					email := v.GetAttributeValue("userPrincipalName")
