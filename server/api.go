@@ -48,7 +48,7 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 
 	r.Route("/auth", func(r chi.Router) {
 		r.NotFound(func(w http.ResponseWriter, r *http.Request) {
-			logrus.Tracef("Reached not found in auth: %s", r.URL)
+			logrus.Debugf("Reached not found in auth: %s", r.URL)
 
 		})
 
@@ -71,7 +71,7 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 
 	r.Route("/idp", func(r chi.Router) {
 		r.NotFound(func(w http.ResponseWriter, r *http.Request) {
-			logrus.Tracef("Reached not found in auth: %s", r.URL)
+			logrus.Debugf("Reached not found in auth: %s", r.URL)
 		})
 
 		r.Post("/login", auth.LoginHandler)
@@ -82,7 +82,7 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 
 	r.Route("/api/woa", func(r chi.Router) {
 		r.NotFound(func(w http.ResponseWriter, r *http.Request) {
-			logrus.Tracef("Reached not found in auth: %s", r.URL)
+			logrus.Debugf("Reached not found in auth: %s", r.URL)
 		})
 		r.Get("/verify/{verifytoken}", my.VerifyAccount)
 		r.Post("/setup/password", my.FirstTimePasswordSetup)
@@ -115,7 +115,7 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 
 	r.Route("/accessproxy", func(r chi.Router) {
 		r.NotFound(func(w http.ResponseWriter, r *http.Request) {
-			logrus.Tracef("Reached not found in auth: %s", r.URL)
+			logrus.Debugf("Reached not found in auth: %s", r.URL)
 		})
 		//r.Use(authmiddleware.Handler)
 		r.Route("/rdp", func(r chi.Router) {
@@ -133,7 +133,7 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 
 	r.Route("/api/v1", func(r chi.Router) {
 		r.NotFound(func(w http.ResponseWriter, r *http.Request) {
-			logrus.Tracef("Reached not found in auth: %s", r.URL)
+			logrus.Debugf("Reached not found in auth: %s", r.URL)
 		})
 
 		r.Use(authmiddleware.Handler)

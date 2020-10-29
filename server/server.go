@@ -186,7 +186,7 @@ func ProxyRouter() chi.Router {
 	})
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
-		logrus.Tracef("Reached not found in auth: %s", r.URL)
+		logrus.Debugf("Reached not found in auth: %s", r.URL)
 	})
 
 	return r
@@ -283,7 +283,7 @@ func FileServer(r chi.Router, path string) {
 	r.Get(path, serveFile)
 
 	r.NotFound(func(w http.ResponseWriter, req *http.Request) {
-		logrus.Tracef("Reached not found in auth: %s", req.URL)
+		logrus.Debugf("Reached not found in auth: %s", req.URL)
 		http.ServeFile(w, req, filepath.Join(utils.GetVarDir(), "trasa", "dashboard", "index.html"))
 	})
 }
