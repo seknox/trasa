@@ -16,11 +16,11 @@ export default function TwoFA (props){
 
 
   const userClickedYes=()=> {
-    this.sendRequest('YES');
+    sendRequest('YES');
   }
 
   const userClickedNo=()=> {
-    this.sendRequest('NO');
+    sendRequest('NO');
   }
 
   //style = {{ opacity : this.props.loading ? 1 : 0 }}
@@ -28,15 +28,15 @@ export default function TwoFA (props){
 
   const getSignature=async()=>{
     const privateKey=await SecureStore.getItemAsync("PRIVATE_KEY")
-    return await RSA.sign(this.props.route.params?.challenge, privateKey)
+    return await RSA.sign(props.route.params?.challenge, privateKey)
   }
 
 
   const  sendRequest= async (action)=> {
 
-    await this.setState({loading: true});
+    await setLoading(true)
     let deviceInfo = await getDeviceInfo();
-    const signature=await this.getSignature()
+    const signature=await getSignature()
     //RNSecureKeyStore.get("privateKey").then(privateKey=>{
     //RSA.sign(this.props.navigation.state.params?.challenge,privateKey).then(signature=>{
     SecureStore.getItemAsync('deviceId')
@@ -49,25 +49,25 @@ export default function TwoFA (props){
             deviceId: deviceId,
             deviceInfo: JSON.stringify(deviceInfo),
             signature: signature,
-            challenge: this.props.route.params?.challenge,
+            challenge: props.route.params?.challenge,
           },
         })
           .then((value) => {
             //console.log(value)
-            this.setState({loading: false});
-            this.props.navigation.navigate('Home');
+            setLoading(false);
+            props.navigation.navigate('Home');
           })
           .catch((reason) => {
-            this.setState({loading: false});
+            setLoading(false);
             console.log(reason)
             alert(reason);
-            this.props.navigation.navigate('Home');
+            props.navigation.navigate('Home');
           });
       })
       .catch((e) => {
         console.log(e);
-        this.setState({loading: false});
-        this.props.navigation.navigate('Home'); //if no device id set, go to home page
+        setLoading(false)
+        props.navigation.navigate('Home'); //if no device id set, go to home page
       });
     //})
     //})
@@ -98,7 +98,7 @@ export default function TwoFA (props){
           <View style={styles.inputs}>
             <Icon type="Ionicons" name="ios-globe" style={{fontSize: 30}} />
             <Text style={{fontSize: 50, fontWeight: 'bold'}}>
-              {this.props.route.params?.orgName}
+              {props.route.params?.orgName}
             </Text>
             {/*<Text style={{fontSize: 35, fontWeight: 'bold', color: 'teal'}}>Seknox</Text>*/}
 
@@ -110,7 +110,7 @@ export default function TwoFA (props){
                   style={{fontSize: 30}}
                 />
                 <Text style={styles.text2}>
-                  {this.props.route.params?.appName}
+                  {props.route.params?.appName}
                 </Text>
                 {/*<Text style={styles.text2}>ssh-prod01</Text>*/}
               </View>
@@ -118,7 +118,7 @@ export default function TwoFA (props){
               <View style={styles.contentMargin}>
                 <Icon type="Ionicons" name="ios-pin" style={{fontSize: 35}} />
                 <Text style={styles.text2}>
-                  {this.props.route.params?.ipAddr}
+                  {props.route.params?.ipAddr}
                 </Text>
                 {/*<Text style={styles.text2}>192.168.0.100</Text>*/}
               </View>
@@ -126,24 +126,24 @@ export default function TwoFA (props){
               <View style={styles.contentMargin}>
                 <Icon type="Ionicons" name="ios-time" style={{fontSize: 30}} />
                 <Text style={styles.text2}>
-                  {this.props.route.params?.time}
+                  {props.route.params?.time}
                 </Text>
                 {/*<Text style={styles.text2}>2835792384579245</Text>*/}
               </View>
             </View>
             <View style={styles.buttonContainer}>
               <View style={styles.button}>
-                <Button large success full onPress={this.userClickedYes}>
+                <Button large success full onPress={userClickedYes}>
                   <Text>Authorize</Text>
                 </Button>
               </View>
               <View style={styles.button}>
-                <Button large danger full onPress={this.userClickedNo}>
+                <Button large danger full onPress={userClickedNo}>
                   <Text>Cancel</Text>
                 </Button>
               </View>
             </View>
-            {this.state.loading ? (
+            {loading ? (
               <ActivityIndicator size="large" animating={true} color={"blue"}/>
             ) : null}
             <Text style={styles.sub}>
