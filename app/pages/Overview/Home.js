@@ -211,7 +211,9 @@ export function Home(props) {
 const BottomFabs = (props)=> {
     const [fabActive, setFabActive] = React.useState(false);
     const goToScanPage = () => {
-        props.navigation.navigate('ScanPage');
+
+        //{rand:Date.now()} is little hack to call useEffect in TotpScan page
+        props.navigation.navigate('ScanPage',{rand:Date.now()});
     };
 
     const goToCodeInputPage = () => {
