@@ -3,7 +3,6 @@ import {ActivityIndicator, ScrollView, StyleSheet, View,} from 'react-native';
 //import {Body, Button, Header, Text, Title} from 'native-base';
 import axios from 'axios';
 import Constants from './Constants';
-//import RNSecureKeyStore from 'react-native-secure-key-store';
 import * as SecureStore from 'expo-secure-store';
 
 import {RSA} from 'react-native-rsa-native';

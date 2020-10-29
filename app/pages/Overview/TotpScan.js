@@ -21,15 +21,11 @@ import {
 import messaging from '@react-native-firebase/messaging';
 import axios from 'axios';
 import Constants from '../Extra/Constants';
-//import RNSecureKeyStore from "react-native-secure-key-store";
 import * as SecureStore from 'expo-secure-store';
-//import AsyncStorage from "@react-native-community/async-storage";
-//import QRCodeScanner from 'react-native-qrcode-scanner';
+
 import BarcodeMask from 'react-native-barcode-mask';
-//import DeviceInfo from 'react-native-device-info';
 import DeviceInfo from '../Device/Device';
 import AsyncStorage from '@react-native-community/async-storage';
-import {CommonActions} from '@react-navigation/native';
 
 const styles = StyleSheet.create({
 
@@ -154,6 +150,7 @@ function TotpScan (props){
                   url: Constants.hostname + '/api/v1/passmydevicedetail',
                   data: {
                     deviceId: deviceID,
+                    deviceID: deviceID,
                     fcmToken: fcmToken,
                     publicKey: publicKey || '',
                     deviceFinger: JSON.stringify(info),
@@ -184,7 +181,7 @@ function TotpScan (props){
                       } else {
                         console.error("response is not success")
                         setLoading(false);
-
+                        alert("Could not enroll device. QR code may be expired");
                         props.navigation.navigate('Home');
                       }
                     })
