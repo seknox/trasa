@@ -193,15 +193,6 @@ var PrimaryMigration = []string{
 			is_resolved BOOL,
 			resolved_on BIGINT
 		);`,
-	`CREATE TABLE IF NOT EXISTS gateway_http (
-			id varchar PRIMARY KEY NOT NULL,
-			org_id varchar NOT NULL,
-			proxy_meta JSONB NOT NULL,
-			service_id VARCHAR REFERENCES services (id) ON DELETE CASCADE,
-			status BOOL,
-			created_at BIGINT,
-			updated_at BIGINT
-		);`,
 	`create table IF NOT EXISTS global_settings (
 			id varchar PRIMARY KEY NOT NULL,
 			org_id varchar REFERENCES org (id) ON DELETE CASCADE,
