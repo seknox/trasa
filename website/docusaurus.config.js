@@ -63,16 +63,16 @@ module.exports = {
         {
           to: 'docs/',
           activeBasePath: 'docs',
-          label: 'Admin Docs',
+          label: 'Docs',
           position: 'right',
         },
 
-        {
-          to: 'docs/guides/getting-started',
-          activeBasePath: 'guides',
-          label: 'User Guides',
-          position: 'right',
-        },
+        // {
+        //   to: 'docs/guides/getting-started',
+        //   activeBasePath: 'guides',
+        //   label: 'User Guides',
+        //   position: 'right',
+        // },
 
         {
           href: 'https://github.com/seknox/trasa',
