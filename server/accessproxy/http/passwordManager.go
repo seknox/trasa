@@ -1,7 +1,6 @@
 package http
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -9,7 +8,7 @@ import (
 // We expect and recognize specefic hardcoded strings to be a email and password field.
 // specifically username to be "trasauser@trasa.io" and password to be "trasapassword".
 func findAndReplaceUnamePass(body, username, password string, shouldFIllUser, shouldFIllPass bool) string {
-	fmt.Println("body Bytes BEFORE: ", body)
+	//fmt.Println("body Bytes BEFORE: ", body)
 	if shouldFIllUser && shouldFIllPass {
 		// find and replace username field
 		modeifiedBody := strings.Replace(body, "trasauser@trasa.io", username, -1)

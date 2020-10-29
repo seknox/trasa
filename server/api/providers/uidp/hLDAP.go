@@ -150,13 +150,13 @@ func bindSearchImportLdapUsers(uc models.UserContext, uname, pass, domain, searc
 	// Search for the given base
 	sr, err := searchLdap(l, searchquery, []string{"member"})
 	if err != nil {
-		fmt.Println(err)
+		logrus.Error(err)
 	}
 
 	for _, v := range sr.Entries {
 
 		mem := v.GetAttributeValues("member")
-		fmt.Println("member: ", mem)
+		logrus.Tracef("member: %v", mem)
 
 		for _, k := range mem {
 
@@ -169,7 +169,7 @@ func bindSearchImportLdapUsers(uc models.UserContext, uname, pass, domain, searc
 				username := u.GetAttributeValue("sAMAccountName")
 				email := u.GetAttributeValue("userPrincipalName")
 				name := u.GetAttributeValue("name")
-				fmt.Println("user: ", fmt.Sprintf("%x", guid), username, email, name)
+				logrus.Tracef("user: %s", fmt.Sprintf("%x", guid), username, email, name)
 
 				for _, v := range sr.Entries {
 					email := v.GetAttributeValue("userPrincipalName")

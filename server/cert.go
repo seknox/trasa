@@ -7,8 +7,7 @@ import (
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/pem"
-	"fmt"
-	"log"
+	"github.com/sirupsen/logrus"
 	"math/big"
 	"net"
 	"os"
@@ -39,7 +38,7 @@ func generateCerts(certPath string, keyPath string, host string) error {
 	priv, err = rsa.GenerateKey(rand.Reader, rsaBits)
 
 	if err != nil {
-		log.Printf("failed to generate private key: %s", err)
+		logrus.Errorf("failed to generate private key: %v", err)
 		return err
 	}
 
@@ -49,7 +48,7 @@ func generateCerts(certPath string, keyPath string, host string) error {
 	} else {
 		notBefore, err = time.Parse("Jan 2 15:04:05 2006", validFrom)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Failed to parse creation date: %s\n", err)
+			logrus.Errorf("Failed to parse creation date: %v", err)
 			return err
 		}
 	}
@@ -59,7 +58,7 @@ func generateCerts(certPath string, keyPath string, host string) error {
 	serialNumberLimit := new(big.Int).Lsh(big.NewInt(1), 128)
 	serialNumber, err := rand.Int(rand.Reader, serialNumberLimit)
 	if err != nil {
-		log.Printf("failed to generate serial number: %s", err)
+		logrus.Errorf("failed to generate serial number: %v", err)
 		return err
 	}
 
@@ -92,27 +91,27 @@ func generateCerts(certPath string, keyPath string, host string) error {
 
 	derBytes, err := x509.CreateCertificate(rand.Reader, &template, &template, publicKey(priv), priv)
 	if err != nil {
-		log.Printf("Failed to create certificate: %s", err)
+		logrus.Errorf("Failed to create certificate: %s", err)
 		return err
 	}
 
 	certOut, err := os.Create(certPath)
 	if err != nil {
-		log.Printf("failed to open "+certPath+" for writing: %s", err)
+		logrus.Errorf("failed to open %s for writing: %v", certPath, err)
 		return err
 	}
 	pem.Encode(certOut, &pem.Block{Type: "CERTIFICATE", Bytes: derBytes})
 	certOut.Close()
-	log.Print("written cert.pem\n")
+	logrus.Info("written cert.pem")
 
 	keyOut, err := os.OpenFile(keyPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
-		log.Print("failed to open "+keyPath+" for writing:", err)
+		logrus.Errorf("failed to open %s for writing: %v", keyPath, err)
 		return err
 	}
 	pem.Encode(keyOut, pemBlockForKey(priv))
 	keyOut.Close()
-	log.Print("written key.pem\n")
+	logrus.Info("written key.pem")
 	return nil
 }
 
@@ -134,7 +133,7 @@ func pemBlockForKey(priv interface{}) *pem.Block {
 	case *ecdsa.PrivateKey:
 		b, err := x509.MarshalECPrivateKey(k)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Unable to marshal ECDSA private key: %v", err)
+			logrus.Errorf("Unable to marshal ECDSA private key: %v", err)
 			os.Exit(2)
 		}
 		return &pem.Block{Type: "EC PRIVATE KEY", Bytes: b}
