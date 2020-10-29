@@ -209,7 +209,7 @@ func AuthHTTPAccessProxy(w http.ResponseWriter, r *http.Request) {
 		sessionRec = "false"
 	}
 	//logger.Trace(encodedSession)
-	err = redis.Store.SetHTTPGatewaySession(encodedSession, orgusr, authData, sessionRec)
+	err = redis.Store.SetHTTPAccessProxySession(encodedSession, orgusr, authData, sessionRec)
 	if err != nil {
 		logger.Errorf("setting session in redis: %v", err)
 	}
