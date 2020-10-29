@@ -404,7 +404,7 @@ func checkInitDirsAndFiles() {
 
 
 [logging]
-  level = "ERROR"
+  level = "INFO"
 
 [minio]
   status = false

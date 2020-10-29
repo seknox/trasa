@@ -54,7 +54,6 @@ import (
 // StartServer starts trasa core server
 func StartServer() {
 
-	logrus.Info("Initialising database connections")
 	state := global.InitDBSTORE()
 
 	rdpproxy.InitStore(state, accesscontrol.TrasaUAC)
@@ -142,7 +141,7 @@ func StartServer() {
 	var err error
 	if global.GetConfig().Trasa.AutoCert {
 		logrus.Infof("HTTPs server started.")
-		fmt.Printf("Open https://%s \n", trasaListenAddr)
+		fmt.Printf("Open TRASA dashboard at https://%s \n", trasaListenAddr)
 		err = s.Serve(autocert.NewListener(trasaListenAddr))
 	} else {
 		certPath := filepath.Join(utils.GetETCDir(), "trasa", "certs", "trasa-server.crt")
@@ -158,7 +157,7 @@ func StartServer() {
 		}
 
 		logrus.Infof("HTTPs server started. ")
-		fmt.Printf("\n\n\nOpen https://%s \n", trasaListenAddr)
+		fmt.Printf("Open TRASA dashboard at https://%s \n", trasaListenAddr)
 		err = s.ListenAndServeTLS(certPath, keyPath)
 	}
 
