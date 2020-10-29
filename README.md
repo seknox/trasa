@@ -40,6 +40,10 @@
   - [Immediate use cases and benefits](#immediate-use-cases-and-benefits)
 - [Getting Started](#getting-started)
 - [Community](#community)
+  - [Chat](#chat)
+  - [Forum](#forum)
+  - [Blog](#blog)
+  - [Contribute](#contribute)
 - [License](#license)
 - [Contact](#contact)
 
@@ -75,7 +79,7 @@ We encourage to checkout <a href="https://www.trasa.io/docs"><strong>TRASA websi
 ### Chat
 Join our [discord server](https://discord.gg/4wRmuv9).
 ### Forum
-Join our [discussion forum](https://discuss.trasa.io).
+Join our [discussion forum](https://discuss.seknox.com).
 ### Blog
 Read our [blog](https://www.trasa.io/blog).
 ### Contribute

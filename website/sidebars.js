@@ -20,6 +20,13 @@ module.exports = {
         'tutorial/monitor-access',
         'tutorial/advance-configurations',
       ],
+      'How to Access ?': [
+        'how-to-access/dashboard-login',
+        'how-to-access/tfa',
+        'how-to-access/ssh-connection-via-proxy',
+        'how-to-access/rdp-connection-via-proxy',
+        'how-to-access/https-connection-via-proxy',
+      ],
       Providers: [
         'providers/providers',
         { users: ['providers/users/ldap/ldap'], vault: ['providers/vault/tsxvault'] },
@@ -27,11 +34,13 @@ module.exports = {
       Users: [
         'users/users',
         'users/creating-updating-users',
+        'users/password-setup',
         // 'users/trasaIDP/trasa-idp',
         // 'users/ldap/ldap',
         // 'users/ad/active-directory',
         // 'users/freeIPA/free-ipa',
       ],
+      'Device Trust': ['device-trust/enrol-2fa-device', 'device-trust/install-trasa-device-agent'],
       Services: [
         'services/introduction',
         'services/privilege',
@@ -46,7 +55,11 @@ module.exports = {
         'policies/device-policy',
         'policies/adhoc-policy',
       ],
-      'Access Map': ['access-map/access-mapping', 'access-map/dynamic-access'],
+      'Access Map': [
+        'access-map/access-mapping',
+        'access-map/dynamic-access',
+        'access-map/adhoc-access',
+      ],
       'Access Proxy': ['access-proxy/introduction', 'access-proxy/proxy-vs-direct'],
       'Two Factor Authentication': [
         'native-tfa/two-factor-authentication',
@@ -63,22 +76,22 @@ module.exports = {
       ],
     },
   ],
-  guides: [
-    'guides/getting-started',
-    {
-      Account: ['guides/user/account/password-setup'],
-      Device: [
-        'guides/user/device/enrol-2fa-device',
-        'guides/user/device/install-trasa-device-agent',
-      ],
-      Access: [
-      //  'guides/user/access/dashboard-login',
-        'guides/user/access/adhoc-access',
-        'guides/user/access/tfa',
-        'guides/user/access/ssh-connection-via-proxy',
-        'guides/user/access/rdp-connection-via-proxy',
-        'guides/user/access/https-connection-via-proxy',
-      ],
-    },
-  ],
+  // guides: [
+  //   'guides/getting-started',
+  //   {
+  //     Account: ['guides/user/account/password-setup'],
+  //     Device: [
+  //       'guides/user/device/enrol-2fa-device',
+  //       'guides/user/device/install-trasa-device-agent',
+  //     ],
+  //     Access: [
+  //       //  'guides/user/access/dashboard-login',
+  //       'guides/user/access/adhoc-access',
+  //       'guides/user/access/tfa',
+  //       'guides/user/access/ssh-connection-via-proxy',
+  //       'guides/user/access/rdp-connection-via-proxy',
+  //       'guides/user/access/https-connection-via-proxy',
+  //     ],
+  //   },
+  // ],
 };
