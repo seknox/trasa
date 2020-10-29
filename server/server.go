@@ -51,9 +51,10 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// StartServr starts trasa core server
-func StartServr() {
+// StartServer starts trasa core server
+func StartServer() {
 
+	logrus.Info("Initialising database connections")
 	state := global.InitDBSTORE()
 
 	rdpproxy.InitStore(state, accesscontrol.TrasaUAC)
@@ -88,8 +89,6 @@ func StartServr() {
 	ca.InitStore(state)
 
 	initdb.InitDB()
-
-	logrus.Info("Starting API Server...")
 
 	closeChan := make(chan bool, 1)
 	go func() {
@@ -142,6 +141,8 @@ func StartServr() {
 
 	var err error
 	if global.GetConfig().Trasa.AutoCert {
+		logrus.Infof("HTTPs server started.")
+		fmt.Printf("Open https://%s \n", trasaListenAddr)
 		err = s.Serve(autocert.NewListener(trasaListenAddr))
 	} else {
 		certPath := filepath.Join(utils.GetETCDir(), "trasa", "certs", "trasa-server.crt")
@@ -156,6 +157,8 @@ func StartServr() {
 			}
 		}
 
+		logrus.Infof("HTTPs server started. ")
+		fmt.Printf("\n\n\nOpen https://%s \n", trasaListenAddr)
 		err = s.ListenAndServeTLS(certPath, keyPath)
 	}
 
@@ -164,34 +167,6 @@ func StartServr() {
 		logrus.Error(err)
 
 	}
-	// err := http.ListenAndServe(":3339", r)
-	// if err != nil {
-	// 	logrus.Error(err)
-	// }
-	//
-	// tlsKeypair, err := tls.LoadX509KeyPair("/etc/trasa/certs/trasa-server-dev.crt", "/etc/trasa/certs/trasa-server-dev.key")
-	// if err != nil {
-	// 	log.Println(err)
-	// 	return
-	// }
-	//
-	// TODO @bhrg3se commenting out your graceful shutdown code coz for some reason, setting up server this way is causing ssl error (SSL_ERROR_RX_RECORD_TOO_LONG).
-	// Feel free to change this if you can figure out the solution.
-	//
-	// trasaTLSServer := http.Server{
-	// 	Addr:      ":443",
-	// 	Handler:   r,
-	// 	TLSConfig: &tls.Config{Certificates: []tls.Certificate{tlsKeypair}},
-	// 	//ReadTimeout:       0,
-	// 	//ReadHeaderTimeout: 0,
-	// 	//WriteTimeout:      0,
-	// 	//IdleTimeout:       0,
-	// 	//MaxHeaderBytes:    0,
-	// 	//
-	// }
-	//
-
-	//err = trasaTLSServer.ListenAndServe()
 
 }
 
@@ -212,8 +187,7 @@ func ProxyRouter() chi.Router {
 	})
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Reached not found in File server ")
-		fmt.Println(r.URL)
+		logrus.Tracef("Reached not found in auth: %s", r.URL)
 	})
 
 	return r
@@ -310,8 +284,7 @@ func FileServer(r chi.Router, path string) {
 	r.Get(path, serveFile)
 
 	r.NotFound(func(w http.ResponseWriter, req *http.Request) {
-		fmt.Println("Reached not found in File server ")
-		fmt.Println(req.URL)
+		logrus.Tracef("Reached not found in auth: %s", req.URL)
 		http.ServeFile(w, req, filepath.Join(utils.GetVarDir(), "trasa", "dashboard", "index.html"))
 	})
 }

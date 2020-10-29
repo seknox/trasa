@@ -46,7 +46,7 @@ func ListenSSH(closeChan chan bool) error {
 	config.Ciphers = append(config.Ciphers, "aes128-cbc", "blowfish-cbc", "3des-cbc")
 
 	config.AddHostKey(private)
-	logrus.Debug("TRASA gateway started")
+	logrus.Info("TRASA SSH gateway started")
 
 	listenAddr := global.GetConfig().Proxy.SSHListenAddr
 	if listenAddr == "" {
