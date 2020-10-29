@@ -156,19 +156,6 @@ func (s serviceStore) GetAllByType(serviceType, orgID string) (services []models
 	return
 }
 
-// func (s serviceStore) GetHttpProxy(serviceID, orgID string) (httpProxy models.HttpProxyOps, err error) {
-// 	var proxyMeta string
-
-// 	err = s.DB.QueryRow("SELECT proxy_meta,status, created_at, updated_at FROM gateway_http WHERE service_id=$1 AND org_id= $2", serviceID, orgID).Scan(&proxyMeta, &httpProxy.Status, &httpProxy.CreatedAt, &httpProxy.UpdatedAt)
-// 	if err != nil {
-// 		return
-// 	}
-// 	//TODO @sshah do we need to unmarshal it separately?
-// 	err = json.Unmarshal([]byte(proxyMeta), &httpProxy.ProxyMeta)
-
-// 	return httpProxy, nil
-// }
-
 // get service Details based on service id. Returns service id and service name.
 func (s serviceStore) GetServiceNameFromID(serviceID string, orgID string) (appName string, err error) {
 	err = s.DB.QueryRow("SELECT services.name FROM services WHERE id= $1 AND org_id=$2", serviceID, orgID).Scan(&appName)

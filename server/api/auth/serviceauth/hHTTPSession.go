@@ -188,7 +188,7 @@ func AuthHTTPAccessProxy(w http.ResponseWriter, r *http.Request) {
 	// generate random nonce
 	var nonce [24]byte
 	if _, err := io.ReadFull(rand.Reader, nonce[:]); err != nil {
-		fmt.Println("error creating nonce")
+		logger.Error("error creating nonce")
 	}
 
 	// we encrypt keyVal with sessionKey and set cipher text as csrf token.
@@ -209,7 +209,7 @@ func AuthHTTPAccessProxy(w http.ResponseWriter, r *http.Request) {
 		sessionRec = "false"
 	}
 	//logger.Trace(encodedSession)
-	err = redis.Store.SetHTTPGatewaySession(encodedSession, orgusr, authData, sessionRec)
+	err = redis.Store.SetHTTPAccessProxySession(encodedSession, orgusr, authData, sessionRec)
 	if err != nil {
 		logger.Errorf("setting session in redis: %v", err)
 	}

@@ -6,14 +6,15 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
+	"github.com/seknox/trasa/server/utils"
+	"github.com/spf13/viper"
 	"net"
 	"net/http"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
-
-	"github.com/seknox/trasa/server/utils"
-	"github.com/spf13/viper"
+	"time"
 
 	"github.com/minio/minio-go"
 	"github.com/sirupsen/logrus"
@@ -110,6 +111,17 @@ func InitDBSTOREWithConfig(conf Config) *State {
 
 	logrus.SetLevel(level)
 	logrus.SetReportCaller(true)
+	logrusFormatter := new(logrus.TextFormatter)
+	logrusFormatter.QuoteEmptyFields = true
+	logrusFormatter.TimestampFormat = time.RFC3339
+	logrusFormatter.DisableTimestamp = false
+	logrusFormatter.FullTimestamp = true
+	logrusFormatter.CallerPrettyfier = func(frame *runtime.Frame) (function string, file string) {
+		dir, filename := filepath.Split(frame.File)
+		filename = filepath.Join(filepath.Base(dir), filename)
+		return frame.Function, fmt.Sprintf("%s:%d", filename, frame.Line)
+	}
+	logrus.SetFormatter(logrusFormatter)
 	// we start trasa-server dependencies:
 
 	// initialize cockroachdb connection
@@ -204,11 +216,11 @@ func migrate(conn *sql.DB) error {
 	for _, v := range migrations.PrimaryMigration {
 		_, e := conn.Exec(v)
 		if e != nil {
-			fmt.Println(e)
+			logrus.Error(e)
 			return e
 
 		}
-		fmt.Printf("%s migrated\n", strings.Split(v, " ")[5])
+		logrus.Tracef("%s migrated", strings.Split(v, " ")[5])
 	}
 	return nil
 
@@ -392,7 +404,7 @@ func checkInitDirsAndFiles() {
 
 
 [logging]
-  level = "ERROR"
+  level = "INFO"
 
 [minio]
   status = false

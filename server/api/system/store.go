@@ -1,7 +1,6 @@
 package system
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/seknox/trasa/server/models"
@@ -75,7 +74,7 @@ func (s systemStore) getSecurityRules(orgID string) ([]models.SecurityRule, erro
 	for rows.Next() {
 		err := rows.Scan(&rule.RuleID, &rule.OrgID, &rule.Name, &rule.ConstName, &rule.Description, &rule.Scope, &rule.Condition, &rule.Status, &rule.Source, &rule.Action, &rule.CreatedBy, &rule.CreatedAt, &rule.LastModified)
 		if err != nil {
-			fmt.Println(err, "===================================================")
+			//fmt.Println(err, "===================================================")
 			logger.Debug(err)
 		}
 		rules = append(rules, rule)
