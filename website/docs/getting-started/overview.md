@@ -5,28 +5,30 @@ sidebar_label: Overview
 slug: /
 ---
 
-> This guide is for Administrators who wants to install and configure TRASA. If your security team has already deployed TRASA in your infrastructure and you are required to use TRASA for remote access, check out our [User Guides](https://www.trasa.io/docs/guides/getting-started 'User Guides')
+
 
 Welcome to TRASA docs. Before anything, let's answer your first question.
 
 ## What is TRASA?
 
-TRASA is an open-source zero trust access control platform built by [Seknox](https://seknox.com). It is unique in the sense that it bundles lots of access control features into a single platform and, as such, allows you to achieve zero trust access control strategies in your infrastructure. 
+TRASA is an open-source zero trust service access platform built by [Seknox](https://www.seknox.com). It is unique in the sense that it bundles **lots of access control features** into a single platform and, as such, allows you to achieve zero trust access control strategies in your infrastructure. 
 
 
-**What is zero trust?** It is probably your first question when you read above.
+It essentially:
++ Is a Layer 7 protocol, User identity, and Access Privilege aware access proxy.
++ Can enforce security policies (time, file transfers, location, context, 2fa) to SSH, RDP, web, database access. 
++ Can enforce access policy based on the security hygiene of user devices.
++ Add two-factor authentication agent (native integration) to protect console access to ssh, RDP, and hardware appliance. 
 
-A **Zero Trust** is a security paradigm where access is granted based on **_risks_** rather than just **_static policies_**
+If you have used Bastian server to jump access or centralized access to internal infrastructure, you can also think of TRASA as a **Bastian server on steroids!**
 
-## How do you differentiate "risk" vs. "static policies"?
 
-### Static policies
+### How is it different from what we already have implemented to control access?
+To distinguish how TRASA and zero trust systems differ from legacy access control products, see how legacy vs. zero trust access control system decides to allow access in the below image:
 
-Control access based on the correctness of a combination of whitelisted IP source, time, and valid user credentials.
+<img alt="enrol device" src={('/img/docs/getting-started/zero-notzero.svg')} />
 
-### Risk based policies
 
-Control access by analyzing real-time contextual threats. E.g., verifying the reputation of IP source past 1 hour, analyze the cyber hygiene of devices used to access services, and in-session monitoring to identify malicious usage patterns.
 
 
 <br />
@@ -62,3 +64,5 @@ Almost every security compromises involve the misuse of trusted credentials, tru
 + Administrators must have a realtime view of all authorized users and authorized devices for remote access. 
 + Administrators must have a realtime view of all remote entry points to your infrastructure.
 + Administrators must have a realtime view of all services that have remote access enabled.
+
+
