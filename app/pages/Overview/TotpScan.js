@@ -1,5 +1,5 @@
 //'use strict';
-import React, {Component} from 'react';
+import React, {Component, useEffect, useState} from 'react';
 import {ActivityIndicator, StyleSheet, View} from 'react-native';
 import {RNCamera} from 'react-native-camera';
 import parse from 'url-parse';
@@ -21,15 +21,11 @@ import {
 import messaging from '@react-native-firebase/messaging';
 import axios from 'axios';
 import Constants from '../Extra/Constants';
-//import RNSecureKeyStore from "react-native-secure-key-store";
 import * as SecureStore from 'expo-secure-store';
-//import AsyncStorage from "@react-native-community/async-storage";
-//import QRCodeScanner from 'react-native-qrcode-scanner';
+
 import BarcodeMask from 'react-native-barcode-mask';
-//import DeviceInfo from 'react-native-device-info';
 import DeviceInfo from '../Device/Device';
 import AsyncStorage from '@react-native-community/async-storage';
-import {CommonActions} from '@react-navigation/native';
 
 const styles = StyleSheet.create({
 
@@ -40,17 +36,19 @@ const styles = StyleSheet.create({
   },
 
 });
-class TotpScan extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {loading: false,done:false};
-  }
+function TotpScan (props){
 
-  componentWillUnmount() {
-    this.setState({done:false});
-  }
+  const [loading,setLoading] = useState(false)
+  const [done,setDone] = useState(false)
 
-  update = async (
+
+  useEffect(()=>{
+    setDone(false)
+  },[props.route?.params?.rand])
+
+
+
+  const update = async (
     item, //Callback function when barcode is read from ScanPage
   ) => {
     let totpList = JSON.parse(await AsyncStorage.getItem('TOTPlist'));
@@ -65,22 +63,21 @@ class TotpScan extends Component {
       totpList = totpList.concat(item);
 
       AsyncStorage.setItem('TOTPlist', JSON.stringify(totpList)).then(a=>{
-        this.setState({done:false});
-        this.props.navigation.navigate('Home',{updated:totpList});
+        props.navigation.navigate('Home',{updated:totpList});
       });
     }
-    this.setState({done:false});
 
 
   };
 
-  barCodeRead = (d) => {
+  const barCodeRead = (d) => {
 
     try {
-      if ( !d.data) {
+      if ( !d.data ) {
         return;
       }
-      this.setState({done:true});
+      setDone(true)
+
       // const data = d.barcodes[0].data;
       const data = d.data;
 
@@ -96,7 +93,7 @@ class TotpScan extends Component {
       if (protocol === 'otpauth:' && host === 'totp') {
         //Normal TOTP add
 
-        this.update({
+        update({
           account: name,
           secret: secret,
           issuer: issuer,
@@ -106,17 +103,15 @@ class TotpScan extends Component {
       } else if (protocol === 'mobileauth:') {
         // this.setState({done:true});
         //Device Enroll
-        this.enrollDevice(query,secret,name,issuer,type)
+        enrollDevice(query,secret,name,issuer,type)
       }else {
-        this.setState({done:false});
 
       }
     } catch (e) {
-      console.log(e);
-      this.setState({done:false});
+      console.error(e);
+      console.info("done:true")
 
       //console.log(this.props);
-      this.setState({loading: false});
       alert('Invalid Code');
     }
   };
@@ -125,7 +120,7 @@ class TotpScan extends Component {
 
 
 
-  getPublicKey=async ()=>{
+  const getPublicKey=async ()=>{
     const publicKey=await SecureStore.getItemAsync("PUBLIC_KEY")
     if(!publicKey){
 
@@ -133,12 +128,12 @@ class TotpScan extends Component {
   }
 
 
-  enrollDevice=async (query,secret,name,issuer,type)=>{
+ const  enrollDevice=async (query,secret,name,issuer,type)=>{
     const urlfromStorage=await AsyncStorage.getItem('TRASA_URL');
     //console.log("urlfromStorage",urlfromStorage)
     let trasaURL = query.trasaURL || urlfromStorage || 'https://trasa.seknox.com';
     Constants.hostname=trasaURL
-    this.setState({loading: true});
+   setLoading(true);
     const deviceID = query.deviceID || '';
     //AsyncStorage.getItem("FCMToken").then(fcmToken=>{
 
@@ -155,6 +150,7 @@ class TotpScan extends Component {
                   url: Constants.hostname + '/api/v1/passmydevicedetail',
                   data: {
                     deviceId: deviceID,
+                    deviceID: deviceID,
                     fcmToken: fcmToken,
                     publicKey: publicKey || '',
                     deviceFinger: JSON.stringify(info),
@@ -167,8 +163,8 @@ class TotpScan extends Component {
                         AsyncStorage.setItem('TRASA_URL', trasaURL);
                         SecureStore.setItemAsync('deviceId', deviceID)
                             .then(() => {
-                              this.setState({loading: false});
-                              this.update({
+                              setLoading(false);
+                              update({
                                 account: name,
                                 secret: secret,
                                 issuer: issuer,
@@ -177,20 +173,22 @@ class TotpScan extends Component {
 
                             })
                             .catch((reason) => {
-                              this.setState({done:false});
-                              this.setState({loading: false});
+                              console.error("Could not store deviceID")
+                              setLoading(false);
+
                               alert(reason);
                             });
                       } else {
-                        this.setState({loading: false});
-                        this.setState({done:false});
-                        this.props.navigation.navigate('Home');
+                        console.error("response is not success")
+                        setLoading(false);
+                        alert("Could not enroll device. QR code may be expired");
+                        props.navigation.navigate('Home');
                       }
                     })
                     .catch((reason) => {
-                      this.setState({done:false});
-                      console.error(reason)
-                      this.setState({loading: false});
+                      console.error("axios error",reason)
+                      setLoading(false);
+
                       alert(reason);
                     });
               });
@@ -209,8 +207,7 @@ class TotpScan extends Component {
 
 
 
-  render() {
-    // this.flag = true;
+
     return (
       <Container>
         <Header>
@@ -219,18 +216,18 @@ class TotpScan extends Component {
               <Icon
                 name={'arrow-back'}
                 onPress={() => {
-                  this.props.navigation.goBack();
+                  props.navigation.goBack();
                 }}
               />
             </Button>
           </Left>
           <Body>
-            <Title style={{color:'white'}}>{this.state.done?"Saving":"Scanning"}</Title>
+            <Title style={{color:'white'}}>{done?"Saving":"Scanning"}</Title>
           </Body>
           <Right />
         </Header>
 
-        {this.state.loading ? (
+        {loading ? (
           <View>
             <H2>Please Wait</H2>
             <ActivityIndicator size="large" color="#0000ff" animating={true} />
@@ -238,14 +235,15 @@ class TotpScan extends Component {
         ) : (
           <RNCamera
             style={styles.camera}
-            onBarCodeRead={this.barCodeRead}
+            onBarCodeRead={!done?barCodeRead:null}
+            barCodeTypes={[RNCamera.Constants.BarCodeType.qr]}
           //  onGoogleVisionBarcodesDetected={this.barCodeRead}
             autoFocusPointOfInterest={{x: 0.5, y: 0.5}}
             captureAudio={false}
-            googleVisionBarcodeType={
-              RNCamera.Constants.GoogleVisionBarcodeDetection.BarcodeType
-                .QR_CODE
-            }
+            // googleVisionBarcodeType={
+            //   RNCamera.Constants.GoogleVisionBarcodeDetection.BarcodeType
+            //     .QR_CODE
+            // }
             //barCodeTypes={[RNCamera.Constants.BarCodeType.qr]}
 
             androidCameraPermissionOptions={{
@@ -265,7 +263,7 @@ class TotpScan extends Component {
         )}
       </Container>
     );
-  }
+
 }
 
 export default TotpScan;
@@ -292,13 +290,11 @@ export class CodeInput extends Component {
       totpList = totpList.concat(item);
       AsyncStorage.setItem('TOTPlist', JSON.stringify(totpList))
         .then((r) => {
-          this.setState({done:false});
           this.props.navigation.navigate('Home', {
             updated: this.state.name + this.state.issuer,
           });
         })
         .catch((error) => {
-          this.setState({done:false});
           console.log(error);
           alert(error);
         });
