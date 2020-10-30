@@ -37,7 +37,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Device(props: any) {
+type DeviceProps = {
+  userID: string,
+  renderFor: 'myRoute' | 'userRoute',
+
+}
+
+export default function Device(props: DeviceProps) {
   const [deviceDeleteState, setDeviceDeleteState] = useState(false);
   // const [deviceInfoDialogueOpen, setdeviceInfoDialogueOpen] = useState(false);
   const [deleteDevice, setDeleteDevice] = useState({
