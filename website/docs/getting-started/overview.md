@@ -26,7 +26,7 @@ If you have used Bastian server to jump access or centralized access to internal
 ### How is it different from what we already have implemented to control access?
 To distinguish how TRASA and zero trust systems differ from legacy access control products, see how legacy vs. zero trust access control system decides to allow access in the below image:
 
-<img alt="enrol device" src={('/img/docs/getting-started/zero-notzero.svg')} />
+<img alt="trasa vs legacy" src={('/img/docs/getting-started/zero-notzero.svg')} />
 
 
 

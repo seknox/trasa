@@ -7,6 +7,25 @@ sidebar_label: Install
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
+
+To run TRASA with a bare minimal setup, you will need :
+1. Database (PostgreSQL), 
+2. Redis,  
+3. Guacamole Guacd server (Only required If you need to protect Remote Desktop Access),
+4. TRASA server itself. 
+
+
+The minimum server requirement to run TRASA is:
+- 1 core CPU,
+- 1 GB ram,
+- 20 GB storage.
+
+
+:::important
+Planning for extra storage space is critical since session recording of remote access can quickly cover up available spaces. It depends on frequency of access, policy that enables session recording. 
+:::
+
+
 <Tabs
 defaultValue="docker"
 values={[
