@@ -43,9 +43,8 @@ func (s statStore) GetAggregatedLoginFails(entityType, entityID, orgID, timezone
 
 	*sb = addTimeFilter(timeFilter, now, *sb)
 
-	sqlStr, args := sb.Build()
-	//change ? into $
-	sqlStr = utils.SqlReplacer(sqlStr)
+	sqlStr, args := sb.BuildWithFlavor(sqlbuilder.PostgreSQL)
+
 	rows, err := s.DB.Query(sqlStr, args...)
 
 	//rows, err := s.DB.Query(`select count(*),failed_reason from auth_logs where status=false AND org_id=$1 GROUP BY failed_reason ORDER BY failed_reason`, orgID)
@@ -104,9 +103,8 @@ func (s statStore) GetAggregatedLoginHours(entityType, entityID, timezone, orgID
 
 	*sb = addTimeFilter(timeFilter, now, *sb)
 
-	sqlStr, args := sb.Build()
-	//change ? into $
-	sqlStr = utils.SqlReplacer(sqlStr)
+	sqlStr, args := sb.BuildWithFlavor(sqlbuilder.PostgreSQL)
+
 	rows, err := s.DB.Query(sqlStr, args...)
 
 	if err != nil {
@@ -177,9 +175,8 @@ func (s statStore) GetAggregatedIPs(entityType, entityID, orgID, timezone, timeF
 
 	*sb = addTimeFilter(timeFilter, now, *sb)
 
-	sqlStr, args := sb.Build()
-	//change ? into $
-	sqlStr = utils.SqlReplacer(sqlStr)
+	sqlStr, args := sb.BuildWithFlavor(sqlbuilder.PostgreSQL)
+
 	rows, err := s.DB.Query(sqlStr, args...)
 
 	if err != nil {
@@ -296,9 +293,8 @@ func (s statStore) GetLoginsByType(entityType, entityID, orgID, timezone, timeFi
 
 	*sb = addTimeFilter(timeFilter, now, *sb)
 
-	sqlStr, args := sb.Build()
-	//change ? into $
-	sqlStr = utils.SqlReplacer(sqlStr)
+	sqlStr, args := sb.BuildWithFlavor(sqlbuilder.PostgreSQL)
+
 	rows, err := s.DB.Query(sqlStr, args...)
 
 	//rows, err := s.DB.Query(`select count(*),failed_reason from auth_logs where status=false AND org_id=$1 GROUP BY failed_reason ORDER BY failed_reason`, orgID)
@@ -359,9 +355,8 @@ func (s statStore) SortLoginByCity(entityType, entityID, orgID, timezone, timeFi
 
 	*sb = addTimeFilter(timeFilter, now, *sb)
 
-	sqlStr, args := sb.Build()
-	//change ? into $
-	sqlStr = utils.SqlReplacer(sqlStr)
+	sqlStr, args := sb.BuildWithFlavor(sqlbuilder.PostgreSQL)
+
 	rows, err := s.DB.Query(sqlStr, args...)
 
 	if err != nil {
@@ -425,9 +420,7 @@ func (s statStore) GetAllAuthEventsByEntityType(entityType, entityID, timeFilter
 
 	sb.GroupBy("status")
 
-	sqlStr, args := sb.Build()
-	//change ? into $
-	sqlStr = utils.SqlReplacer(sqlStr)
+	sqlStr, args := sb.BuildWithFlavor(sqlbuilder.PostgreSQL)
 
 	rows, err := s.DB.Query(sqlStr, args...)
 	if err != nil {
@@ -482,9 +475,8 @@ func (s statStore) GetTodayHexaLoginEvents(entityType, entityID, orgID, statusFi
 	case "Failed":
 		sb.Where(sb.Equal(`status`, false))
 	}
-	sqlStr, args := sb.Build()
-	//change ? into $
-	sqlStr = utils.SqlReplacer(sqlStr)
+
+	sqlStr, args := sb.BuildWithFlavor(sqlbuilder.PostgreSQL)
 
 	rows, err := s.DB.Query(sqlStr, args...)
 
@@ -620,9 +612,8 @@ func (s statStore) GetRemoteAppCount(entityType, entityID, orgID, timezone, time
 
 	*sb = addTimeFilter(timeFilter, now, *sb)
 
-	sqlStr, args := sb.Build()
-	//change ? into $
-	sqlStr = utils.SqlReplacer(sqlStr)
+	sqlStr, args := sb.BuildWithFlavor(sqlbuilder.PostgreSQL)
+
 	err = s.DB.QueryRow(sqlStr, args...).Scan(&count)
 
 	//rows, err := s.DB.Query(`select count(*),failed_reason from orgloginsv1 where status=false AND org_id=$1 GROUP BY failed_reason ORDER BY failed_reason`, orgID)

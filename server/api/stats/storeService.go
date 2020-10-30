@@ -6,7 +6,6 @@ import (
 
 	"github.com/huandu/go-sqlbuilder"
 	"github.com/pkg/errors"
-	"github.com/seknox/trasa/server/utils"
 )
 
 func (s statStore) GetTotalServices(orgID string) (count int64, err error) {
@@ -25,9 +24,9 @@ func (s statStore) GetTotalManagedUsers(entityType, entityID, orgID string) (cou
 		sb.Where(sb.Equal("id", entityID))
 	}
 	sb.Where(sb.Equal(`org_id`, orgID))
-	sqlStr, args := sb.Build()
-	//change ? into $
-	sqlStr = utils.SqlReplacer(sqlStr)
+
+	sqlStr, args := sb.BuildWithFlavor(sqlbuilder.PostgreSQL)
+
 	err = s.DB.QueryRow(sqlStr, args...).Scan(&managedAcc)
 
 	return len(strings.Split(managedAcc, ",")) - 1, err
