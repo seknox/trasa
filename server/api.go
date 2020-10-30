@@ -168,6 +168,7 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		//Enroll device needs both password and session
 		//After device is enrolled
 		r.Post("/my/enroldevice", auth.Enrol2FADevice)
+		r.Post("/my/devices/delete/{deviceID}", users.RemoveUserDevice)
 		r.Get("/my/authmeta/{appID}/{username}", my.GetAuthMeta)
 
 		r.Get("/my/notifs", notif.GetPendingNotif)

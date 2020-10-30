@@ -29,9 +29,48 @@ func AddTestUserContext(next http.HandlerFunc) http.HandlerFunc {
 				FirstName:  "Bhargab",
 				MiddleName: "",
 				LastName:   "Acharya",
-				Email:      "bhargab@seknox.com",
+				Email:      "bbbb@seknox.com",
 				Groups:     nil,
 				UserRole:   "orgAdmin",
+				Status:     true,
+				IdpName:    "trasa",
+			},
+			Org: models.Org{
+				ID:             "153f7582-5ae2-46ba-8c1c-79ef73fe296e",
+				OrgName:        "Trasa",
+				Domain:         "trasa.io",
+				PrimaryContact: "",
+				Timezone:       "Asia/Kathmandu",
+				PhoneNumber:    "",
+				CreatedAt:      0,
+				PlatformBase:   "",
+				License:        models.License{},
+			},
+			DeviceID:  "",
+			BrowserID: "",
+		}
+		ctx := context.WithValue(r.Context(), "user", userContext)
+		next(w, r.WithContext(ctx))
+
+	})
+
+}
+
+// AddTestUserContext is a middleware that adds  mock userContext
+func AddTestSelfUserContext(next http.HandlerFunc) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		userContext := models.UserContext{
+			User: &models.User{
+				ID:         "60926a3e-c508-4d94-8f0c-6bad605bdb08",
+				OrgID:      "153f7582-5ae2-46ba-8c1c-79ef73fe296e",
+				UserName:   "bh",
+				FirstName:  "Bha",
+				MiddleName: "",
+				LastName:   "Ach",
+				Email:      "bhbha@gmail.com",
+				Groups:     nil,
+				UserRole:   "selfUser",
 				Status:     true,
 				IdpName:    "trasa",
 			},

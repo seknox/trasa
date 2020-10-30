@@ -60,7 +60,7 @@ export default function MyDevices(props: any) {
         <Divider light />
       </Grid>
       <Grid item xs={12}>
-        <UserDevices renderFor="myRoute" />
+        <UserDevices renderFor="myRoute" userID={""}/>
       </Grid>
 
       <div>
