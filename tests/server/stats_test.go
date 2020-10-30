@@ -118,8 +118,8 @@ func TestGetAggregatedDevices(t *testing.T) {
 		t.Errorf(`incorrect number of browser types, expected:%d got %d`, 1, len(data.BrowserByType))
 	}
 
-	if data.TotalMobiles != 3 {
-		t.Errorf(`incorrect number of mobiles, expected:%d got %d`, 1, data.TotalMobiles)
+	if data.TotalMobiles != 2 {
+		t.Errorf(`incorrect number of mobiles, expected:%d got %d`, 2, data.TotalMobiles)
 	}
 	if data.TotalWorkstations < 2 {
 		t.Errorf(`incorrect number of workstations, expected:%d got %d`, 2, data.TotalWorkstations)

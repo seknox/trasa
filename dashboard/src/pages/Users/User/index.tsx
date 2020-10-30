@@ -73,7 +73,7 @@ function UserPage(props: Userpageindexprops) {
             userAccessMaps={userAccessMaps}
           />,
 
-          <UserDevices userID={props.userID} />,
+          <UserDevices renderFor={"userRoute"} userID={props.userID} />,
 
           <UserResources
             userID={props.userID}
