@@ -56,10 +56,13 @@ To use all features of TRASA, you need to setup
 
 <br />
 
-## 3. Firewall configuration (Recommended)
+## 3. Configuring Network Firewall  (Recommended)
 
-To use TRASA as an access proxy, you need to enforce remote access to services through TRASA only.
-To do that, you need to configure firewall rules accordingly.
+TRASA access proxy can only control access if traffic passes through it. To ensure security policy is enforced on access proxy, you should configure a network firewall so that every remote access to your server and services is only routed and allowed from the IP address of the TRASA server. 
+
+:::note
+TRASA also supports native two-factor authentication integration (with installable agents that protect windows server, Linux server, and hardware appliance). If you are using TRASA just for native two-factor authentication, you can skip configuring your network because agents will communicate with TRASA server for authorization.
+:::
 
 <!-- ######################################################################################## -->
 
