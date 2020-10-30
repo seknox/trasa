@@ -1,10 +1,13 @@
 package server_test
 
 import (
+	"context"
 	"encoding/hex"
 	"encoding/json"
+	"github.com/go-chi/chi"
 	"github.com/seknox/trasa/server/api/auth"
 	"github.com/seknox/trasa/server/api/crypt"
+	"github.com/seknox/trasa/server/api/my"
 	"github.com/seknox/trasa/server/models"
 	"github.com/seknox/trasa/server/utils"
 	"github.com/seknox/trasa/tests/server/testutils"
@@ -188,4 +191,79 @@ func trasadaKex(t *testing.T, intent string) []byte {
 	t.Log("our secret key: ", hex.EncodeToString(sec))
 
 	return sec
+}
+
+func TestDeleteMyDevice(t *testing.T) {
+	t.Run("deleting own device should pass", func(t *testing.T) {
+
+		req, err := http.NewRequest("GET", "", nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		rctx := chi.NewRouteContext()
+		rctx.URLParams.Add("deviceID", "db8dc6b0-84c1-43b2-929f-fa0479a25441")
+		req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, rctx))
+
+		// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
+		rr := httptest.NewRecorder()
+		handler := http.HandlerFunc(testutils.AddTestSelfUserContext(my.RemoveMyDevice))
+
+		handler.ServeHTTP(rr, req)
+
+		// Check the status code is what we expect.
+		if status := rr.Code; status != http.StatusOK {
+			t.Errorf("handler returned wrong status code: got %v want %v",
+				status, http.StatusOK)
+		}
+
+		var resp models.TrasaResponseStruct
+
+		err = json.Unmarshal(rr.Body.Bytes(), &resp)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if resp.Status != "success" {
+			t.Fatal(resp.Reason)
+		}
+
+	})
+
+	t.Run("deleting other user's device should fail", func(t *testing.T) {
+
+		req, err := http.NewRequest("GET", "", nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		rctx := chi.NewRouteContext()
+		rctx.URLParams.Add("deviceID", "aac1e00f-bcd0-4fb1-87b2-8f3cbb746b14")
+		req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, rctx))
+
+		// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
+		rr := httptest.NewRecorder()
+		handler := http.HandlerFunc(testutils.AddTestSelfUserContext(my.RemoveMyDevice))
+
+		handler.ServeHTTP(rr, req)
+
+		// Check the status code is what we expect.
+		if status := rr.Code; status != http.StatusForbidden {
+			t.Errorf("handler returned wrong status code: got %v want %v",
+				status, http.StatusForbidden)
+		}
+
+		var resp models.TrasaResponseStruct
+
+		err = json.Unmarshal(rr.Body.Bytes(), &resp)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if resp.Status != "failed" {
+			t.Errorf(`expected status %s got %s`, "failed", resp.Reason)
+		}
+
+	})
+
 }
