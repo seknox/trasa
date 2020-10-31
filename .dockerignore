@@ -4,6 +4,10 @@ dashboard/build
 release
 devenv
 
+server/server
+server/server.exe
+tests/
+release/
 
 workstation/
 website/
