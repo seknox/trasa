@@ -376,16 +376,16 @@ INSERT INTO inapp_trails (id, client_ip, user_agent, email, event_time, org_id, 
 	('ff179e1ff6', '27.34.68.16:28001', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:79.0) Gecko/20100101 Firefox/79.0', 'bhargab@seknox.com', 1596451233825716280, '153f7582-5ae2-46ba-8c1c-79ef73fe296e', 'Vault reinitialised', true, '13c45cfb-72ca-4177-b968-03604cab6a27');
 
 INSERT INTO key_holder (id, org_id, name, tag, value, added_by, added_at) VALUES
-	('ebe6b1cbcb', '153f7582-5ae2-46ba-8c1c-79ef73fe296e', 'GLOBAL_EMAIL_CONFIG_SECRET', 'key-xxxx-xxxx...', '\x56918d3167a03917c1e79a35e21a6a71f0f1a1f97bc0c9b13f1ef8235ecba38f9a2085b131a25a548e55e02615d256e6c6d3b86ae5d890a12fd16a92ff3b0119', '13c45cfb-72ca-4177-b968-03604cab6a27', 1596451264);
+	('ebe6b1cbcb', '153f7582-5ae2-46ba-8c1c-79ef73fe296e', 'GLOBAL_EMAIL_CONFIG_SECRET', 'key-xxxx-xxxx...', '', '13c45cfb-72ca-4177-b968-03604cab6a27', 1596451264);
 
 INSERT INTO keylog (id, org_id, hash, generated_at, status, last_updated) VALUES
-	('724f49c5-3e65-410b-9cbf-b73e29904a15', '153f7582-5ae2-46ba-8c1c-79ef73fe296e', '22ce88df730736e04fad70980ccb19882c703562625512f62f14ffd15643377ecf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e', 1596451234, true, 1596451234),
-	('bd14fd94-4823-495d-b929-6f44eae72aa5', '153f7582-5ae2-46ba-8c1c-79ef73fe296e', 'ffd79a0d0b2df13dae4353175c4096327c2f0d0109a6145a99391a08f62c0bc1cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e', 1596450046, false, 1596451233);
+	('724f49c5-3e65-410b-9cbf-b73e29904a15', '153f7582-5ae2-46ba-8c1c-79ef73fe296e', '', 1596451234, true, 1596451234),
+	('bd14fd94-4823-495d-b929-6f44eae72aa5', '153f7582-5ae2-46ba-8c1c-79ef73fe296e', '', 1596450046, false, 1596451233);
 
 INSERT INTO password_state (user_id, org_id, last_passwords, last_updated) VALUES
-	('13c45cfb-72ca-4177-b968-03604cab6a27', '153f7582-5ae2-46ba-8c1c-79ef73fe296e', ARRAY['$2a$10$bnR4a6xbbebM8nZipabizOPajsTCxexkgq2UHt.JX7tp76FVoxKLG'], 1596450342),
-	('60926a3e-c508-4d94-8f0c-6bad605bdb08', '153f7582-5ae2-46ba-8c1c-79ef73fe296e', ARRAY['$2a$10$o.zyNXgDd35db5L2VhlklufC5Uygfn7rtegX3hheC0TVJNlnsxcCC','$2a$10$ANSXpYJgByXiNZLUpTcbb.JeZCovtWJxLCtjOdBc.sWl8qGJZF5HO'], 1596451836),
-	('8501a948-f628-4d3a-877d-f970680223fc', '153f7582-5ae2-46ba-8c1c-79ef73fe296e', ARRAY['$2a$10$0ITUoD1e4znv2c7UatK1B.SQvD1KspZZcXsawWazoYB7YXSkBxmdC'], 1596768245);
+	('13c45cfb-72ca-4177-b968-03604cab6a27', '153f7582-5ae2-46ba-8c1c-79ef73fe296e', ARRAY['$2a$10$3uCzm6xpQmSyA39VcAXwLe52wpC/Xod6FxZWcEBg/6.DqY3MioQYK'], 1596450342),
+	('60926a3e-c508-4d94-8f0c-6bad605bdb08', '153f7582-5ae2-46ba-8c1c-79ef73fe296e', ARRAY['$2a$10$3uCzm6xpQmSyA39VcAXwLe52wpC/Xod6FxZWcEBg/6.DqY3MioQYK'], 1596451836),
+	('8501a948-f628-4d3a-877d-f970680223fc', '153f7582-5ae2-46ba-8c1c-79ef73fe296e', ARRAY['$2a$10$3uCzm6xpQmSyA39VcAXwLe52wpC/Xod6FxZWcEBg/6.DqY3MioQYK'], 1596768245);
 
 INSERT INTO policies (id, name, org_id, day_time, device_policy, record_session, file_transfer, ip_source, risk_threshold, tfa_enabled, expiry, allowed_countries, created_at, updated_at) VALUES
 	('1ec67f75-a90b-4750-8ae4-b6730fb23671', 'strict-device', '153f7582-5ae2-46ba-8c1c-79ef73fe296e', '[{"days": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], "fromTime": "00:00", "toTime": "23:59"}]', '{"blockAntivirusDisabled": true, "blockAutologinEnabled": true, "blockCriticalAutoUpdateDisabled": false, "blockDebuggingEnabled": true, "blockEmulated": true, "blockEncryptionNotSet": false, "blockFirewallDisabled": true, "blockIdleScreenLockDisabled": true, "blockJailBroken": true, "blockOpenWifiConn": false, "blockRemoteLoginEnabled": false, "blockTfaNotConfigured": false, "blockUntrustedDevices": true}', true, true, '0.0.0.0/0', 5.0, true, '2021-03-01', '', 0, 1596449296),
