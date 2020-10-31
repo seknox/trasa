@@ -3,7 +3,6 @@ package initdb
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"github.com/seknox/trasa/server/api/policies"
 	"time"
 
@@ -35,7 +34,7 @@ func InitDB() {
 	storeDeviceHygieneCheck()
 
 	//init CA
-	initSystemCA()
+	//initSystemCA()
 
 	initDefaultPolicies()
 
@@ -149,10 +148,8 @@ func initDefaultPolicies() {
 	if err == nil {
 		return
 	}
-
-	fmt.Println(!errors.Is(err, sql.ErrNoRows))
-
 	if !errors.Is(err, sql.ErrNoRows) {
+		logrus.Error(err)
 		return
 	}
 
