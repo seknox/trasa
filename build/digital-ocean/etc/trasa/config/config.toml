@@ -1,45 +1,41 @@
-
 [backup]
-  backupdir = "$HOME/trasa/backup"
+  backupdir = "/var/trasa/backup"
 
 [database]
   dbname = "trasadb"
+  dbpass = "trasauser"
+  dbtype = "postgres"
   dbuser = "trasauser"
   port = "5432"
   server = "localhost"
-  sslenabled = false
-
 
 [logging]
-  level = "ERROR"
+  level = "INFO"
 
+[minio]
+  key = "minioadmin"
+  secret = "minioadmin"
+  server = "127.0.0.1:9000"
+  status = false
+  usessl = false
 
 [platform]
-  base = "public"
+  base = "private"
+
+[proxy]
+  dblistenaddr = "127.0.0.1:3333"
+  guacdaddr = "127.0.0.1:4822"
+  guacdenabled = false
+  sshlistenaddr = "127.0.0.1:8022"
 
 [redis]
-  server = "redis:6379"
-
-[timezone]
-  location = "Asia/Kathmandu"
+  server = "localhost:6379"
 
 [security]
-  insecureSkipVerify=false
-
-
+  insecureskipverify = true
 
 [trasa]
-  cloudServer = "https://u2fproxy.trasa.io"
-  listenAddr = "<TRASA_LISTEN_ADDR>"
-  autoCert  = <AUTO_CERT>
-
-
-[sshproxy]
- listenAddr="0.0.0.0:8022"
-
-[dbproxy]
-  listenAddr="127.0.0.1:8023"
-
-[vault]
-  tsxvault = true
-
+  autocert = <AUTO_CERT>
+  cloudserver = "https://sg.cpxy.trasa.io"
+  listenaddr = "<TRASA_LISTEN_ADDR>"
+  proxydashboard = false
