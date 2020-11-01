@@ -4,10 +4,9 @@ module.exports = {
       'Getting Started': [
         'getting-started/overview',
         'getting-started/concepts',
-        'getting-started/glossary',
-        'getting-started/signup-or-install',
-
         'getting-started/how-to',
+        'getting-started/glossary',
+        // 'getting-started/signup-or-install',
       ],
       Install: ['install/installation', 'install/initial-setup'],
       Tutorial: [
@@ -34,6 +33,7 @@ module.exports = {
       Users: [
         'users/users',
         'users/creating-updating-users',
+        'users/account-setup',
         'users/password-setup',
         // 'users/trasaIDP/trasa-idp',
         // 'users/ldap/ldap',
