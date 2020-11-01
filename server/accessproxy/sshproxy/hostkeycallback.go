@@ -41,7 +41,7 @@ func HandleHostKeyCallback(creds *models.UpstreamCreds, serviceID, orgID string,
 			//If caKey from trasacore is invalid
 			if caKey == nil {
 				if confirmSkipVerify("Upstream Host provided a certificate which could not be verified. Do you want to skip the verification and save the key?  \n") {
-					logger.Debug(string(k.Marshal()))
+					//logger.Debug(string(k.Marshal()))
 					//TODO verify cert
 					// put orgID
 					err := services.Store.UpdateHostCert(string(ssh.MarshalAuthorizedKey(k)), serviceID, orgID)

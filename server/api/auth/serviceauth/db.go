@@ -150,7 +150,7 @@ func DBLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.TrasaResponse(w, 200, "success", string(reason), "db-login", creds, policy.RecordSession, authlog.SessionID)
-	logrus.Trace("Agent rlogin response returned")
+	logrus.Trace("DB login response returned")
 	return
 
 }
