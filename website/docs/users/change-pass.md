@@ -1,5 +1,5 @@
 ---
-id: password-setup
+id: change-password
 title: Change Password
 sidebar_label: Change Password
 ---

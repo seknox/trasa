@@ -34,7 +34,7 @@ module.exports = {
         'users/users',
         'users/creating-updating-users',
         'users/account-setup',
-        'users/change-pass',
+        'users/change-password',
         // 'users/trasaIDP/trasa-idp',
         // 'users/ldap/ldap',
         // 'users/ad/active-directory',
