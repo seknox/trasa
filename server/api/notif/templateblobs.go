@@ -3867,7 +3867,7 @@ We received password reset request from your account. Click the link below to ch
                         
                         <td class="mcnTextContent" style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;" valign="top">
                         
-                            <em>Copyright © 2018 - seknox cybersecurity, All rights reserved.</em><br>
+                            <em>Copyright © 2020 - Seknox Cybersecurity, All rights reserved.</em><br>
 <br>
 <br>
 <strong>Our mailing address is:</strong><br>
@@ -4816,7 +4816,7 @@ var AdhocReq string = `
                         
                         <td class="mcnTextContent" style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;" valign="top">
                         
-                            <em>Copyright © 2018 - seknox cybersecurity, All rights reserved.</em><br>
+                            <em>Copyright © 2020 - Seknox Cybersecurity, All rights reserved.</em><br>
 <br>
 <br>
 <strong>Our mailing address is:</strong><br>
@@ -5766,7 +5766,7 @@ var AdhocStatus string = `
                         
                         <td class="mcnTextContent" style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;" valign="top">
                         
-                            <em>Copyright © 2018 - seknox cybersecurity, All rights reserved.</em><br>
+                            <em>Copyright © 2020 - Seknox Cybersecurity, All rights reserved.</em><br>
 <br>
 <br>
 <strong>Our mailing address is:</strong><br>
@@ -6701,7 +6701,7 @@ var DynamicAccess string = `
                         
                         <td class="mcnTextContent" style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;" valign="top">
                         
-                            <em>Copyright © 2018 - seknox cybersecurity, All rights reserved.</em><br>
+                            <em>Copyright © 2020 - Seknox Cybersecurity, All rights reserved.</em><br>
 <br>
 <br>
 <strong>Our mailing address is:</strong><br>
@@ -7641,7 +7641,7 @@ h4{
 
 <td class="mcnTextContent" style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;" valign="top">
 
-<em>Copyright © 2018 - seknox cybersecurity, All rights reserved.</em><br>
+<em>Copyright © 2020 - Seknox Cybersecurity, All rights reserved.</em><br>
 <br>
 <br>
 <strong>Our mailing address is:</strong><br>
@@ -7686,7 +7686,7 @@ secure@seknox.com<br>
 
 <td class="mcnTextContent" style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;" valign="top">
 
-<em>Copyright © 2018 - seknox cybersecurity, All rights reserved.</em><br>
+<em>Copyright © 2020 - Seknox Cybersecurity, All rights reserved.</em><br>
 <br>
 <br>
 <strong>Our mailing address is:</strong><br>
