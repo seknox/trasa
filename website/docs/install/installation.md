@@ -103,7 +103,7 @@ sudo docker run -d -p 5432:5432 --name db -e POSTGRES_PASSWORD=trasauser -e POST
 sudo docker run -d -p 6379:6379 --name redis redis:6.0.8
 ```
 
-- Run guacamole proxy if you use RDP
+- Run guacd (Apache Guacamole RDP proxy server). This is only required if you need to protect RDP service
 
 ```shell script
 sudo docker run -d --rm --name guacd -p 127.0.0.1:4822:4822 -v /tmp/trasa/accessproxy/guac:/tmp/trasa/accessproxy/guac --user root  seknox/guacd:v0.0.1
@@ -111,8 +111,13 @@ sudo docker run -d --rm --name guacd -p 127.0.0.1:4822:4822 -v /tmp/trasa/access
 
 - Run trasa-server
 
+:::tip
+- Replace app.trasa in `TRASA.LISTENADDR` with hostname/IP you want TRASA server to listen on.
+- If `TRASA.LISTENADDR` is not a public domain, turn off the autocert by passing `-e TRASA.AUTOCERT="false"`
+:::
+
 ```shell script
-sudo docker run --link db:db \
+sudo docker run -d --link db:db \
 --link guacd:guacd \
 --link redis:redis \
 -p 443:443 \
@@ -120,14 +125,11 @@ sudo docker run --link db:db \
 -p 8022:8022 \
 -e TRASA.LISTENADDR=app.trasa \
 -v /tmp/trasa/accessproxy/guac:/tmp/trasa/accessproxy/guac \
-seknox/trasa:v1.1.1
+seknox/trasa:v1.1.2
 ```
 
 
-:::tip
-- Replace app.trasa with hostname/IP of TRASA server.
-- If `TRASA.LISTENADDR` is not a public domain, turn off the autocert by passing `-e TRASA.AUTOCERT="false"`
-:::
+
 
    </TabItem>
   <TabItem value="kubernetes"> coming soon... </TabItem>

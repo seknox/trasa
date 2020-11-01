@@ -11,52 +11,50 @@ import TabItem from '@theme/TabItem';
 
 <br />
 
+
+
 ## 1. Root account setup
 
-- Download TRASA mobile app from [App Store](https://apps.apple.com/us/app/trasa/id1411267389) or [Play Store](https://play.google.com/store/apps/details?id=com.trasa)
-- Open [TRASA_HOST](/docs/getting-started/glossary#TRASA_HOST) in your browser.
-- Use default credentials to login (root:changeme)
 
-Since this is your first time logging into TRASA, you have not added your 2FA device yet.
-QR code will appear on the screen.
 
-- Open TRASA mobile app and press + button on the bottom right and then press the QR icon.
+Once TRASA server is up and running, you can open web browser to access TRASA dashboard (listening at [TRASA_HOST](/docs/getting-started/glossary#TRASA_HOST) in browser which is an IP address or domain name.)
 
-<img alt="enrol device" src={('/img/docs/tutorial/enrol-mobile-device.svg')} />
+By default, a `root` user account will be created for you with default password `changeme`. As an administraotr, you will need to setup this root account before you can access TRASA.
 
-- Scan the QR code on the browser.
-- If everything goes well, you will see the following icon on your app.
 
-<img alt="enrol device" src={('/img/docs/tutorial/device-enroled.svg')} />
 
-- Press the icon to get TOTP codes.
 
-Now 2FA device is added.
+Follow account setup steps detailed at [account setup guide](/docs/users/account-setup)
 
-- Try logging in again.
-- Now, you need to choose TOTP and enter the TOTP code from the mobile app.
 
 <br />
 
----
+
+
+## 2. Initialize encrypted storage - [TsxVault](/docs/getting-started/glossary#tsxvault)
+
+TRASA has secure encrypted storage to which is used to store service credentials like password, private keys and integration keys.
+Follow steps at [initializing TsxVault](/docs/providers/vault/tsxvault) to enable secret storage.
 
 <br />
 
-## 2. System Setup (Optional)
+## 3. Setup FCM with TRASA FCM proxy (Optional, Recommended)
+
+TRASA push U2F is very convinient way of authorizing 2FA process. With push U2F, user's do not need to enter 6 digit totp code every time they need to verify second step verification process and is also immune to phishing attacks on totp codes. 
+
+This feature requires sending push notification to user's mobile device. To enable it, register with [TRASA FCM Proxy](/docs/system/fcm-settings)
 
 To use all features of TRASA, you need to setup
 
-1.  [Secret Store](/docs/providers/vault/tsxvault)
-2.  [FCM](../system/fcm-settings.md)
-3.  [Email](../system/email-settings.md)
+## 4.  Email setup (Optional, Recommended)
+
+To receive emails and security alerts from TRASA you will need to integrate TRASA with you existing email provider. Follow [Email setup](/docs/system/email-settings) guide to setup email.
 
 <br />
 
----
 
-<br />
 
-## 3. Configuring Network Firewall  (Recommended)
+## 5. Configuring Network Firewall  (Optional, Recommended)
 
 TRASA access proxy can only control access if traffic passes through it. To ensure security policy is enforced on access proxy, you should configure a network firewall so that every remote access to your server and services is only routed and allowed from the IP address of the TRASA server. 
 
@@ -142,28 +140,7 @@ Learn more about priority [here](https://cloud.google.com/vpc/docs/firewalls#pri
 
 Use these two firewall rules for all instances.
 
-**Configuring SSH keys in Google Cloud**
 
-By default, google cloud uses OS Login, which uses google identity to manage SSH keys.
-To use TRASA to manage your SSH keys, you need to disable OS Login.
-Then you need to add ssh keys to the instance or project.
-
-- Go to [google cloud compute instances page](https://console.cloud.google.com/compute/instances) and click on the instance you want to configure.
-- Click the "Edit" button
-  <img alt="edit-instance-btn" src={('/img/docs/cloud/gcp/edit-instance-btn.png')} />
-
-- Generate a new ssh key
-  `ssh-keygen -t rsa -b 4096 -f ~/.ssh/[KEY_FILENAME] -C [USERNAME]`
-- Scroll down to the "custom metadata" section and add a new key `enable-oslogin`:`FALSE`
-- Click the "add item" button under SSH Keys section
-- Copy the contents of [KEY_FILENAME].pub into the field
-  <img alt="instance-level-metadata" src={('/img/docs/cloud/gcp/instance-level-metadata.png')} />
-- Click Save
-- [Save the contents of [KEY_FILENAME] in TRASA vault](/docs/providers/vault/tsxvault)
-
-:::tip
-If you want to configure this for all instances of a project, go to the [Metadata](https://console.cloud.google.com/compute/metadata) menu on Compute Engine page.
-<img alt="project-level-metadata" src={('/img/docs/cloud/gcp/project-level-metadata.png')} />
 
 :::
 </TabItem>

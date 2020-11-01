@@ -118,3 +118,29 @@ Configuring client device is applicable when accessing SSH servers directly inst
   `HostCertificate /etc/ssh/id_rsa-cert.pub`
 - Restart sshd daemon.  
   `sudo systemctl restart sshd`
+
+
+
+## Configuring Google cloud (GCP) to be accessible from TRASA
+
+
+By default, google cloud uses OS Login, which uses google identity to manage SSH keys.
+To use TRASA to manage your SSH keys, you need to disable OS Login.
+Then you need to add ssh keys to the instance or project.
+
+- Go to [google cloud compute instances page](https://console.cloud.google.com/compute/instances) and click on the instance you want to configure.
+- Click the "Edit" button
+  <img alt="edit-instance-btn" src={('/img/docs/cloud/gcp/edit-instance-btn.png')} />
+
+- Generate a new ssh key
+  `ssh-keygen -t rsa -b 4096 -f ~/.ssh/[KEY_FILENAME] -C [USERNAME]`
+- Scroll down to the "custom metadata" section and add a new key `enable-oslogin`:`FALSE`
+- Click the "add item" button under SSH Keys section
+- Copy the contents of [KEY_FILENAME].pub into the field
+  <img alt="instance-level-metadata" src={('/img/docs/cloud/gcp/instance-level-metadata.png')} />
+- Click Save
+- [Save the contents of [KEY_FILENAME] in TRASA vault](/docs/providers/vault/tsxvault)
+
+:::tip
+If you want to configure this for all instances of a project, go to the [Metadata](https://console.cloud.google.com/compute/metadata) menu on Compute Engine page.
+<img alt="project-level-metadata" src={('/img/docs/cloud/gcp/project-level-metadata.png')} />
