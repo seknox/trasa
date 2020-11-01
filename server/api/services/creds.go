@@ -76,7 +76,7 @@ func GetUpstreamCreds(user, serviceID, serviceType, orgID string) (*models.Upstr
 	//logrus.Debug(orgID, serviceID, "password", user)
 	pass, err := tsxvault.Store.GetSecret(orgID, serviceID, "password", user)
 	if err != nil {
-		logrus.Error(err)
+		logrus.Debug(err)
 		resp.Password = ""
 	} else {
 		resp.Password = pass
