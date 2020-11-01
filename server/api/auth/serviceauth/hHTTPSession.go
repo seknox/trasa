@@ -330,7 +330,7 @@ func sessionWriter(sessionID, shots string) {
 					img, err := png.Decode(gopherPNG(counterAndImage[1]))
 					if err != nil {
 						if _, ok := err.(base64.CorruptInputError); ok {
-							logger.Debug("\nbase64 input is corrupt, check service Key")
+							logger.Debug("base64 input is corrupt, check service Key")
 						}
 						logger.Debug(err)
 						//return
@@ -467,7 +467,7 @@ func logoutSequence(sessionID string) {
 			logger.Error(err)
 		}
 	} else {
-		logger.Tracef("Not deleting directory %s as video failed.\n", sessionID)
+		logger.Tracef("Not deleting directory %s as video failed", sessionID)
 	}
 
 	// we delete sessionvalur from sessionStore
@@ -503,7 +503,7 @@ func createVideo(path, sessionID string) error {
 	cmd.Dir = path
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		logger.Errorf("createVideo: %s : cmd.Run() failed with %v || %s\n", sessionID, err, string(output))
+		logger.Errorf("createVideo: %s : cmd.Run() failed with %v || %s", sessionID, err, string(output))
 		return err
 	}
 	//fmt.Printf("combined out:\n%s\n", string(out))
