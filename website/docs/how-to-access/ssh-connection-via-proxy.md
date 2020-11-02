@@ -11,7 +11,7 @@ import TabItem from '@theme/TabItem';
 When the linux server or workstation is protected with TRASA 2FA agent, just after the username(privilege) and password validation in the login screen, a prompt will appear on your screen. 
 ```shell script
 $ ssh root@host
-$ password:
+$ Password:
 $ Enter your trasaID: 
 $ Choose TFA method (enter blank for U2F):
 ```
@@ -23,11 +23,24 @@ You can access the SSH service either via Browser or SSH client.
 
 ### Using Browser
 
-* Login into your TRASA account.
+* Login into your TRASA account from browser.
+* If you are an admin user,
+    - Click the account button with your initials on the right top
+    - Click "My Account" menu 
+    <img alt="ssh-proxy-email" src={('/img/docs/user-guides/access/my-account.png')} />  
+
+* You will be redirected to "My Route" page.
 * Search for the service you want to connect to.
 * Click connect and choose the service username.
-* Enter password and TOTP. 
-> You may be asked to save the new host key.
+<img alt="ssh-proxy-email" src={('/img/docs/user-guides/access/connect-ssh-from-my.png')} />  
+
+* Enter the password and click submit.
+* Choose second factor method and authenicate using mobile app
+* If it's the first time accessing this service, TRASA will ask you to save the SSH host key.
+Press "y" to do that.
+<img alt="ssh-proxy-email" src={('/img/docs/user-guides/access/ssh-host-key-warn-dash.png')} />  
+
+
 
 
 
@@ -35,31 +48,40 @@ You can access the SSH service either via Browser or SSH client.
 
 ### Using SSH clients
 
-* `ssh -i <private_key_path> root@TRASA_HOST -p 8022`     
-<img alt="ssh-proxy-email" src={('/img/docs/user-guides/access/ssh-proxy-email.png')} />  
-
+* Connect to 8022 port on TRASA_HOST using any SSH client.
+    ```shell script
+    ssh root@TRASA_HOST -p 8022
+    ```     
 * Enter the TRASA email and password   
-* Enter the IP address of the service you want to connect to.   
-* Enter TOTP code or leave it blank for U2F.   
-* Enter the Service password.   
-> You may be asked to save the new host key.
+<img alt="ssh-proxy-email" src={('/img/docs/user-guides/access/ssh-proxy-email.png')} />  
+* Enter the IP address or name of the service you want to connect to.   
+* Enter TOTP code or leave it blank for U2F.  
+* If it's the first time accessing this service, TRASA will ask you to save the SSH host key.
+  Enter "yes" to do that.
+  <img alt="ssh-proxy-email" src={('/img/docs/user-guides/access/ssh-host-key-warn-cli.png')} />  
+* Enter the service password (Upstream server's password).   
 
 
 
-:::note
-Download a TRASA user key to save you from entering TRASA email and password every time you use SSH proxy.
+#### TRASA SSH key
+You can skip TRASA email and password validation using TRASA ssh key.
+Download a TRASA user key and use it while accessing SSH through access proxy.
 
-* Go to the dashboard and go to the "Account" tab.
+* Go to the "My Route" in dashboard
+* Click the "Account" tab.
 * Click the menu to get dropdown menu items.
 * Click the "get ssh private key" button" to download the SSH key.
-* If you're using PuTTY, use PuTTYgen to convert the downloaded key `id_rsa` into `id_rsa.ppk`.
+  <img alt="ssh-proxy-email" src={('/img/docs/user-guides/access/download-trasa-ssh-key.png')} />  
 
+* If you're using PuTTY, use PuTTYgen to convert the downloaded key `id_rsa` into `id_rsa.ppk`.
+* Now use this key to access SSH through TRASA access proxy.
+    ```shell script
+    ssh -i <private_key_path> root@TRASA_HOST -p 8022
+    ```    
 
 >This key is used to authenticate to TRASA server, NOT the upstream SSH server.
 >So, you might still be asked for an upstream password.
-
-:::
-
+ 
 
 <!---
 
@@ -136,7 +158,7 @@ If you have dowloaded the TRASA user key
 ## Using private key instead of password
 
 ### Save private keys in vault (Recommended)
-Ask your administrator to save the private key in the vault.
+Ask your administrator to [save the private key in the vault](../providers/vault/tsxvault.md#storing-service-credentials).
 
 ### Using agent forwarding
 >SSH Agent forwarding is not recommended since it allows users with root privilege in the server to use your SSH keys.
