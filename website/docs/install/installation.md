@@ -1,13 +1,14 @@
 ---
 id: installation
-title: Installation
-sidebar_label: Install
+title: Installation Guide
+sidebar_label: Installation
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 
+## Requirements
 To run TRASA with a bare minimal setup, you will need :
 1. Database (PostgreSQL), 
 2. Redis,  

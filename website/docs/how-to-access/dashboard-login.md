@@ -6,7 +6,14 @@ sidebar_label: Dashboard Login
 
 
 :::note
-If your security team has deployed TRASA in your infrastructure you should have received a link from your administrator (check your inbox)
+Login method for TRASA administrator(`orgAdmin`) and TRASA user(`selfUser`) is the same except for TRASA users will be redirected to [my account page](/docs/getting-started/glossary#my-route) after successful authentication, and administrators will be redirected to the Dashboard overview page.
 :::
 
-Signing in to TRASA dashboard.
+## Dashboard login process
+
+Signing in to TRASA dashboard (as an administrator)
+<iframe width="100%" height='600' src="https://www.youtube.com/embed/CvkpXIebZAI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+## My Account Page (my route)
+If you are not an administrator,  you will be redirected to your account page after successful authentication. 
+ <img alt="dashbaord overview self user" src={('/img/docs/how-to-access/self-user-dash.png')} />
