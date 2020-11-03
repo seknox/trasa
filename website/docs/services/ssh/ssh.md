@@ -73,22 +73,25 @@ During SSH access through TRASA access proxy, a temporary certificate is used to
 Now we are going to tell each upstream server to trust any certificate signed by TRASA CA.  
 To do that,
 
-- Go to Providers page and click the "Certificate Authority" tab.
-- Download client CA public key.
+- Download TRASA CA
+    - Go to Providers page and click the "Certificate Authority" tab.
+    - Download client CA public key.
 
-<img alt="download-user-ca" src={('/img/docs/providers/ca/download-user-ca.png')} />
+    <img alt="download-user-ca" src={('/img/docs/providers/ca/download-user-ca.png')} />
 
-- Copy the downloaded public key into upstream servers.
-- Edit /etc/ssh/sshd_config of upstream server and add the following.
+- Copy the downloaded CA key into upstream servers.
+- Edit /etc/ssh/sshd_config of upstream server and add the following.  
   `TrustedUserCAKeys <path to ca public key>`
-- Restart ssh daemon.
-  `sudo systemctl restart sshd`
+- Restart ssh daemon of upsteam server.
+  ```shell script
+  sudo systemctl restart sshd
+  ```
 
 ### Host Certificates
 
-Host certificates are used to authenticate ssh servers (hosts).
+Host certificates are used to verify the authenticity of ssh servers (hosts).
 
-TRASA proxy will automatically validate host keys and certificates when accessing through the TRASA proxy.
+TRASA access proxy will automatically validate host keys and certificates when accessing through the TRASA proxy.
 
 #### Configure Client Device
 
