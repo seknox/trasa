@@ -23,17 +23,16 @@ You can access the SSH service either via Browser or SSH client.
 
 ### Using Browser
 
-* Login into your TRASA account.
-* Search for the service you want to connect to.
-* Click connect and choose the service username.
-* Enter password and TOTP. 
-> You may be asked to save the new host key.
-
-
+<iframe allowfullscreen width="100%" height='600' src={('/video/ssh-access-dash.mov')} />  
 
 
 
 ### Using SSH clients
+
+You should connect ssh to [TRASA_HOST](../getting-started/glossary.md#trasa_host) (Hostname or IP address of TRASA server) instead of server you are trying to connect. 
+
+<iframe allowfullscreen width="100%" height='600' src={('/video/ssh-access-cli.mov')} />  
+
 
 * `ssh -i <private_key_path> root@TRASA_HOST -p 8022`     
 <img alt="ssh-proxy-email" src={('/img/docs/user-guides/access/ssh-proxy-email.png')} />  
