@@ -50,7 +50,7 @@ CA private keys are stored in the vault, so the vault must be [initialized](/doc
 
 ### Initialize CA
 
-- Go to Providers page.
+- Go to `Providers` page.
 
 <img alt="download-user-ca" src={('/img/docs/providers/providers-menu.svg')} />
 
@@ -87,20 +87,14 @@ To do that,
 ### Host Certificates
 
 Host certificates are used to authenticate ssh servers (hosts).
+We need to generate a host certificate signed by TRASA SSH CA for each upstream server and configure them to use that certificate.
+
+After that, when the SSH client connects to that upstream server, the ssh client can check whether the certificate is indeed signed by TRASA SSH CA.
+
 
 TRASA proxy will automatically validate host keys and certificates when accessing through the TRASA proxy.
+But if you are accessing the SSH server directly, the SSH client (your device) must be configured to trust the TRASA SSH CA.
 
-#### Configure Client Device
-
-Configuring client device is applicable when accessing SSH servers directly instead through the TRASA proxy.
-
-- Go to Providers page and click the "Certificate Authority" tab.
-
-- Download host CA public key.
-  <img alt="download-host-ca" src={('/img/docs/providers/ca/download-host-ca.png')} />
-
-- Copy its contents to /etc/ssh/ssh_known_hosts in following format.  
-  `@cert-authority * <public key content>`
 
 #### Configure Upstream Server
 
@@ -118,6 +112,20 @@ Configuring client device is applicable when accessing SSH servers directly inst
   `HostCertificate /etc/ssh/id_rsa-cert.pub`
 - Restart sshd daemon.  
   `sudo systemctl restart sshd`
+
+
+#### Configure Client Device
+
+Configuring client device is applicable when accessing SSH servers directly instead through the TRASA proxy.
+
+- Go to Providers page and click the "Certificate Authority" tab.
+
+- Download host CA public key.
+  <img alt="download-host-ca" src={('/img/docs/providers/ca/download-host-ca.png')} />
+
+- Copy its contents to /etc/ssh/ssh_known_hosts in following format.  
+  `@cert-authority * <public key content>`
+
 
 
 
