@@ -2,7 +2,7 @@
 name: Feature request
 about: Create a feature request to help us improve TRASA
 title: "[FEATURE] "
-labels: 'enhancement'
+labels: enhancement
 assignees: ''
 
 ---
@@ -23,6 +23,3 @@ A clear and concise description of what the feature is.
 - [ ] browser extension
 - [ ] device agent 
 - [ ] website/docs
-
-
-
