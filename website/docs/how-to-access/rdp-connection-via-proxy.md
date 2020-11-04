@@ -49,6 +49,10 @@ To Copy from your local PC to remote RDP server,
 * Right-click on the clipboard and paste it.
 * Now you can paste the text on the remote computer.
 
+#### Clipboard Demo
+<iframe allowfullscreen width="100%" height='400' src={('/video/rdp-clipboard.mp4')} />  
+
+
 ### File Transfer 
 If you have file transfer access, TRASA shared drive will be mounted on the remote RDP server when you access them.
 * In remote RDP server, go to "This PC".
@@ -71,5 +75,10 @@ To download a file from a remote RDP server to a local PC,
 * Click the download icon to download the file.
 <img  alt="file-download-btn" src={('/img/docs/user-guides/access/file-download-btn.png')} />
 
+#### File download demo
+<iframe allowfullscreen width="100%" height='400' src={('/video/rdp-file-download.mp4')} />  
+
+#### File upload demo
+<iframe allowfullscreen width="100%" height='400' src={('/video/rdp-file-upload.mp4')} />  
 
 
