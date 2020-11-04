@@ -66,11 +66,16 @@ sudo docker run -d -p 6379:6379 --name redis redis:6.0.8
 ```
 
 
-- Run guacamole proxy if you use rdp
-
-```shell script
-sudo docker run -d --rm --name guacd -p 127.0.0.1:4822:4822 -v /tmp/trasa/accessproxy/guac:/tmp/trasa/accessproxy/guac --user root seknox/guacd:v0.0.1
-```
+- If you need to protect RDP service
+    - Run guacd (Apache Guacamole RDP proxy server) 
+    ```shell script
+    sudo docker run -d --rm --name guacd -p 127.0.0.1:4822:4822 -v /tmp/trasa/accessproxy/guac:/tmp/trasa/accessproxy/guac --user root seknox/guacd:v0.0.1
+    ```
+    
+    - Install ffmpeg
+    ```shell script
+        sudo apt-get install ffmpeg
+    ```
 
 
 - Run trasa-server binary
