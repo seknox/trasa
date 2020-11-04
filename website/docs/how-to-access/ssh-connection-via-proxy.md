@@ -32,13 +32,11 @@ You can access the SSH service either via Browser or SSH client.
 * You will be redirected to "My Route" page.
 * Search for the service you want to connect to.
 * Click connect and choose the service username.
-<img alt="ssh-proxy-email" src={('/img/docs/user-guides/access/connect-ssh-from-my.png')} />  
 
 * Enter the password and click submit.
 * Choose second factor method and authenicate using mobile app
 * If it's the first time accessing this service, TRASA will ask you to save the SSH host key.
 Press "y" to do that.
-<img alt="ssh-proxy-email" src={('/img/docs/user-guides/access/ssh-host-key-warn-dash.png')} />  
 
 
 
@@ -53,12 +51,10 @@ Press "y" to do that.
     ssh root@TRASA_HOST -p 8022
     ```     
 * Enter the TRASA email and password   
-<img alt="ssh-proxy-email" src={('/img/docs/user-guides/access/ssh-proxy-email.png')} />  
 * Enter the IP address or name of the service you want to connect to.   
 * Enter TOTP code or leave it blank for U2F.  
 * If it's the first time accessing this service, TRASA will ask you to save the SSH host key.
   Enter "yes" to do that.
-  <img alt="ssh-proxy-email" src={('/img/docs/user-guides/access/ssh-host-key-warn-cli.png')} />  
 * Enter the service password (Upstream server's password).   
 
 
@@ -82,6 +78,19 @@ Download a TRASA user key and use it while accessing SSH through access proxy.
 >This key is used to authenticate to TRASA server, NOT the upstream SSH server.
 >So, you might still be asked for an upstream password.
  
+
+### Examples
+#### OpenSSH client
+<iframe allowfullscreen width="100%" height='400' src={('/video/ssh-access-cli.mp4')} />  
+
+#### OpenSSH client with TRASA private key
+<iframe allowfullscreen width="100%" height='400' src={('/video/ssh-access-with-key.mp4')} />  
+
+#### Putty with TRASA private key
+<iframe allowfullscreen width="100%" height='400' src={('/video/ssh-access-putty.mp4')} />  
+
+
+
 
 <!---
 
