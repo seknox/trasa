@@ -28,7 +28,8 @@ When you try to login using TRASA, you will be asked to choose a second step ver
 
 
 ### Using TRASA U2F (online mode)
-* Enter blank TOTP code. You will get a notification on your TRASA app.
+* If you choose U2F, you will get a notification on your TRASA app.
+    > If you are in terminal, blank TOTP code is considered U2F
 * Open the notification.
 
 <img alt="u2f" src={('/img/docs/user-guides/2fa/u2f.svg')} />
