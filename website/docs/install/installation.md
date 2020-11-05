@@ -70,7 +70,7 @@ sudo docker run -d -p 6379:6379 --name redis redis:6.0.8
 ```
 
 
-- Run guacamole proxy if you use rdp
+- If you need to protect RDP service, run guacd (Apache Guacamole RDP proxy server) 
 
 ```shell script
 sudo docker run -d --rm --name guacd \
