@@ -69,7 +69,10 @@ Download the TRASA SSH key and use it while accessing SSH through access proxy.
 * Click the menu to get dropdown menu items.
 * Click the "get ssh private key" button" to download the SSH key.
   <img alt="ssh-proxy-email" src={('/img/docs/user-guides/access/download-trasa-ssh-key.png')} />  
-
+* Keep the private key in secure location with 0600 permission (read & write permission to owner only).
+    ```shell script
+    sudo chmod 0600 id_rsa
+    ```
 * If you're using PuTTY, use PuTTYgen to convert the downloaded key `id_rsa` into `id_rsa.ppk`.
 * Now use this key to access SSH through TRASA access proxy.
     ```shell script

@@ -80,19 +80,19 @@ values={[
 In EC2 management console,
 
 - Go to Security groups.
-  <img alt="security-groups-menu" src={('/img/docs/cloud/aws/security-groups-menu.png')} />
-
 - Click the "Create security group" button.
   <img alt="create-security-grp-btn" src={('/img/docs/cloud/aws/create-security-grp-btn.png')} />
 
 - Fill in the name and description.
-- On Inbound rules, click the "add rule" button.
+- In inbound rules section, click the "Add rule" button.
+
+  <img alt="create-security-grp-btn" src={('/img/docs/cloud/aws/create-rule-btn.png')} />
 
 - Choose the "SSH" type and "Custom" source.
 - Add TRASA IP on the "source IP" field.
   <img alt="inbound-rule-sample" src={('/img/docs/cloud/aws/inbound-rule-sample.png')} />
 
-Now use this security group to allow SSH in all instances.
+Now use this security group to allow SSH in all instances you want to protect with TRASA.
 </TabItem>
 
 <!-- ######################################################################################## -->
@@ -138,11 +138,11 @@ Just make sure `allow-from-trasa` has more priority than `block-all-remote`.
 Learn more about priority [here](https://cloud.google.com/vpc/docs/firewalls#priority_order_for_firewall_rules)
 :::
 
-Use these two firewall rules for all instances.
+Use these two firewall rules for all instances you want to protect with TRASA.
 
 
 
-:::
+
 </TabItem>
 
 <!-- ######################################################################################## -->
@@ -151,7 +151,8 @@ Use these two firewall rules for all instances.
 
 **Create a firewall rule for TRASA**
 
-- Go to Networking-> Firewalls on the Main menu.
+- Go to "Networking" section from the main menu.
+- Go to "Firewalls" tab. 
 - Click the "Create Firewall" button.
   <img alt="network-firewall-create" src={('/img/docs/cloud/do/network-firewall-create.png')} />
 
@@ -163,7 +164,7 @@ Use these two firewall rules for all instances.
 - Click the "Create Firewall" button
   <img alt="create" src={('/img/docs/cloud/do/create.png')} />
 
-Use this firewall rule to give ssh access to all instances.
+Use this firewall rule to give ssh access to all droplets you want to protect with TRASA.
 </TabItem>
 
 <!-- ######################################################################################## -->
