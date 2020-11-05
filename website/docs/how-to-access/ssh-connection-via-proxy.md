@@ -176,7 +176,7 @@ It will automatically inject it while accessing services through access proxy.
 To use private key to access SSH, ask your administrator to [save the private key in the vault](../providers/vault/tsxvault.md#storing-service-credentials).
 
 ### Using agent forwarding
-:::warning
+:::caution
 SSH Agent forwarding is not recommended since it allows users with root privilege in the server to use your SSH keys.
 :::
 * Add the private key to ssh agent `ssh-add <private_key_path>`

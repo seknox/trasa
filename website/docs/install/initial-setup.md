@@ -42,13 +42,13 @@ Follow steps at [initializing TsxVault](/docs/providers/vault/tsxvault) to enabl
 
 TRASA push U2F is very convinient way of authorizing 2FA process. With push U2F, user's do not need to enter 6 digit totp code every time they need to verify second step verification process and is also immune to phishing attacks on totp codes. 
 
-This feature requires sending push notification to user's mobile device. To enable it, register with [TRASA FCM Proxy](/docs/system/fcm-settings)
+This feature requires sending push notification to user's mobile device. To enable it, register with [TRASA FCM Proxy](/docs/system/fcm-setup)
 
 To use all features of TRASA, you need to setup
 
 ## 4.  Email setup (Optional, Recommended)
 
-To receive emails and security alerts from TRASA you will need to integrate TRASA with you existing email provider. Follow [Email setup](/docs/system/email-settings) guide to setup email.
+To receive emails and security alerts from TRASA you will need to integrate TRASA with your existing email provider. Follow [Email setup](/docs/system/email-setup) guide to setup email.
 
 <br />
 
