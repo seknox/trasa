@@ -86,9 +86,11 @@ Download a TRASA user key and use it while accessing SSH through access proxy.
 #### OpenSSH client with TRASA private key
 <iframe allowfullscreen width="100%" height='400' src={('/video/ssh-access-with-key.mp4')} />  
 
-#### Putty with TRASA private key
+#### Putty
 <iframe allowfullscreen width="100%" height='400' src={('/video/ssh-access-putty.mp4')} />  
 
+#### Putty with TRASA private key
+<iframe allowfullscreen width="100%" height='400' src={('/video/ssh-access-putty-key.mp4')} />  
 
 
 
