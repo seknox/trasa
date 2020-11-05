@@ -1,13 +1,14 @@
 ---
 id: installation
-title: Installation
-sidebar_label: Install
+title: Installation Guide
+sidebar_label: Installation
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 
+## Requirements
 To run TRASA with a bare minimal setup, you will need :
 1. Database (PostgreSQL), 
 2. Redis,  
@@ -56,7 +57,10 @@ mv trasa/GeoLite2-City.mmdb /etc/trasa/static/
 - Run [Postgres](https://www.postgresql.org/) or [CockroachDB](https://cockroachlabs.com) on port 5432
 
 ```shell script
-sudo docker run -d -p 5432:5432 --name db -e POSTGRES_PASSWORD=trasauser -e POSTGRES_USER=trasauser -e POSTGRES_DB=trasadb postgres:13.0
+sudo docker run -d -p 5432:5432 --name db \
+-e POSTGRES_PASSWORD=trasauser \
+-e POSTGRES_USER=trasauser \
+-e POSTGRES_DB=trasadb postgres:13.0
 ```
 
 - Run [Redis](https://redis.io/download) on port 6379
@@ -66,16 +70,14 @@ sudo docker run -d -p 6379:6379 --name redis redis:6.0.8
 ```
 
 
-- If you need to protect RDP service
-    - Run guacd (Apache Guacamole RDP proxy server) 
-    ```shell script
-    sudo docker run -d --rm --name guacd -p 127.0.0.1:4822:4822 -v /tmp/trasa/accessproxy/guac:/tmp/trasa/accessproxy/guac --user root seknox/guacd:v0.0.1
-    ```
-    
-    - Install ffmpeg
-    ```shell script
-        sudo apt-get install ffmpeg
-    ```
+- If you need to protect RDP service, run guacd (Apache Guacamole RDP proxy server) 
+
+```shell script
+sudo docker run -d --rm --name guacd \
+-p 127.0.0.1:4822:4822 \
+-v /tmp/trasa/accessproxy/guac:/tmp/trasa/accessproxy/guac \
+--user root seknox/guacd:v0.0.1
+```
 
 
 - Run trasa-server binary
@@ -99,7 +101,10 @@ sudo ./trasa/trasa-server
 - Run [Postgres](https://www.postgresql.org/) or [CockroachDB](https://cockroachlabs.com) on port 5432
 
 ```shell script
-sudo docker run -d -p 5432:5432 --name db -e POSTGRES_PASSWORD=trasauser -e POSTGRES_USER=trasauser -e POSTGRES_DB=trasadb postgres:13.0
+sudo docker run -d -p 5432:5432 --name db \
+-e POSTGRES_PASSWORD=trasauser \
+-e POSTGRES_USER=trasauser \
+-e POSTGRES_DB=trasadb postgres:13.0
 ```
 
 - Run [Redis](https://redis.io/download) on port 6379
@@ -111,7 +116,10 @@ sudo docker run -d -p 6379:6379 --name redis redis:6.0.8
 - Run guacd (Apache Guacamole RDP proxy server). This is only required if you need to protect RDP service
 
 ```shell script
-sudo docker run -d --rm --name guacd -p 127.0.0.1:4822:4822 -v /tmp/trasa/accessproxy/guac:/tmp/trasa/accessproxy/guac --user root  seknox/guacd:v0.0.1
+sudo docker run -d --rm --name guacd \
+-p 127.0.0.1:4822:4822 \
+-v /tmp/trasa/accessproxy/guac:/tmp/trasa/accessproxy/guac \
+--user root  seknox/guacd:v0.0.1
 ```
 
 - Run trasa-server

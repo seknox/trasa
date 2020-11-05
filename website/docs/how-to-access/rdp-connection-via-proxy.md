@@ -53,7 +53,7 @@ To Copy from your local PC to remote RDP server,
 * Now you can paste the text on the remote computer.
 
 #### Clipboard Demo
-<iframe allowfullscreen width="100%" height='400' src={('/video/rdp-clipboard.mp4')} />  
+<iframe width="100%" height='600' src="https://www.youtube.com/embed/z7uSr2ydsgQ?list=PLZOFebo-o2K7TriDRJwgC2pWOdilz-gaz" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 
 ### File Transfer 
@@ -79,9 +79,9 @@ To download a file from a remote RDP server to a local PC,
 <img  alt="file-download-btn" src={('/img/docs/user-guides/access/file-download-btn.png')} />
 
 #### File download demo
-<iframe allowfullscreen width="100%" height='400' src={('/video/rdp-file-download.mp4')} />  
+<iframe width="100%" height='600' src="https://www.youtube.com/embed/uX87E_5kUvk?list=PLZOFebo-o2K7TriDRJwgC2pWOdilz-gaz" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 #### File upload demo
-<iframe allowfullscreen width="100%" height='400' src={('/video/rdp-file-upload.mp4')} />  
+<iframe width="100%" height='600' src="https://www.youtube.com/embed/ij802EzPlVI?list=PLZOFebo-o2K7TriDRJwgC2pWOdilz-gaz" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 
