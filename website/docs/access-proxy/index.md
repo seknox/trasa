@@ -14,4 +14,4 @@ Currently, TRASA supports four types of protocol.
 3. RDP
 4. Database (beta, Mysql only)
 
-You need to [configure firewall rules](/docs/install/initial-setup#3-firewall-configuration-recommended) to enforce remote access to servers only from TRASA.
+You need to [configure firewall rules](../install/initial-setup.md#5-configuring-network-firewall--optional-recommended) to enforce remote access to servers only from TRASA.

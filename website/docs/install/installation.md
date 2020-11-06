@@ -151,5 +151,5 @@ seknox/trasa:v1.1.2
 </Tabs>
 
 :::info
-Go through [config reference](../system/config-reference) to run TRASA in environment according to your need
+Go through [config reference](../system/config-reference.md) to run TRASA in environment according to your need
 :::

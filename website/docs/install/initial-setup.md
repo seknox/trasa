@@ -11,44 +11,44 @@ import TabItem from '@theme/TabItem';
 
 <br />
 
+To use all features of TRASA, you need to setup these settings.
 
 
 ## 1. Root account setup
 
 
 
-Once TRASA server is up and running, you can open web browser to access TRASA dashboard (listening at [TRASA_HOST](/docs/getting-started/glossary#TRASA_HOST) in browser which is an IP address or domain name.)
+Once TRASA server is up and running, you can open web browser to access TRASA dashboard (listening at [TRASA_HOST](../getting-started/glossary.md#trasa_host) in browser which is an IP address or domain name.)
 
-By default, a `root` user account will be created for you with default password `changeme`. As an administraotr, you will need to setup this root account before you can access TRASA.
-
-
+By default, a `root` user account will be created for you with default password `changeme`. As an administrator, you will need to set up this root account before you can access TRASA.
 
 
-Follow account setup steps detailed at [account setup guide](/docs/users/account-setup)
+
+
+Follow account setup steps detailed at [account setup guide](../users/account-setup.md)
 
 
 <br />
 
 
 
-## 2. Initialize encrypted storage - [TsxVault](/docs/getting-started/glossary#tsxvault)
+## 2. Initialize encrypted storage - [TsxVault](../getting-started/glossary.md#tsxvault)
 
 TRASA has secure encrypted storage to which is used to store service credentials like password, private keys and integration keys.
-Follow steps at [initializing TsxVault](/docs/providers/vault/tsxvault) to enable secret storage.
+Follow steps at [initializing TsxVault](../providers/vault/tsxvault.md) to enable secret storage.
 
 <br />
 
 ## 3. Setup FCM with TRASA FCM proxy (Optional, Recommended)
 
-TRASA push U2F is very convinient way of authorizing 2FA process. With push U2F, user's do not need to enter 6 digit totp code every time they need to verify second step verification process and is also immune to phishing attacks on totp codes. 
+TRASA push U2F is very convenient way of authorizing 2FA process. With push U2F, users do not need to enter 6 digits TOTP code every time they need to verify second step verification process and is also immune to phishing attacks on TOTP codes. 
 
-This feature requires sending push notification to user's mobile device. To enable it, register with [TRASA FCM Proxy](/docs/system/fcm-setup)
+This feature requires sending push notification to user's mobile device. To enable it, register with [TRASA FCM Proxy](../system/fcm-settings.md)
 
-To use all features of TRASA, you need to setup
 
 ## 4.  Email setup (Optional, Recommended)
 
-To receive emails and security alerts from TRASA you will need to integrate TRASA with your existing email provider. Follow [Email setup](/docs/system/email-setup) guide to setup email.
+To receive emails and security alerts from TRASA you will need to integrate TRASA with your existing email provider. Follow [Email setup guide](../system/email-settings.md) to setup email.
 
 <br />
 

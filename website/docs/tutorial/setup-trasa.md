@@ -19,7 +19,7 @@ In this first part, we will cover installation and setup of TRASA server.
 ## Install
 
 :::note
-We are using docker install for demonstration. For other installation options, refer to [Install Guides](../install/installation)
+We are using docker install for demonstration. For other installation options, refer to [Install Guides](../install/installation.md)
 :::
 
 SSH to Linux instance (TRASA server) you created in previous step.
@@ -57,7 +57,7 @@ seknox/trasa:v1.1.1
 ## Setup Root Account
 
 TRASA server should be ready from previous step.
-Enter [TRASA_HOST](/docs/getting-started/glossary#TRASA_HOST) in your browser.
+Enter [TRASA_HOST](../getting-started/glossary.md#trasa_host) in your browser.
 
 In our case, we setup domain `nepsec.trasa.io` so we enter this address in browser.
 <img alt="dashboard login" src={('/img/docs/tutorial/dashboard-login.png')} />
@@ -103,7 +103,7 @@ Press `login` button in dashboard page (where QR code is shown), you will be red
 3. From your TRASA mobile app, note totp code and enter in dashboard to proceed login.
    <img alt="enrol device" src={('/img/docs/tutorial/enter-totp.svg')} />
 
-4. Server will validate your totp code and will redirecto to dashboard overview page.
+4. Server will validate your totp code and will redirected to dashboard overview page.
    <img alt="dashbaord overview" src={('/img/docs/tutorial/first-dashboard.png')} />
 
 ---
@@ -141,4 +141,4 @@ You can always view your enroled and active device in your account page **device
 :::
 <img alt="my devices" src={('/img/docs/tutorial/my-devices.png')} />
 
-## [Next - Create User accounts](create-users)
+## [Next - Create User Accounts](./create-user.md)

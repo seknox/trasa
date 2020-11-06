@@ -12,7 +12,8 @@ export const Hlt = ({children, color}) => ( <span style={{
     }}>{children}</span> );
 
 :::tip
-TRASA IDP is builtin default user identity provider. Creating user profile directly in TRASA is one way to create user profile. You can also use available user identity providers to sync user profiles in TRASA. Checkout [identity providers](../providers/user-idp)
+TRASA IDP is builtin default user identity provider. Creating user profile directly in TRASA is one way to create user profile. You can also use available user identity providers to sync user profiles in TRASA.
+ Checkout [identity providers](../providers/providers.md)
 :::
 
 By default, root account (which you used to login to TRASA) is already created during installtion.
