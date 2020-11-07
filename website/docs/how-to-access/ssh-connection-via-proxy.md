@@ -91,8 +91,8 @@ Download the TRASA SSH key and use it while accessing SSH through access proxy.
 <iframe width="100%" height='600' src="https://www.youtube.com/embed/kPzUsKu_ZPg?list=PLZOFebo-o2K7TriDRJwgC2pWOdilz-gaz" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 
-#### Putty
-<iframe allowfullscreen width="100%" height='400' src={('/video/ssh-access-putty.mp4')} />  
+#### Putty with Password
+<iframe width="100%" height='600' src="https://www.youtube.com/embed/ILSajwnj_uY" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 #### Putty with TRASA private key
 <iframe width="100%" height='600' src="https://www.youtube.com/embed/Ag3Y5OxnvbE?list=PLZOFebo-o2K7TriDRJwgC2pWOdilz-gaz" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>

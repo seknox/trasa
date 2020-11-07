@@ -25,8 +25,7 @@ You will have to enter your trasaID(email or username) and select the TFA method
 * Click the "Connect" button and choose service username.
 * Enter password and TOTP. 
 
-<iframe allowfullscreen width="100%" height='400' src={('/video/rdp-access.mp4')} />  
-
+<iframe width="100%" height='600' src="https://www.youtube.com/embed/io3rv0M_k2E" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 
 ### RDP Console Menu
