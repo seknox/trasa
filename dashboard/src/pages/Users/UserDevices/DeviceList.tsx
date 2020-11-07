@@ -298,6 +298,7 @@ export default function DeviceDetail(props: any) {
               </Grid>
               <Grid item xs={6}>
                 <Button
+                    name={"viewDetailBtn"}
                   size="small"
                   color="secondary"
                   variant="outlined"
@@ -400,7 +401,7 @@ function DeviceSettings(props: any) {
               <Typography variant="h3">Trust this device : </Typography>
             </Grid>
             <Grid item xs={4}>
-              <Switch color="secondary" onChange={handleCheck} checked={checked} />
+              <Switch name={"deviceTrustSwitch"} color="secondary" onChange={handleCheck} checked={checked} />
             </Grid>
           </Grid>
         </Grid>

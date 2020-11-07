@@ -294,7 +294,7 @@ func getClient(c ssh.ConnMetadata, signers []ssh.Signer) (*ssh.Client, error) {
 	}
 
 	if len(signers) != 0 {
-		logrus.Debug(signers)
+		//logrus.Debug(signers)
 		sess.clientConfig.Auth = append(sess.clientConfig.Auth, ssh.PublicKeys(signers...))
 
 	}

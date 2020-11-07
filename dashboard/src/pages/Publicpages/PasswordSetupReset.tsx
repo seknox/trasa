@@ -148,6 +148,8 @@ export function SetPasswordComponent(props: SetPasswordComponentProps) {
   };
 
   const handleSubmit = (event: React.FormEvent<{}>) => {
+     event.preventDefault();
+
     if (data.password !== data.cpassword) {
       alert('Your passwords does not match')    
       return
@@ -162,7 +164,7 @@ export function SetPasswordComponent(props: SetPasswordComponentProps) {
 
     setLoader(true);
     const reqData = data;
-    event.preventDefault();
+   
 
     let url = `${Constants.TRASA_HOSTNAME}/api/woa/setup/password`;
     reqData.token = props.token;

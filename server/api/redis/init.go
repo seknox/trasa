@@ -38,6 +38,6 @@ type adapter interface {
 	GetSession(key string) (userID, orgID, deviceID, browserID, auth string, err error)
 
 	WaitForStatusAndGet(key, field string) (success bool, val string)
-	SetHTTPGatewaySession(key, orgusr, authDataVal string, sessionRecord string) error
-	GetHTTPGatewaySession(key string) (user, auth, sessionRecord string, err error)
+	SetHTTPAccessProxySession(key, orgusr, authDataVal string, sessionRecord string) error
+	GetHTTPAccessProxySession(key string) (user, auth, sessionRecord string, err error)
 }

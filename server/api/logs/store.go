@@ -277,9 +277,7 @@ func (s logStore) GetOrgInAppTrails(orgID string, page int, size int, dateFrom, 
 		sb.GreaterEqualThan("event_time", dateFrom)
 	}
 
-	sqlStr, args := sb.Build()
-	//change ? into $
-	sqlStr = utils.SqlReplacer(sqlStr)
+	sqlStr, args := sb.BuildWithFlavor(sqlbuilder.PostgreSQL)
 
 	logEvents, err := querySQLInappTrail(s.DB, sqlStr, args...)
 	if err != nil {

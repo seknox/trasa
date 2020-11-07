@@ -2,7 +2,6 @@ package auth
 
 import (
 	"bytes"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -117,7 +116,7 @@ func TestLoginHandler(t *testing.T) {
 		// Our handlers satisfy http.Handler, so we can call their ServeHTTP method
 		// directly and pass in our Request and ResponseRecorder.
 		handler.ServeHTTP(rr, req)
-		fmt.Println(string(rr.Body.Bytes()))
+		//fmt.Println(string(rr.Body.Bytes()))
 
 		// Check the status code is what we expect.
 		if status := rr.Code; status != http.StatusOK {

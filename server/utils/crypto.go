@@ -12,6 +12,7 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"io"
 	"strings"
 
@@ -295,7 +296,7 @@ func EncryptorAndSharder(secretData string) (string, []string) {
 	//fmt.Println("initial root token: ", secretData)
 	SecretKeyBytes, err := hex.DecodeString(GetRandomString(32))
 	if err != nil {
-		fmt.Println(err)
+		logrus.Error(err)
 	}
 
 	//fmt.Println("encryption key: ", base64.StdEncoding.EncodeToString(SecretKeyBytes))
@@ -315,19 +316,19 @@ func DeducerAndDecryptor(shards [][]byte, secretData string) (string, error) {
 	// deduce encryption key
 	deducedSecretKey, err := ShamirDeducer(shards)
 	if err != nil {
-		fmt.Println(err)
+		logrus.Error(err)
 		return "", err
 	}
 
-	fmt.Println("deduced encryption Key: ", deducedSecretKey)
+	//fmt.Println("deduced encryption Key: ", deducedSecretKey)
 	// we now retrieve(by decryption) encrypted data from deducedSecretKey.
 	data, err := NaclDeCrypt(secretData, deducedSecretKey)
 	if err != nil {
-		fmt.Println(err)
+		logrus.Error(err)
 		return "", err
 	}
 
-	fmt.Println("deduced root Token: ", data)
+	//fmt.Println("deduced root Token: ", data)
 	return data, nil
 }
 
@@ -370,7 +371,7 @@ func NaclDeCrypt(encryptedData string, decryptionKey []byte) (string, error) {
 func ShamirSharder(key []byte, shards, threshold int) []string {
 	keys, err := shamir.Split(key, shards, threshold)
 	if err != nil {
-		fmt.Println(err)
+		logrus.Error(err)
 	}
 
 	var shardedKeys []string
@@ -386,7 +387,7 @@ func ShamirDeducer(keys [][]byte) ([]byte, error) {
 	var val []byte
 	val, err := shamir.Combine(keys)
 	if err != nil {
-		fmt.Println(err)
+		logrus.Error(err)
 		return val, err
 	}
 

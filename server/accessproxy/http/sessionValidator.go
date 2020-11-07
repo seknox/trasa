@@ -34,7 +34,7 @@ func tokenValidator(r *http.Request, userName string, isSSO bool) error {
 	// this key holds extoken value, and secret nacl seal that contains userID and orgID.
 	// this userID and orgID is then verified with extoken values which also contains same.
 	// If userID and orgID doesnot match, false is return. else tokenValidator returns true.
-	orguser, sessionData, sRecord, err := redis.Store.GetHTTPGatewaySession(sessionToken) // (sessionToken, "user", "auth", "sessionRecord")
+	orguser, sessionData, sRecord, err := redis.Store.GetHTTPAccessProxySession(sessionToken) // (sessionToken, "user", "auth", "sessionRecord")
 	//logger.Tracef("HTTP-Session-Redis: %s , %s , %s , %v", orguser, sessionData, sRecord, err)
 	if err != nil || orguser == "" {
 		return fmt.Errorf("invalid session")

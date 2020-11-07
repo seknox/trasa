@@ -149,8 +149,8 @@ func (s redisStore) WaitForStatusAndGet(key, field string) (success bool, val st
 
 }
 
-// SetHTTPGatewaySession
-func (s redisStore) SetHTTPGatewaySession(key, orgusr, authDataVal string, sessionRecord string) error {
+// SetHTTPAccessProxySession
+func (s redisStore) SetHTTPAccessProxySession(key, orgusr, authDataVal string, sessionRecord string) error {
 	client := s.RedisClient
 	ctx := context.Background()
 	err := client.HSet(ctx, key, "user", orgusr, "auth", authDataVal, "sessionRecord", sessionRecord).Err()
@@ -162,8 +162,8 @@ func (s redisStore) SetHTTPGatewaySession(key, orgusr, authDataVal string, sessi
 
 }
 
-// GetHTTPGatewaySession
-func (s redisStore) GetHTTPGatewaySession(key string) (user, auth, sessionRecord string, err error) {
+// GetHTTPAccessProxySession
+func (s redisStore) GetHTTPAccessProxySession(key string) (user, auth, sessionRecord string, err error) {
 	client := s.RedisClient
 	ctx := context.Background()
 	var vals []interface{}

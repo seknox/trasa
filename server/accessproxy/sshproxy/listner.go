@@ -46,7 +46,7 @@ func ListenSSH(closeChan chan bool) error {
 	config.Ciphers = append(config.Ciphers, "aes128-cbc", "blowfish-cbc", "3des-cbc")
 
 	config.AddHostKey(private)
-	logrus.Debug("TRASA gateway started")
+	logrus.Info("TRASA SSH access proxy started")
 
 	listenAddr := global.GetConfig().Proxy.SSHListenAddr
 	if listenAddr == "" {
@@ -86,6 +86,6 @@ func ListenSSH(closeChan chan bool) error {
 }
 
 func bannerCallBackHandler(conn ssh.ConnMetadata) string {
-	return "Welcome to TRASA ssh Gateway\n\rIF YOU ARE NOT AUTHORISED LEAVE IMMEDIATELY!\n\r\n\r" +
+	return "Welcome to TRASA SSH access proxy\n\rIF YOU ARE NOT AUTHORISED LEAVE IMMEDIATELY!\n\r\n\r" +
 		"Copyright @ 2020, Seknox Cybersecurity, All rights reserved.\n\r\n\r "
 }

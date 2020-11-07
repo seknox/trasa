@@ -3,6 +3,7 @@ package initdb
 import (
 	"database/sql"
 	"encoding/json"
+	"github.com/seknox/trasa/server/api/policies"
 	"time"
 
 	"github.com/pkg/errors"
@@ -33,7 +34,9 @@ func InitDB() {
 	storeDeviceHygieneCheck()
 
 	//init CA
-	initSystemCA()
+	//initSystemCA()
+
+	initDefaultPolicies()
 
 }
 
@@ -138,6 +141,63 @@ func storeDeviceHygieneCheck() {
 	}
 
 	logrus.Trace("Global Password Policy stored")
+}
+
+func initDefaultPolicies() {
+	_, err := policies.Store.GetPolicy("f022d753-5f5f-4035-b3d4-59db0079d634", global.GetConfig().Trasa.OrgId)
+	if err == nil {
+		return
+	}
+	if !errors.Is(err, sql.ErrNoRows) {
+		logrus.Error(err)
+		return
+	}
+
+	var fullPolicy = models.Policy{
+		PolicyID:   "f022d753-5f5f-4035-b3d4-59db0079d634",
+		OrgID:      global.GetConfig().Trasa.OrgId,
+		PolicyName: "full-access",
+		DayAndTime: []models.DayAndTimePolicy{{
+			Days:     []string{"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"},
+			FromTime: "00:00",
+			ToTime:   "23:59",
+		}},
+		TfaRequired:      true,
+		RecordSession:    true,
+		FileTransfer:     true,
+		IPSource:         "0.0.0.0/0",
+		AllowedCountries: "",
+		DevicePolicy: models.DevicePolicy{
+			BlockUntrustedDevices:           false,
+			BlockAutologinEnabled:           false,
+			BlockTfaNotConfigured:           false,
+			BlockJailBroken:                 false,
+			BlockDebuggingEnabled:           false,
+			BlockEmulated:                   false,
+			BlockOpenWifiConn:               false,
+			BlockIdleScreenLockDisabled:     false,
+			BlockRemoteLoginEnabled:         false,
+			BlockEncryptionNotSet:           false,
+			BlockFirewallDisabled:           false,
+			BlockCriticalAutoUpdateDisabled: false,
+			BlockAntivirusDisabled:          false,
+		},
+		RiskThreshold: 5.0,
+		CreatedAt:     0,
+		UpdatedAt:     0,
+		Expiry:        "2069-04-20",
+		IsExpired:     false,
+	}
+
+	fullPolicy.OrgID = global.GetConfig().Trasa.OrgId
+
+	err = policies.Store.CreatePolicy(fullPolicy)
+	if err != nil {
+		logrus.Error(err)
+		return
+	}
+
+	logrus.Trace("default policy stored")
 }
 
 func storeGlobalEmailSettings() {

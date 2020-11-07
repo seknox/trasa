@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/seknox/trasa/server/accessproxy/rdpproxy"
@@ -49,8 +48,8 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 
 	r.Route("/auth", func(r chi.Router) {
 		r.NotFound(func(w http.ResponseWriter, r *http.Request) {
-			fmt.Println("Reached not found in auth ")
-			fmt.Println(r.URL)
+			logrus.Debugf("Reached not found in auth: %s", r.URL)
+
 		})
 
 		r.Post("/identity", auth.LoginHandler)
@@ -72,8 +71,7 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 
 	r.Route("/idp", func(r chi.Router) {
 		r.NotFound(func(w http.ResponseWriter, r *http.Request) {
-			fmt.Println("Reached not found in idp ")
-			fmt.Println(r.URL)
+			logrus.Debugf("Reached not found in auth: %s", r.URL)
 		})
 
 		r.Post("/login", auth.LoginHandler)
@@ -84,8 +82,7 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 
 	r.Route("/api/woa", func(r chi.Router) {
 		r.NotFound(func(w http.ResponseWriter, r *http.Request) {
-			fmt.Println("Reached not found in File server ")
-			fmt.Println(r.URL)
+			logrus.Debugf("Reached not found in auth: %s", r.URL)
 		})
 		r.Get("/verify/{verifytoken}", my.VerifyAccount)
 		r.Post("/setup/password", my.FirstTimePasswordSetup)
@@ -118,8 +115,7 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 
 	r.Route("/accessproxy", func(r chi.Router) {
 		r.NotFound(func(w http.ResponseWriter, r *http.Request) {
-			fmt.Println("Reached not found in File server ")
-			fmt.Println(r.URL)
+			logrus.Debugf("Reached not found in auth: %s", r.URL)
 		})
 		//r.Use(authmiddleware.Handler)
 		r.Route("/rdp", func(r chi.Router) {
@@ -137,8 +133,7 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 
 	r.Route("/api/v1", func(r chi.Router) {
 		r.NotFound(func(w http.ResponseWriter, r *http.Request) {
-			fmt.Println("Reached not found in File server ")
-			fmt.Println(r.URL)
+			logrus.Debugf("Reached not found in auth: %s", r.URL)
 		})
 
 		r.Use(authmiddleware.Handler)
@@ -173,6 +168,7 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		//Enroll device needs both password and session
 		//After device is enrolled
 		r.Post("/my/enroldevice", auth.Enrol2FADevice)
+		r.Post("/my/devices/delete/{deviceID}", users.RemoveUserDevice)
 		r.Get("/my/authmeta/{appID}/{username}", my.GetAuthMeta)
 
 		r.Get("/my/notifs", notif.GetPendingNotif)

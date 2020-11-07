@@ -953,12 +953,12 @@
 				CODE_SIGN_ENTITLEMENTS = trasa/trasa.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 36;
+				CURRENT_PROJECT_VERSION = 38;
 				DEVELOPMENT_TEAM = QF253X5LF9;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = trasa/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 3.2.1;
+				MARKETING_VERSION = 3.3.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -982,11 +982,11 @@
 				CODE_SIGN_ENTITLEMENTS = trasa/trasa.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 36;
+				CURRENT_PROJECT_VERSION = 38;
 				DEVELOPMENT_TEAM = QF253X5LF9;
 				INFOPLIST_FILE = trasa/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 3.2.1;
+				MARKETING_VERSION = 3.3.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
