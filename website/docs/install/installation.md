@@ -37,10 +37,10 @@ values={[
 
 <TabItem value="linux">
 
-- Download [trasa](https://storage.googleapis.com/trasa-public-download-assets/release/v1.1.1/trasa.tar.gz) binary
-
+- Download [trasa](https://storage.googleapis.com/trasa-public-download-assets/release/v1.1.2/trasa.tar.gz) binary
+    
 ```shell script
-wget https://storage.googleapis.com/trasa-public-download-assets/release/v1.1.1/trasa.tar.gz
+wget https://storage.googleapis.com/trasa-public-download-assets/release/v1.1.2/trasa.tar.gz
 ```
 
 - Extract and place static files into respective dirs
@@ -55,7 +55,7 @@ mv trasa/GeoLite2-City.mmdb /etc/trasa/static/
 ```
 
 - Run [Postgres](https://www.postgresql.org/) or [CockroachDB](https://cockroachlabs.com) on port 5432
-
+    
 ```shell script
 sudo docker run -d -p 5432:5432 --name db \
 -e POSTGRES_PASSWORD=trasauser \
@@ -80,19 +80,20 @@ sudo docker run -d --rm --name guacd \
 ```
 
 
-- Run trasa-server binary
-
+- Run trasa-server binary. 
+    It will create config file at /etc/trasa/config/config.toml
 ```shell script
 sudo ./trasa/trasa-server
 ```
 
 > Add -f argument while running trasa-server to enable logging to file /var/log/trasa.log
 
+- Stop the trasa-server binary with `Ctrl + C`
 - Edit `/etc/trasa/config/config.toml`
     - Change `trasa.listenAddr` to the domain/IP of server.
     - If `trasa.listenAddr` is not a public domain, turn off the autocert in config by setting `trasa.autoCert=false`
 
-- Restart the trasa-server
+- Start the trasa-server again
 
 
    </TabItem>
@@ -150,5 +151,5 @@ seknox/trasa:v1.1.2
 </Tabs>
 
 :::info
-Go through [config reference](../system/config-reference) to run TRASA in environment according to your need
+Go through [config reference](../system/config-reference.md) to run TRASA in environment according to your need
 :::

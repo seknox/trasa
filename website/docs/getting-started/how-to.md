@@ -13,7 +13,7 @@ If you are having trouble operating a feature, ping us in our community discussi
 
 TRASA controls `users` (DevOps, Software, Marketing teams, 3rd party vendors, etc.) `access to services` (SSH, RDP, Web, Database). The decision to control access depends on `access policy` and `access privilege` defined by administrators. 
 
-Once TRASA is installed and configured, [users](glossary#user) will  access server and services with through TRASA access proxy.
+Once TRASA is installed and configured, [users](./glossary.md#user) will  access server and services with through TRASA access proxy.
 
 ### How will user access the services?
  Currently supported methods of connection:

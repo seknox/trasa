@@ -85,7 +85,7 @@ In the video below,
 
 In the video below,
 
-1. We will create a service profile for Gitlab ce which is hosted in GCP.
+1. We will create a service profile for Discourse which is hosted in GCP.
 2. Assign access to administrator and security professional with `trusted device` policy.
 
    <iframe width="100%" height='600' src="https://www.youtube.com/embed/VzwARHXnLWI?list=PLZOFebo-o2K44zdkUPWnGO_cTz6KjNAnN" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>

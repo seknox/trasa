@@ -9,7 +9,7 @@ Linux two factor authentication is supported via TRASA PAM (Pluggable Authentica
 :::
 
 
-trasaPAM is a PAM module that handle's second factor authentication in *nix systems.
+TrasaPAM is a PAM module that handle's second factor authentication in *nix systems.
 
 ## Installation
 
@@ -45,15 +45,15 @@ insecureSkipVerify = <boolean value. false by default. set true if TRASA server 
 
 ## Configure SSH
 
-open `/etc/ssh/sshd_config` file and make sure `UsePam yes` and `ChallengeResponseAuthentication yes` is set.
+Open `/etc/ssh/sshd_config` file and make sure `UsePam yes` and `ChallengeResponseAuthentication yes` is set.
 
 ## Make trasaPAM PAM aware
 + Open `/etc/pam.d/sshd`
-+ Add `auth required trasapam.so` for debian or `auth required /lib64/security/trasapam.so` in case centOS at end of the file.
++ Add `auth required trasapam.so` for debian or `auth required /lib64/security/trasapam.so` in case centOS at the end of the file.
 
 
 ## Finishing
-Restart sshd to correctly load pam module: `$ sudo systemctl restart sshd`
+Restart sshd to reload the pam module: `$ sudo systemctl restart sshd`
 
 
 ## Testing

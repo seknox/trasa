@@ -29,12 +29,12 @@ You can access the SSH service either via Browser or SSH client.
     - Click "My Account" menu 
     <img alt="ssh-proxy-email" src={('/img/docs/user-guides/access/my-account.png')} />  
 
-* You will be redirected to "My Route" page.
+* You will be redirected to "My Account" page.
 * Search for the service you want to connect to.
 * Click connect and choose the service username.
 
 * Enter the password and click submit.
-* Choose second factor method and authenicate using mobile app
+* Choose second factor method and authenticate using mobile app
 * If it's the first time accessing this service, TRASA will ask you to save the SSH host key.
 Press "y" to do that.
 
@@ -60,15 +60,19 @@ Press "y" to do that.
 
 
 #### TRASA SSH key
-You can skip TRASA email and password validation using TRASA ssh key.
-Download a TRASA user key and use it while accessing SSH through access proxy.
+You can skip TRASA email and password validation using TRASA SSH key.
+Download the TRASA SSH key and use it while accessing SSH through access proxy.
 
-* Go to the "My Route" in dashboard
+* Login to TRASA dashboard
+* Go to the "My Account" in dashboard
 * Click the "Account" tab.
 * Click the menu to get dropdown menu items.
 * Click the "get ssh private key" button" to download the SSH key.
   <img alt="ssh-proxy-email" src={('/img/docs/user-guides/access/download-trasa-ssh-key.png')} />  
-
+* Keep the private key in secure location with 0600 permission (read & write permission to owner only).
+    ```shell script
+    sudo chmod 0600 id_rsa
+    ```
 * If you're using PuTTY, use PuTTYgen to convert the downloaded key `id_rsa` into `id_rsa.ppk`.
 * Now use this key to access SSH through TRASA access proxy.
     ```shell script
@@ -86,6 +90,9 @@ Download a TRASA user key and use it while accessing SSH through access proxy.
 #### OpenSSH client with TRASA private key
 <iframe width="100%" height='600' src="https://www.youtube.com/embed/kPzUsKu_ZPg?list=PLZOFebo-o2K7TriDRJwgC2pWOdilz-gaz" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
+
+#### Putty with Password
+<iframe width="100%" height='600' src="https://www.youtube.com/embed/ILSajwnj_uY" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 #### Putty with TRASA private key
 <iframe width="100%" height='600' src="https://www.youtube.com/embed/Ag3Y5OxnvbE?list=PLZOFebo-o2K7TriDRJwgC2pWOdilz-gaz" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -167,11 +174,14 @@ If you have dowloaded the TRASA user key
 ## Using private key instead of password
 
 ### Save private keys in vault (Recommended)
-Ask your administrator to [save the private key in the vault](../providers/vault/tsxvault.md#storing-service-credentials).
+TRASA can save password and private keys in a secure vault. 
+It will automatically inject it while accessing services through access proxy.  
+To use private key to access SSH, ask your administrator to [save the private key in the vault](../providers/vault/tsxvault.md#storing-service-credentials).
 
 ### Using agent forwarding
->SSH Agent forwarding is not recommended since it allows users with root privilege in the server to use your SSH keys.
-
+:::caution
+SSH Agent forwarding is not recommended since it allows users with root privilege in the server to use your SSH keys.
+:::
 * Add the private key to ssh agent `ssh-add <private_key_path>`
 * Use -A flag `ssh -A -i <private_key_path> root@trasa.hostname -p 8022`
 

@@ -14,9 +14,9 @@ You need to [build a mobile app from the source](https://github.com/seknox/trasa
 
 To configure Seknox's Cloud server as FCM proxy,
 
-- Initialise and decrypt the [vault](/docs/providers/vault/tsxvault) if you haven't done it already.
+- Initialise and decrypt the [vault](../providers/vault/tsxvault.md) if you haven't done it already.
 - Open the main menu and click in "System".
-- Click the "settings" tab.
+- Click the "Settings" tab.
 - Click the "FCM Setting" section.
   <img alt="fcm-settings" src={('/img/docs/system/fcm-settings.png')} />
 

@@ -15,10 +15,10 @@ TRASA is an open-source zero trust service access platform built by [Seknox](htt
 
 
 It essentially:
-+ Is a Layer 7 protocol, User identity, and Access Privilege aware access proxy.
-+ Can enforce security policies (time, file transfers, location, context, 2fa) to SSH, RDP, web, database access. 
++ Is a Layer 7 protocol, user identity, and privilege aware access proxy.
++ Can enforce security policies (time, file transfers, location, context, 2FA) to SSH, RDP, web, database access. 
 + Can enforce access policy based on the security hygiene of user devices.
-+ Add two-factor authentication agent (native integration) to protect console access to ssh, RDP, and hardware appliance. 
++ Add two-factor authentication agent (native integration) to protect console access to SSH, RDP, and hardware appliance. 
 
 If you have used Bastian server to jump access or centralized access to internal infrastructure, you can also think of TRASA as a **Bastian server on steroids!**
 
