@@ -25,6 +25,8 @@ You will have to enter your trasaID(email or username) and select the TFA method
 * Click the "Connect" button and choose service username.
 * Enter password and TOTP. 
 
+<iframe width="100%" height='600' src="https://www.youtube.com/embed/io3rv0M_k2E" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 
 ### RDP Console Menu
 When accessing RDP using a browser, you can open the console menu by clicking the gear icon on top.
@@ -49,6 +51,10 @@ To Copy from your local PC to remote RDP server,
 * Right-click on the clipboard and paste it.
 * Now you can paste the text on the remote computer.
 
+#### Clipboard Demo
+<iframe width="100%" height='600' src="https://www.youtube.com/embed/z7uSr2ydsgQ?list=PLZOFebo-o2K7TriDRJwgC2pWOdilz-gaz" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+
 ### File Transfer 
 If you have file transfer access, TRASA shared drive will be mounted on the remote RDP server when you access them.
 * In remote RDP server, go to "This PC".
@@ -71,5 +77,10 @@ To download a file from a remote RDP server to a local PC,
 * Click the download icon to download the file.
 <img  alt="file-download-btn" src={('/img/docs/user-guides/access/file-download-btn.png')} />
 
+#### File download demo
+<iframe width="100%" height='600' src="https://www.youtube.com/embed/uX87E_5kUvk?list=PLZOFebo-o2K7TriDRJwgC2pWOdilz-gaz" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+#### File upload demo
+<iframe width="100%" height='600' src="https://www.youtube.com/embed/ij802EzPlVI?list=PLZOFebo-o2K7TriDRJwgC2pWOdilz-gaz" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 

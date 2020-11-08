@@ -73,6 +73,7 @@ A vault is where TRASA stores secrets. There are two types of secrets that TRASA
 - **Upstream Service Secrets -** Passwords and Keys of upstream services.
 - **Integration Keys -** Secrets and Keys of external services that TRASA connects during the process of integration.
 
+## TsxVault
 TRASA has a built-in vault named `TsxVault`, which can be used to store both of the secrets mentioned above. While Integration Keys are always stored in `TsxVault`, Upstream Service Secrets can also be stored in external secret storage providers such as HashiCorp Vault, AWS KMS, and GCP KMS.
 
 ## TRASA_HOST

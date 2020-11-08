@@ -26,7 +26,7 @@ const useStyles = makeStyles(() => ({
 
 export default function Enterprise() {
   const classes = useStyles();
-  const imgUrl = useBaseUrl('arch/usecase-reference.png');
+  const imgUrl = useBaseUrl('arch/difference.svg');
   return (
     <ThemeBase>
       <Grid container spacing={2} direction="column" justify="center" alignItems="center">
@@ -44,7 +44,7 @@ export default function Enterprise() {
             </Typography>
           </div>
         </Grid>
-        <Grid item xs={8}>
+        <Grid item xs="up(lg): 8">
           <div className={classes.image}>
             <img src={imgUrl} alt="protect internal infrastructure" />
           </div>
