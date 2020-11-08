@@ -1,7 +1,7 @@
 ---
-id: password-setup
-title: Password Setup
-sidebar_label: Password Setup
+id: change-password
+title: Change Password
+sidebar_label: Change Password
 ---
 
 import useBaseUrl from '@docusaurus/useBaseUrl';

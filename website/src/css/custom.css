@@ -13,7 +13,7 @@
   --ifm-color-primary-dark: #0d0d8b;
   --ifm-color-primary-darker: #0f0fa5;
   --ifm-color-primary-darkest: #0d0dac;
-  --ifm-color-primary-light: #1313c9;
+  --ifm-color-primary-light: #565664;
   --ifm-color-primary-lighter: #0e0ed6;
   --ifm-color-primary-lightest: #0d0df1;
 
@@ -65,6 +65,21 @@
   margin: 0 calc(-1 * var(--ifm-pre-padding));
   padding: 0 var(--ifm-pre-padding);
 }
+
+.menu__link--sublist  {
+/* menu__link--sublist */
+ font-size: 18px;
+ font-weight: 500;
+ color: #242449;
+}
+
+
+.menu__link--active  {
+  /* menu__link--sublist */
+   background-color:  #ecefff;
+   font-size: 18px;
+   color: #000080;
+  }
 
 .hash-link {
   padding-left: 0.5rem;
