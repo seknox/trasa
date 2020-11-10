@@ -125,14 +125,7 @@ func InitDBSTOREWithConfig(conf Config) *State {
 	// we start trasa-server dependencies:
 
 	// initialize cockroachdb connection
-	db, err := sql.Open("postgres", DBconn(config))
-	if err != nil {
-		panic(err)
-	}
-	err = db.Ping()
-	if err != nil {
-		panic("database connection down: " + err.Error())
-	}
+	db := DBconn(config)
 
 	//	DbCon = db
 
@@ -167,16 +160,6 @@ func InitDBSTOREWithConfig(conf Config) *State {
 			panic(err)
 		}
 	}
-
-	// DbEnv = &DBConn{
-	// 	db:             db,
-	// 	geoip:          geodb,
-	// 	firebaseClient: app,
-	// 	minioClient:    minioClient,
-
-	// 	config:      config,
-	// 	redisClient: redisClient,
-	// }
 
 	err = migrate(db)
 	if err != nil {
@@ -225,7 +208,7 @@ func migrate(conn *sql.DB) error {
 	return nil
 
 }
-func DBconn(config Config) string {
+func DBconn(config Config) *sql.DB {
 
 	dbuser := config.Database.Dbuser
 	dbpass := config.Database.Dbpass
@@ -251,7 +234,22 @@ func DBconn(config Config) string {
 		str = fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=disable", dbuser, dbpass, dbhost, dbport, dbname)
 	}
 
-	return str
+	db, err := sql.Open("postgres", str)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	for retryCount := 0; retryCount < 10; retryCount++ {
+		err = db.Ping()
+		if err == nil {
+			return db
+		}
+
+		logrus.Info("could not connect to database: retrying...")
+		time.Sleep(time.Second)
+	}
+
+	panic("could not connect to database")
 
 }
 
