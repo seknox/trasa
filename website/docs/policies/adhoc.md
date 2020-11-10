@@ -27,7 +27,7 @@ To do that,
 ### Grant users ad hoc access
 To grant users temporary ad hoc access,
 
-* Click  "Control" on main menu.
+* Click  "Control" on the main menu.
 * Click on "Ad Hoc" tab.
 * You will see pending adhoc requests and history of older requests.
 * Click "View" on a certain pending request.

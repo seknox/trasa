@@ -5,60 +5,54 @@ sidebar_label: Overview
 slug: /
 ---
 
-> This guide is for Administrators who wants to install and configure TRASA. If your security team has already deployed TRASA in your infrastructure and you are required to use TRASA for remote access, check out our [User Guides](https://www.trasa.io/docs/guides/getting-started 'User Guides')
+
 
 Welcome to TRASA docs. Before anything, let's answer your first question.
 
 ## What is TRASA?
 
-TRASA is an open-source zero trust access control platform built by [Seknox](https://seknox.com). It is unique in the sense that it bundles lots of access control features into a single platform and, as such, allows you to achieve zero trust access control strategies in your infrastructure. 
+TRASA is an open-source zero trust service access platform built by [Seknox](https://www.seknox.com). It is unique in the sense that it bundles **lots of access control features** into a single platform and, as such, allows you to achieve zero trust access control strategies in your infrastructure. 
 
 
-**What is zero trust?** It is probably your first question when you read above.
+It essentially:
++ Is a Layer 7 protocol, user identity, and privilege aware access proxy.
++ Can enforce security policies (time, file transfers, location, context, 2FA) to SSH, RDP, web, database access. 
++ Can enforce access policy based on the security hygiene of user devices.
++ Add two-factor authentication agent (native integration) to protect console access to SSH, RDP, and hardware appliance. 
 
-A **Zero Trust** is a security paradigm where access is granted based on **_risks_** rather than just **_static policies_**
+If you have used Bastian server to jump access or centralized access to internal infrastructure, you can also think of TRASA as a **Bastian server on steroids!**
 
-## How do you differentiate "risk" vs. "static policies"?
 
-### Static policies
+### How is it different from what we already have implemented to control access?
+To distinguish how TRASA and zero trust systems differ from legacy access control products, see how legacy vs. zero trust access control system decides to allow access in the below image:
 
-Control access based on the correctness of a combination of whitelisted IP source, time, and valid user credentials.
-
-### Risk based policies
-
-Control access by analyzing real-time contextual threats. E.g., verifying the reputation of IP source past 1 hour, analyze the cyber hygiene of devices used to access services, and in-session monitoring to identify malicious usage patterns.
-
+<img alt="trasa vs legacy" src={('/img/docs/getting-started/zero-notzero.svg')} />
 
 <br />
 
-## Baseline security concept
-
-TRASA is build upon the baseline security concept, which adheres to zero trust access control paradigm.
-
+TRASA Access Proxy is a drop in upgrade for your homegrown bastian/jump server.
+Whether you are using a linux server (configured as Jump server) or Microsoft Remote Desktop Gateway, TRASA offers all those features along with best practices enabled and configurable by default.
 
 
 
-### 1. Whitelisted entry point for remote access
-
-You may have heard in the wild that zero-trust is all about allowing access from anywhere, anytime. While not delusive, many of us have interpreted it as allowing direct access from users to remote services. It is dangerous, and access via jump/Bastian servers is still the safest way to enable remote access.
-
-Zero trust does not promote to remove your Bastian server but rather upgrade your Bastian server to allow remote access based on risks. It means that users can access remote service from anywhere as long as their connection is not deemed risky. 
 
 
-### 2. Security hygiene of user device is crucial
+## Immediate use cases and benefits
 
-Although it is users who access your remote service, their devices (mobile device, workstations) handles every aspect of remote access. Once connected, all sensitive data are also processed and stored in users' devices. If the user's device is already compromised, the firewall, Intrusion detections, SIEMs, malware detection on the server-side are of little help, if any. Users may be choosing strong passwords, handling API keys safely. Still, a compromised device will probably have snooped all those secrets already.
+### TRASA server as an access point (Bastian/Jump server) for your internal infrastructure
 
-So granting access to servers and services based on user devices' security hygiene is of utmost importance and a fundamental step to achieve zero trust.
-
-
-### 3. Monitoring trusted access
-
-Almost every security compromises involve the misuse of trusted credentials, trusted networks, and trusted devices. There must be complete visibility to an active authorized session so that any malicious intent hidden in trusted access can be audited in realtime or in the future.
+Access Proxy is a reverse proxy that also understands RDP, SSH, HTTP, and Database protocols and makes a forwarding decision based on the access policy. 
 
 
-### 4. Realtime view of remote access
+<!-- <img alt="enrol device" src={('/img/docs/tutorial/all-users.png')} /> -->
 
-+ Administrators must have a realtime view of all authorized users and authorized devices for remote access. 
-+ Administrators must have a realtime view of all remote entry points to your infrastructure.
-+ Administrators must have a realtime view of all services that have remote access enabled.
+<img alt="trasa as bastian for internal services" src={('/img/docs/getting-started/zero-trust-service-access.svg')} />
+
+
+### Follow best practice security for remote (SSH, RDP, WEB, Database).
+
+- Centralized authorization for remote access.
+- Enforce security policy for remote access.
+- Add two factor authentication to remote access.
+- Easily add and implement SSH Certificate authentication to every SSH access.
+

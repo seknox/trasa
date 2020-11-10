@@ -4,7 +4,7 @@ title: Part 5 - Test access to services
 sidebar_label: Part 5 - Test access to services
 ---
 
-We've configured service profile and access routes in [Part 4](protect-services) or this tutorial.
+We've configured service profile and access routes in [Part 4](./protect-services.md) or this tutorial.
 
 Now, we will test access to services.
 
@@ -12,15 +12,15 @@ Now, we will test access to services.
 
 In TRASA,
 
-- SSH service can be accessed from both dashboard (no external client required) or Linux, Mac, Windows terminal clients.
-- RDP services are only accessible from the dashboard. I.e. does not support RDP from other clients.
+- SSH service can be accessed from both dashboard (no external client required) or any ssh clients (PuTTY, Bitvise, OpenSSH client).
+- RDP services are only accessible from the dashboard. i.e. does not support RDP from other clients.
 - Https service can only be accessed from the browser and only if the TRASA browser extension is installed in the browser.
 
 :::
 
 ## Viewing available service access
 
-You can view available services that can be accessed from [My Page](../getting-started/glossary#my-route). Every service that is assigned to you will be listed on that page.
+You can view available services that can be accessed from [My Page](../getting-started/glossary.md#my-route). Every service that is assigned to you will be listed on that page.
 
 Below is a screenshot of available access applications and services for the Nepsec administrator.
 

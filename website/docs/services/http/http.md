@@ -31,6 +31,16 @@ Users will need to install the TRASA browser extension in their browsers to acce
 Create a new service selecting `http` as the service type.
 ![create web service](./create-http.png 'Integrate new web service')
 
-## Configuring HTTP service.
+This is how your newly created service profile page look like.
+<img alt="http service profile page" src={('/img/docs/services/http-service-profile.png')} />
 
-Configure Proxy
+
+## Configuring Proxy setting.
+
+We've configured the http service profile for GitLab to listen on domain `gitlab.trasa.io`. If you also have set up your DNS server that points the domain to the TRASA server IP address, your users will be redirected to TRASA server when they visit `gitlab.trasa.io`. But how will TRASA server know where to forward the request once validation is processed?
+
+<img alt="http service proxy setting" src={('/img/docs/services/proxy-setting.svg')} />
+
+Click the edit icon on Proxy Setting and enter the `upstream server` address in the designated field. In our case, we have added IP address `10.10.0.10` because that is where the actual GitLab server is running.
+
+Now, when HTTP requests gitlab.trasa.io come to TRASA server, it validates policies and performs authorization, and if everything is successful, it will forward the traffic to IP `10.10.0.10`.
