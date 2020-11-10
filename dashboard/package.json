@@ -1,6 +1,6 @@
 {
   "name": "trasa-dashboard",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "config": {
     "registry": "registry.gitlab.com/seknox/trasa/trasa-dashboard",
     "variant": "onprem"
