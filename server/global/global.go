@@ -362,7 +362,7 @@ func checkInitDirsAndFiles() {
 	if err != nil {
 		panic(err)
 	}
-	err = os.MkdirAll(filepath.Join(utils.GetVarDir(), "trasa", "minio"), 0600)
+	err = os.MkdirAll(filepath.Join(utils.GetVarDir(), "trasa", "sessions"), 0600)
 	if err != nil {
 		panic(err)
 	}

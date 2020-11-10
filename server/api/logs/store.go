@@ -347,7 +347,7 @@ func (s logStore) GetFromMinio(path, bucketName string) (object io.ReadSeeker, e
 		return s.MinioClient.GetObject(bucketName, path, minio.GetObjectOptions{})
 	}
 
-	filename := filepath.Join(utils.GetVarDir(), "trasa", "minio", bucketName, path)
+	filename := filepath.Join(utils.GetVarDir(), "trasa", "sessions", bucketName, path)
 	return os.OpenFile(filename, os.O_RDONLY, os.ModePerm)
 }
 
@@ -357,7 +357,7 @@ func (s logStore) PutIntoMinio(objectName, logfilepath, bucketName string) error
 		_, err := s.MinioClient.FPutObject(bucketName, objectName, logfilepath, minio.PutObjectOptions{})
 		return err
 	}
-	newpath := filepath.Join(utils.GetVarDir(), "trasa", "minio", bucketName, objectName)
+	newpath := filepath.Join(utils.GetVarDir(), "trasa", "sessions", bucketName, objectName)
 	dir, _ := filepath.Split(newpath)
 	err := os.MkdirAll(dir, os.ModePerm)
 	if err != nil {
