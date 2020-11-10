@@ -49,4 +49,4 @@ It is essential to maintain service profiles and access requirements, which can 
   - Discourse hosted in GCP. Currently directly accessed using domain `http://discuss.nepsec.io`.
   - Should be accessible by Nepsec `administrator` and `security engineer`
 
-## [Next, we will setup TRASA](setup-trasa)
+## [Next, we will setup TRASA](./setup-trasa.md)

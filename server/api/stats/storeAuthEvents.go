@@ -84,11 +84,11 @@ func (s statStore) GetAggregatedLoginHours(entityType, entityID, timezone, orgID
 	}
 	sb.Where(sb.Equal(`org_id`, orgID))
 
-	if global.GetConfig().Database.Dbtype == "postgres" {
-		sb.Select(sb.As(fmt.Sprintf(`extract(HOURS FROM (to_timestamp(login_time/1000000000) at time zone %s))`, sb.Var(timezone)), `hour`), sb.As(`count(*)`, `c`))
-	} else {
-		//cockroachdb
+	if global.GetConfig().Database.Dbtype == "cockroachdb" {
 		sb.Select(sb.As(fmt.Sprintf(`EXTRACT('hour',timezone(timezone((login_time/1000000000)::int::timestamp,'UTC'),%s))`, sb.Var(timezone)), `hour `), sb.As(`count(*)`, `c`))
+	} else {
+		//postgres
+		sb.Select(sb.As(fmt.Sprintf(`extract(HOURS FROM (to_timestamp(login_time/1000000000) at time zone %s))`, sb.Var(timezone)), `hour`), sb.As(`count(*)`, `c`))
 	}
 
 	sb.GroupBy(`hour`)
