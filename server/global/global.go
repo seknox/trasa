@@ -239,9 +239,12 @@ func DBconn(config Config) *sql.DB {
 		panic(err.Error())
 	}
 
+	//Check if the connection is successful by establishing a connection.
+	//Retry upto 10 times if connection is not successful
 	for retryCount := 0; retryCount < 10; retryCount++ {
 		err = db.Ping()
 		if err == nil {
+			logrus.Info("database connection successful")
 			return db
 		}
 
