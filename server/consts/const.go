@@ -56,16 +56,6 @@ const (
 )
 
 const (
-	SCIM_USER_SCHEMA            = "urn:ietf:params:scim:schemas:core:2.0:User"
-	SCIM_ENTERPRISE_USER_SCHEMA = "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User"
-
-	SCIM_GROUP_SCHEMA = "urn:ietf:params:scim:schemas:core:2.0:Group"
-
-	SCIM_ERR      = "urn:ietf:params:scim:api:messages:2.0:Error"
-	SCIM_LISTRESP = "urn:ietf:params:scim:api:messages:2.0:ListResponse"
-)
-
-const (
 	KEY_DOAPI = "KEY_DOAPI"
 	KEY_LDAP  = "KEY_LDAP"
 	KEY_SCIM  = "KEY_SCIM"
@@ -119,11 +109,6 @@ const (
 	AUTH_REQ_FORGOT_PASS   = "AUTH_REQ_FORGOT_PASS"
 	AUTH_HTTP_ACCESS_PROXY = "AUTH_HTTP_ACCESS_PROXY"
 	AUTH_REQ_TFA_DH        = "AUTH_REQ_TFA_DH"
-)
-
-const (
-	IDP_TRASA   = "IDP_TRASA"
-	IDP_FREEIPA = "IDP_FREEIPA"
 )
 
 const DEFAULT_ROOT_PASSWORD = "changeme"

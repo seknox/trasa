@@ -53,6 +53,7 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		})
 
 		r.Post("/identity", auth.LoginHandler)
+		r.Post("/external/saml/{orgid}/{vendorname}", auth.SAMLLoginHandler)
 		r.Post("/tfa", auth.TfaHandler)
 		r.Delete("/logout", auth.LogoutHandler)
 
