@@ -99,13 +99,6 @@ After that, when the SSH client connects to that upstream server, the ssh client
 
 
 TRASA access proxy will automatically validate host keys and certificates when accessing through the TRASA proxy.
-
-#### Configure Client Device
-
-Configuring client device is applicable when accessing SSH servers directly instead through the TRASA proxy.
-
-- Go to Providers page and click the "Certificate Authority" tab.
-TRASA proxy will automatically validate host keys and certificates when accessing through the TRASA proxy.
 But if you are accessing the SSH server directly, the SSH client (your device) must be configured to trust the TRASA SSH CA.
 
 
