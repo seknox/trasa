@@ -95,12 +95,12 @@ func (r *redisMock) WaitForStatusAndGet(key, field string) (success bool, val st
 	panic("implement me")
 }
 
-//SetHTTPGatewaySession mock
-func (r *redisMock) SetHTTPGatewaySession(key, orgusr, authDataVal string, sessionRecord string) error {
+//SetHTTPAccessProxySession mock
+func (r *redisMock) SetHTTPAccessProxySession(key, orgusr, authDataVal string, sessionRecord string) error {
 	panic("implement me")
 }
 
-//GetHTTPGatewaySession mock
-func (r *redisMock) GetHTTPGatewaySession(key string) (user, auth, sessionRecord string, err error) {
+//GetHTTPAccessProxySession mock
+func (r *redisMock) GetHTTPAccessProxySession(key string) (user, auth, sessionRecord string, err error) {
 	panic("implement me")
 }

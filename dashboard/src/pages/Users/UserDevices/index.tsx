@@ -37,7 +37,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Device(props: any) {
+type DeviceProps = {
+  userID: string,
+  renderFor: 'myRoute' | 'userRoute',
+
+}
+
+export default function Device(props: DeviceProps) {
   const [deviceDeleteState, setDeviceDeleteState] = useState(false);
   // const [deviceInfoDialogueOpen, setdeviceInfoDialogueOpen] = useState(false);
   const [deleteDevice, setDeleteDevice] = useState({
@@ -59,7 +65,7 @@ export default function Device(props: any) {
     axios
       .get(reqPath)
       .then((r) => {
-        setUserDevices(r.data.data[0]);
+        setUserDevices(r?.data?.data?.[0]);
       })
       .catch((error) => {
         console.log(error);
@@ -68,8 +74,14 @@ export default function Device(props: any) {
 
   // removeUserDevice sends delete device request to trasacore and removes deleted device from local deivce state after successful response
   const removeUserDevice = () => {
+
+    let apiURL=`${Constants.TRASA_HOSTNAME}/api/v1/user/devices/delete/${deleteDevice.deviceID}`;
+    if(props.renderFor=="myRoute"){
+      apiURL=`${Constants.TRASA_HOSTNAME}/api/v1/my/devices/delete/${deleteDevice.deviceID}`;
+    }
+
     axios
-      .post(`${Constants.TRASA_HOSTNAME}/api/v1/user/devices/delete/${deleteDevice.deviceID}`)
+      .post(apiURL)
       .then((response) => {
         if (response.data.status === 'success') {
           let device = userDevices.browser;

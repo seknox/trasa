@@ -23,7 +23,7 @@ func StartRadiusServer(done chan bool) {
 		server.Shutdown(context.Background())
 	}()
 
-	logrus.Debug("Starting radius server on UDP :1812")
+	logrus.Info("Radius server started on port 1812/udp")
 	if err := server.ListenAndServe(); err != nil {
 		panic(err)
 	}

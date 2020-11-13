@@ -28,7 +28,7 @@ Window two factor authentication is supported via TRASA Windows Credential Provi
 Download [TrasaWIN](https://storage.googleapis.com/trasa-public-download-assets/trasaWIN/TRASA-TFA-20-04.msi) and proceed installation.
 
 :::caution
-Do not reboot or signout from your computer until you configure agent.
+Do not reboot or sign out from your computer until you configure the agent.
 Broken configuration may lock your access to operating system.
 :::
 
@@ -40,7 +40,7 @@ Check on <Highlight color="#1877F2">Launch TrasaWIn to configure now</Highlight>
 
 ## Configuration
 
-If you checked on "Launch TrasaWIn to configure now" checkbox, configuration application will open. You will need to input configuration values in required field.
+If you checked on "Launch TrasaWIN to configure now" checkbox, configuration application will open. You will need to input configuration values in required field.
 
 ### What values goes in input fields?
 
@@ -51,7 +51,7 @@ If you checked on "Launch TrasaWIn to configure now" checkbox, configuration app
 - Skip TLS verification: Allows to connect to TRASA server if self signed certificate is used at port 443.
   ![Configuring value from service profile](/img/docs/tfa/windows/config-from-trasa.png 'Configuring TRASA TFA agent')
 
-In following image, you can see appID appsecret and api hostname entered as per auth app created earlier. Note api host name "app.trasa.io" always remains same for TRASA SaaS users and can be custom url for self hosted (On-Premise) TRASA users.
+In following image, you can see serviceID, serviceKey and TRASA server address entered as per service created earlier. Note TRASA server address "app.trasa.io" always remains same for TRASA SaaS users and can be custom url for self hosted (On-Premise) TRASA users.
 
 Below is example on how configuration would look like.
 ![Configuring TRASA TFA agent](/img/docs/tfa/windows/configure-trasawin-tfa.png 'Configuring TRASA TFA agent')
@@ -59,8 +59,8 @@ Below is example on how configuration would look like.
 Once you are ready with required configuration values, click <Highlight color="#1877F2">Save Configuration</Highlight> button.
 It will
 
-1. verify configuration values
-2. save it in file if verification is successful.
+1. Verify configuration values
+2. Save it in a file if verification is successful.
    ![Confirming verification](/img/docs/tfa/windows/check-config.png 'Confirming verification')
 
 ## Finishing
@@ -70,7 +70,7 @@ If your verification was success, you will be prompted for TRASA tfa process in 
 To check, you can try swithing user (from alt+F4 key).
 ![TRASA Credential Provider](/img/docs/tfa/windows/trasa-credprov.png 'TRASA Credential Provider')
 
-If your username and password validation was success, you will be prompted with TRASA tfa prompt.
+If your username and password validation was successful, you will be prompted with TRASA TFA prompt.
 
 - You will need to enter your TRASA username or email address.
 - On Choose 2FA method, you can leave it empty for push U2F or select TOTP option for TOTP.

@@ -1,23 +1,10 @@
 package utils
 
 import (
-	"fmt"
-	"strings"
-
 	"github.com/lib/pq"
 	"github.com/seknox/trasa/server/consts"
 	"github.com/sirupsen/logrus"
 )
-
-//SqlReplacer replaces '?' characters from sql query into '$1','$2' etc
-func SqlReplacer(src string) string {
-
-	for nParam := 1; strings.Contains(src, "?"); nParam++ {
-		src = strings.Replace(src, "?", fmt.Sprintf("$%d", nParam), 1)
-	}
-
-	return src
-}
 
 //GetConstraintErrorMessage returns user readable error according to violated database constraints.
 //It is used while creating and updating

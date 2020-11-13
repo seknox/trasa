@@ -158,7 +158,7 @@ func GiveMeDeviceDetail(orguser, deviceID, totpSec string) {
 		logrus.Error(err)
 		return
 	}
-	logrus.Debug(orguser)
+	//logrus.Debug(orguser)
 	orgUserArray := strings.Split(orguser, ":")
 
 	if len(orgUserArray) != 2 {

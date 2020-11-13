@@ -22,7 +22,7 @@ You need to install and configure 2fa agents in all SSH servers you want to prot
 
 ### 2. SSH Access Proxy
 
-To use TRASA as an SSH proxy, you need to [configure firewall rules](../../install/initial-setup.md#3-firewall-configuration-recommended) to enforce ssh access from TRASA only.
+To use TRASA as an SSH proxy, you need to [configure firewall rules](../../install/initial-setup.md#5-configuring-network-firewall--optional-recommended) to enforce ssh access from IP address of TRASA server only.
 
 Now users need to SSH into TRASA proxy instead of the upstream server.
 
@@ -35,22 +35,25 @@ Here the port 8022 is the default port of TRASA proxy.
 You can change the default port in [config](../../system/config-reference.md#sshlistenaddr) if you want.
 :::
 
-Learn more about accessing SSH proxy [here](../../guides/user/access/ssh-connection-via-proxy.md)
+Learn more about accessing SSH proxy [here](../../how-to-access/ssh-connection-via-proxy.md)
 
 ## Store Password/Keys in vault
 
 If you save password or ssh keys in the TRASA vault, users don't need to enter the upstream server password while accessing through the TRASA proxy.  
-Follow [this guide](/docs/providers/vault/tsxvault#storing-service-credentials) to configure and store credentials in the vault.
+Follow [this guide](../../providers/vault/tsxvault.md#storing-service-credentials) to configure and store credentials in the vault.
 
 ## SSH Certificates
 
 You can use TRASA as an SSH CA.
 
-CA private keys are stored in the vault, so the vault must be [initialized](/docs/providers/vault/tsxvault#initialize-vault-one-time-only) and [decrypted](/docs/providers/vault/tsxvault#decrypt-the-vault) to use TRASA CA.
+CA private keys are stored in the vault, so the vault must be in [decrypted state ](../../providers/vault/tsxvault.md#vault-states) to use TRASA CA.  
+If it is not initialized, it should be [initialized](../../providers/vault/tsxvault.md#initialize-vault-one-time-only).  
+If it is not decrypted , it should be  [decrypted](/docs/providers/vault/tsxvault#decrypt-the-vault).  
+
 
 ### Initialize CA
 
-- Go to Providers page.
+- Go to `Providers` page.
 
 <img alt="download-user-ca" src={('/img/docs/providers/providers-menu.svg')} />
 
@@ -68,7 +71,7 @@ CA private keys are stored in the vault, so the vault must be [initialized](/doc
 User certificates are used to authenticate ssh users. It can be used instead of a password or a private key.
 
 If you configure user certificates, you don't need to store password or private keys in the vault.
-During SSH access through TRASA access proxy, a temporary certificate is used to make an upstream connection. This makes remote access very easy and secure since the user doesn't need to know password or store keys.
+During SSH access through TRASA access proxy, a temporary certificate is used to make an upstream connection. This makes remote access very easy and secure since the user doesn't need to know the password or store keys.
 
 Now we are going to tell each upstream server to trust any certificate signed by TRASA CA.  
 To do that,
@@ -90,6 +93,10 @@ To do that,
 ### Host Certificates
 
 Host certificates are used to verify the authenticity of ssh servers (hosts).
+We need to generate a host certificate signed by TRASA SSH CA for each upstream server and configure them to use that certificate.
+
+After that, when the SSH client connects to that upstream server, the ssh client can check whether the certificate is indeed signed by TRASA SSH CA.
+
 
 TRASA access proxy will automatically validate host keys and certificates when accessing through the TRASA proxy.
 
@@ -98,12 +105,9 @@ TRASA access proxy will automatically validate host keys and certificates when a
 Configuring client device is applicable when accessing SSH servers directly instead through the TRASA proxy.
 
 - Go to Providers page and click the "Certificate Authority" tab.
+TRASA proxy will automatically validate host keys and certificates when accessing through the TRASA proxy.
+But if you are accessing the SSH server directly, the SSH client (your device) must be configured to trust the TRASA SSH CA.
 
-- Download host CA public key.
-  <img alt="download-host-ca" src={('/img/docs/providers/ca/download-host-ca.png')} />
-
-- Copy its contents to /etc/ssh/ssh_known_hosts in following format.  
-  `@cert-authority * <public key content>`
 
 #### Configure Upstream Server
 
@@ -121,6 +125,20 @@ Configuring client device is applicable when accessing SSH servers directly inst
   `HostCertificate /etc/ssh/id_rsa-cert.pub`
 - Restart sshd daemon.  
   `sudo systemctl restart sshd`
+
+
+#### Configure Client Device
+
+Configuring client device is applicable when accessing SSH servers directly instead through the TRASA proxy.
+
+- Go to Providers page and click the "Certificate Authority" tab.
+
+- Download host CA public key.
+  <img alt="download-host-ca" src={('/img/docs/providers/ca/download-host-ca.png')} />
+
+- Copy its contents to /etc/ssh/ssh_known_hosts in following format.  
+  `@cert-authority * <public key content>`
+
 
 
 
@@ -142,7 +160,7 @@ Then you need to add ssh keys to the instance or project.
 - Copy the contents of [KEY_FILENAME].pub into the field
   <img alt="instance-level-metadata" src={('/img/docs/cloud/gcp/instance-level-metadata.png')} />
 - Click Save
-- [Save the contents of [KEY_FILENAME] in TRASA vault](/docs/providers/vault/tsxvault)
+- [Save the contents of [KEY_FILENAME] in TRASA vault](../../providers/vault/tsxvault.md)
 
 :::tip
 If you want to configure this for all instances of a project, go to the [Metadata](https://console.cloud.google.com/compute/metadata) menu on Compute Engine page.

@@ -2,6 +2,8 @@ package my
 
 import (
 	"database/sql"
+	"fmt"
+	"github.com/seknox/trasa/server/api/devices"
 	"strconv"
 	"strings"
 	"time"
@@ -302,4 +304,35 @@ func GetMyServicesDetail(w http.ResponseWriter, r *http.Request) {
 
 	utils.TrasaResponse(w, http.StatusOK, "success", "", "GetMyServicesDetail", response)
 	return
+}
+
+//RemoveUserDevice removes user device
+func RemoveMyDevice(w http.ResponseWriter, r *http.Request) {
+	userContext := r.Context().Value("user").(models.UserContext)
+	deviceID := chi.URLParam(r, "deviceID")
+
+	fmt.Println(deviceID, "deviceID")
+
+	dev, err := devices.Store.GetFromID(deviceID)
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "failed to delete user device.", "failed to remove user device")
+		return
+	}
+
+	if dev.UserID != userContext.User.ID {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 403, "failed", "you do not have permission to remove this device", "failed to remove user device")
+		return
+	}
+
+	err = devices.Store.Deregister(deviceID, userContext.User.OrgID)
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "failed to delete user device.", "failed to remove user device")
+		return
+	}
+
+	utils.TrasaResponse(w, 200, "success", "user device removed", "user device removed")
+
 }

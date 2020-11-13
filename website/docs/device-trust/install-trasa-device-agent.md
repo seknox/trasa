@@ -34,6 +34,6 @@ Always download agents and installer for TRASA from links provided in trasa.io w
 <br /><br />
 
 :::tip
-You can always view your enroled and active device in your account page **device** tab.
+You can always view your enrolled and active device in your account page **device** tab.
 :::
 <img alt="my devices" src={('/img/docs/tutorial/my-devices.png')} />

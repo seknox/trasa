@@ -84,7 +84,7 @@ export default function TsxCloudProxyAccess(props: any) {
   const classes = useStyles();
   const [reqStatus, setReqStatus] = useState(false);
 
-  const [data, setData] = useState({ email: '', cpxy: '' });
+  const [data, setData] = useState({ email: '', cpxy: 'https://sg.cpxy.trasa.io' });
   const [APIKey, setAPIKey] = useState('');
 
   function handlechange(e: any) {

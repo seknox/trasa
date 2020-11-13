@@ -95,7 +95,7 @@ func ViewCreds(w http.ResponseWriter, r *http.Request) {
 
 	service, err := Store.GetFromID(req.ServiceID)
 	if err != nil {
-		logrus.Error(err, "invalid service ID in view creds")
+		//logrus.Error(err, "invalid service ID in view creds")
 		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "Invalid service", "failed to view password")
 		return

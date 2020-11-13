@@ -1,7 +1,6 @@
 package services
 
 import (
-	"fmt"
 	"reflect"
 	"testing"
 
@@ -86,7 +85,7 @@ func TestGetUpstreamCreds(t *testing.T) {
 	for _, tt := range tests {
 
 		if tt.args.serviceType == "ssh" {
-			fmt.Println(tt.args.serviceType)
+			//fmt.Println(tt.args.serviceType)
 			cryptstore.
 				On("GetCertHolder", consts.CERT_TYPE_SSH_HOST_KEY, tt.args.serviceID, tt.args.orgID).
 				Return(models.CertHolder{

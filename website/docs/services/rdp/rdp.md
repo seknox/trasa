@@ -22,10 +22,10 @@ If you install a native 2fa agent, the 2FA prompt will be shown in local login a
 :::
 
 ### 2. RDP Access Proxy
-To use TRASA as an RDP proxy, you need to [configure firewall rules](../../install/initial-setup.md#3-firewall-configuration-recommended) to enforce RDP access from TRASA only.
+To use TRASA as an RDP proxy, you need to [configure firewall rules](../../install/initial-setup.md#5-configuring-network-firewall--optional-recommended) to enforce RDP access from TRASA only.
 
 We only support access through RDP proxy from a browser. So, users need to log into the TRASA dashboard(web app) to access RDP. 
-Learn more about accessing RDP proxy [here](../../guides/user/access/rdp-connection-via-proxy.md).
+Learn more about accessing RDP proxy [here](../../how-to-access/rdp-connection-via-proxy.md).
 
 TRASA uses guacamole to connect to the RDP server.
 To enable RDP, guacd (guacamole server daemon) must be running. By default, TRASA will look for guacd on 127.0.0.1:4822, but you can change that in [config](../../system/config-reference.md#guacdaddr).

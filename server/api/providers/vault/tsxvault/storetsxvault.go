@@ -265,7 +265,6 @@ func (s vaultStore) TsxVaultTester() error {
 	secret.AddedAt = time.Now().Unix()
 	secret.LastUpdated = time.Now().Unix()
 
-	logger.Debug(fmt.Sprintf("the plain text is: %s", string(secret.Secret)))
 	// encrypt the secret.
 	ct, err := utils.AESEncrypt(s.TsxvKey.Key[:], secret.Secret)
 	if err != nil {
@@ -273,7 +272,6 @@ func (s vaultStore) TsxVaultTester() error {
 		return fmt.Errorf("failed to pass encryption test")
 	}
 
-	logger.Debug(fmt.Sprintf("the cipher text is: %s", string(ct)))
 	secret.Secret = ct
 
 	// store it in database
