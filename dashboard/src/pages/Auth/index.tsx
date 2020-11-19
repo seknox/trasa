@@ -113,13 +113,6 @@ export default function AuthIndex(props: LoginIndexProps) {
     setLoginData({ ...loginData, [event.target.name]: event.target.value });
   }
 
-  // function checkVersion() {
-  //   axios.get(Constants.TRASA_HOSTNAME+"/api/v1/check").then(r=>{
-  //     if(r.data.status==="success"){
-  //       localStorage.setItem("isEE","TRUE")
-  //     }
-  //   })
-  // }
 
   function sendLoginRequest(
     e: React.FormEvent<Element>,

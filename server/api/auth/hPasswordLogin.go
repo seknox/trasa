@@ -166,8 +166,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	logrus.Info(hex.EncodeToString(pub[:]), "-")
-
 	respIntent := consts.AUTH_RESP_TFA_REQUIRED
 	globalDeviceCheck, err := system.Store.GetGlobalSetting(userDetails.OrgID, consts.GLOBAL_DEVICE_HYGIENE_CHECK)
 	if err != nil {

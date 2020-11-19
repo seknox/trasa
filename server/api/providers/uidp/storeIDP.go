@@ -36,6 +36,16 @@ func (s idpStore) GetByID(orgID, idpID string) (models.IdentityProvider, error) 
 	return idp, err
 }
 
+// GetByName retrieves IDP detail based on Name
+
+func (s idpStore) GetByName(orgID, idpName string) (models.IdentityProvider, error) {
+	var idp models.IdentityProvider
+	err := s.DB.QueryRow("SELECT id, org_id, name,type, meta, is_enabled, redirect_url, audience_uri, client_id, endpoint, created_by , last_updated FROM idp WHERE org_id = $1 AND name=$2",
+		orgID, idpName).
+		Scan(&idp.IdpID, &idp.OrgID, &idp.IdpName, &idp.IdpType, &idp.IdpMeta, &idp.IsEnabled, &idp.RedirectURL, &idp.AudienceURI, &idp.ClientID, &idp.Endpoint, &idp.CreatedBy, &idp.LastUpdated)
+	return idp, err
+}
+
 // CreateIDP creates new Identity Provider
 func (s idpStore) CreateIDP(idp *models.IdentityProvider) error {
 
