@@ -3,6 +3,7 @@ package users
 import (
 	"database/sql"
 	"fmt"
+
 	"github.com/sirupsen/logrus"
 
 	"github.com/lib/pq"
