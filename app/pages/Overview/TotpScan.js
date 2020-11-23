@@ -90,7 +90,7 @@ function TotpScan (props){
       const issuer = query.issuer || '';
       const type = query.trasaType || 'public';
 
-      if (protocol === 'otpauth:' && host === 'totp') {
+      if (type === 'public') {
         //Normal TOTP add
 
         update({
@@ -100,7 +100,7 @@ function TotpScan (props){
           type: type,
         });
        // this.props.navigation.navigate('Home');
-      } else if (protocol === 'mobileauth:') {
+      } else if (type === 'private') {
         // this.setState({done:true});
         //Device Enroll
         enrollDevice(query,secret,name,issuer,type)

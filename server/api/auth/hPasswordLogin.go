@@ -249,7 +249,6 @@ func Enrol2FADevice(w http.ResponseWriter, r *http.Request) {
 
 		getUser.Email = req.Email
 
-		orguser := fmt.Sprintf("%s:%s", userDetailWithPass.OrgID, userDetailWithPass.ID)
 		// (2) Generate Device ID
 		deviceID, _ := uuid.NewV4()
 
@@ -265,7 +264,7 @@ func Enrol2FADevice(w http.ResponseWriter, r *http.Request) {
 
 		utils.TrasaResponse(w, 200, "success", "", "EnrolDevice", respVal)
 
-		go devices.GiveMeDeviceDetail(orguser, deviceID.String(), totpSec)
+		go devices.GiveMeDeviceDetail(userDetailWithPass.OrgID, userDetailWithPass.ID, deviceID.String(), totpSec)
 	}
 
 }

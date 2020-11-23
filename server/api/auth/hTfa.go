@@ -382,3 +382,107 @@ func decryptAndUpdateDH(ourPriv, clientPub, clientDH, extID string) (string, err
 
 	return deviceID, nil
 }
+
+type confirmTOTPPreq struct {
+	TOTPCode string `json:"totpCode"`
+	DeviceID string `json:"deviceID"`
+}
+
+//Check newly added TOTP to complete device registration process.
+//This function will also create http session
+func ConfirmTOTPAndSave(w http.ResponseWriter, r *http.Request) {
+	var request confirmTOTPPreq
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "invalid request", "ConfirmTOTPAndSave")
+		return
+	}
+
+	userID_orgID_Totpsec, err := redis.Store.MGet(request.DeviceID,
+		"userID",
+		"orgID",
+		"totpSec",
+	)
+
+	userID := userID_orgID_Totpsec[0]
+	orgID := userID_orgID_Totpsec[1]
+	totpSec := userID_orgID_Totpsec[2]
+
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "invalid deviceID", "ConfirmTOTPAndSave")
+		return
+	}
+
+	prevCode, nowCode, nextCode := utils.CalculateTotp(totpSec)
+	if request.TOTPCode != prevCode && request.TOTPCode != nowCode && request.TOTPCode != nextCode {
+		logrus.Error("invalid TOTP code: %s,%s,%s  != %s", prevCode, nowCode, nextCode, request.TOTPCode)
+		logrus.Error("invalid TOTP code: %s", totpSec)
+		utils.TrasaResponse(w, 200, "failed", "invalid TOTP code", "ConfirmTOTPAndSave")
+		return
+	}
+
+	dev := models.UserDevice{
+		UserID:     userID,
+		OrgID:      orgID,
+		DeviceID:   request.DeviceID,
+		MachineID:  "",
+		DeviceType: "mobile",
+		TotpSec:    totpSec,
+		Trusted:    false,
+		AddedAt:    time.Now().Unix(),
+	}
+
+	fcm_publick_devHyg, err := redis.Store.MGet(request.DeviceID,
+		"fcmToken",
+		"publicKey",
+		"deviceHygiene",
+	)
+
+	if err == nil {
+		var devHyg models.DeviceHygiene
+		err = json.Unmarshal([]byte(fcm_publick_devHyg[2]), &devHyg)
+		if err != nil {
+			logrus.Error(err)
+		}
+
+		dev.FcmToken = fcm_publick_devHyg[0]
+		dev.PublicKey = fcm_publick_devHyg[1]
+		dev.DeviceHygiene = devHyg
+
+	}
+
+	userDetails, err := users.Store.GetFromID(userID, orgID)
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "could not find user", "ConfirmTOTPAndSave")
+		return
+	}
+
+	err = devices.Store.Register(dev)
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "could not register device", "ConfirmTOTPAndSave")
+		return
+	}
+
+	//TODO add deviceID and browserID
+	sessionToken, resp, err := sessionResponse(userDetails, "", "")
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "could not get session", "ConfirmTOTPAndSave")
+		return
+	}
+
+	xSESSION := http.Cookie{
+		Name:     "X-SESSION",
+		Value:    sessionToken,
+		HttpOnly: true,
+		SameSite: http.SameSiteStrictMode,
+		Secure:   true,
+		Path:     "/",
+	}
+
+	http.SetCookie(w, &xSESSION)
+	utils.TrasaResponse(w, 200, "success", "", "", resp)
+}

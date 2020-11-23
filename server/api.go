@@ -77,6 +77,7 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 
 		r.Post("/login", auth.LoginHandler)
 		r.Post("/login/tfa", auth.TfaHandler)
+		r.Post("/login/checktfa", auth.ConfirmTOTPAndSave)
 		r.Delete("/logout", auth.LogoutHandler)
 
 	})

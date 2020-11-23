@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net/http"
 	"runtime/debug"
-	"strings"
 	"time"
 
 	"github.com/pkg/errors"
@@ -114,7 +113,6 @@ func EnrolDeviceFunc(userDetail models.User) EnrolDeviceStruct {
 
 	deviceID, _ := uuid.NewV4()
 	totpSec := utils.GenerateTotpSecret()
-	orguser := fmt.Sprintf("%s:%s", userDetail.OrgID, userDetail.ID)
 
 	respVal := EnrolDeviceStruct{
 		DeviceID:      deviceID.String(),
@@ -122,7 +120,7 @@ func EnrolDeviceFunc(userDetail models.User) EnrolDeviceStruct {
 		CloudProxyURL: global.GetConfig().Trasa.CloudServer,
 	}
 
-	go GiveMeDeviceDetail(orguser, deviceID.String(), totpSec)
+	go GiveMeDeviceDetail(userDetail.OrgID, userDetail.ID, deviceID.String(), totpSec)
 
 	return respVal
 }
@@ -130,7 +128,7 @@ func EnrolDeviceFunc(userDetail models.User) EnrolDeviceStruct {
 // GiveMeDeviceDetail calls trasa cloud server asking for users device details.
 // It does by first calling cloud server by providing device ID and expects fcm token, public keys in return.
 // once it receives device details, it calls redis to get user ID for that device id then stores users device detail in database.
-func GiveMeDeviceDetail(orguser, deviceID, totpSec string) {
+func GiveMeDeviceDetail(orgID, userID, deviceID, totpSec string) {
 	defer func() {
 		if r := recover(); r != nil {
 			logrus.Error(errors.New(fmt.Sprintf(`%v:%s`, r, string(debug.Stack()))), "Panic in GiveMeDeviceDetail")
@@ -138,8 +136,12 @@ func GiveMeDeviceDetail(orguser, deviceID, totpSec string) {
 
 	}()
 
-	// (1) store device id and orguser into redis.
-	err := redis.Store.Set(deviceID, time.Second*400, "orguser", orguser)
+	// (1) store device id, org ID and user ID into redis.
+	err := redis.Store.Set(deviceID, time.Second*400,
+		"userID", userID,
+		"orgID", orgID,
+		"totpSec", totpSec,
+	)
 	if err != nil {
 		logrus.Error(err)
 		return
@@ -152,82 +154,27 @@ func GiveMeDeviceDetail(orguser, deviceID, totpSec string) {
 		return
 	}
 
-	// (3) fetch user detail from redis (based on deviceID).
-	orguser, err = redis.Store.Get(deviceID, "orguser")
+	// update fcm,public key and device hygiene of temp device
+	err = redis.Store.Set(deviceID, time.Second*400,
+		"fcmToken", deviceDetail.FCMToken,
+		"publicKey", deviceDetail.PublicKey,
+		"deviceHygiene", deviceDetail.DeviceFinger,
+	)
 	if err != nil {
 		logrus.Error(err)
 		return
 	}
-	//logrus.Debug(orguser)
-	orgUserArray := strings.Split(orguser, ":")
-
-	if len(orgUserArray) != 2 {
-		logrus.Errorf("length of orgUserArray is not 2: %v", orgUserArray)
-		return
-	}
-
-	// (4) store user device detail in database
-	var userDevice models.UserDevice
-
-	userDevice.OrgID = orgUserArray[0]
-	userDevice.UserID = orgUserArray[1]
-	userDevice.DeviceID = deviceDetail.DeviceID
-	userDevice.TotpSec = totpSec
-	userDevice.FcmToken = deviceDetail.FcmToken
-	userDevice.DeviceType = "mobile"
-	userDevice.PublicKey = deviceDetail.PublicKey
-
-	userDevice.AddedAt = time.Now().Unix() //.In(nep).String()
-
-	//logrus.Debug(deviceDetail.DeviceFinger,"\n\n\n\n")
-
-	var devHyg models.DeviceHygiene
-	err = json.Unmarshal([]byte(deviceDetail.DeviceFinger), &devHyg)
-	if err != nil {
-		//TODO handle error after mobile app is also updated in ios
-		// ignoring error for backward compatibility
-		//logrus.Trace(deviceDetail.DeviceFinger)
-		logrus.Error(err)
-	} else {
-		userDevice.DeviceHygiene = devHyg
-		userDevice.MachineID = devHyg.DeviceInfo.MachineID
-	}
-
-	//Also remove this
-	if deviceDetail.DeviceFinger == "" {
-		userDevice.DeviceFinger = "{}"
-	} else {
-		userDevice.DeviceFinger = deviceDetail.DeviceFinger //"{}"
-	}
-
-	// we register device id and fcm tokens here.
-	if strings.Compare(userDevice.DeviceID, "") == 0 {
-		logrus.Error("device id not found GiveMeDeviceDetail")
-		return
-	}
-	err = Store.Register(userDevice)
-	if err != nil {
-		logrus.Error(err)
-		return
-	}
-
-	//val, err := dbstore.Connect.GetUserApps(orgUserArray[1], userDevice.OrgID)
-	//if err != nil {
-	//	logrus.Error(err)
-	//}
-
-	//appsArray := val
-	//var fcmTokens []string
-	//fcmTokens = append(fcmTokens, deviceDetail.FcmToken)
-	//mar, err := json.Marshal(appsArray)
-	//if err != nil {
-	//	logrus.Error("Json marshal error in Givemedevive detail")
-	//}
-	//deferAppDetailSync(fcmTokens, string(mar))
 
 }
 
-func callServerForDeviceDetail(deviceID string) (models.UserDevice, error) {
+type deviceEnrollResp struct {
+	DeviceID     string `json:"deviceID"`
+	FCMToken     string `json:"fcmToken"`
+	PublicKey    string `json:"publicKey"`
+	DeviceFinger string `json:"deviceFinger"`
+}
+
+func callServerForDeviceDetail(deviceID string) (deviceEnrollResp, error) {
 
 	var requestConfig models.UserDevice
 	requestConfig.DeviceID = deviceID
@@ -237,19 +184,19 @@ func callServerForDeviceDetail(deviceID string) (models.UserDevice, error) {
 	//	inseccure := global.GetConfig().Security.InsecureSkipVerify
 	mar, err := json.Marshal(requestConfig)
 	if err != nil {
-		return models.UserDevice{}, errors.Errorf("failed to marshal request : %v", err)
+		return deviceEnrollResp{}, errors.Errorf("failed to marshal request : %v", err)
 	}
 
 	//resp, err := utils.CallTrasaAPI(urlPath, requestConfig, inseccure)
 	resp, err := http.Post(urlPath, "application/json", bytes.NewBuffer(mar))
 	if err != nil {
-		return models.UserDevice{}, errors.Errorf("failed to get device detail: %v", err)
+		return deviceEnrollResp{}, errors.Errorf("failed to get device detail: %v", err)
 	}
 
-	var dev models.UserDevice
+	var dev deviceEnrollResp
 	err = json.NewDecoder(resp.Body).Decode(&dev)
 	if err != nil {
-		return models.UserDevice{}, errors.Errorf("failed to get device detail: %v", err)
+		return deviceEnrollResp{}, errors.Errorf("failed to get device detail: %v", err)
 	}
 	return dev, err
 	//
