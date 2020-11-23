@@ -105,6 +105,7 @@ type EnrolDeviceStruct struct {
 	DeviceID      string `json:"deviceID"`
 	TotpSSC       string `json:"totpSSC"`
 	OrgName       string `json:"orgName"`
+	Account       string `json:"account"`
 	CloudProxyURL string `json:"cloudProxyURL"`
 }
 

@@ -136,6 +136,10 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if !enrolled {
 		resp := devices.EnrolDeviceFunc(models.CopyUserWithoutPass(*userDetails))
 		resp.OrgName = userDetails.OrgName
+		resp.Account = userDetails.Email
+		if resp.Account == "" {
+			resp.Account = userDetails.UserName
+		}
 		utils.TrasaResponse(w, http.StatusOK, "success", "enrol device", consts.AUTH_RESP_ENROL_DEVICE, resp)
 		return
 	}
