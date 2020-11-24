@@ -4,6 +4,7 @@ import (
 	"github.com/seknox/trasa/server/accessproxy/sshproxy"
 	"github.com/seknox/trasa/tests/server/accessproxytest"
 	"github.com/seknox/trasa/tests/server/crudtest"
+	"github.com/seknox/trasa/tests/server/devicestest"
 	"github.com/seknox/trasa/tests/server/notiftest"
 	"github.com/seknox/trasa/tests/server/providerstest"
 	"github.com/seknox/trasa/tests/server/systemtest"
@@ -16,6 +17,10 @@ import (
 func TestServer(t *testing.T) {
 
 	vaulttest.InitVault(t)
+
+	t.Run("enroll device test with trasa authenticator", devicestest.EnrollTFADeviceTest)
+	t.Run("enroll device test with other authenticator", devicestest.EnrollTFADeviceTestWith3rdPartyAuthenticator)
+	t.Run("register workstation test", devicestest.RegisterWorkstationTest)
 
 	t.Run("test system settings", func(t *testing.T) {
 		systemtest.UpdateSettings(t)

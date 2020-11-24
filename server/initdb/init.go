@@ -255,7 +255,7 @@ func initSystemCA() {
 		panic(err)
 		return
 	}
-	pubKey, err := utils.GeneratePublicKey(&privateKey.PublicKey)
+	pubKey, err := utils.ConvertPublicKeyToSSHFormat(&privateKey.PublicKey)
 	if err != nil {
 		panic(err)
 		return

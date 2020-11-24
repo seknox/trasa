@@ -168,14 +168,14 @@ func GiveMeDeviceDetail(orgID, userID, deviceID, totpSec string) {
 
 }
 
-type deviceEnrollResp struct {
+type DeviceEnrollResp struct {
 	DeviceID     string `json:"deviceID"`
 	FCMToken     string `json:"fcmToken"`
 	PublicKey    string `json:"publicKey"`
 	DeviceFinger string `json:"deviceFinger"`
 }
 
-func callServerForDeviceDetail(deviceID string) (deviceEnrollResp, error) {
+func callServerForDeviceDetail(deviceID string) (DeviceEnrollResp, error) {
 
 	var requestConfig models.UserDevice
 	requestConfig.DeviceID = deviceID
@@ -185,19 +185,19 @@ func callServerForDeviceDetail(deviceID string) (deviceEnrollResp, error) {
 	//	inseccure := global.GetConfig().Security.InsecureSkipVerify
 	mar, err := json.Marshal(requestConfig)
 	if err != nil {
-		return deviceEnrollResp{}, errors.Errorf("failed to marshal request : %v", err)
+		return DeviceEnrollResp{}, errors.Errorf("failed to marshal request : %v", err)
 	}
 
 	//resp, err := utils.CallTrasaAPI(urlPath, requestConfig, inseccure)
 	resp, err := http.Post(urlPath, "application/json", bytes.NewBuffer(mar))
 	if err != nil {
-		return deviceEnrollResp{}, errors.Errorf("failed to get device detail: %v", err)
+		return DeviceEnrollResp{}, errors.Errorf("failed to get device detail: %v", err)
 	}
 
-	var dev deviceEnrollResp
+	var dev DeviceEnrollResp
 	err = json.NewDecoder(resp.Body).Decode(&dev)
 	if err != nil {
-		return deviceEnrollResp{}, errors.Errorf("failed to get device detail: %v", err)
+		return DeviceEnrollResp{}, errors.Errorf("failed to get device detail: %v", err)
 	}
 	return dev, err
 	//

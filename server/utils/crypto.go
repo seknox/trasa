@@ -139,10 +139,10 @@ func EncodePrivateKeyToPEM(privateKey *rsa.PrivateKey) []byte {
 	return privatePEM
 }
 
-// GeneratePublicKey take a rsa.PublicKey and return bytes suitable for writing to .pub file
+// ConvertPublicKeyToSSHFormat takes a rsa.PublicKey and return bytes suitable for writing to .pub file
 // returns in the format "ssh-rsa ..."
-func GeneratePublicKey(privatekey *rsa.PublicKey) ([]byte, error) {
-	publicRsaKey, err := ssh.NewPublicKey(privatekey)
+func ConvertPublicKeyToSSHFormat(publicKey *rsa.PublicKey) ([]byte, error) {
+	publicRsaKey, err := ssh.NewPublicKey(publicKey)
 	if err != nil {
 		return nil, err
 	}

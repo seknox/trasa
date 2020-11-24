@@ -21,7 +21,7 @@ import (
 	"github.com/tstranex/u2f"
 )
 
-type tfaRequest struct {
+type TfaRequest struct {
 	// Token is unique to tfarequest which is tied to specific user profile
 	Token string `json:"token"`
 	// TfaMethod can be u2f, totp or htoken
@@ -39,7 +39,7 @@ type tfaRequest struct {
 // TfaHandler handles two factor authentication from TRASA ui
 func TfaHandler(w http.ResponseWriter, r *http.Request) {
 
-	var req tfaRequest
+	var req TfaRequest
 	//var service dbstore.App
 	//var respBody userLoginStatus
 
@@ -204,7 +204,7 @@ func getIntentMatch(intent string) bool {
 	return retVal
 }
 
-func handleTFAMethodd(req tfaRequest, user *models.User, authlog *logs.AuthLog) (status, reason string, resp interface{}) {
+func handleTFAMethodd(req TfaRequest, user *models.User, authlog *logs.AuthLog) (status, reason string, resp interface{}) {
 	switch req.TfaMethod {
 	// in case of u2fy, we do not need to generate login credentials here but process it in another signed response request from client
 	case "u2fy":
@@ -248,7 +248,7 @@ func handleTFAMethodd(req tfaRequest, user *models.User, authlog *logs.AuthLog) 
 
 }
 
-func handleIntentResponse(req tfaRequest, user *models.User, deviceID, browserID string) (status string, reason consts.FailedReason, intent, sessionToken string, resp interface{}) {
+func handleIntentResponse(req TfaRequest, user *models.User, deviceID, browserID string) (status string, reason consts.FailedReason, intent, sessionToken string, resp interface{}) {
 	orgUserStr := fmt.Sprintf("%s:%s", user.OrgID, user.ID)
 	switch req.Intent {
 	// in case of u2fy, we do not need to generate login credentials here but process it in another signed response request from client
@@ -383,7 +383,7 @@ func decryptAndUpdateDH(ourPriv, clientPub, clientDH, extID string) (string, err
 	return deviceID, nil
 }
 
-type confirmTOTPPreq struct {
+type ConfirmTOTPPreq struct {
 	TOTPCode string `json:"totpCode"`
 	DeviceID string `json:"deviceID"`
 }
@@ -391,7 +391,7 @@ type confirmTOTPPreq struct {
 //Check newly added TOTP to complete device registration process.
 //This function will also create http session
 func ConfirmTOTPAndSave(w http.ResponseWriter, r *http.Request) {
-	var request confirmTOTPPreq
+	var request ConfirmTOTPPreq
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "invalid request", "ConfirmTOTPAndSave")
@@ -404,15 +404,15 @@ func ConfirmTOTPAndSave(w http.ResponseWriter, r *http.Request) {
 		"totpSec",
 	)
 
-	userID := userID_orgID_Totpsec[0]
-	orgID := userID_orgID_Totpsec[1]
-	totpSec := userID_orgID_Totpsec[2]
-
 	if err != nil {
 		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "invalid deviceID", "ConfirmTOTPAndSave")
 		return
 	}
+
+	userID := userID_orgID_Totpsec[0]
+	orgID := userID_orgID_Totpsec[1]
+	totpSec := userID_orgID_Totpsec[2]
 
 	prevCode, nowCode, nextCode := utils.CalculateTotp(totpSec)
 	if request.TOTPCode != prevCode && request.TOTPCode != nowCode && request.TOTPCode != nextCode {
