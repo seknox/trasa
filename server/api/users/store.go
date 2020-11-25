@@ -122,6 +122,17 @@ func (s userStore) Update(user models.User) error {
 	return err
 }
 
+// UpdateStatus change active or disabled status of user.
+func (s userStore) UpdateStatus(state bool, userID, orgID string) error {
+	_, err := s.DB.Exec(`UPDATE usersv1 SET status = $1, WHERE user_id = $2 AND org_id = $3;`,
+		state, userID, orgID)
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 //UpdatePassword updates password of given user. It expects password to be already hashed
 func (s userStore) UpdatePassword(userID, password string) error {
 	_, err := s.DB.Exec(`UPDATE users SET password = $1 WHERE id = $2;`, password, userID)

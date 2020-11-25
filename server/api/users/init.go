@@ -42,7 +42,7 @@ type adapter interface {
 	Create(user *models.UserWithPass) error
 	Delete(userID, orgID string) (string, string, error)
 	Update(user models.User) error
-
+	UpdateStatus(state bool, userID, orgID string) error
 	UpdatePublicKey(userID string, publicKey string) error
 
 	UpdatePassword(userID, password string) error
