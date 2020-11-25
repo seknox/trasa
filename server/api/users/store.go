@@ -3,6 +3,8 @@ package users
 import (
 	"database/sql"
 	"fmt"
+	"strings"
+
 	"github.com/sirupsen/logrus"
 
 	"github.com/lib/pq"
@@ -17,6 +19,33 @@ func (s userStore) GetFromID(userID, orgID string) (user *models.User, err error
 		Scan(&user.OrgID, &user.ID, &user.UserName, &user.FirstName, &user.MiddleName, &user.LastName, &user.Email, &user.UserRole, &user.Status, &user.CreatedAt, &user.UpdatedAt, &user.IdpName)
 
 	return
+}
+
+// GetFromTRASAID returns user details from user trasaID (username or email address)
+func (s userStore) GetFromTRASAID(trasaID, orgID string) (*models.User, error) {
+
+	isTrasaIDEmail := strings.Contains(trasaID, "@")
+
+	//TODO use domain
+
+	sqlStr := ``
+
+	if isTrasaIDEmail {
+		sqlStr = `SELECT users.org_id, users.id, first_name, email, idp_name, user_role, status ,org.org_name
+				FROM users
+				JOIN org ON users.org_id=org.id
+				WHERE users.email=$1 AND users.org_id=$2`
+	} else {
+		sqlStr = `SELECT users.org_id, users.id, first_name, email, idp_name, user_role, status ,org.org_name
+				FROM users
+				JOIN org ON users.org_id=org.id
+				WHERE users.username=$1 AND users.org_id=$2`
+	}
+
+	var user models.User
+	err := s.DB.QueryRow(sqlStr, trasaID, orgID).Scan(&user.OrgID, &user.ID, &user.FirstName, &user.Email, &user.IdpName, &user.UserRole, &user.Status)
+
+	return &user, err
 }
 
 //GetAll returns all users of an organization
@@ -91,6 +120,17 @@ func (s userStore) Update(user models.User) error {
 		user.UserName, user.FirstName, user.MiddleName, user.LastName, user.Email, user.UserRole, user.UpdatedAt, user.Status, user.ID)
 
 	return err
+}
+
+// UpdateStatus change active or disabled status of user.
+func (s userStore) UpdateStatus(state bool, userID, orgID string) error {
+	_, err := s.DB.Exec(`UPDATE usersv1 SET status = $1, WHERE user_id = $2 AND org_id = $3;`,
+		state, userID, orgID)
+
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 //UpdatePassword updates password of given user. It expects password to be already hashed

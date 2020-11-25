@@ -26,6 +26,12 @@ func (us *UserStoreMock) GetFromID(userID, orgID string) (*models.User, error) {
 	return args.Get(0).(*models.User), args.Error(1)
 }
 
+func (us *UserStoreMock) GetFromTRASAID(trasaID, orgID string) (*models.User, error) {
+	args := us.Called(trasaID, orgID)
+
+	return args.Get(0).(*models.User), args.Error(1)
+}
+
 //GetAdminEmails mock
 func (us *UserStoreMock) GetAdminEmails(orgID string) ([]string, error) {
 	args := us.Called(orgID)
@@ -50,6 +56,11 @@ func (us *UserStoreMock) Delete(userID, orgID string) (string, string, error) {
 
 //Update mock
 func (us *UserStoreMock) Update(user models.User) error {
+	panic("implement me")
+}
+
+// UpdateStatus mock
+func (us *UserStoreMock) UpdateStatus(state bool, userID, orgID string) error {
 	panic("implement me")
 }
 
