@@ -318,5 +318,20 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 
 	})
 
+	// SCIM endpoint allows scim providers to manage users and user groups in TRASA.
+	r.Route("/scim/v2", func(r chi.Router) {
+
+		// 	User     /Users           GET (Section 3.4.1),   Retrieve, add,
+		// 							  POST (Section 3.3),    modify Users.
+		// 							  PUT (Section 3.5.1),
+		// 							  PATCH (Section 3.5.2),
+		// 							  DELETE (Section 3.6)
+		// get single user detail from userID
+		r.Get("/Users/{userID}", uidp.SCIMGetSingleUser)
+		r.Get("/Users", uidp.SCIMGetSingleUsersWithFilter)
+		r.Post("/Users", uidp.SCIMCreateUser)
+
+	})
+
 	return r
 }
