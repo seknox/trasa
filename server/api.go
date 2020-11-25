@@ -330,6 +330,8 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		r.Get("/Users/{userID}", uidp.SCIMGetSingleUser)
 		r.Get("/Users", uidp.SCIMGetSingleUsersWithFilter)
 		r.Post("/Users", uidp.SCIMCreateUser)
+		r.Put("/Users/{userID}", uidp.SCIMPutSingleUser)
+		r.Patch("/Users/{userID}", uidp.SCIMPatchSingleUser)
 
 	})
 

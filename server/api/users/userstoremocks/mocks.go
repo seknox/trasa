@@ -59,6 +59,11 @@ func (us *UserStoreMock) Update(user models.User) error {
 	panic("implement me")
 }
 
+// UpdateStatus mock
+func (us *UserStoreMock) UpdateStatus(state bool, userID, orgID string) error {
+	panic("implement me")
+}
+
 //UpdatePublicKey mock
 func (us *UserStoreMock) UpdatePublicKey(userID string, publicKey string) error {
 	panic("implement me")

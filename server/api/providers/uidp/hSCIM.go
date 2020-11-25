@@ -15,6 +15,40 @@ import (
 	logger "github.com/sirupsen/logrus"
 )
 
+/////////////////////////////////////////////////////////////////////////
+/////////////////////      SCIM Reference     ///////////////////////////
+/////////////////////////////////////////////////////////////////////////
+// 	HTTP   SCIM Usage
+// 	Method
+// 	------ --------------------------------------------------------------
+// 	GET    Retrieves one or more complete or partial resources.
+
+// 	POST   Depending on the endpoint, creates new resources, creates a
+// 		   search request, or MAY be used to bulk-modify resources.
+
+// 	PUT    Modifies a resource by replacing existing attributes with a
+// 		   specified set of replacement attributes (replace).  PUT
+// 		   MUST NOT be used to create new resources.
+
+// 	PATCH  Modifies a resource with a set of client-specified changes
+// 		   (partial update).
+
+// 	DELETE Deletes a resource.
+
+// 						 Table 1: SCIM HTTP Methods
+
+//  Hunt, et al.                 Standards Track                    [Page 9]
+
+//  RFC 7644               SCIM Protocol Specification        September 2015
+
+// 	Resource Endpoint         Operations             Description
+// 	-------- ---------------- ---------------------- --------------------
+// 	User     /Users           GET (Section 3.4.1),   Retrieve, add,
+// 							  POST (Section 3.3),    modify Users.
+// 							  PUT (Section 3.5.1),
+// 							  PATCH (Section 3.5.2),
+// 							  DELETE (Section 3.6)
+
 // SCIMCreateUser creates user in TRASA based on data from SCIM request.
 func SCIMCreateUser(w http.ResponseWriter, r *http.Request) {
 
@@ -127,6 +161,68 @@ func SCIMGetSingleUsersWithFilter(w http.ResponseWriter, r *http.Request) {
 		scimUserListResp(w, 200, ss)
 
 	}
+
+}
+
+// SCIMPutSingleUser updates user profile (all details supplied by request). For single element update, use patch.
+func SCIMPutSingleUser(w http.ResponseWriter, r *http.Request) {
+	uc := r.Context().Value("scimprov").(models.ScimContext)
+
+	var req models.ScimUser
+
+	//email := chi.URLParam(r, "userID")
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		scimNotFoundOrConflictResp(w, 409, "user already exists", consts.SCIM_USER_SCHEMA)
+		return
+	}
+
+	trasaUser := transformSuserToTuser(req, uc)
+
+	err := users.Store.Update(trasaUser) //createUser(&user)
+	if err != nil {
+		logger.Debug(err)
+		var s models.ScimUser
+		scimUserResp(w, 200, s)
+		return
+	}
+
+	logger.Debug(err)
+
+	suser := transformTuserToSuser(&trasaUser)
+	scimUserResp(w, 200, suser)
+
+}
+
+// SCIMPatchSingleUser patch single element. Currently only update user status is implemented.
+func SCIMPatchSingleUser(w http.ResponseWriter, r *http.Request) {
+	uc := r.Context().Value("scimprov").(models.ScimContext)
+
+	var req models.ScimUser
+
+	userID := chi.URLParam(r, "userID")
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		scimNotFoundOrConflictResp(w, 409, "user already exists", consts.SCIM_USER_SCHEMA)
+		return
+	}
+
+	err := users.Store.UpdateStatus(req.Active, userID, uc.OrgID) //createUser(&user)
+	if err != nil {
+		logger.Debug(err)
+		var s models.ScimUser
+		scimUserResp(w, 200, s)
+		return
+	}
+
+	userDetailFromDb, err := users.Store.GetFromID(userID, uc.OrgID)
+	if err != nil {
+		logger.Error(err)
+		var s models.ScimUser
+		scimUserResp(w, 200, s)
+		return
+	}
+
+	suser := transformTuserToSuser(userDetailFromDb)
+	scimUserResp(w, 200, suser)
 
 }
 
