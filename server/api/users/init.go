@@ -33,6 +33,7 @@ type userStore struct {
 type adapter interface {
 	//CRUD
 	GetFromID(userID, orgID string) (*models.User, error)
+	GetFromTRASAID(trasaID, orgID string) (*models.User, error)
 	GetAll(orgID string) ([]models.User, error)
 	GetAllByIdp(orgID, idpName string) ([]models.User, error)
 	GetAdminEmails(orgID string) ([]string, error)
