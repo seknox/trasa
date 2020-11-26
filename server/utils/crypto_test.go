@@ -294,13 +294,13 @@ func TestGeneratePublicKey(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := GeneratePublicKey(tt.args.privatekey)
+			got, err := ConvertPublicKeyToSSHFormat(tt.args.privatekey)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("GeneratePublicKey() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("ConvertPublicKeyToSSHFormat() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GeneratePublicKey() got = %v, want %v", got, tt.want)
+				t.Errorf("ConvertPublicKeyToSSHFormat() got = %v, want %v", got, tt.want)
 			}
 		})
 	}

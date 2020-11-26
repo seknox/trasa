@@ -129,7 +129,7 @@ func setupTestEnv() *global.State {
 			Ssodomain      string `toml:"ssodomain"`
 			Rootdir        string `toml:"rootdir"`
 			OrgId          string `toml:"orgID"`
-		}{false, "https://localhost", false, "localhost", "", "", "https://u2fproxy.trasa.io", "", "", testutils.MockOrgID},
+		}{false, "https://localhost", false, "localhost", "", "", "https://sg.cpxy.trasa.io", "", "", testutils.MockOrgID},
 		Proxy: struct {
 			SSHListenAddr string `toml:"sshlistenAddr"`
 			GuacdAddr     string `toml:"guacdAddr"`

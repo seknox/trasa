@@ -3,10 +3,14 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import { makeStyles } from '@material-ui/core/styles';
 import QRCode from 'qrcode.react';
-import React from 'react';
+import React, {useState} from 'react';
 import servicestoreIcon from '../../assets/loginpage/appstore.png';
 import PlaystoreIcon from '../../assets/loginpage/playstore.png';
 import TrasaLogo from '../../assets/trasa-ni.svg';
+import Dialogue from "../../utils/Components/DialogueWrapComponent";
+import {TextField} from "@material-ui/core";
+import Constants from "../../Constants";
+import axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -160,6 +164,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function EnrolDevice(props: any) {
   const classes = useStyles();
+  const [totpDialogOpen,setTotpDialogOpen] = useState(false);
   return (
     <div className={classes.root}>
       <br />
@@ -197,7 +202,7 @@ export default function EnrolDevice(props: any) {
           <br />
           <div className={classes.padMiddle}>
             <QRCode
-              value={`mobileauth://api.trasa.seknox.com/?trasaType=private&deviceID=${props.enrolDeviceDetail.deviceID}&issuer=${props.enrolDeviceDetail.orgName}&secret=${props.enrolDeviceDetail.totpSSC}&trasaURL=${props.enrolDeviceDetail.cloudProxyURL}`}
+              value={`otpauth://totp/trasa:${props.enrolDeviceDetail.account}?trasaType=private&deviceID=${props.enrolDeviceDetail.deviceID}&issuer=${props.enrolDeviceDetail.orgName}&secret=${props.enrolDeviceDetail.totpSSC}&trasaURL=${props.enrolDeviceDetail.cloudProxyURL}`}
               size={256}
             />
             <br /> <br />
@@ -212,12 +217,59 @@ export default function EnrolDevice(props: any) {
           <div className={classes.heading}>3. Test your device : </div> <br />
           <Button
             style={{ background: 'navy', color: 'white' }}
-            onClick={() => window.location.reload()}
+            onClick={() => setTotpDialogOpen(true)}
           >
             Done
           </Button>
         </CardContent>
       </Card>
+      <ConfirmTOTPDialog open={totpDialogOpen} handleClose={()=>setTotpDialogOpen(false)} deviceID={props.enrolDeviceDetail.deviceID}/>
     </div>
   );
+}
+
+type ConfirmTOTPDialogProps = {
+  open:boolean,
+  deviceID:string,
+  handleClose: ()=>void,
+}
+
+function ConfirmTOTPDialog(props:ConfirmTOTPDialogProps) {
+  const [totp,setTOTP] = useState("")
+  const onSubmit = () => {
+    axios.post(Constants.TRASA_HOSTNAME+"/idp/login/checktfa",{totpCode:totp,deviceID:props.deviceID}).then(r=>{
+      if(r.data.status=="success"){
+        localStorage.setItem('X-CSRF', r.data.data[0].CSRFToken);
+        if (r.data.data[0].user.userRole === 'orgAdmin') {
+          const urlParams = new URLSearchParams(window.location.search);
+          const nextUrl = urlParams.get('next');
+          if (nextUrl) {
+            window.location.href = nextUrl;
+          } else {
+            window.location.href = '/overview';
+          }
+        } else {
+          window.location.href = '/my';
+        }
+      }
+    })
+  }
+  return(
+
+      <Dialogue open={props.open} fullScreen={false} handleClose={props.handleClose} maxWidth={"sm"} title={"Verify TOTP"}>
+        <TextField
+            fullWidth
+            label="TOTP"
+            // defaultValue={loginData.password}
+            onChange={(e)=>{setTOTP(e.target.value)}}
+            id="totp"
+            name="totp"
+            type="number"
+            value={totp}
+            variant="outlined"
+            size="small"
+        />
+        <Button variant="contained" onClick={onSubmit}>Verify</Button>
+      </Dialogue>
+  )
 }

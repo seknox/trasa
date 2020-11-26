@@ -10,7 +10,9 @@ const (
 	MockUserID = "13c45cfb-72ca-4177-b968-03604cab6a27"
 
 	MockTrasaID      = "root"
+	MockTrasaID2     = "bhbha@gmail.com"
 	MocktrasaPass    = "changeme"
+	MocktrasaPass2   = "Changeme@123"
 	MocktotpSEC      = "AV2COXZHVG4OAFSF"
 	MockupstreamUser = "root"
 	MockupstreamPass = "root"
