@@ -30,7 +30,7 @@
     "otp-client": "^1.0.2",
     "prop-types": "^15.7.2",
     "react": "16.13.1",
-    "react-native": "0.63.1",
+    "react-native": "0.63.3",
     "react-native-barcode-mask": "^1.1.0",
     "react-native-bootsplash": "^2.2.5",
     "react-native-camera": "git+https://git@github.com/react-native-community/react-native-camera.git",
