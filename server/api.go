@@ -333,7 +333,7 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		r.Post("/Users", uidp.SCIMCreateUser)
 		r.Put("/Users/{userID}", uidp.SCIMPutSingleUser)
 		r.Patch("/Users/{userID}", uidp.SCIMPatchSingleUser)
-
+		r.Delete("/Users/{userID}", uidp.SCIMDeleteUser)
 	})
 
 	return r
