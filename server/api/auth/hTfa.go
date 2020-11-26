@@ -416,8 +416,7 @@ func ConfirmTOTPAndSave(w http.ResponseWriter, r *http.Request) {
 
 	prevCode, nowCode, nextCode := utils.CalculateTotp(totpSec)
 	if request.TOTPCode != prevCode && request.TOTPCode != nowCode && request.TOTPCode != nextCode {
-		logrus.Error("invalid TOTP code: %s,%s,%s  != %s", prevCode, nowCode, nextCode, request.TOTPCode)
-		logrus.Error("invalid TOTP code: %s", totpSec)
+		logrus.Error("invalid TOTP code")
 		utils.TrasaResponse(w, 200, "failed", "invalid TOTP code", "ConfirmTOTPAndSave")
 		return
 	}
