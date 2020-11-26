@@ -2,16 +2,19 @@ package uidp
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
 
 	"github.com/go-chi/chi"
+	"github.com/seknox/trasa/server/api/notif"
 	"github.com/seknox/trasa/server/api/users"
 	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/models"
 	"github.com/seknox/trasa/server/utils"
+	"github.com/sirupsen/logrus"
 	logger "github.com/sirupsen/logrus"
 )
 
@@ -223,6 +226,47 @@ func SCIMPatchSingleUser(w http.ResponseWriter, r *http.Request) {
 
 	suser := transformTuserToSuser(userDetailFromDb)
 	scimUserResp(w, 200, suser)
+
+}
+
+// DeleteUser should be atomic transaction - a single user delete call should delete users detail from
+// every database tabble connected with user.
+func SCIMDeleteUser(w http.ResponseWriter, r *http.Request) {
+
+	userID := chi.URLParam(r, "userID")
+
+	sc := r.Context().Value("scimprov").(models.ScimContext)
+	email, userRole, err := users.Store.Delete(userID, sc.OrgID) //createUser(&user)
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "failed deleting user", "user not deleted", nil)
+		return
+	}
+
+	err = users.Store.DeleteAllUserAccessMaps(userID, sc.OrgID)
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "failed deleting user.", "user not deleted", nil)
+		return
+	}
+
+	err = users.Store.DeregisterUserDevices(userID, sc.OrgID)
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "failed deleting user.", "user not deleted", nil)
+		return
+	}
+
+	utils.TrasaResponse(w, http.StatusOK, "success", "successfully deleted user", fmt.Sprintf(`user "%s" deleted`, email), nil)
+
+	//TODO @sshah
+	_ = userRole
+	if userRole == "orgAdmin" {
+		go notif.CheckAndFireSecurityRule(sc.OrgID, consts.DELETE_ADMIN_USER, email)
+
+	} else {
+		go notif.CheckAndFireSecurityRule(sc.OrgID, consts.DELETE_USER, email)
+	}
 
 }
 
