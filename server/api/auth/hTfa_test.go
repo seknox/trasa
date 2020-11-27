@@ -25,7 +25,7 @@ func Test_handleIntentResponse(t *testing.T) {
 
 	pass, _ := bcrypt.GenerateFromPassword([]byte("testpass@123"), bcrypt.DefaultCost)
 	authstore.
-		On("GetLoginDetails", "user@example.com", "").
+		On("GetLoginDetails", "rot", "").
 		Return(&models.UserWithPass{
 			User: models.User{
 				ID:         "123",
@@ -73,6 +73,7 @@ func Test_handleIntentResponse(t *testing.T) {
 				ID:       "123456789",
 				OrgID:    "abc",
 				Email:    "user@example.com",
+				UserName: "rot",
 				UserRole: "orgAdmin",
 				Status:   true,
 				IdpName:  "trasa",
@@ -95,6 +96,7 @@ func Test_handleIntentResponse(t *testing.T) {
 				ID:       "123456789",
 				OrgID:    "abc",
 				Email:    "user@example.com",
+				UserName: "rot",
 				UserRole: "orgAdmin",
 				Status:   true,
 				IdpName:  "trasa",
@@ -117,6 +119,7 @@ func Test_handleIntentResponse(t *testing.T) {
 				ID:       "123456789",
 				OrgID:    "abc",
 				Email:    "user@example.com",
+				UserName: "rot",
 				UserRole: "orgAdmin",
 				Status:   true,
 				IdpName:  "trasa",
