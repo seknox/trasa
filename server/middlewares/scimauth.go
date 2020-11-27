@@ -28,9 +28,7 @@ func SCIMTokenValidator(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		logrus.Trace("HEADER::::::::::::: ", authHeader)
 		authorization := strings.Split(authHeader, " ")
-		logrus.Trace("authorization::::::::::::: ", authorization)
 		if len(authorization) < 2 {
 			logrus.Error("no authorization token")
 			utils.TrasaResponse(w, 403, "failed", "no Authorization token", "SCIMTokenValidator", nil, nil)
@@ -45,7 +43,6 @@ func SCIMTokenValidator(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		logrus.Trace("decodedkey::::::::::::: ", string(decodedkey))
 		orgPass := strings.Split(string(decodedkey), ":")
 
 		// fetch and check from database
