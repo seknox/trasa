@@ -18,7 +18,7 @@ func TestServer(t *testing.T) {
 
 	vaulttest.InitVault(t)
 
-	t.Run("enroll device test with trasa authenticator", devicestest.EnrollTFADeviceTest)
+	t.Run("enroll device test", devicestest.EnrollTFADeviceTest)
 	t.Run("register workstation test", devicestest.RegisterWorkstationTest)
 
 	t.Run("test system settings", func(t *testing.T) {
