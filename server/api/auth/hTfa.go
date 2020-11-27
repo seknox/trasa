@@ -295,7 +295,7 @@ func handleIntentResponse(req TfaRequest, user *models.User, deviceID, browserID
 		}
 	case consts.AUTH_REQ_ENROL_DEVICE:
 		//todo this is a temporary fix
-		userWithPass, err := Store.GetLoginDetails(user.Email, "")
+		userWithPass, err := Store.GetLoginDetails(user.UserName, "")
 		if err != nil {
 			logrus.Error(err)
 			return "failed", consts.REASON_USER_NOT_FOUND, "DashboardLogin", "", ""
