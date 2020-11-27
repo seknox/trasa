@@ -27,6 +27,28 @@ func (s idpStore) GetAllIdps(orgID string) ([]models.IdentityProvider, error) {
 	return idps, err
 }
 
+// GetAllIdpsWoa retrieves all idps configured for organization. Only returne SAML idp that is required for login.
+func (s idpStore) GetAllIdpsWoa() ([]models.IdentityProvider, error) {
+	var idps []models.IdentityProvider = make([]models.IdentityProvider, 0)
+	var idp models.IdentityProvider
+	rows, err := s.DB.Query("SELECT name,type, endpoint FROM idp WHERE type = $1", "saml")
+
+	if err != nil {
+		return idps, err
+	}
+
+	defer rows.Close()
+	for rows.Next() {
+		err := rows.Scan(&idp.IdpName, &idp.IdpType, &idp.Endpoint)
+		if err != nil {
+			logger.Errorf("scan error in idpStore.GetAllIdps: %v", err)
+		}
+		idps = append(idps, idp)
+	}
+
+	return idps, err
+}
+
 // GetByID retrieves IDP detail based on ID
 func (s idpStore) GetByID(orgID, idpID string) (models.IdentityProvider, error) {
 	var idp models.IdentityProvider

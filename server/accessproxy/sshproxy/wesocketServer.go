@@ -200,52 +200,6 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 
 	}
 
-	clientConfig.HostKeyCallback = HandleHostKeyCallback(creds, service.ID, uc.Org.ID, hostConfirmFunc)
-
-	if params.Password == "" || creds.Password != "" {
-		conn.WriteMessage(1, []byte("\n\rUsing password from vault.\n\r"))
-		clientConfig.Auth = append(clientConfig.Auth, ssh.Password(creds.Password))
-	} else {
-		clientConfig.Auth = append(clientConfig.Auth, ssh.Password(params.Password))
-	}
-
-	if !strings.Contains(params.Hostname, ":") {
-		params.Hostname = params.Hostname + ":22"
-	}
-
-	conn.WriteMessage(1, []byte("\n\rAuthenticating...\n\r"))
-
-	sshClient, err := ssh.Dial("tcp", params.Hostname, &clientConfig)
-	if err != nil {
-		//logrus.Debug(err)
-		if strings.Contains(err.Error(), "ssh: unable to authenticate") {
-			logrus.Debug(err)
-			conn.WriteMessage(1, []byte("\r\nInvalid credentials.\n\r"))
-			err = logs.Store.LogLogin(&authlog, consts.REASON_INVALID_USER_CREDS, false)
-
-		} else if strings.Contains(err.Error(), "ssh: handshake failed: Could not verify upstream host key") {
-			logrus.Debug(err)
-			conn.WriteMessage(1, []byte("\n\rInvalid host key.\n\r"))
-			err = logs.Store.LogLogin(&authlog, consts.REASON_INVALID_HOST_KEY, false)
-		} else if strings.Contains(err.Error(), ErrVerifyHost.Error()) {
-			logrus.Debug(err)
-			conn.WriteMessage(1, []byte("\n\rInvalid host key.\n\r"))
-			err = logs.Store.LogLogin(&authlog, consts.REASON_INVALID_HOST_KEY, false)
-		} else {
-			logrus.Error(err)
-			conn.WriteMessage(1, []byte(err.Error()))
-			err = logs.Store.LogLogin(&authlog, consts.REASON_UNKNOWN, false)
-		}
-		//TODO add host not reachable message
-		if err != nil {
-			logrus.Error(err)
-		}
-
-		return
-	}
-
-	defer sshClient.Close()
-
 	conn.WriteMessage(1, []byte("\n\rChecking policy...\n\r"))
 
 	policy, reason, err := SSHStore.checkPolicy(&params)
@@ -294,6 +248,52 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 	}
 
 	authlog.SessionRecord = policy.RecordSession
+
+	clientConfig.HostKeyCallback = HandleHostKeyCallback(creds, service.ID, uc.Org.ID, hostConfirmFunc)
+
+	if params.Password == "" || creds.Password != "" {
+		conn.WriteMessage(1, []byte("\n\rUsing password from vault.\n\r"))
+		clientConfig.Auth = append(clientConfig.Auth, ssh.Password(creds.Password))
+	} else {
+		clientConfig.Auth = append(clientConfig.Auth, ssh.Password(params.Password))
+	}
+
+	if !strings.Contains(params.Hostname, ":") {
+		params.Hostname = params.Hostname + ":22"
+	}
+
+	conn.WriteMessage(1, []byte("\n\rAuthenticating...\n\r"))
+
+	sshClient, err := ssh.Dial("tcp", params.Hostname, &clientConfig)
+	if err != nil {
+		//logrus.Debug(err)
+		if strings.Contains(err.Error(), "ssh: unable to authenticate") {
+			logrus.Debug(err)
+			conn.WriteMessage(1, []byte("\r\nInvalid credentials.\n\r"))
+			err = logs.Store.LogLogin(&authlog, consts.REASON_INVALID_USER_CREDS, false)
+
+		} else if strings.Contains(err.Error(), "ssh: handshake failed: Could not verify upstream host key") {
+			logrus.Debug(err)
+			conn.WriteMessage(1, []byte("\n\rInvalid host key.\n\r"))
+			err = logs.Store.LogLogin(&authlog, consts.REASON_INVALID_HOST_KEY, false)
+		} else if strings.Contains(err.Error(), ErrVerifyHost.Error()) {
+			logrus.Debug(err)
+			conn.WriteMessage(1, []byte("\n\rInvalid host key.\n\r"))
+			err = logs.Store.LogLogin(&authlog, consts.REASON_INVALID_HOST_KEY, false)
+		} else {
+			logrus.Error(err)
+			conn.WriteMessage(1, []byte(err.Error()))
+			err = logs.Store.LogLogin(&authlog, consts.REASON_UNKNOWN, false)
+		}
+		//TODO add host not reachable message
+		if err != nil {
+			logrus.Error(err)
+		}
+
+		return
+	}
+
+	defer sshClient.Close()
 
 	session, err := sshClient.NewSession()
 	if err != nil {
