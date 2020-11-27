@@ -19,15 +19,16 @@ func EnrollTFADeviceTest(t *testing.T) {
 	t.Log("enroll device test with trasa authenticator")
 
 	totpSec, deviceID := sendCreds(t)
+	time.Sleep(time.Second)
 	sendDeviceDetailsToCloudProxy(t, deviceID)
 	confirmTOTPCode(t, totpSec, deviceID)
 	token := login(t)
 	sendTFA(t, token, totpSec)
-	time.Sleep(time.Second)
 	deleteMyDevice(t, deviceID)
 
 	t.Log("enroll device test with 3rd party authenticator")
 	totpSec, deviceID = sendCreds(t)
+	time.Sleep(time.Second)
 	confirmTOTPCode(t, totpSec, deviceID)
 	token = login(t)
 	sendTFA(t, token, totpSec)
