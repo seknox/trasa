@@ -136,6 +136,10 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if !enrolled {
 		resp := devices.EnrolDeviceFunc(models.CopyUserWithoutPass(*userDetails))
 		resp.OrgName = userDetails.OrgName
+		resp.Account = userDetails.Email
+		if resp.Account == "" {
+			resp.Account = userDetails.UserName
+		}
 		utils.TrasaResponse(w, http.StatusOK, "success", "enrol device", consts.AUTH_RESP_ENROL_DEVICE, resp)
 		return
 	}
@@ -249,7 +253,6 @@ func Enrol2FADevice(w http.ResponseWriter, r *http.Request) {
 
 		getUser.Email = req.Email
 
-		orguser := fmt.Sprintf("%s:%s", userDetailWithPass.OrgID, userDetailWithPass.ID)
 		// (2) Generate Device ID
 		deviceID, _ := uuid.NewV4()
 
@@ -265,7 +268,7 @@ func Enrol2FADevice(w http.ResponseWriter, r *http.Request) {
 
 		utils.TrasaResponse(w, 200, "success", "", "EnrolDevice", respVal)
 
-		go devices.GiveMeDeviceDetail(orguser, deviceID.String(), totpSec)
+		go devices.GiveMeDeviceDetail(userDetailWithPass.OrgID, userDetailWithPass.ID, deviceID.String(), totpSec)
 	}
 
 }

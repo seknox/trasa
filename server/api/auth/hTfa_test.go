@@ -50,7 +50,7 @@ func Test_handleIntentResponse(t *testing.T) {
 	}, nil)
 
 	type args struct {
-		req  tfaRequest
+		req  TfaRequest
 		user *models.User
 	}
 	tests := []struct {
@@ -64,7 +64,7 @@ func Test_handleIntentResponse(t *testing.T) {
 	}{
 		{
 			name: "successful dash login ",
-			args: args{tfaRequest{
+			args: args{TfaRequest{
 				Token:     "1234",
 				TfaMethod: "totp",
 				Totp:      "4432",
@@ -86,7 +86,7 @@ func Test_handleIntentResponse(t *testing.T) {
 
 		{
 			name: "successful enrol device ",
-			args: args{tfaRequest{
+			args: args{TfaRequest{
 				Token:     "1234",
 				TfaMethod: "totp",
 				Totp:      "4432",
@@ -108,7 +108,7 @@ func Test_handleIntentResponse(t *testing.T) {
 
 		{
 			name: "successful change pass",
-			args: args{tfaRequest{
+			args: args{TfaRequest{
 				Token:     "1234",
 				TfaMethod: "totp",
 				Totp:      "4432",
