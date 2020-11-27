@@ -134,7 +134,7 @@ android {
         applicationId "com.trasa"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 45
+        versionCode 47
         versionName "3.3.1"
         missingDimensionStrategy 'react-native-camera', 'mlkit'
         multiDexEnabled true
