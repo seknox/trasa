@@ -21,6 +21,15 @@ func (s userStore) GetFromID(userID, orgID string) (user *models.User, err error
 	return
 }
 
+//GetFromWithLimit returns user details from with supplied limit
+func (s userStore) GetFromWithLimit(orgID string, limit int) (user *models.User, err error) {
+	user = &models.User{}
+	err = s.DB.QueryRow("SELECT org_id, id,username, first_name,middle_name, last_name, email, user_role,status, created_at, updated_at, idp_name FROM users WHERE org_id=$1 LIMIT $2", orgID, limit).
+		Scan(&user.OrgID, &user.ID, &user.UserName, &user.FirstName, &user.MiddleName, &user.LastName, &user.Email, &user.UserRole, &user.Status, &user.CreatedAt, &user.UpdatedAt, &user.IdpName)
+
+	return
+}
+
 // GetFromTRASAID returns user details from user trasaID (username or email address)
 func (s userStore) GetFromTRASAID(trasaID, orgID string) (*models.User, error) {
 
@@ -50,6 +59,36 @@ func (s userStore) GetFromTRASAID(trasaID, orgID string) (*models.User, error) {
 
 //GetAll returns all users of an organization
 func (s userStore) GetAll(orgID string) ([]models.User, error) {
+	var users = make([]models.User, 0)
+
+	rows, err := s.DB.Query(`SELECT users.org_id, users.id,  username, first_name, middle_name,
+								   last_name, email, user_role,
+								   users.status AND COALESCE(idp.is_enabled,true) as status,
+								   created_at, updated_at, users.idp_name
+							FROM users
+							LEFT JOIN idp  on users.idp_name = idp.name WHERE users.org_id = $1`, orgID)
+
+	if err != nil {
+		return users, err
+	}
+
+	defer rows.Close()
+	for rows.Next() {
+		var user models.User
+		err := rows.Scan(&user.OrgID, &user.ID,
+			&user.UserName, &user.FirstName, &user.MiddleName, &user.LastName, &user.Email, &user.UserRole, &user.Status, &user.CreatedAt, &user.UpdatedAt, &user.IdpName)
+		if err != nil {
+			return users, err
+		}
+		users = append(users, user)
+	}
+
+	return users, err
+
+}
+
+//GetByLimit returns all users of an organization based on limit. Only count is supported for now.
+func (s userStore) GetByLimit(orgID string) ([]models.User, error) {
 	var users = make([]models.User, 0)
 
 	rows, err := s.DB.Query(`SELECT users.org_id, users.id,  username, first_name, middle_name,
@@ -124,7 +163,7 @@ func (s userStore) Update(user models.User) error {
 
 // UpdateStatus change active or disabled status of user.
 func (s userStore) UpdateStatus(state bool, userID, orgID string) error {
-	_, err := s.DB.Exec(`UPDATE usersv1 SET status = $1, WHERE user_id = $2 AND org_id = $3;`,
+	_, err := s.DB.Exec(`UPDATE users SET status = $1 WHERE id = $2 AND org_id = $3;`,
 		state, userID, orgID)
 
 	if err != nil {

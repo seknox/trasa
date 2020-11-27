@@ -26,6 +26,13 @@ func (us *UserStoreMock) GetFromID(userID, orgID string) (*models.User, error) {
 	return args.Get(0).(*models.User), args.Error(1)
 }
 
+//GetFromID mock
+func (us *UserStoreMock) GetFromWithLimit(orgID string, limit int) (user *models.User, err error) {
+	args := us.Called(orgID, limit)
+
+	return args.Get(0).(*models.User), args.Error(1)
+}
+
 func (us *UserStoreMock) GetFromTRASAID(trasaID, orgID string) (*models.User, error) {
 	args := us.Called(trasaID, orgID)
 

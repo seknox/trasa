@@ -14,6 +14,8 @@ const (
 
 	SCIM_ERR      = "urn:ietf:params:scim:api:messages:2.0:Error"
 	SCIM_LISTRESP = "urn:ietf:params:scim:api:messages:2.0:ListResponse"
+
+	SCIMKEY = "SCIMKEY"
 )
 
 const (
