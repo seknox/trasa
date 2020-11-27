@@ -95,7 +95,7 @@ func InitDBSTOREWithConfig(conf Config) *State {
 	level, _ := logrus.ParseLevel(config.Logging.Level)
 	OxyLog = logrus.New()
 	OxyLog.SetLevel(logrus.ErrorLevel)
-	if *LogToFile {
+	if LogToFile != nil && *LogToFile {
 		f, err := os.OpenFile(filepath.Join(utils.GetVarDir(), "log", "trasa.log"), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 		if err != nil {
 			panic(err)
