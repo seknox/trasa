@@ -31,7 +31,7 @@ func (s idpStore) GetAllIdps(orgID string) ([]models.IdentityProvider, error) {
 func (s idpStore) GetAllIdpsWoa() ([]models.IdentityProvider, error) {
 	var idps []models.IdentityProvider = make([]models.IdentityProvider, 0)
 	var idp models.IdentityProvider
-	rows, err := s.DB.Query("SELECT id, org_id, name,type, meta, is_enabled, redirect_url, audience_uri, client_id, endpoint, created_by , last_updated, scim_endpoint FROM idp WHERE type = $1", "saml")
+	rows, err := s.DB.Query("SELECT name,type, endpoint FROM idp WHERE type = $1", "saml")
 
 	if err != nil {
 		return idps, err
@@ -39,7 +39,7 @@ func (s idpStore) GetAllIdpsWoa() ([]models.IdentityProvider, error) {
 
 	defer rows.Close()
 	for rows.Next() {
-		err := rows.Scan(&idp.IdpID, &idp.OrgID, &idp.IdpName, &idp.IdpType, &idp.IdpMeta, &idp.IsEnabled, &idp.RedirectURL, &idp.AudienceURI, &idp.ClientID, &idp.Endpoint, &idp.CreatedBy, &idp.LastUpdated, &idp.SCIMEndpoint)
+		err := rows.Scan(&idp.IdpName, &idp.IdpType, &idp.Endpoint)
 		if err != nil {
 			logger.Errorf("scan error in idpStore.GetAllIdps: %v", err)
 		}
