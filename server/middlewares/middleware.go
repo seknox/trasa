@@ -43,3 +43,15 @@ func (am AuthMiddleware) Handler(next http.Handler) http.Handler {
 			return
 		})
 }
+
+// SCIMAuth handles authentication of SCIM api requests
+type SCIMAuth struct {
+}
+
+func (sc SCIMAuth) Handler(next http.Handler) http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			SCIMTokenValidator(next.ServeHTTP).ServeHTTP(w, r)
+			return
+		})
+}

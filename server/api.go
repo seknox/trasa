@@ -104,15 +104,13 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 	// Below api only kept for older version compatibility
 	r.Post("/api/v1/remote/auth/win", serviceauth.AgentLogin)
 	r.Post("/api/v1/remote/auth/nix", serviceauth.AgentLogin)
-	// r.Post("/api/v1/remote/auth/win", serviceauth.AgentLogin)
-	// r.Post("/api/v1/remote/auth/checkconfig", services.CheckAppConfigs)
-	// ////////////////////////////////////////////////////////
 
 	r.Get("/api/v1/logs/livesessions", middlewares.SessionValidatorWS(logs.GetLiveSessions))
 	r.Get("/api/v1/logs/vsessionlog", logs.GetVideoLog) //SessionValidator(GetSessionLog))
 
 	authmiddleware := middlewares.AuthMiddleware{}
 	inapptrailmiddleware := middlewares.InAppTrail{}
+
 	gproxy := rdpproxy.NewProxy()
 
 	r.Route("/accessproxy", func(r chi.Router) {
@@ -320,6 +318,7 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 	})
 
 	// SCIM endpoint allows scim providers to manage users and user groups in TRASA.
+	scimMiddleware := middlewares.SCIMAuth{}
 	r.Route("/scim/v2", func(r chi.Router) {
 
 		// 	User     /Users           GET (Section 3.4.1),   Retrieve, add,
@@ -328,6 +327,8 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		// 							  PATCH (Section 3.5.2),
 		// 							  DELETE (Section 3.6)
 		// get single user detail from userID
+
+		r.Use(scimMiddleware.Handler)
 		r.Get("/Users/{userID}", uidp.SCIMGetSingleUser)
 		r.Get("/Users", uidp.SCIMGetSingleUsersWithFilter)
 		r.Post("/Users", uidp.SCIMCreateUser)

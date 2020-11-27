@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 
@@ -90,6 +91,7 @@ func SCIMCreateUser(w http.ResponseWriter, r *http.Request) {
 	user.UserRole = "selfUser"
 	user.IdpName = utils.NormalizeString(uc.IdpName)
 	user.Password = ""
+	user.Status = true
 
 	user.CreatedAt = time.Now().Unix()
 	user.UpdatedAt = time.Now().Unix()
@@ -165,12 +167,30 @@ func SCIMGetSingleUsersWithFilter(w http.ResponseWriter, r *http.Request) {
 
 	}
 
+	// We will also handle "count" request. This implementation is clumsy handle of count and limit but will work
+	//  since this will be mostly be used for SCIM API connection tests only.
+	limit := r.URL.Query().Get("count")
+	i, _ := strconv.Atoi(limit)
+	userDetailFromDb, err := users.Store.GetFromWithLimit(uc.OrgID, i)
+	if err != nil {
+		logger.Error(err)
+		var ss = make([]models.ScimUser, 0)
+		scimUserListResp(w, 200, ss)
+		return
+	}
+
+	var ss = make([]models.ScimUser, 0)
+	s := transformTuserToSuser(userDetailFromDb)
+	ss = append(ss, s)
+
+	scimUserListResp(w, 200, ss)
+
 }
 
 // SCIMPutSingleUser updates user profile (all details supplied by request). For single element update, use patch.
 func SCIMPutSingleUser(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("scimprov").(models.ScimContext)
-
+	userID := chi.URLParam(r, "userID")
 	var req models.ScimUser
 
 	//email := chi.URLParam(r, "userID")
@@ -180,16 +200,25 @@ func SCIMPutSingleUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	trasaUser := transformSuserToTuser(req, uc)
+	trasaUser.ID = userID
+
+	if req.Active == false {
+		err := users.Store.UpdateStatus(false, trasaUser.ID, uc.OrgID) //createUser(&user)
+		if err != nil {
+			logger.Error(err)
+			var s models.ScimUser
+			scimUserResp(w, 200, s)
+			return
+		}
+	}
 
 	err := users.Store.Update(trasaUser) //createUser(&user)
 	if err != nil {
-		logger.Debug(err)
+		logger.Error(err)
 		var s models.ScimUser
 		scimUserResp(w, 200, s)
 		return
 	}
-
-	logger.Debug(err)
 
 	suser := transformTuserToSuser(&trasaUser)
 	scimUserResp(w, 200, suser)
@@ -210,7 +239,7 @@ func SCIMPatchSingleUser(w http.ResponseWriter, r *http.Request) {
 
 	err := users.Store.UpdateStatus(req.Active, userID, uc.OrgID) //createUser(&user)
 	if err != nil {
-		logger.Debug(err)
+		logger.Error(err)
 		var s models.ScimUser
 		scimUserResp(w, 200, s)
 		return
