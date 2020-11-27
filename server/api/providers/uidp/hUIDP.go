@@ -30,6 +30,20 @@ func GetAllIdps(w http.ResponseWriter, r *http.Request) {
 	utils.TrasaResponse(w, 200, "success", "IDPs", "StoredIdps", storedIdp)
 }
 
+// GetAllIdpsWoa.
+// TODO This should be rate limited when #63 is implemented
+func GetAllIdpsWoa(w http.ResponseWriter, r *http.Request) {
+
+	storedIdp, err := Store.GetAllIdpsWoa()
+	if err != nil {
+		logger.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "failed to fetch IDP", "GetExternalIdpsForLogin-storedIdp", nil)
+		return
+	}
+
+	utils.TrasaResponse(w, 200, "success", "IDPs", "StoredIdps", storedIdp)
+}
+
 // CreateIdp created Identity Provider
 func CreateIdp(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
