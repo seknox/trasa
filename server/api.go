@@ -94,7 +94,7 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		r.Post("/devices/brsrdetail", devices.GetBrsrDetails)
 
 		r.Post("/forgotpass", my.ForgotPassword)
-		r.Get("/providers/uidp/all", uidp.GetAllIdps)
+		r.Get("/providers/uidp/all", uidp.GetAllIdpsWoa)
 
 	})
 	r.Get("/api/v1/my/download_file/get/{fileName}/{sskey}", my.FileDownloadHandler)
