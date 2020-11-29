@@ -44,6 +44,9 @@ func (s redisStore) MGet(key string, field ...string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
+	if len(vals) != len(field) {
+		return nil, errors.New("not enough values got from redis")
+	}
 	return utils.ToStringArr(vals)
 }
 

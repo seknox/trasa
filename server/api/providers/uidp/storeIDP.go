@@ -27,11 +27,43 @@ func (s idpStore) GetAllIdps(orgID string) ([]models.IdentityProvider, error) {
 	return idps, err
 }
 
+// GetAllIdpsWoa retrieves all idps configured for organization. Only returne SAML idp that is required for login.
+func (s idpStore) GetAllIdpsWoa() ([]models.IdentityProvider, error) {
+	var idps []models.IdentityProvider = make([]models.IdentityProvider, 0)
+	var idp models.IdentityProvider
+	rows, err := s.DB.Query("SELECT name,type, endpoint FROM idp WHERE type = $1", "saml")
+
+	if err != nil {
+		return idps, err
+	}
+
+	defer rows.Close()
+	for rows.Next() {
+		err := rows.Scan(&idp.IdpName, &idp.IdpType, &idp.Endpoint)
+		if err != nil {
+			logger.Errorf("scan error in idpStore.GetAllIdps: %v", err)
+		}
+		idps = append(idps, idp)
+	}
+
+	return idps, err
+}
+
 // GetByID retrieves IDP detail based on ID
 func (s idpStore) GetByID(orgID, idpID string) (models.IdentityProvider, error) {
 	var idp models.IdentityProvider
 	err := s.DB.QueryRow("SELECT id, org_id, name,type, meta, is_enabled, redirect_url, audience_uri, client_id, endpoint, created_by , last_updated FROM idp WHERE org_id = $1 AND id=$2",
 		orgID, idpID).
+		Scan(&idp.IdpID, &idp.OrgID, &idp.IdpName, &idp.IdpType, &idp.IdpMeta, &idp.IsEnabled, &idp.RedirectURL, &idp.AudienceURI, &idp.ClientID, &idp.Endpoint, &idp.CreatedBy, &idp.LastUpdated)
+	return idp, err
+}
+
+// GetByName retrieves IDP detail based on Name
+
+func (s idpStore) GetByName(orgID, idpName string) (models.IdentityProvider, error) {
+	var idp models.IdentityProvider
+	err := s.DB.QueryRow("SELECT id, org_id, name,type, meta, is_enabled, redirect_url, audience_uri, client_id, endpoint, created_by , last_updated FROM idp WHERE org_id = $1 AND name=$2",
+		orgID, idpName).
 		Scan(&idp.IdpID, &idp.OrgID, &idp.IdpName, &idp.IdpType, &idp.IdpMeta, &idp.IsEnabled, &idp.RedirectURL, &idp.AudienceURI, &idp.ClientID, &idp.Endpoint, &idp.CreatedBy, &idp.LastUpdated)
 	return idp, err
 }

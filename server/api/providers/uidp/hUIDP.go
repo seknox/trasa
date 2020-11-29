@@ -18,7 +18,23 @@ import (
 
 // GetAllIdps retrieves all idps configured for organization
 func GetAllIdps(w http.ResponseWriter, r *http.Request) {
-	storedIdp, err := Store.GetAllIdps(global.GetConfig().Trasa.OrgId)
+	uc := r.Context().Value("user").(models.UserContext)
+
+	storedIdp, err := Store.GetAllIdps(uc.User.OrgID)
+	if err != nil {
+		logger.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "failed to fetch IDP", "GetExternalIdpsForLogin-storedIdp", nil)
+		return
+	}
+
+	utils.TrasaResponse(w, 200, "success", "IDPs", "StoredIdps", storedIdp)
+}
+
+// GetAllIdpsWoa.
+// TODO This should be rate limited when #63 is implemented
+func GetAllIdpsWoa(w http.ResponseWriter, r *http.Request) {
+
+	storedIdp, err := Store.GetAllIdpsWoa()
 	if err != nil {
 		logger.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "failed to fetch IDP", "GetExternalIdpsForLogin-storedIdp", nil)
@@ -236,8 +252,8 @@ func PreConfiguredIdps(idp models.IdentityProvider, uc models.UserContext) model
 
 }
 
-// GenerateSCIMAuthToken new auth token for scim connector.
-// token is basically passwaord which is hashed and stored in database.
+// GenerateSCIMAuthToken creates auth token for scim connector.
+// token is basically passwaord with format "password:orgID" which is hashed and stored in database.
 // password is returned to user only once. first 4 characters of password
 // is stored as key tag which will be returned in subsequent request.
 func GenerateSCIMAuthToken(w http.ResponseWriter, r *http.Request) {
@@ -245,14 +261,15 @@ func GenerateSCIMAuthToken(w http.ResponseWriter, r *http.Request) {
 
 	idpID := chi.URLParam(r, "idpID")
 
+	// create password
 	pass := utils.GetRandomString(14)
 
-	passorg := fmt.Sprintf("%s:%s", pass, uc.User.OrgID)
+	orgpass := fmt.Sprintf("%s:%s", uc.User.OrgID, pass)
 
-	hashedpass, err := bcrypt.GenerateFromPassword([]byte(passorg), bcrypt.DefaultCost)
+	hashedpass, err := bcrypt.GenerateFromPassword([]byte(orgpass), bcrypt.DefaultCost)
 	if err != nil {
 		logger.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "failed generate key", "GenerateSCIMAuthToken-storedIdp", nil)
+		utils.TrasaResponse(w, 200, "failed", "failed generate hashed password", "GenerateSCIMAuthToken", nil)
 		return
 	}
 
@@ -263,17 +280,19 @@ func GenerateSCIMAuthToken(w http.ResponseWriter, r *http.Request) {
 	req.KeyTag = fmt.Sprintf("%s-xxxx-xxxx...", pass[0:4])
 	req.AddedBy = uc.User.ID
 	req.AddedAt = time.Now().Unix()
+
+	// we do not need to encrypt the key here since we are storing bcrypt hash
 	req.KeyVal = hashedpass
-	req.KeyName = "scimkey"
+	req.KeyName = consts.SCIMKEY
 
 	err = tsxvault.Store.StoreKeyOrTokens(req)
 	if err != nil {
 		logger.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "failed to store token.", "GenerateSCIMAuthToken-StoreKeyOrTokens", nil)
+		utils.TrasaResponse(w, 200, "failed", "failed to store token.", "GenerateSCIMAuthToken", nil)
 		return
 	}
 
-	encodedPass := utils.EncodeBase64([]byte(passorg))
+	encodedPass := utils.EncodeBase64([]byte(orgpass))
 	utils.TrasaResponse(w, 200, "success", "IDPs", "GenerateSCIMAuthToken", encodedPass)
 }
 

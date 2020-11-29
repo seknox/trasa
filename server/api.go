@@ -53,6 +53,7 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		})
 
 		r.Post("/identity", auth.LoginHandler)
+		r.Post("/external/saml/{orgid}/{vendorname}", auth.SAMLLoginHandler)
 		r.Post("/tfa", auth.TfaHandler)
 		r.Delete("/logout", auth.LogoutHandler)
 
@@ -76,6 +77,7 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 
 		r.Post("/login", auth.LoginHandler)
 		r.Post("/login/tfa", auth.TfaHandler)
+		r.Post("/login/checktfa", auth.ConfirmTOTPAndSave)
 		r.Delete("/logout", auth.LogoutHandler)
 
 	})
@@ -92,7 +94,7 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		r.Post("/devices/brsrdetail", devices.GetBrsrDetails)
 
 		r.Post("/forgotpass", my.ForgotPassword)
-		r.Get("/providers/uidp/all", uidp.GetAllIdps)
+		r.Get("/providers/uidp/all", uidp.GetAllIdpsWoa)
 
 	})
 	r.Get("/api/v1/my/download_file/get/{fileName}/{sskey}", my.FileDownloadHandler)
@@ -102,15 +104,13 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 	// Below api only kept for older version compatibility
 	r.Post("/api/v1/remote/auth/win", serviceauth.AgentLogin)
 	r.Post("/api/v1/remote/auth/nix", serviceauth.AgentLogin)
-	// r.Post("/api/v1/remote/auth/win", serviceauth.AgentLogin)
-	// r.Post("/api/v1/remote/auth/checkconfig", services.CheckAppConfigs)
-	// ////////////////////////////////////////////////////////
 
 	r.Get("/api/v1/logs/livesessions", middlewares.SessionValidatorWS(logs.GetLiveSessions))
 	r.Get("/api/v1/logs/vsessionlog", logs.GetVideoLog) //SessionValidator(GetSessionLog))
 
 	authmiddleware := middlewares.AuthMiddleware{}
 	inapptrailmiddleware := middlewares.InAppTrail{}
+
 	gproxy := rdpproxy.NewProxy()
 
 	r.Route("/accessproxy", func(r chi.Router) {
@@ -315,6 +315,26 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		r.Get("/providers/ca/tsxca/all", ca.GetAllCAs)
 		r.Get("/providers/ca/tsxca/ssh/{type}", ca.DownloadSshCA)
 
+	})
+
+	// SCIM endpoint allows scim providers to manage users and user groups in TRASA.
+	scimMiddleware := middlewares.SCIMAuth{}
+	r.Route("/scim/v2", func(r chi.Router) {
+
+		// 	User     /Users           GET (Section 3.4.1),   Retrieve, add,
+		// 							  POST (Section 3.3),    modify Users.
+		// 							  PUT (Section 3.5.1),
+		// 							  PATCH (Section 3.5.2),
+		// 							  DELETE (Section 3.6)
+		// get single user detail from userID
+
+		r.Use(scimMiddleware.Handler)
+		r.Get("/Users/{userID}", uidp.SCIMGetSingleUser)
+		r.Get("/Users", uidp.SCIMGetSingleUsersWithFilter)
+		r.Post("/Users", uidp.SCIMCreateUser)
+		r.Put("/Users/{userID}", uidp.SCIMPutSingleUser)
+		r.Patch("/Users/{userID}", uidp.SCIMPatchSingleUser)
+		r.Delete("/Users/{userID}", uidp.SCIMDeleteUser)
 	})
 
 	return r

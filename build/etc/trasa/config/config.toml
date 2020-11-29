@@ -20,7 +20,7 @@
 
 
 [platform]
-  base = "public"
+  base = "private"
 
 [redis]
   server = "redis:6379"

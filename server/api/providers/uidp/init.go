@@ -20,7 +20,9 @@ type idpStore struct {
 type adapter interface {
 	// user idp
 	GetAllIdps(orgID string) ([]models.IdentityProvider, error)
+	GetAllIdpsWoa() ([]models.IdentityProvider, error)
 	GetByID(orgID, idpID string) (models.IdentityProvider, error)
+	GetByName(orgID, idpName string) (models.IdentityProvider, error)
 	CreateIDP(idp *models.IdentityProvider) error
 	UpdateIDP(idp *models.IdentityProvider) error
 	UpdateLDAPIDP(idp *models.IdentityProvider) error

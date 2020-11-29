@@ -45,7 +45,7 @@ func CheckTrasaUAC(timezone, clientip string, policy *models.Policy) (bool, cons
 	reason := consts.REASON_TIME_POLICY_FAILED
 	for _, dayTimePolicy := range policy.DayAndTime {
 		allow, reason = dayTimeExpiryChecker(timezone, dayTimePolicy)
-		logrus.Trace(allow, reason)
+		logrus.Tracef("day time check:%v , failed reason:%v", allow, reason)
 	}
 
 	// we check expiry
