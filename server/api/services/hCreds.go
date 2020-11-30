@@ -112,30 +112,26 @@ func DeleteCreds(w http.ResponseWriter, r *http.Request) {
 
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "false", "invalid request", "failed to delete password")
+		utils.TrasaResponse(w, 200, "false", "invalid request", "failed to delete creds")
 		return
 	}
 
-	err := tsxvault.Store.TsxvDeleteSecret(userContext.User.OrgID, req.ServiceID, "password", req.Username)
-	if err != nil {
-		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "DeleteCreds", "failed to delete password")
-		return
-	}
+	err1 := tsxvault.Store.TsxvDeleteSecret(userContext.User.OrgID, req.ServiceID, "password", req.Username)
 
-	err = tsxvault.Store.TsxvDeleteSecret(userContext.User.OrgID, req.ServiceID, "key", req.Username)
-	if err != nil {
-		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "DeleteCreds", "failed to delete password")
+	err2 := tsxvault.Store.TsxvDeleteSecret(userContext.User.OrgID, req.ServiceID, "key", req.Username)
+
+	if err1 != nil && err2 != nil {
+		logrus.Error(err1, err2)
+		utils.TrasaResponse(w, 200, "failed", "DeleteCreds", "failed to delete creds")
 		return
 	}
 
 	// we also need to delete username from managed accounts from service table.
 
-	err = Store.RemoveManagedAccounts(req.ServiceID, userContext.Org.ID, req.Username)
+	err := Store.RemoveManagedAccounts(req.ServiceID, userContext.Org.ID, req.Username)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "DeleteCreds", "failed to delete password")
+		utils.TrasaResponse(w, 200, "failed", "DeleteCreds", "failed to delete creds")
 		return
 	}
 

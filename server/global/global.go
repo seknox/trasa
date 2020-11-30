@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/tls"
 	"database/sql"
-	"flag"
 	"fmt"
 	"github.com/seknox/trasa/server/utils"
 	"github.com/spf13/viper"
@@ -32,6 +31,7 @@ import (
 )
 
 var DBVersion string = "2020-07-31-rc"
+var LogToFile *bool
 
 var config Config
 
@@ -93,11 +93,9 @@ func InitDBSTOREWithConfig(conf Config) *State {
 
 	config = conf
 	level, _ := logrus.ParseLevel(config.Logging.Level)
-	logOutputToFile := flag.Bool("f", false, "Write to file")
 	OxyLog = logrus.New()
 	OxyLog.SetLevel(logrus.ErrorLevel)
-	flag.Parse()
-	if *logOutputToFile {
+	if LogToFile != nil && *LogToFile {
 		f, err := os.OpenFile(filepath.Join(utils.GetVarDir(), "log", "trasa.log"), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 		if err != nil {
 			panic(err)
