@@ -11,6 +11,7 @@ import (
 	"github.com/seknox/trasa/server/api/auth/tfa"
 	"github.com/seknox/trasa/server/api/devices"
 	"github.com/seknox/trasa/server/api/logs"
+	"github.com/seknox/trasa/server/api/orgs"
 	"github.com/seknox/trasa/server/api/redis"
 	"github.com/seknox/trasa/server/api/system"
 	"github.com/seknox/trasa/server/api/users"
@@ -153,7 +154,20 @@ func TfaHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	status, failedReason, intent, sessionToken, respData := handleIntentResponse(req, userDetails, deviceID, req.ExtID)
+	var uc models.UserContext
+	uc.User = userDetails
+
+	org, err := orgs.Store.Get(userDetails.OrgID)
+	if err != nil {
+		utils.TrasaResponse(w, 200, status, reason, "Dashboard Login", response)
+		return
+	}
+
+	uc.Org = org
+	uc.DeviceID = deviceID
+	uc.BrowserID = req.ExtID
+
+	status, failedReason, intent, sessionToken, respData := handleIntentResponse(req, uc)
 
 	err = logs.Store.LogLogin(&authlog, failedReason, status == "success")
 	if err != nil {
@@ -248,18 +262,18 @@ func handleTFAMethodd(req TfaRequest, user *models.User, authlog *logs.AuthLog) 
 
 }
 
-func handleIntentResponse(req TfaRequest, user *models.User, deviceID, browserID string) (status string, reason consts.FailedReason, intent, sessionToken string, resp interface{}) {
-	orgUserStr := fmt.Sprintf("%s:%s", user.OrgID, user.ID)
+func handleIntentResponse(req TfaRequest, uc models.UserContext) (status string, reason consts.FailedReason, intent, sessionToken string, resp interface{}) {
+	orgUserStr := fmt.Sprintf("%s:%s", uc.User.OrgID, uc.User.ID)
 	switch req.Intent {
 	// in case of u2fy, we do not need to generate login credentials here but process it in another signed response request from client
 	case consts.AUTH_REQ_DASH_LOGIN:
 		// check if user has pending change password policy.
 		// if yes, respond with change password intent else respond with session identifiers.
-		policy, err := users.Store.GetEnforcedPolicy(user.ID, user.OrgID, consts.ChangePassword)
+		policy, err := users.Store.GetEnforcedPolicy(uc.User.ID, uc.User.OrgID, consts.ChangePassword)
 		if err != nil {
 			// if we reached here means there's no pending change password policy enforced for this user.
 			// we can continue for creating session.
-			sessionToken, resp, err := sessionResponse(user, deviceID, browserID)
+			sessionToken, resp, err := sessionResponse(uc)
 			if err != nil {
 				logrus.Error(err)
 				return "failed", consts.REASON_TRASA_ERROR, "DashboardLogin", sessionToken, nil
@@ -286,7 +300,7 @@ func handleIntentResponse(req TfaRequest, user *models.User, deviceID, browserID
 				}
 				return "success", "", consts.AUTH_RESP_RESET_PASS, "", verifyToken
 			}
-			sessionToken, resp, err := sessionResponse(user, deviceID, browserID)
+			sessionToken, resp, err := sessionResponse(uc)
 			if err != nil {
 				return "failed", consts.REASON_TRASA_ERROR, "DashboardLogin", sessionToken, nil
 			}
@@ -295,12 +309,12 @@ func handleIntentResponse(req TfaRequest, user *models.User, deviceID, browserID
 		}
 	case consts.AUTH_REQ_ENROL_DEVICE:
 		//todo this is a temporary fix
-		userWithPass, err := Store.GetLoginDetails(user.UserName, "")
+		userWithPass, err := Store.GetLoginDetails(uc.User.UserName, "")
 		if err != nil {
 			logrus.Error(err)
 			return "failed", consts.REASON_USER_NOT_FOUND, "DashboardLogin", "", ""
 		}
-		resp := devices.EnrolDeviceFunc(*user)
+		resp := devices.EnrolDeviceFunc(*uc.User)
 		resp.OrgName = userWithPass.OrgName
 		resp.Account = userWithPass.Email
 		if resp.Account == "" {
@@ -323,7 +337,7 @@ func handleIntentResponse(req TfaRequest, user *models.User, deviceID, browserID
 		return "success", "", consts.AUTH_RESP_CHANGE_PASS, "", verifyToken
 
 	case consts.AUTH_REQ_FORGOT_PASS:
-		err := forgotPassTfaResp(*user)
+		err := forgotPassTfaResp(*uc.User)
 		if err != nil {
 			logrus.Error(err)
 			return "failed", consts.REASON_TRASA_ERROR, consts.AUTH_RESP_FORGOT_PASS, "", nil
@@ -470,8 +484,21 @@ func ConfirmTOTPAndSave(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var uc models.UserContext
+	uc.User = userDetails
+
+	org, err := orgs.Store.Get(userDetails.OrgID)
+	if err != nil {
+		utils.TrasaResponse(w, 200, "failed", err.Error(), "could not register device", "ConfirmTOTPAndSave")
+		return
+	}
+
+	uc.Org = org
+	uc.DeviceID = ""
+	uc.BrowserID = ""
+
 	//TODO add deviceID and browserID
-	sessionToken, resp, err := sessionResponse(userDetails, "", "")
+	sessionToken, resp, err := sessionResponse(uc)
 	if err != nil {
 		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "could not get session", "ConfirmTOTPAndSave")

@@ -24,6 +24,7 @@ import (
 	"github.com/seknox/trasa/server/utils"
 
 	"github.com/seknox/trasa/server/api/logs"
+	"github.com/seknox/trasa/server/api/orgs"
 	"github.com/seknox/trasa/server/api/providers/uidp"
 )
 
@@ -184,8 +185,21 @@ func SAMLLoginHandler(w http.ResponseWriter, r *http.Request) {
 	//Update authlog value with user fields
 	authlog.UpdateUser(&models.UserWithPass{User: user})
 
+	var uc models.UserContext
+	uc.User = &user
+
+	org, err := orgs.Store.Get(user.OrgID)
+	if err != nil {
+		setFailedResponse(w, "FAILED_TO_GET_ORG_DETAILS")
+		return
+	}
+
+	uc.Org = org
+	uc.DeviceID = ""
+	uc.BrowserID = ""
+
 	// we do not need to handle intent response here since all request will be for dashboard login?
-	sessionToken, csrfToken, err := SetSession(user.ID, user.OrgID, "deviceID", "browserID")
+	sessionToken, csrfToken, err := SetSession(uc)
 	if err != nil {
 		setFailedResponse(w, "could not set user session")
 		err = logs.Store.LogLogin(&authlog, "failed to create session", false)
