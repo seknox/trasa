@@ -20,26 +20,31 @@ func Test_getUserContext(t *testing.T) {
 	orgstore := orgs.InitStoreMock()
 	_ = redis.InitStoreMock()
 	//
-	//mockUser := models.User{
-	//	ID:         "someUserID",
-	//	OrgID:      "someOrgID",
-	//	UserName:   "testUname",
-	//	FirstName:  "Bha",
-	//	MiddleName: "",
-	//	LastName:   "Ach",
-	//	Email:      "user@example.com",
-	//	UserRole:   "orgAdmin",
-	//	Status:     true,
-	//	IdpName:    "trasa",
-	//}
-	//mockOrg := models.Org{
-	//	ID:             "someOrgID",
-	//	OrgName:        "testOrg",
-	//	Domain:         "example.com",
-	//	PrimaryContact: "user@example.com",
-	//	Timezone:       "Asia/Kathmandu",
-	//	PhoneNumber:    "12345678",
-	//}
+	mockUser := models.User{
+		ID:         "someUserID",
+		OrgID:      "someOrgID",
+		UserName:   "testUname",
+		FirstName:  "Bha",
+		MiddleName: "",
+		LastName:   "Ach",
+		Email:      "user@example.com",
+		UserRole:   "orgAdmin",
+		Status:     true,
+		IdpName:    "trasa",
+	}
+	mockOrg := models.Org{
+		ID:             "someOrgID",
+		OrgName:        "testOrg",
+		Domain:         "example.com",
+		PrimaryContact: "user@example.com",
+		Timezone:       "Asia/Kathmandu",
+		PhoneNumber:    "12345678",
+	}
+
+	mockUC := models.UserContext{
+		User: &mockUser,
+		Org:  mockOrg,
+	}
 
 	//userstore.
 	//	On("GetFromID", "someUserID", "someOrgID").
@@ -60,8 +65,7 @@ func Test_getUserContext(t *testing.T) {
 	var nulUC models.UserContext
 
 	type args struct {
-		orgID  string
-		userID string
+		context models.UserContext
 	}
 	tests := []struct {
 		name    string
@@ -70,23 +74,23 @@ func Test_getUserContext(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name:    "blank userID orgID",
-			args:    args{"", ""},
+			name:    "blank context",
+			args:    args{models.UserContext{}},
 			want:    nulUC,
 			wantErr: true,
 		},
-		//{
-		//	name:    "with valid userID orgID",
-		//	args:    args{"someOrgID", "someUserID"},
-		//	want:    models.UserContext{&mockUser, mockOrg, "", ""},
-		//	wantErr: false,
-		//},
+		{
+			name:    "with valid userID orgID",
+			args:    args{mockUC},
+			want:    mockUC,
+			wantErr: false,
+		},
 		// TODO: Add test cases.
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			setSession, setCsrf, err := auth.SetSession(tt.args.userID, tt.args.orgID, "", "")
+			setSession, setCsrf, err := auth.SetSession(tt.args.context)
 			if err != nil {
 				t.Errorf("failed setting session: %v", err)
 			}

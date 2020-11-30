@@ -1,8 +1,9 @@
 package utils
 
 import (
-	"github.com/pkg/errors"
 	"strings"
+
+	"github.com/pkg/errors"
 )
 
 //NormalizeString trims spaces and convert into lowercase
