@@ -40,12 +40,12 @@ func (s userStore) GetFromTRASAID(trasaID, orgID string) (*models.User, error) {
 	sqlStr := ``
 
 	if isTrasaIDEmail {
-		sqlStr = `SELECT users.org_id, users.id, first_name, email, idp_name, user_role, status ,org.org_name
+		sqlStr = `SELECT users.org_id, users.id, first_name, email, idp_name, user_role, status 
 				FROM users
 				JOIN org ON users.org_id=org.id
 				WHERE users.email=$1 AND users.org_id=$2`
 	} else {
-		sqlStr = `SELECT users.org_id, users.id, first_name, email, idp_name, user_role, status ,org.org_name
+		sqlStr = `SELECT users.org_id, users.id, first_name, email, idp_name, user_role, status
 				FROM users
 				JOIN org ON users.org_id=org.id
 				WHERE users.username=$1 AND users.org_id=$2`
