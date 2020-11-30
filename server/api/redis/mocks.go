@@ -1,7 +1,9 @@
 package redis
 
 import (
+	"encoding/json"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/seknox/trasa/server/consts"
@@ -23,7 +25,13 @@ func (r *redisMock) Set(key string, expiry time.Duration, val ...string) error {
 
 // SetSessionWithUserContext mock
 func (r *redisMock) SetSessionWithUserContext(key string, expiry time.Duration, authToken string, uc models.UserContext) error {
-	r.TestData().Set(key, uc)
+
+	fmt.Println("key: ", key)
+	val, err := json.Marshal(uc)
+	if err != nil {
+		return err
+	}
+	r.TestData().Set(key, val)
 
 	return nil
 }
@@ -63,7 +71,7 @@ func (r *redisMock) SetVerifyIntent(key string, expiry time.Duration, intent, fi
 }
 
 //VerifyIntent mock
-func (r redisMock) VerifyIntent(key string, intent consts.VerifyTokenIntent) error {
+func (r *redisMock) VerifyIntent(key string, intent consts.VerifyTokenIntent) error {
 	panic("implement me")
 }
 
