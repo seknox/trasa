@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/seknox/trasa/server/api/redis"
+	"github.com/seknox/trasa/server/global"
 	"github.com/seknox/trasa/server/models"
 	"github.com/seknox/trasa/server/utils"
 	"github.com/sirupsen/logrus"
@@ -21,8 +22,11 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 
 	sessionToken, err := r.Cookie("X-SESSION")
 	if sessionToken.Value == "" || err != nil {
+		utils.TrasaResponse(w, http.StatusOK, "failed", "", "")
 		return
 	}
+
+	// logrus.Trace("Logout request received with cookie value: ", sessionToken.Value)
 
 	err = Store.Logout(sessionToken.Value)
 	if err != nil {
@@ -54,48 +58,37 @@ type userAuthSessionResp struct {
 // 	Csrf    string `json:"csrf"`
 // }
 
-func sessionResponse(userDetails *models.User, deviceID, browserID string) (sessionToken string, response userAuthSessionResp, err error) {
+func sessionResponse(uc models.UserContext) (sessionToken string, response userAuthSessionResp, err error) {
 
 	var csrfToken string
-	sessionToken, csrfToken, err = SetSession(userDetails.ID, userDetails.OrgID, deviceID, browserID)
+	sessionToken, csrfToken, err = SetSession(uc)
 	if err != nil {
 		return
 	}
 
-	response.User = *userDetails
+	response.User = *uc.User
 	response.CSRFToken = csrfToken
 
 	return sessionToken, response, nil
 }
 
 // SetSession sets, encrypts and serializes session cookies and csrf tokens
-func SetSession(userID, orgID, deviceID, browserID string) (string, string, error) {
+func SetSession(uc models.UserContext) (string, string, error) {
 
 	sessionKey := utils.GetRandomBytes(17)
 	authKey := utils.GetRandomBytes(17)
 
 	// Insert user session values in database
-	orgusr := fmt.Sprintf("%v:%v", orgID, userID)
-	//fmt.Printf("orgusr value is %s\n", orgusr)
-	//nep, _ := time.LoadLocation(timezone)
+	orgusr := fmt.Sprintf("%v:%v", uc.Org.ID, uc.User.ID)
 
-	//timerVal := time.Now().In(nep) //.Format(time.RFC3339)
 	encodedSession := hex.EncodeToString(sessionKey)
 	encodedAuth := base64.StdEncoding.EncodeToString(authKey)
 
-	err := redis.Store.Set(encodedSession, time.Second*900,
-		"userID", userID,
-		"orgID", orgID,
-		"deviceID", deviceID,
-		"browserID", browserID,
-		"auth", encodedAuth)
+	uc.Org.PlatformBase = global.GetConfig().Platform.Base
+	err := redis.Store.SetSessionWithUserContext(encodedSession, time.Second*900, encodedAuth, uc)
 	if err != nil {
 		return "", "", err
 	}
-
-	// generate cookies
-	//sessoinCookie := http.Cookie{Name: "auth", Value: encodedSession, Path: "/"}
-	//userCookie := http.Cookie{Name: "user", Value: keyVal}
 
 	// create csrf token
 	var encryptionKey [32]byte

@@ -24,7 +24,7 @@ type adapter interface {
 	GetByID(orgID, idpID string) (models.IdentityProvider, error)
 	GetByName(orgID, idpName string) (models.IdentityProvider, error)
 	CreateIDP(idp *models.IdentityProvider) error
-	UpdateIDP(idp *models.IdentityProvider) error
+	UpdateSAMLIDP(idp *models.IdentityProvider) error
 	UpdateLDAPIDP(idp *models.IdentityProvider) error
 	activateOrDisableIdp(orgID, idpID string, updateTime int64, updateVal bool) error
 }

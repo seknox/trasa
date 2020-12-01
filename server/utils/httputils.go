@@ -52,7 +52,7 @@ func TrasaResponse(w http.ResponseWriter, httpRespCode int, status, reason strin
 	//TODO remove this after all inapp trail related apis are ported to TrasaResponseWithTrail
 	w.Header().Set("trailDescription", intent)
 	w.Header().Set("trailStatus", status)
-
+	w.Header().Set("Cache-Control", "no-store, pragma")
 	w.WriteHeader(httpRespCode)
 
 	resp.Status = status

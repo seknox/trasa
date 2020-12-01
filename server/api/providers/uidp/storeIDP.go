@@ -77,9 +77,9 @@ func (s idpStore) CreateIDP(idp *models.IdentityProvider) error {
 	return err
 }
 
-func (s idpStore) UpdateIDP(idp *models.IdentityProvider) error {
+func (s idpStore) UpdateSAMLIDP(idp *models.IdentityProvider) error {
 
-	_, err := s.DB.Exec(`UPDATE idp SET meta = $1, is_enabled = $2, endpoint = $3, created_by = $4 , last_updated = $5  WHERE org_id=$6 AND id=$7`, idp.IdpMeta, idp.IsEnabled, idp.Endpoint, idp.CreatedBy, idp.LastUpdated, idp.OrgID, idp.IdpID)
+	_, err := s.DB.Exec(`UPDATE idp SET meta = $1, is_enabled = $2, endpoint = $3, created_by = $4 , last_updated = $5, redirect_url = $6, scim_endpoint = $7  WHERE org_id=$8 AND id=$9`, idp.IdpMeta, idp.IsEnabled, idp.Endpoint, idp.CreatedBy, idp.LastUpdated, idp.RedirectURL, idp.SCIMEndpoint, idp.OrgID, idp.IdpID)
 
 	return err
 }
