@@ -55,7 +55,6 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		r.Post("/identity", auth.LoginHandler)
 		r.Post("/external/saml/{orgid}/{vendorname}", auth.SAMLLoginHandler)
 		r.Post("/tfa", auth.TfaHandler)
-		r.Delete("/logout", auth.LogoutHandler)
 
 		r.Post("/accessproxy/http", serviceauth.AuthHTTPAccessProxy)
 
@@ -78,7 +77,6 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		r.Post("/login", auth.LoginHandler)
 		r.Post("/login/tfa", auth.TfaHandler)
 		r.Post("/login/checktfa", auth.ConfirmTOTPAndSave)
-		r.Delete("/logout", auth.LogoutHandler)
 
 	})
 
@@ -173,7 +171,7 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 
 		r.Get("/my/notifs", notif.GetPendingNotif)
 		r.Post("/my/notif/resolve", notif.ResolveNotif)
-
+		r.Delete("/my/logout", auth.LogoutHandler)
 		//User Crud
 		r.Get("/user/{userID}", users.GetUserDetails)
 		r.Get("/user/all", users.GetAllUsers)

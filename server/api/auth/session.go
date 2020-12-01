@@ -22,8 +22,11 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 
 	sessionToken, err := r.Cookie("X-SESSION")
 	if sessionToken.Value == "" || err != nil {
+		utils.TrasaResponse(w, http.StatusOK, "failed", "", "")
 		return
 	}
+
+	// logrus.Trace("Logout request received with cookie value: ", sessionToken.Value)
 
 	err = Store.Logout(sessionToken.Value)
 	if err != nil {
