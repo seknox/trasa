@@ -506,3 +506,4 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+server/localhost.session.sql

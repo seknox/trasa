@@ -33,6 +33,8 @@ type userStore struct {
 type adapter interface {
 	//CRUD
 	GetFromID(userID, orgID string) (*models.User, error)
+	GetFromWithLimit(orgID string, limit int) (user *models.User, err error)
+	GetFromTRASAID(trasaID, orgID string) (*models.User, error)
 	GetAll(orgID string) ([]models.User, error)
 	GetAllByIdp(orgID, idpName string) ([]models.User, error)
 	GetAdminEmails(orgID string) ([]string, error)
@@ -41,7 +43,7 @@ type adapter interface {
 	Create(user *models.UserWithPass) error
 	Delete(userID, orgID string) (string, string, error)
 	Update(user models.User) error
-
+	UpdateStatus(state bool, userID, orgID string) error
 	UpdatePublicKey(userID string, publicKey string) error
 
 	UpdatePassword(userID, password string) error

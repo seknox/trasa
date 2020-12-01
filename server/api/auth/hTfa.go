@@ -11,6 +11,7 @@ import (
 	"github.com/seknox/trasa/server/api/auth/tfa"
 	"github.com/seknox/trasa/server/api/devices"
 	"github.com/seknox/trasa/server/api/logs"
+	"github.com/seknox/trasa/server/api/orgs"
 	"github.com/seknox/trasa/server/api/redis"
 	"github.com/seknox/trasa/server/api/system"
 	"github.com/seknox/trasa/server/api/users"
@@ -21,7 +22,7 @@ import (
 	"github.com/tstranex/u2f"
 )
 
-type tfaRequest struct {
+type TfaRequest struct {
 	// Token is unique to tfarequest which is tied to specific user profile
 	Token string `json:"token"`
 	// TfaMethod can be u2f, totp or htoken
@@ -39,7 +40,7 @@ type tfaRequest struct {
 // TfaHandler handles two factor authentication from TRASA ui
 func TfaHandler(w http.ResponseWriter, r *http.Request) {
 
-	var req tfaRequest
+	var req TfaRequest
 	//var service dbstore.App
 	//var respBody userLoginStatus
 
@@ -153,7 +154,20 @@ func TfaHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	status, failedReason, intent, sessionToken, respData := handleIntentResponse(req, userDetails, deviceID, req.ExtID)
+	var uc models.UserContext
+	uc.User = userDetails
+
+	org, err := orgs.Store.Get(userDetails.OrgID)
+	if err != nil {
+		utils.TrasaResponse(w, 200, status, reason, "Dashboard Login", response)
+		return
+	}
+
+	uc.Org = org
+	uc.DeviceID = deviceID
+	uc.BrowserID = req.ExtID
+
+	status, failedReason, intent, sessionToken, respData := handleIntentResponse(req, uc)
 
 	err = logs.Store.LogLogin(&authlog, failedReason, status == "success")
 	if err != nil {
@@ -204,7 +218,7 @@ func getIntentMatch(intent string) bool {
 	return retVal
 }
 
-func handleTFAMethodd(req tfaRequest, user *models.User, authlog *logs.AuthLog) (status, reason string, resp interface{}) {
+func handleTFAMethodd(req TfaRequest, user *models.User, authlog *logs.AuthLog) (status, reason string, resp interface{}) {
 	switch req.TfaMethod {
 	// in case of u2fy, we do not need to generate login credentials here but process it in another signed response request from client
 	case "u2fy":
@@ -248,18 +262,18 @@ func handleTFAMethodd(req tfaRequest, user *models.User, authlog *logs.AuthLog) 
 
 }
 
-func handleIntentResponse(req tfaRequest, user *models.User, deviceID, browserID string) (status string, reason consts.FailedReason, intent, sessionToken string, resp interface{}) {
-	orgUserStr := fmt.Sprintf("%s:%s", user.OrgID, user.ID)
+func handleIntentResponse(req TfaRequest, uc models.UserContext) (status string, reason consts.FailedReason, intent, sessionToken string, resp interface{}) {
+	orgUserStr := fmt.Sprintf("%s:%s", uc.User.OrgID, uc.User.ID)
 	switch req.Intent {
 	// in case of u2fy, we do not need to generate login credentials here but process it in another signed response request from client
 	case consts.AUTH_REQ_DASH_LOGIN:
 		// check if user has pending change password policy.
 		// if yes, respond with change password intent else respond with session identifiers.
-		policy, err := users.Store.GetEnforcedPolicy(user.ID, user.OrgID, consts.ChangePassword)
+		policy, err := users.Store.GetEnforcedPolicy(uc.User.ID, uc.User.OrgID, consts.ChangePassword)
 		if err != nil {
 			// if we reached here means there's no pending change password policy enforced for this user.
 			// we can continue for creating session.
-			sessionToken, resp, err := sessionResponse(user, deviceID, browserID)
+			sessionToken, resp, err := sessionResponse(uc)
 			if err != nil {
 				logrus.Error(err)
 				return "failed", consts.REASON_TRASA_ERROR, "DashboardLogin", sessionToken, nil
@@ -286,7 +300,7 @@ func handleIntentResponse(req tfaRequest, user *models.User, deviceID, browserID
 				}
 				return "success", "", consts.AUTH_RESP_RESET_PASS, "", verifyToken
 			}
-			sessionToken, resp, err := sessionResponse(user, deviceID, browserID)
+			sessionToken, resp, err := sessionResponse(uc)
 			if err != nil {
 				return "failed", consts.REASON_TRASA_ERROR, "DashboardLogin", sessionToken, nil
 			}
@@ -295,12 +309,17 @@ func handleIntentResponse(req tfaRequest, user *models.User, deviceID, browserID
 		}
 	case consts.AUTH_REQ_ENROL_DEVICE:
 		//todo this is a temporary fix
-		userWithPass, err := Store.GetLoginDetails(user.Email, "")
+		userWithPass, err := Store.GetLoginDetails(uc.User.UserName, "")
 		if err != nil {
 			logrus.Error(err)
+			return "failed", consts.REASON_USER_NOT_FOUND, "DashboardLogin", "", ""
 		}
-		resp := devices.EnrolDeviceFunc(*user)
+		resp := devices.EnrolDeviceFunc(*uc.User)
 		resp.OrgName = userWithPass.OrgName
+		resp.Account = userWithPass.Email
+		if resp.Account == "" {
+			resp.Account = userWithPass.UserName
+		}
 		return "success", "", consts.AUTH_RESP_ENROL_DEVICE, "", resp
 	case consts.AUTH_REQ_CHANGE_PASS:
 		verifyToken := utils.GetRandomString(7)
@@ -318,7 +337,7 @@ func handleIntentResponse(req tfaRequest, user *models.User, deviceID, browserID
 		return "success", "", consts.AUTH_RESP_CHANGE_PASS, "", verifyToken
 
 	case consts.AUTH_REQ_FORGOT_PASS:
-		err := forgotPassTfaResp(*user)
+		err := forgotPassTfaResp(*uc.User)
 		if err != nil {
 			logrus.Error(err)
 			return "failed", consts.REASON_TRASA_ERROR, consts.AUTH_RESP_FORGOT_PASS, "", nil
@@ -381,4 +400,120 @@ func decryptAndUpdateDH(ourPriv, clientPub, clientDH, extID string) (string, err
 	}
 
 	return deviceID, nil
+}
+
+type ConfirmTOTPPreq struct {
+	TOTPCode string `json:"totpCode"`
+	DeviceID string `json:"deviceID"`
+}
+
+//Check newly added TOTP to complete device registration process.
+//This function will also create http session
+func ConfirmTOTPAndSave(w http.ResponseWriter, r *http.Request) {
+	var request ConfirmTOTPPreq
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "invalid request", "ConfirmTOTPAndSave")
+		return
+	}
+
+	userID_orgID_Totpsec, err := redis.Store.MGet(request.DeviceID,
+		"userID",
+		"orgID",
+		"totpSec",
+	)
+
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "invalid deviceID", "ConfirmTOTPAndSave")
+		return
+	}
+
+	userID := userID_orgID_Totpsec[0]
+	orgID := userID_orgID_Totpsec[1]
+	totpSec := userID_orgID_Totpsec[2]
+
+	prevCode, nowCode, nextCode := utils.CalculateTotp(totpSec)
+	if request.TOTPCode != prevCode && request.TOTPCode != nowCode && request.TOTPCode != nextCode {
+		logrus.Error("invalid TOTP code")
+		utils.TrasaResponse(w, 200, "failed", "invalid TOTP code", "ConfirmTOTPAndSave")
+		return
+	}
+
+	dev := models.UserDevice{
+		UserID:     userID,
+		OrgID:      orgID,
+		DeviceID:   request.DeviceID,
+		MachineID:  "",
+		DeviceType: "mobile",
+		TotpSec:    totpSec,
+		Trusted:    false,
+		AddedAt:    time.Now().Unix(),
+	}
+
+	fcm_publick_devHyg, err := redis.Store.MGet(request.DeviceID,
+		"fcmToken",
+		"publicKey",
+		"deviceHygiene",
+	)
+
+	if err == nil {
+		var devHyg models.DeviceHygiene
+		err = json.Unmarshal([]byte(fcm_publick_devHyg[2]), &devHyg)
+		if err != nil {
+			logrus.Error(err)
+		}
+
+		dev.FcmToken = fcm_publick_devHyg[0]
+		dev.PublicKey = fcm_publick_devHyg[1]
+		dev.DeviceHygiene = devHyg
+
+	}
+
+	userDetails, err := users.Store.GetFromID(userID, orgID)
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "could not find user", "ConfirmTOTPAndSave")
+		return
+	}
+
+	err = devices.Store.Register(dev)
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "could not register device", "ConfirmTOTPAndSave")
+		return
+	}
+
+	var uc models.UserContext
+	uc.User = userDetails
+
+	org, err := orgs.Store.Get(userDetails.OrgID)
+	if err != nil {
+		utils.TrasaResponse(w, 200, "failed", err.Error(), "could not register device", "ConfirmTOTPAndSave")
+		return
+	}
+
+	uc.Org = org
+	uc.DeviceID = ""
+	uc.BrowserID = ""
+
+	//TODO add deviceID and browserID
+	sessionToken, resp, err := sessionResponse(uc)
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "could not get session", "ConfirmTOTPAndSave")
+		return
+	}
+
+	xSESSION := http.Cookie{
+		Name:     "X-SESSION",
+		Value:    sessionToken,
+		HttpOnly: true,
+		SameSite: http.SameSiteStrictMode,
+		Secure:   true,
+		Path:     "/",
+	}
+
+	http.SetCookie(w, &xSESSION)
+	utils.TrasaResponse(w, 200, "success", "", "", resp)
 }

@@ -27,8 +27,17 @@ func makeConfig(params *models.ConnectionParams, creds *models.UpstreamCreds) (*
 	config.OptimalScreenWidth = int(params.OptWidth)
 
 	config.Parameters = make(map[string]string)
-	config.Parameters["hostname"] = params.Hostname
-	config.Parameters["port"] = "3389"
+
+	port := "3389"
+	host := params.Hostname
+	if strings.Contains(params.Hostname, ":") {
+		splitted := strings.Split(params.Hostname, ":")
+		port = splitted[1]
+		host = splitted[0]
+
+	}
+	config.Parameters["hostname"] = host
+	config.Parameters["port"] = port
 	splitted := strings.Split(params.Privilege, `\`)
 	if strings.Contains(params.Privilege, `\`) && len(splitted) == 2 {
 		config.Parameters["username"] = splitted[1]

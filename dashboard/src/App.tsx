@@ -53,6 +53,7 @@ export default class APP extends Component<AppProps, Tstate> {
 
     axios.interceptors.response.use(
       (resp) => {
+        console.debug('resp headers: ', resp.headers)
         if (resp.config.method !== 'get') {
           this.setState((prevState) => ({
             actionStatus: { ...prevState.actionStatus, loader: false },

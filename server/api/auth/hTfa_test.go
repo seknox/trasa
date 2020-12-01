@@ -25,7 +25,7 @@ func Test_handleIntentResponse(t *testing.T) {
 
 	pass, _ := bcrypt.GenerateFromPassword([]byte("testpass@123"), bcrypt.DefaultCost)
 	authstore.
-		On("GetLoginDetails", "user@example.com", "").
+		On("GetLoginDetails", "rot", "").
 		Return(&models.UserWithPass{
 			User: models.User{
 				ID:         "123",
@@ -50,7 +50,7 @@ func Test_handleIntentResponse(t *testing.T) {
 	}, nil)
 
 	type args struct {
-		req  tfaRequest
+		req  TfaRequest
 		user *models.User
 	}
 	tests := []struct {
@@ -64,7 +64,7 @@ func Test_handleIntentResponse(t *testing.T) {
 	}{
 		{
 			name: "successful dash login ",
-			args: args{tfaRequest{
+			args: args{TfaRequest{
 				Token:     "1234",
 				TfaMethod: "totp",
 				Totp:      "4432",
@@ -73,6 +73,7 @@ func Test_handleIntentResponse(t *testing.T) {
 				ID:       "123456789",
 				OrgID:    "abc",
 				Email:    "user@example.com",
+				UserName: "rot",
 				UserRole: "orgAdmin",
 				Status:   true,
 				IdpName:  "trasa",
@@ -86,7 +87,7 @@ func Test_handleIntentResponse(t *testing.T) {
 
 		{
 			name: "successful enrol device ",
-			args: args{tfaRequest{
+			args: args{TfaRequest{
 				Token:     "1234",
 				TfaMethod: "totp",
 				Totp:      "4432",
@@ -95,6 +96,7 @@ func Test_handleIntentResponse(t *testing.T) {
 				ID:       "123456789",
 				OrgID:    "abc",
 				Email:    "user@example.com",
+				UserName: "rot",
 				UserRole: "orgAdmin",
 				Status:   true,
 				IdpName:  "trasa",
@@ -108,7 +110,7 @@ func Test_handleIntentResponse(t *testing.T) {
 
 		{
 			name: "successful change pass",
-			args: args{tfaRequest{
+			args: args{TfaRequest{
 				Token:     "1234",
 				TfaMethod: "totp",
 				Totp:      "4432",
@@ -117,6 +119,7 @@ func Test_handleIntentResponse(t *testing.T) {
 				ID:       "123456789",
 				OrgID:    "abc",
 				Email:    "user@example.com",
+				UserName: "rot",
 				UserRole: "orgAdmin",
 				Status:   true,
 				IdpName:  "trasa",
@@ -130,7 +133,7 @@ func Test_handleIntentResponse(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotStatus, gotReason, gotIntent, gotSession, gotResp := handleIntentResponse(tt.args.req, tt.args.user, "", "")
+			gotStatus, gotReason, gotIntent, gotSession, gotResp := handleIntentResponse(tt.args.req, models.UserContext{User: tt.args.user})
 			if gotStatus != tt.wantStatus {
 				t.Errorf("handleIntentResponse() gotStatus = %v, want %v", gotStatus, tt.wantStatus)
 			}

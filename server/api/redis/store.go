@@ -2,10 +2,12 @@ package redis
 
 import (
 	"context"
+	"encoding/json"
 	"time"
 
 	"github.com/pkg/errors"
 	"github.com/seknox/trasa/server/consts"
+	"github.com/seknox/trasa/server/models"
 	"github.com/seknox/trasa/server/utils"
 	"github.com/sirupsen/logrus"
 )
@@ -15,6 +17,22 @@ func (s redisStore) Set(key string, expiry time.Duration, val ...string) error {
 	client := s.RedisClient
 	ctx := context.Background()
 	err := client.HSet(ctx, key, val).Err()
+	if err != nil {
+		return err
+	}
+
+	return client.Expire(ctx, key, expiry).Err()
+}
+
+// Set implements reis HSet
+func (s redisStore) SetSessionWithUserContext(key string, expiry time.Duration, authToken string, uc models.UserContext) error {
+	client := s.RedisClient
+	ctx := context.Background()
+	ucString, err := json.Marshal(uc)
+	if err != nil {
+		return err
+	}
+	err = client.HSet(ctx, key, "auth", authToken, "uc", ucString).Err()
 	if err != nil {
 		return err
 	}
@@ -44,37 +62,41 @@ func (s redisStore) MGet(key string, field ...string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
+	if len(vals) != len(field) {
+		return nil, errors.New("not enough values got from redis")
+	}
 	return utils.ToStringArr(vals)
 }
 
-// GetSession can be used to store any key value. Main key should be unique value while value key name will be "data" and value should be json encoded byte.
-func (s redisStore) GetSession(key string) (userID, orgID, deviceID, browserID, auth string, err error) {
+// GetSession can be used to get any key value. Main key should be unique value while value key name will be "data" and value should be json encoded byte.
+func (s redisStore) GetSession(key string) (auth string, uc models.UserContext, err error) {
 	client := s.RedisClient
 	ctx := context.Background()
 	var vals []interface{}
-	vals, err = client.HMGet(ctx, key, "userID", "orgID", "deviceID", "browserID", "auth").Result()
+	vals, err = client.HMGet(ctx, key, "auth", "uc").Result()
 	if err != nil {
 		return
 	}
 	var strArr []string
 	strArr, err = utils.ToStringArr(vals)
 	if err != nil {
+		logrus.Debug(err)
 		return
 	}
 
-	if len(strArr) != 5 {
+	if len(strArr) != 2 {
 		err = errors.Errorf("not enough values")
 		return
 	}
 
-	//TODO
 	client.Expire(ctx, key, time.Second*900)
-	userID = strArr[0]
-	orgID = strArr[1]
-	deviceID = strArr[2]
-	browserID = strArr[3]
+	auth = strArr[0]
+	ucJson := strArr[1]
 
-	auth = strArr[4]
+	err = json.Unmarshal([]byte(ucJson), &uc)
+	if err != nil {
+		return
+	}
 
 	return
 }

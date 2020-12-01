@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/tls"
 	"database/sql"
-	"flag"
 	"fmt"
 	"github.com/seknox/trasa/server/utils"
 	"github.com/spf13/viper"
@@ -32,6 +31,7 @@ import (
 )
 
 var DBVersion string = "2020-07-31-rc"
+var LogToFile *bool
 
 var config Config
 
@@ -93,11 +93,9 @@ func InitDBSTOREWithConfig(conf Config) *State {
 
 	config = conf
 	level, _ := logrus.ParseLevel(config.Logging.Level)
-	logOutputToFile := flag.Bool("f", false, "Write to file")
 	OxyLog = logrus.New()
 	OxyLog.SetLevel(logrus.ErrorLevel)
-	flag.Parse()
-	if *logOutputToFile {
+	if LogToFile != nil && *LogToFile {
 		f, err := os.OpenFile(filepath.Join(utils.GetVarDir(), "log", "trasa.log"), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 		if err != nil {
 			panic(err)
@@ -125,14 +123,7 @@ func InitDBSTOREWithConfig(conf Config) *State {
 	// we start trasa-server dependencies:
 
 	// initialize cockroachdb connection
-	db, err := sql.Open("postgres", DBconn(config))
-	if err != nil {
-		panic(err)
-	}
-	err = db.Ping()
-	if err != nil {
-		panic("database connection down: " + err.Error())
-	}
+	db := DBconn(config)
 
 	//	DbCon = db
 
@@ -167,16 +158,6 @@ func InitDBSTOREWithConfig(conf Config) *State {
 			panic(err)
 		}
 	}
-
-	// DbEnv = &DBConn{
-	// 	db:             db,
-	// 	geoip:          geodb,
-	// 	firebaseClient: app,
-	// 	minioClient:    minioClient,
-
-	// 	config:      config,
-	// 	redisClient: redisClient,
-	// }
 
 	err = migrate(db)
 	if err != nil {
@@ -225,7 +206,7 @@ func migrate(conn *sql.DB) error {
 	return nil
 
 }
-func DBconn(config Config) string {
+func DBconn(config Config) *sql.DB {
 
 	dbuser := config.Database.Dbuser
 	dbpass := config.Database.Dbpass
@@ -251,7 +232,25 @@ func DBconn(config Config) string {
 		str = fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=disable", dbuser, dbpass, dbhost, dbport, dbname)
 	}
 
-	return str
+	db, err := sql.Open("postgres", str)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	//Check if the connection is successful by establishing a connection.
+	//Retry upto 10 times if connection is not successful
+	for retryCount := 0; retryCount < 10; retryCount++ {
+		err = db.Ping()
+		if err == nil {
+			logrus.Info("database connection successful")
+			return db
+		}
+
+		logrus.Info("could not connect to database: retrying...")
+		time.Sleep(time.Second)
+	}
+
+	panic("could not connect to database")
 
 }
 
@@ -361,7 +360,7 @@ func checkInitDirsAndFiles() {
 	if err != nil {
 		panic(err)
 	}
-	err = os.MkdirAll(filepath.Join(utils.GetVarDir(), "trasa", "minio"), 0600)
+	err = os.MkdirAll(filepath.Join(utils.GetVarDir(), "trasa", "sessions"), 0600)
 	if err != nil {
 		panic(err)
 	}

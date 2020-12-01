@@ -21,9 +21,8 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import Constants from '../../../../Constants';
-import ProgressHOC from '../../../../utils/Components/Progressbar';
+import { default as Progress, default as ProgressHOC } from '../../../../utils/Components/Progressbar';
 import ScrollableDlg from '../../../../utils/Components/ScrollableDlg';
-import Progress from '../../../../utils/Components/Progressbar';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -284,17 +283,21 @@ function SAMLConfig(props: any) {
               />
             </Grid>
             <Grid item xs={1}>
-              <CopyToClipboard text={clipText}>
-                <Fab
+
+            <Fab
                   size="small"
-                  onClick={() => setClipText(props.idp.audienceURI)}
+                  onClick={() => {
+                    navigator &&
+                      navigator.clipboard &&
+                      navigator.clipboard.writeText(props.idp.audienceURI);
+                  }}
                   aria-label="copy"
                   className={classes.fab}
                   component="button"
                 >
                   <CopyIcon />
                 </Fab>
-              </CopyToClipboard>
+
             </Grid>
           </Grid>
 
@@ -303,13 +306,24 @@ function SAMLConfig(props: any) {
               <Typography variant="h4">Redirect Url: </Typography>
             </Grid>
             <Grid item xs={8}>
-              <TextField disabled name="redirectURL" fullWidth value={props.idp.redirectURL} />
+              <TextField disabled name="redirectURL" fullWidth    InputProps={{
+                  disableUnderline: true,
+                  classes: {
+                    root: classes.textFieldRoot,
+                    input: classes.textFieldInputBig,
+                  },
+                }}
+                value={props.idp.redirectURL} />
             </Grid>
             <Grid item xs={1}>
               <CopyToClipboard text={clipText}>
                 <Fab
                   size="small"
-                  onClick={() => setClipText(props.idp.redirectURL)}
+                  onClick={() => {
+                    navigator &&
+                      navigator.clipboard &&
+                      navigator.clipboard.writeText(props.idp.redirectURL);
+                  }}
                   aria-label="copy"
                   className={classes.fab}
                   component="button"

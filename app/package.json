@@ -30,7 +30,7 @@
     "otp-client": "^1.0.2",
     "prop-types": "^15.7.2",
     "react": "16.13.1",
-    "react-native": "0.63.1",
+    "react-native": "0.63.3",
     "react-native-barcode-mask": "^1.1.0",
     "react-native-bootsplash": "^2.2.5",
     "react-native-camera": "git+https://git@github.com/react-native-community/react-native-camera.git",
@@ -60,10 +60,6 @@
     "@react-native-community/eslint-config": "^2.0.0",
     "babel-jest": "^26.1.0",
     "eslint": "^7.4.0",
-    "jest": "^26.1.0",
-    "metro-react-native-babel-preset": "^0.60.0",
-    "react-test-renderer": "16.13.1",
-    "prettier": "^2.0.5",
     "eslint-config-airbnb": "18.1.0",
     "eslint-config-import": "^0.13.0",
     "eslint-config-prettier": "^6.11.0",
@@ -71,7 +67,11 @@
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-react": "^7.20.0",
-    "eslint-plugin-react-hooks": "^2.5.0"
+    "eslint-plugin-react-hooks": "^2.5.0",
+    "jest": "^26.1.0",
+    "metro-react-native-babel-preset": "^0.60.0",
+    "prettier": "^2.0.5",
+    "react-test-renderer": "16.13.1"
   },
   "jest": {
     "preset": "react-native"

@@ -35,8 +35,8 @@ jobs:
 
       - name: Create required directories
         run: |
-          sudo mkdir -p /var/trasa/minio
-          sudo chmod 777 /var/trasa/minio
+          sudo mkdir -p /var/trasa/sessions
+          sudo chmod 777 /var/trasa/sessions
           sudo mkdir -p /tmp/trasa/accessproxy/http
           sudo chmod 777 /tmp/trasa/accessproxy/http
           sudo mkdir -p /tmp/trasa/accessproxy/guac

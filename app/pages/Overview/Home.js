@@ -61,11 +61,17 @@ export function Home(props) {
         setSearchQuery(q);
         //   setState({totpList:this.totpList.filter(item=>item.issuer.toUpperCase().includes(q.toUpperCase()))})
     };
+    const trimIssuerName= (name) =>{
+        const maxChars = 11
+        if(name?.length>maxChars){
+            return name.slice(0,maxChars-1)+"..."
+        }else {
+            return name
+        }
+    }
 
 
-    // const onGetTagetRef = (ref) => {
-    //   this.setState({qrFabRef: ref});
-    // };
+
 
     const filteredTotpList = totpList.filter((item) =>
         item.issuer.toUpperCase().includes(searchQuery.toUpperCase()),
@@ -127,7 +133,7 @@ export function Home(props) {
                                                 badge={0}
                                             />
 
-                                            <Text >{item.issuer}</Text>
+                                            <Text >{trimIssuerName(item.issuer)}</Text>
                                         </View>
 
 
@@ -168,7 +174,7 @@ export function Home(props) {
                                                 }}
                                             />
 
-                                            <Text>{item.issuer}</Text>
+                                            <Text>{trimIssuerName(item.issuer)}</Text>
 
                                         </View>
 

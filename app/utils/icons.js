@@ -30,6 +30,6 @@ export const iconName = (name) =>
     'weibo',
     'wordpress',
     'youtube',
-  ].includes(name.toLowerCase())
-    ? name.toLowerCase()
+  ].includes(name?.toLowerCase())
+    ? name?.toLowerCase()
     : 'lock';

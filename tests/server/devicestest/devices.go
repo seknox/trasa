@@ -1,4 +1,4 @@
-package server_test
+package devicestest
 
 import (
 	"context"
@@ -19,7 +19,7 @@ import (
 
 //TODO
 
-func TestRegisterWorkstation(t *testing.T) {
+func RegisterWorkstationTest(t *testing.T) {
 	key := trasadaKex(t, "enrolDevice")
 	deviceRegisterReq(t, key)
 }
@@ -193,7 +193,7 @@ func trasadaKex(t *testing.T, intent string) []byte {
 	return sec
 }
 
-func TestDeleteMyDevice(t *testing.T) {
+func deleteMyDevice(t *testing.T, deviceID string) {
 	t.Run("deleting own device should pass", func(t *testing.T) {
 
 		req, err := http.NewRequest("GET", "", nil)
@@ -202,7 +202,7 @@ func TestDeleteMyDevice(t *testing.T) {
 		}
 
 		rctx := chi.NewRouteContext()
-		rctx.URLParams.Add("deviceID", "db8dc6b0-84c1-43b2-929f-fa0479a25441")
+		rctx.URLParams.Add("deviceID", deviceID)
 		req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, rctx))
 
 		// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.

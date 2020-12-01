@@ -29,7 +29,7 @@ func InitSSHCA(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pubKey, err := utils.GeneratePublicKey(&privateKey.PublicKey)
+	pubKey, err := utils.ConvertPublicKeyToSSHFormat(&privateKey.PublicKey)
 	if err != nil {
 		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "invalid request", "SSH CA not initialised", nil, nil)
