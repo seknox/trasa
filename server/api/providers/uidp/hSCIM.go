@@ -201,6 +201,7 @@ func SCIMPutSingleUser(w http.ResponseWriter, r *http.Request) {
 
 	trasaUser := transformSuserToTuser(req, uc)
 	trasaUser.ID = userID
+	trasaUser.UserRole = "selfUser"
 
 	if req.Active == false {
 		err := users.Store.UpdateStatus(false, trasaUser.ID, uc.OrgID) //createUser(&user)
