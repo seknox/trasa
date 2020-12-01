@@ -7,10 +7,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/pkg/errors"
-	"github.com/seknox/trasa/server/api/orgs"
 	"github.com/seknox/trasa/server/api/redis"
-	"github.com/seknox/trasa/server/api/users"
-	"github.com/seknox/trasa/server/global"
 	"github.com/seknox/trasa/server/models"
 	"github.com/seknox/trasa/server/utils"
 	"github.com/sirupsen/logrus"
@@ -110,7 +107,7 @@ func validateAndGetUserContext(sessionToken, csrfToken string) (models.UserConte
 	}
 
 	// if we are here, it means cookies are present. we look for auth token with redis store
-	userID, orgID, deviceID, browserID, authToken, err := redis.Store.GetSession(sessionToken)
+	authToken, uc, err := redis.Store.GetSession(sessionToken)
 	if err != nil {
 		return userContext, errors.Errorf("get session redis: %v", err)
 	}
@@ -132,24 +129,6 @@ func validateAndGetUserContext(sessionToken, csrfToken string) (models.UserConte
 		return userContext, errors.Errorf("error in decryption")
 	}
 
-	user, err := users.Store.GetFromID(userID, orgID)
-	if err != nil {
-		return userContext, errors.Errorf(`get user  from db: %v`, err)
-	}
-
-	org, err := orgs.Store.Get(user.OrgID)
-	if err != nil {
-		return userContext, errors.Errorf("get org from db: %v", err)
-
-	}
-	//logrus.Trace(deviceID)
-
-	userContext.User = user
-	userContext.Org = org
-	userContext.DeviceID = deviceID
-	userContext.BrowserID = browserID
-	userContext.Org.PlatformBase = global.GetConfig().Platform.Base
-
-	return userContext, nil
+	return uc, nil
 
 }

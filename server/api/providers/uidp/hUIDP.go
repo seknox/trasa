@@ -85,7 +85,10 @@ func UpdateIdp(w http.ResponseWriter, r *http.Request) {
 
 	//	var err error
 	if idp.IdpType == "saml" {
-		err := Store.UpdateIDP(&idp)
+		idp.SCIMEndpoint = fmt.Sprintf("https://%s/scim/v2", global.GetConfig().Trasa.ListenAddr)
+		idp.RedirectURL = fmt.Sprintf("https://%s/auth/external/saml/%s/%s", global.GetConfig().Trasa.ListenAddr, uc.User.OrgID, idp.IdpName)
+
+		err := Store.UpdateSAMLIDP(&idp)
 		if err != nil {
 			logger.Error(err)
 			utils.TrasaResponse(w, 200, "failed", "failed to update IDP", "Could not update IDP", nil)

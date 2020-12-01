@@ -133,8 +133,7 @@ export function Home(props) {
                                                 badge={0}
                                             />
 
-                                            <Text >{trimIssuerName("seknox-okta.okta.com")}</Text>
-                                            {/*<Text >{trimIssuerName("item.issuer")}</Text>*/}
+                                            <Text >{trimIssuerName(item.issuer)}</Text>
                                         </View>
 
 

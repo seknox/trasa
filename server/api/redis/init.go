@@ -5,6 +5,7 @@ import (
 
 	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/global"
+	"github.com/seknox/trasa/server/models"
 )
 
 //InitStore initialises package state
@@ -28,6 +29,8 @@ type redisStore struct {
 
 type adapter interface {
 	Set(key string, expiry time.Duration, val ...string) error
+	SetSessionWithUserContext(key string, expiry time.Duration, authToken string, uc models.UserContext) error
+
 	Get(key string, field string) (string, error)
 	MGet(key string, field ...string) ([]string, error)
 	Delete(key string) error
@@ -35,7 +38,7 @@ type adapter interface {
 	SetVerifyIntent(key string, expiry time.Duration, intent, field, val string) error
 	VerifyIntent(key string, intent consts.VerifyTokenIntent) error
 
-	GetSession(key string) (userID, orgID, deviceID, browserID, auth string, err error)
+	GetSession(key string) (auth string, uc models.UserContext, err error)
 
 	WaitForStatusAndGet(key, field string) (success bool, val string)
 	SetHTTPAccessProxySession(key, orgusr, authDataVal string, sessionRecord string) error

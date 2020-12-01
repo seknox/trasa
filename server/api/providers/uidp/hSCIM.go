@@ -68,12 +68,7 @@ func SCIMCreateUser(w http.ResponseWriter, r *http.Request) {
 	// get ScimContext
 	uc := r.Context().Value("scimprov").(models.ScimContext)
 
-	primaryEmail := ""
-	for _, v := range req.Emails {
-		if v.Primary == true {
-			primaryEmail = v.Value
-		}
-	}
+	primaryEmail := getPrimaryEmail(req.Emails)
 	// normalized. i.e change to lower case.
 	normalizedEmail := utils.NormalizeString(primaryEmail)
 	normalizedUserName := utils.NormalizeString(req.UserName)
@@ -149,7 +144,7 @@ func SCIMGetSingleUsersWithFilter(w http.ResponseWriter, r *http.Request) {
 
 		userDetailFromDb, err := users.Store.GetFromTRASAID(userName, uc.OrgID)
 		if err != nil {
-			logger.Error(err)
+			logger.Debug(err)
 			var ss = make([]models.ScimUser, 0)
 			//s := transformTuserToSuser(userDetailFromDb)
 			//ss = append(ss, s)
@@ -164,6 +159,7 @@ func SCIMGetSingleUsersWithFilter(w http.ResponseWriter, r *http.Request) {
 		ss = append(ss, s)
 
 		scimUserListResp(w, 200, ss)
+		return
 
 	}
 
@@ -201,6 +197,14 @@ func SCIMPutSingleUser(w http.ResponseWriter, r *http.Request) {
 
 	trasaUser := transformSuserToTuser(req, uc)
 	trasaUser.ID = userID
+	trasaUser.UserRole = "selfUser"
+
+	userName := req.UserName
+	if userName == "" {
+		primaryEmail := getPrimaryEmail(req.Emails)
+		userName = primaryEmail
+	}
+	trasaUser.UserName = userName
 
 	if req.Active == false {
 		err := users.Store.UpdateStatus(false, trasaUser.ID, uc.OrgID) //createUser(&user)
@@ -311,8 +315,8 @@ func SCIMDeleteUser(w http.ResponseWriter, r *http.Request) {
 // scimUserResp is a generic scim response handler
 func scimUserResp(w http.ResponseWriter, respVal int, u models.ScimUser) {
 
-	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(respVal)
+	w.Header().Set("Content-Type", "application/json")
 
 	write, err := json.Marshal(u)
 	if err != nil {
@@ -328,8 +332,8 @@ func scimUserListResp(w http.ResponseWriter, respVal int, u []models.ScimUser) {
 	l.Resources = u
 	l.ItemsPerPage = 1
 	l.TotalResults = len(u)
-	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(respVal)
+	w.Header().Set("Content-Type", "application/json")
 
 	write, _ := json.Marshal(l)
 	w.Write(write)
@@ -415,4 +419,14 @@ func transformSuserToTuser(s models.ScimUser, uc models.ScimContext) models.User
 	}
 	u.Status = s.Active
 	return u
+}
+
+func getPrimaryEmail(emails []models.ScimUserEmails) string {
+	primaryEmail := ""
+	for _, v := range emails {
+		if v.Primary == true {
+			primaryEmail = v.Value
+		}
+	}
+	return primaryEmail
 }

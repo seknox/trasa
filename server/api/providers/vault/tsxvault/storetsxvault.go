@@ -132,7 +132,7 @@ func (s vaultStore) TsxvGetSecret(orgID, serviceID, appType, secretid string) ([
 
 // GetSecret is only returns secret value from tsxVault
 func (s vaultStore) TsxvDeleteSecret(orgID, serviceID, secretType, secretid string) error {
-	_, err := s.DB.Exec(`DELETE FROM service_keyvault WHERE org_id = $1 AND secret_id = $2 AND secret_id=$3 AND secret_type=$4`,
+	_, err := s.DB.Exec(`DELETE FROM service_keyvault WHERE org_id = $1 AND service_id = $2 AND secret_id=$3 AND secret_type=$4`,
 		orgID, serviceID, secretid, secretType)
 
 	return err

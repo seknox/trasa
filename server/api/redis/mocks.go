@@ -1,10 +1,13 @@
 package redis
 
 import (
+	"encoding/json"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/seknox/trasa/server/consts"
+	"github.com/seknox/trasa/server/models"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -15,6 +18,19 @@ type redisMock struct {
 //Set mock
 func (r *redisMock) Set(key string, expiry time.Duration, val ...string) error {
 
+	r.TestData().Set(key, val)
+
+	return nil
+}
+
+// SetSessionWithUserContext mock
+func (r *redisMock) SetSessionWithUserContext(key string, expiry time.Duration, authToken string, uc models.UserContext) error {
+
+	fmt.Println("key: ", key)
+	val, err := json.Marshal(uc)
+	if err != nil {
+		return err
+	}
 	r.TestData().Set(key, val)
 
 	return nil
@@ -55,12 +71,12 @@ func (r *redisMock) SetVerifyIntent(key string, expiry time.Duration, intent, fi
 }
 
 //VerifyIntent mock
-func (r redisMock) VerifyIntent(key string, intent consts.VerifyTokenIntent) error {
+func (r *redisMock) VerifyIntent(key string, intent consts.VerifyTokenIntent) error {
 	panic("implement me")
 }
 
 //GetSession mock
-func (r *redisMock) GetSession(key string) (userID, orgID, deviceID, browserID, auth string, err error) {
+func (r *redisMock) GetSession(key string) (auth string, uc models.UserContext, err error) {
 	val := r.TestData().Get(key)
 
 	arr, ok := val.Data().([]string)
@@ -70,13 +86,8 @@ func (r *redisMock) GetSession(key string) (userID, orgID, deviceID, browserID, 
 	}
 
 	for i, v := range arr {
-		if v == "user" {
-			if len(arr) < i+2 {
-				err = errors.New("invalid array length")
-				return
-			}
-			userID = arr[i+1]
-		}
+		// TODO @bhrg3se mock for user context?
+
 		if v == "auth" {
 			if len(arr) < i+2 {
 				err = errors.New("field not found")
