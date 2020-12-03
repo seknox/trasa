@@ -37,10 +37,10 @@ values={[
 
 <TabItem value="linux">
 
-- Download [trasa](https://storage.googleapis.com/trasa-public-download-assets/release/v1.1.3/trasa.tar.gz) binary
+- Download [trasa](https://storage.googleapis.com/trasa-public-download-assets/release/v1.1.4/trasa.tar.gz) binary
     
 ```shell script
-wget https://storage.googleapis.com/trasa-public-download-assets/release/v1.1.3/trasa.tar.gz
+wget https://storage.googleapis.com/trasa-public-download-assets/release/v1.1.4/trasa.tar.gz
 ```
 
 - Extract and place static files into respective dirs
@@ -139,7 +139,7 @@ sudo docker run -d --link db:db \
 -p 8022:8022 \
 -e TRASA.LISTENADDR=app.trasa \
 -v /tmp/trasa/accessproxy/guac:/tmp/trasa/accessproxy/guac \
-seknox/trasa:v1.1.3
+seknox/trasa:v1.1.4
 ```
 
 

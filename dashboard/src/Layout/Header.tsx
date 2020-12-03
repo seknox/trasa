@@ -179,8 +179,14 @@ export default function MainHeaderBar(props: any) {
   const handleUserMenuClicked = (name: any) => () => {
     setAnchorEl(null);
     if (name === 'logout') {
-      localStorage.clear();
-      axios.delete(`${Constants.TRASA_HOSTNAME}/api/v1/user/logout`);
+    
+      axios.delete(`${Constants.TRASA_HOSTNAME}/api/v1/my/logout`).then(()=>{
+        localStorage.clear();
+      }).catch((e)=> {
+        console.log(e) 
+        localStorage.clear()
+      });
+     
       window.location.href = '/login';
     } else if (name === 'my') {
       window.location.href = '/my';
