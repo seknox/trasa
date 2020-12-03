@@ -37,10 +37,10 @@ values={[
 
 <TabItem value="linux">
 
-- Download [trasa](https://storage.googleapis.com/trasa-public-download-assets/release/v1.1.3/trasa.tar.gz) binary
+- Download [trasa](https://storage.googleapis.com/trasa-public-download-assets/release/v1.1.4/trasa.tar.gz) binary
     
 ```shell script
-wget https://storage.googleapis.com/trasa-public-download-assets/release/v1.1.3/trasa.tar.gz
+wget https://storage.googleapis.com/trasa-public-download-assets/release/v1.1.4/trasa.tar.gz
 ```
 
 - Extract and place static files into respective dirs
