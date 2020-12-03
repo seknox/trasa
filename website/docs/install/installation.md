@@ -139,7 +139,7 @@ sudo docker run -d --link db:db \
 -p 8022:8022 \
 -e TRASA.LISTENADDR=app.trasa \
 -v /tmp/trasa/accessproxy/guac:/tmp/trasa/accessproxy/guac \
-seknox/trasa:v1.1.3
+seknox/trasa:v1.1.4
 ```
 
 
