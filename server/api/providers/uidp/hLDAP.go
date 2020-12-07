@@ -14,7 +14,6 @@ import (
 	"github.com/seknox/trasa/server/api/users"
 	"github.com/seknox/trasa/server/models"
 
-	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/utils"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/ldap.v2"
@@ -40,7 +39,8 @@ func ImportLdapUsers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// get client secret from keyholders.
-	ct, err := vault.Store.GetKeyOrTokenWithKeyvalAndID(uc.User.OrgID, consts.KEY_LDAP, req.IdpID)
+	logrus.Debug(uc.User.OrgID, idpDetail.IdpName, req.IdpID)
+	ct, err := vault.Store.GetKeyOrTokenWithKeyvalAndID(uc.User.OrgID, idpDetail.IdpName, req.IdpID)
 	if err != nil {
 		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "IFailed to fetch secret value for ldap system user", "failed to import users", nil)
@@ -54,7 +54,7 @@ func ImportLdapUsers(w http.ResponseWriter, r *http.Request) {
 		ldapBindUsername = fmt.Sprintf("CN=%s,%s", idpDetail.ClientID, idpDetail.IdpMeta)
 	}
 
-	// search users in ldap
+	// search and import users in ldap
 	ldapUsers, err := bindSearchImportLdapUsers(uc, ldapBindUsername, string(password), idpDetail.Endpoint, req.AudienceURI, idpDetail.IdpName)
 	if err != nil {
 		logrus.Error(err)
@@ -153,52 +153,94 @@ func bindSearchImportLdapUsers(uc models.UserContext, uname, pass, domain, searc
 		logrus.Error(err)
 	}
 
-	for _, v := range sr.Entries {
+	if idpName == "ad" {
+		logrus.Trace("Searching Active Directory: ")
+		for _, v := range sr.Entries {
 
-		mem := v.GetAttributeValues("member")
-		logrus.Tracef("member: %v", mem)
+			mem := v.GetAttributeValues("member")
+			logrus.Tracef("member: %v", mem)
 
-		for _, k := range mem {
+			for _, k := range mem {
 
-			sr, err := searchLdap(l, k, []string{"objectGUID", "sAMAccountName", "userPrincipalName", "name"})
-			if err != nil {
-				logrus.Error(err)
-			}
-			for _, u := range sr.Entries {
-				guid := u.GetRawAttributeValue("objectGUID")
-				username := u.GetAttributeValue("sAMAccountName")
-				email := u.GetAttributeValue("userPrincipalName")
-				name := u.GetAttributeValue("name")
-				logrus.Tracef("user: %x, %v, %v, %v", guid, username, email, name)
+				sr, err := searchLdap(l, k, []string{"objectGUID", "sAMAccountName", "userPrincipalName", "name"})
+				if err != nil {
+					logrus.Error(err)
+				}
+				for _, u := range sr.Entries {
 
-				for _, v := range sr.Entries {
-					email := v.GetAttributeValue("userPrincipalName")
-					if email != "" {
-						guid := u.GetRawAttributeValue("objectGUID")
-						username := u.GetAttributeValue("sAMAccountName")
-						name := u.GetAttributeValue("name")
-						fullName := strings.Split(name, " ")
-						firstName := ""
-						lastName := ""
-						if len(fullName) > 1 {
-							firstName = fullName[0]
-							lastName = fullName[1]
-						} else {
-							firstName = name
+					for _, v := range sr.Entries {
+						email := v.GetAttributeValue("userPrincipalName")
+						if email != "" {
+							guid := u.GetRawAttributeValue("objectGUID")
+							username := u.GetAttributeValue("sAMAccountName")
+							name := u.GetAttributeValue("name")
+							fullName := strings.Split(name, " ")
+							firstName := ""
+							lastName := ""
+							if len(fullName) > 1 {
+								firstName = fullName[0]
+								lastName = fullName[1]
+							} else {
+								firstName = name
+							}
+
+							var lu models.UserWithPass
+							lu.OrgID = uc.User.OrgID
+							lu.UserName = utils.NormalizeString(username)
+							lu.FirstName = utils.NormalizeString(firstName)
+							lu.LastName = utils.NormalizeString(lastName)
+							lu.Email = utils.NormalizeString(email)
+							lu.UserRole = "selfUser"
+							lu.ID = utils.GetUUID()
+							lu.ExternalID = utils.NormalizeString(fmt.Sprintf("%x", guid))
+							lu.IdpName = idpName
+							lu.Password = ""
+							lu.Status = true
+							lu.CreatedAt = time.Now().Unix()
+							lu.UpdatedAt = lu.CreatedAt
+
+							lus = append(lus, lu)
 						}
 
+					}
+
+				}
+			}
+
+		}
+	}
+
+	if idpName == "freeipa" {
+		logrus.Trace("Searching FreeIPA: ")
+		for _, v := range sr.Entries {
+
+			mem := v.GetAttributeValues("member")
+			logrus.Tracef("member: %v", mem)
+
+			for _, k := range mem {
+
+				sr, err := searchLdap(l, k, []string{"uid", "mail", "givenName", "sn"})
+				if err != nil {
+					logrus.Error(err)
+				}
+
+				for _, v := range sr.Entries {
+					email := v.GetAttributeValue("mail")
+					if email != "" {
 						var lu models.UserWithPass
 						lu.OrgID = uc.User.OrgID
-						lu.UserName = utils.NormalizeString(username)
-						lu.FirstName = utils.NormalizeString(firstName)
-						lu.LastName = utils.NormalizeString(lastName)
-						lu.Email = utils.NormalizeString(email)
+						lu.OrgName = uc.Org.OrgName
+						lu.UserName = utils.NormalizeString(v.GetAttributeValue("uid"))
+						lu.FirstName = utils.NormalizeString(v.GetAttributeValue("givenName"))
+						lu.LastName = utils.NormalizeString(v.GetAttributeValue("sn"))
+						lu.Email = utils.NormalizeString(v.GetAttributeValue("mail"))
 						lu.UserRole = "selfUser"
 						lu.ID = utils.GetUUID()
-						lu.ExternalID = utils.NormalizeString(fmt.Sprintf("%x", guid))
-						lu.IdpName = idpName
+						lu.ExternalID = utils.NormalizeString(v.GetAttributeValue("ipaUniqueID"))
+						lu.IdpName = "freeipa"
 						lu.Password = ""
 						lu.Status = true
+
 						lu.CreatedAt = time.Now().Unix()
 						lu.UpdatedAt = lu.CreatedAt
 
@@ -208,8 +250,8 @@ func bindSearchImportLdapUsers(uc models.UserContext, uname, pass, domain, searc
 				}
 
 			}
-		}
 
+		}
 	}
 
 	//timezone, _ := time.LoadLocation(uc.Org.Timezone)
