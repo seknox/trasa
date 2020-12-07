@@ -28,7 +28,6 @@ import (
 	"github.com/seknox/trasa/server/api/stats"
 	"github.com/seknox/trasa/server/api/system"
 	"github.com/seknox/trasa/server/api/users"
-	"github.com/seknox/trasa/server/api/users/passwordpolicy"
 	"github.com/sirupsen/logrus"
 )
 
@@ -278,8 +277,6 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		r.Get("/system/settings/all", system.GlobalSettings)
 		r.Get("/system/security/rules", system.SecurityRules)
 		r.Post("/system/security/rule/update", system.UpdateSecurityRule)
-		r.Post("/system/settings/passwordpolicy/update", system.UpdatePasswordPolicy)
-		r.Get("/system/settings/passwordpolicy/enforce", passwordpolicy.EnforcePasswordPolicyNow)
 		r.Post("/system/settings/email/update", system.UpdateEmailSetting)
 		r.Post("/system/settings/devicehygienecheck/update", system.UpdateDeviceHygieneSetting)
 		r.Post("/system/settings/dynamicaccess/update", system.UpdateDynamicAccessSetting)
