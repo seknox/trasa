@@ -54,48 +54,6 @@ func GlobalSettings(w http.ResponseWriter, r *http.Request) {
 
 }
 
-type updatePassPolicyReq struct {
-	Policy models.PasswordPolicy `json:"policy"`
-	Enable bool                  `json:"enable"`
-}
-
-//UpdatePasswordPolicy updates password policy  in global settings
-func UpdatePasswordPolicy(w http.ResponseWriter, r *http.Request) {
-	logrus.Trace("request received")
-	userContext := r.Context().Value("user").(models.UserContext)
-	var req updatePassPolicyReq
-
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "error parsing request", "password policy not updated", nil, nil)
-		return
-	}
-
-	var store models.GlobalSettings
-	encodePolicy, _ := json.Marshal(req.Policy)
-	store.SettingValue = string(encodePolicy)
-	store.Status = req.Enable
-	store.OrgID = userContext.User.OrgID
-	store.SettingType = consts.GLOBAL_PASSWORD_CONFIG
-	store.UpdatedBy = userContext.User.ID
-	store.UpdatedOn = time.Now().Unix()
-
-	err := Store.UpdateGlobalSetting(store)
-	if err != nil {
-		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "error updating global settings", "password policy not updated", nil, nil)
-		return
-	}
-
-	reason := "password policy enabled"
-	if req.Enable == false {
-		reason = "password policy disabled"
-	}
-
-	utils.TrasaResponse(w, 200, "success", reason, "password policy updated", nil, nil)
-
-}
-
 //UpdateDeviceHygieneSetting updates device hygiene enforce settings
 func UpdateDeviceHygieneSetting(w http.ResponseWriter, r *http.Request) {
 	logrus.Trace("device hygeiene req")

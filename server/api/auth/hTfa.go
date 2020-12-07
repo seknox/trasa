@@ -267,46 +267,13 @@ func handleIntentResponse(req TfaRequest, uc models.UserContext) (status string,
 	switch req.Intent {
 	// in case of u2fy, we do not need to generate login credentials here but process it in another signed response request from client
 	case consts.AUTH_REQ_DASH_LOGIN:
-		// check if user has pending change password policy.
-		// if yes, respond with change password intent else respond with session identifiers.
-		policy, err := users.Store.GetEnforcedPolicy(uc.User.ID, uc.User.OrgID, consts.ChangePassword)
+
+		sessionToken, resp, err := sessionResponse(uc)
 		if err != nil {
-			// if we reached here means there's no pending change password policy enforced for this user.
-			// we can continue for creating session.
-			sessionToken, resp, err := sessionResponse(uc)
-			if err != nil {
-				logrus.Error(err)
-				return "failed", consts.REASON_TRASA_ERROR, "DashboardLogin", sessionToken, nil
-			}
-
-			return "success", "", "DashboardLogin", sessionToken, resp
-
-		} else {
-			// respond with change password intent
-			if policy.Pending == true {
-				verifyToken := utils.GetRandomString(7)
-				// store token to redis
-				err = redis.Store.Set(
-					verifyToken,
-					consts.TOKEN_EXPIRY_CHANGEPASS,
-					"orguser", orgUserStr,
-					"intent", string(consts.VERIFY_TOKEN_CHANGEPASS),
-					"createdAt", time.Now().String(),
-				)
-
-				if err != nil {
-					logrus.Error(err)
-					return "failed", consts.REASON_TRASA_ERROR, consts.AUTH_RESP_RESET_PASS, "", verifyToken
-				}
-				return "success", "", consts.AUTH_RESP_RESET_PASS, "", verifyToken
-			}
-			sessionToken, resp, err := sessionResponse(uc)
-			if err != nil {
-				return "failed", consts.REASON_TRASA_ERROR, "DashboardLogin", sessionToken, nil
-			}
-			return "success", "", "DashboardLogin", sessionToken, resp
-
+			return "failed", consts.REASON_TRASA_ERROR, "DashboardLogin", sessionToken, nil
 		}
+		return "success", "", "DashboardLogin", sessionToken, resp
+
 	case consts.AUTH_REQ_ENROL_DEVICE:
 		//todo this is a temporary fix
 		userWithPass, err := Store.GetLoginDetails(uc.User.UserName, "")
