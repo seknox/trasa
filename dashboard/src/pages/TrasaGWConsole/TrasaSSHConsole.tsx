@@ -32,7 +32,7 @@ export function SSHLiveSession(props: any) {
 
   //
   // TODO define device hygiene type
-  const connect = (e:FormEvent<Element>, tfaMethod: string,totpCode:string,) => {
+  const connect = (e:FormEvent<Element> | null, tfaMethod: string,totpCode:string,) => {
     const term = termRef.current;
 
     set2FADialogOpen(false);
@@ -123,7 +123,11 @@ export function SSHLiveSession(props: any) {
           askPassword();
         } else {
           setCredDialogOpen(false);
-          set2FADialogOpen(true);
+          if(props.tfaRequired=="true"){
+            set2FADialogOpen(true);
+          }else {
+            connect( null,"","");
+          }
         }
       })
       .catch((e) => {
@@ -141,7 +145,12 @@ export function SSHLiveSession(props: any) {
   const onPasswordSubmit = (e:React.FormEvent<any>) => {
     e.preventDefault()
     setCredDialogOpen(false);
-    set2FADialogOpen(true);
+    if(props.tfaRequired=="true"){
+      set2FADialogOpen(true);
+    }else {
+      connect( null,"","");
+    }
+    // set2FADialogOpen(true);
   };
 
   // message extension to fetch device hygiene
