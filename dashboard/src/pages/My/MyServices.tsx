@@ -206,6 +206,7 @@ export default function MyservicesList() {
     serviceType: string,
     hostname: string,
     userName: string,
+    tfaRequired: string,
   ) => {
     if (serviceType === 'http') {
       // var messenger = document.getElementById("trasextmsngr");
@@ -227,7 +228,7 @@ export default function MyservicesList() {
       window.open(
         `/my/service/connectssh#username=${encodeURIComponent(
           userName,
-        )}&serviceID=${lserviceID}&hostname=${hostname}`,
+        )}&serviceID=${lserviceID}&hostname=${hostname}&tfaRequired=${tfaRequired}`,
       );
     } else if (serviceType === 'db') {
       // window.open("sql://"+ encodeURIComponent(userName) + "@" + serviceID);setState({ open: false })
@@ -451,6 +452,7 @@ export default function MyservicesList() {
                     services[selectedServiceIndex].serviceType,
                     services[selectedServiceIndex].hostname,
                     v,
+                    services[selectedServiceIndex].policy.tfaRequired,
                   );
                 }}
               >
