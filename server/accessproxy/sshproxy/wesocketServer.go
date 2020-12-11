@@ -268,11 +268,14 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 	//Add keyboard-interactive auth method to handle TRASA PAM module installed in upstream server
 	clientConfig.Auth = append(clientConfig.Auth,
 		ssh.KeyboardInteractive(func(user, instruction string, questions []string, echos []bool) ([]string, error) {
+			//logrus.Tracef("user: %s \n instruction: %v \n questions: %v",user,instruction,questions)
 			answers := make([]string, len(questions))
 			if len(questions) == 1 {
 
 				if strings.Contains(questions[0], "Password") {
 					answers[0] = upstreamPassword
+					//logrus.Tracef("pass: %v ",upstreamPassword)
+					//logrus.Tracef("ans: %v ",answers)
 					return answers, nil
 				} else if strings.Contains(questions[0], "email") {
 					answers[0] = params.TrasaID
