@@ -258,6 +258,7 @@ export default function MyservicesList() {
         console.log(response.data);
         setUser(response.data.User);
         setAssignedservices(response.data?.data?.[0]?.myServices);
+        console.log(response.data?.data?.[0]?.myServices)
         // setState({ user: response.data.User, services: response.data.UserService });
       })
       .catch((error) => {
