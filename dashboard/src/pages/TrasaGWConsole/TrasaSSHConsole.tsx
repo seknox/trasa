@@ -145,6 +145,7 @@ export function SSHLiveSession(props: any) {
   const onPasswordSubmit = (e:React.FormEvent<any>) => {
     e.preventDefault()
     setCredDialogOpen(false);
+    console.log(props)
     if(props.tfaRequired=="true"){
       set2FADialogOpen(true);
     }else {
@@ -229,12 +230,12 @@ export function SSHLiveSession(props: any) {
 
 export default function TsshConsoleMain(props: any){
 
-  const [data, setData] = React.useState<any>({serviceID:'',username: '', email: '', connID: '', hostname: '' })
+  const [data, setData] = React.useState<any>({serviceID:'',username: '', email: '', connID: '', hostname: '',tfaRequired:true })
   React.useEffect(() => {
     const hashed = QueryString.parse(props.location.hash);
 
     if (hashed) {
-      setData({serviceID: hashed.serviceID,username: hashed.username, email: hashed.email, connID: hashed.connID, hostname: hashed.hostname})
+      setData({serviceID: hashed.serviceID,username: hashed.username, email: hashed.email, connID: hashed.connID, hostname: hashed.hostname,tfaRequired:hashed.tfaRequired})
     }
   }, [props.location.hash])
 
@@ -244,6 +245,7 @@ export default function TsshConsoleMain(props: any){
             <SSHLiveSession
                 serviceID={data.serviceID}
                 username={data.username}
+                tfaRequired={data.tfaRequired}
                 email={data.email}
                 connID={data.connID}
                 hostname={data.hostname}/> : <div></div>}
