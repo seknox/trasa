@@ -478,7 +478,7 @@ func updateSessionCredentials(sess *Session, signer ssh.Signer, hostkeyCallback 
 					answers[0] = totp
 					return answers, nil
 				} else {
-					return answers, errors.New("invalid challenges")
+					return answers, errors.New("unexpected challenges")
 				}
 
 			}

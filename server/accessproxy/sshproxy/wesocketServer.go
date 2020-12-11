@@ -18,7 +18,6 @@ import (
 	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/models"
 	logrus "github.com/sirupsen/logrus"
-	"github.com/trustelem/zxcvbn"
 )
 
 func JoinSSHSession(params models.ConnectionParams, uc models.UserContext, conn *websocket.Conn) {
@@ -154,19 +153,21 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 
 	//caKey,err:=ssh.ParsePublicKey([]byte(resp.CaCert))
 
-	passwordStreanght := zxcvbn.PasswordStrength(params.Password, nil)
+	//
+	//passwordStreanght := zxcvbn.PasswordStrength(params.Password, nil)
+	//
+	//if creds.EnforceStrongPass && creds.ClientKey == "" {
+	//	if passwordStreanght.Score < creds.ZxcvbnScore || len(params.Password) < creds.MinimumChar {
+	//		conn.WriteMessage(1, []byte("\n\rPassword policy failed, weak password\n\r"))
+	//		logrus.Debug("Weak Password")
+	//		err := logs.Store.LogLogin(&authlog, consts.REASON_PASSWORD_POLICY_FAILED, false)
+	//		if err != nil {
+	//			logrus.Error(err)
+	//		}
+	//		return
+	//	}
+	//}
 
-	if creds.EnforceStrongPass && creds.ClientKey == "" {
-		if passwordStreanght.Score < creds.ZxcvbnScore || len(params.Password) < creds.MinimumChar {
-			conn.WriteMessage(1, []byte("\n\rPassword policy failed, weak password\n\r"))
-			logrus.Debug("Weak Password")
-			err := logs.Store.LogLogin(&authlog, consts.REASON_PASSWORD_POLICY_FAILED, false)
-			if err != nil {
-				logrus.Error(err)
-			}
-			return
-		}
-	}
 	clientConfig := ssh.ClientConfig{
 		User: params.Privilege,
 		//HostKeyCallback: ssh.InsecureIgnoreHostKey(),
@@ -180,6 +181,7 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 		clientConfig.Auth = append(clientConfig.Auth, ssh.PublicKeys(signer))
 	}
 
+	//Callback function to check ssh host key of upstream server
 	var hostConfirmFunc = func(message string) bool {
 		err := conn.WriteMessage(1, []byte("\r\n"+message+"\n\rPress \"y\" to ignore and save it.\n\r"))
 		if err != nil {
@@ -200,8 +202,8 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 
 	}
 
+	//Checking TRASA policy
 	conn.WriteMessage(1, []byte("\n\rChecking policy...\n\r"))
-
 	policy, reason, err := SSHStore.checkPolicy(&params)
 	if err != nil {
 		logrus.Debug(err)
@@ -210,6 +212,7 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 		return
 	}
 
+	//Handle seconf factor if enabled in policy
 	if policy.TfaRequired {
 		conn.WriteMessage(1, []byte("\n\rAuthenticating 2nd Factor\n\r"))
 		deviceID, reason, ok := tfa.HandleTfaAndGetDeviceID(nil,
@@ -251,12 +254,41 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 
 	clientConfig.HostKeyCallback = HandleHostKeyCallback(creds, service.ID, uc.Org.ID, hostConfirmFunc)
 
+	upstreamPassword := ""
 	if params.Password == "" || creds.Password != "" {
+		//password from vault
 		conn.WriteMessage(1, []byte("\n\rUsing password from vault.\n\r"))
-		clientConfig.Auth = append(clientConfig.Auth, ssh.Password(creds.Password))
+		upstreamPassword = creds.Password
 	} else {
-		clientConfig.Auth = append(clientConfig.Auth, ssh.Password(params.Password))
+		//password entered by user
+		upstreamPassword = params.Password
 	}
+	clientConfig.Auth = append(clientConfig.Auth, ssh.Password(upstreamPassword))
+
+	//Add keyboard-interactive auth method to handle TRASA PAM module installed in upstream server
+	clientConfig.Auth = append(clientConfig.Auth,
+		ssh.KeyboardInteractive(func(user, instruction string, questions []string, echos []bool) ([]string, error) {
+			answers := make([]string, len(questions))
+			if len(questions) == 1 {
+
+				if strings.Contains(questions[0], "Password") {
+					answers[0] = upstreamPassword
+					return answers, nil
+				} else if strings.Contains(questions[0], "email") {
+					answers[0] = params.TrasaID
+					return answers, nil
+				} else if strings.Contains(questions[0], "totp") {
+					answers[0] = params.TotpCode
+					return answers, nil
+				} else {
+					return answers, errors.New("unexpected challenges")
+				}
+
+			}
+
+			return answers, nil
+		}),
+	)
 
 	if !strings.Contains(params.Hostname, ":") {
 		params.Hostname = params.Hostname + ":22"
@@ -274,11 +306,11 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 
 		} else if strings.Contains(err.Error(), "ssh: handshake failed: Could not verify upstream host key") {
 			logrus.Debug(err)
-			conn.WriteMessage(1, []byte("\n\rInvalid host key.\n\r"))
+			conn.WriteMessage(1, []byte("\n\rInvalid host key. Could not verify upstream server.\n\r"))
 			err = logs.Store.LogLogin(&authlog, consts.REASON_INVALID_HOST_KEY, false)
 		} else if strings.Contains(err.Error(), ErrVerifyHost.Error()) {
 			logrus.Debug(err)
-			conn.WriteMessage(1, []byte("\n\rInvalid host key.\n\r"))
+			conn.WriteMessage(1, []byte("\n\rInvalid host key. Could not verify upstream server.\n\r"))
 			err = logs.Store.LogLogin(&authlog, consts.REASON_INVALID_HOST_KEY, false)
 		} else {
 			logrus.Error(err)
