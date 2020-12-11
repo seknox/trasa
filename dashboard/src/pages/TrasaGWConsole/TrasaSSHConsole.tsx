@@ -145,7 +145,6 @@ export function SSHLiveSession(props: any) {
   const onPasswordSubmit = (e:React.FormEvent<any>) => {
     e.preventDefault()
     setCredDialogOpen(false);
-    console.log(props)
     if(props.tfaRequired=="true"){
       set2FADialogOpen(true);
     }else {
