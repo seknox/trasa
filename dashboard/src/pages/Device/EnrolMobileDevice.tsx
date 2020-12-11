@@ -202,7 +202,7 @@ export default function EnrolDevice(props: any) {
           <br />
           <div className={classes.padMiddle}>
             <QRCode
-              value={`otpauth://totp/trasa:${props.enrolDeviceDetail.account}?trasaType=private&deviceID=${props.enrolDeviceDetail.deviceID}&issuer=${props.enrolDeviceDetail.orgName}&secret=${props.enrolDeviceDetail.totpSSC}&trasaURL=${props.enrolDeviceDetail.cloudProxyURL}`}
+              value={`otpauth://totp/trasa:${props.enrolDeviceDetail.account}?trasaType=private&deviceID=${props.enrolDeviceDetail.deviceID}&issuer=${encodeURIComponent(props.enrolDeviceDetail.orgName)}&secret=${props.enrolDeviceDetail.totpSSC}&trasaURL=${props.enrolDeviceDetail.cloudProxyURL}`}
               size={256}
             />
             <br /> <br />
