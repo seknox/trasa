@@ -257,19 +257,22 @@ function ConfirmTOTPDialog(props:ConfirmTOTPDialogProps) {
   return(
 
       <Dialogue open={props.open} fullScreen={false} handleClose={props.handleClose} maxWidth={"sm"} title={"Verify TOTP"}>
-        <TextField
-            fullWidth
-            label="TOTP"
-            // defaultValue={loginData.password}
-            onChange={(e)=>{setTOTP(e.target.value)}}
-            id="totp"
-            name="totp"
-            type="number"
-            value={totp}
-            variant="outlined"
-            size="small"
-        />
-        <Button variant="contained" onClick={onSubmit}>Verify</Button>
+        <form onSubmit={onSubmit}>
+          <TextField
+              fullWidth
+              label="TOTP"
+              // defaultValue={loginData.password}
+              onChange={(e)=>{setTOTP(e.target.value)}}
+              id="totp"
+              name="totp"
+              type="number"
+              value={totp}
+              variant="outlined"
+              size="small"
+          />
+          <Button  type={"submit"} variant="contained" >Verify</Button>
+        </form>
+
       </Dialogue>
   )
 }
