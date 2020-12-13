@@ -15,8 +15,6 @@ import (
 	"github.com/seknox/trasa/server/global"
 	"github.com/seknox/trasa/server/models"
 	"github.com/seknox/trasa/server/utils"
-	"github.com/trustelem/zxcvbn"
-
 	//"crypto/tls"
 	"fmt"
 	"net"
@@ -166,23 +164,19 @@ func handleUpstreamPasswordAndKey(username, serviceID, hostname string, challeng
 		logrus.Trace(err)
 	}
 
-	passwordStreanght := zxcvbn.PasswordStrength(password, nil)
-
-	if creds.EnforceStrongPass && creds.ClientKey == "" {
-		if passwordStreanght.Score < creds.ZxcvbnScore || len(password) < creds.MinimumChar {
-			logrus.Debug("Weak Password")
-			challengeUser("", "Weak password. Password policy not met", nil, nil)
-			return signer, nil, "", errors.New("Weak Password")
-		}
-	}
+	//passwordStreanght := zxcvbn.PasswordStrength(password, nil)
+	//
+	//if creds.EnforceStrongPass && creds.ClientKey == "" {
+	//	if passwordStreanght.Score < creds.ZxcvbnScore || len(password) < creds.MinimumChar {
+	//		logrus.Debug("Weak Password")
+	//		challengeUser("", "Weak password. Password policy not met", nil, nil)
+	//		return signer, nil, "", errors.New("Weak Password")
+	//	}
+	//}
 
 	var allowHost = func(msg string) bool { return true }
 
 	return signer, HandleHostKeyCallback(creds, serviceID, global.GetConfig().Trasa.OrgId, allowHost), password, nil
-
-	//return creds,password,nil
-
-	//When logging in from certificate always reject unknown certificate
 
 	//clientConfig.SetDefaults()
 	//		clientConfig.Ciphers = append(clientConfig.Ciphers, "aes128-cbc", "blowfish-cbc", "3des-cbc")
@@ -368,7 +362,6 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 		Privilege: sessionMeta.params.Privilege,
 		SessionID: sessionMeta.ID, //to append adhoc sessions
 
-		//TODO change hard coded value
 		Timezone: orgDetail.Timezone, //for day time policy check
 	})
 	if err != nil {
@@ -396,12 +389,6 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 	if totp != "" {
 		tfaMethod = "totp"
 	}
-
-	//logrus.Debug(sessionMeta.params.Hostname)
-	//logrus.Debug(sessionMeta.params.ServiceID)
-	//logrus.Debug(sessionMeta.params.ServiceName)
-
-	//logrus.Debug(utils.MarshallStruct(sessionMeta.params))
 
 	if sessionMeta.policy.TfaRequired {
 
@@ -455,10 +442,6 @@ func updateSessionCredentials(sess *Session, signer ssh.Signer, hostkeyCallback 
 
 	sess.clientConfig.HostKeyCallback = hostkeyCallback
 
-	if password != "" {
-		sess.clientConfig.Auth = append(sess.clientConfig.Auth, ssh.Password(password))
-	}
-
 	if signer != nil {
 		sess.clientConfig.Auth = append(sess.clientConfig.Auth, ssh.PublicKeys(signer))
 	}
@@ -486,6 +469,10 @@ func updateSessionCredentials(sess *Session, signer ssh.Signer, hostkeyCallback 
 			return answers, nil
 		}),
 	)
+
+	if password != "" {
+		sess.clientConfig.Auth = append(sess.clientConfig.Auth, ssh.Password(password))
+	}
 
 }
 

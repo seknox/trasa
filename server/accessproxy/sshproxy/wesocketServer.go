@@ -263,7 +263,6 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 		//password entered by user
 		upstreamPassword = params.Password
 	}
-	clientConfig.Auth = append(clientConfig.Auth, ssh.Password(upstreamPassword))
 
 	//Add keyboard-interactive auth method to handle TRASA PAM module installed in upstream server
 	clientConfig.Auth = append(clientConfig.Auth,
@@ -292,6 +291,8 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 			return answers, nil
 		}),
 	)
+
+	clientConfig.Auth = append(clientConfig.Auth, ssh.Password(upstreamPassword))
 
 	if !strings.Contains(params.Hostname, ":") {
 		params.Hostname = params.Hostname + ":22"
