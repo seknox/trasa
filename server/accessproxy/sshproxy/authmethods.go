@@ -1,11 +1,8 @@
 package sshproxy
 
 import (
-	"database/sql"
-	"github.com/seknox/trasa/server/api/accesscontrol"
-
 	"github.com/pkg/errors"
-	"github.com/seknox/trasa/server/api/accessmap"
+	"github.com/seknox/trasa/server/api/accesscontrol"
 	"github.com/seknox/trasa/server/api/auth"
 	"github.com/seknox/trasa/server/api/auth/tfa"
 	"github.com/seknox/trasa/server/api/logs"
@@ -17,14 +14,11 @@ import (
 	"github.com/seknox/trasa/server/utils"
 	//"crypto/tls"
 	"fmt"
-	"net"
-
 	logrus "github.com/sirupsen/logrus"
 
 	"github.com/seknox/ssh"
 
 	"strings"
-	"time"
 )
 
 const (
@@ -226,68 +220,8 @@ func authenticateTRASA(conn ssh.ConnMetadata, challengeUser ssh.KeyboardInteract
 
 }
 
-//This function takes username, valid applist and keyboardInteractive callback function to  get user to choose authapp/hostname
-//It returns instance of chosen appuser (app with username) and  isDynamicApp boolean if chosen app is not yet created or assgned
-func chooseService(privilege, userID, userEmail string, challengeUser ssh.KeyboardInteractiveChallenge) (*models.Service, error) {
-
-	var isHostDown bool = true
-	hostname := ""
-
-	//take input(upstream server) from user and validate
-	for isHostDown {
-
-		ans, err := challengeUser("user",
-			"Choose Service",
-			[]string{"\n\r_____________________________________________________________________________________\n\rEnter Service IP : \n\r"}, []bool{true})
-		if len(ans) != 1 || err != nil {
-			logrus.Debug("User canceled")
-			return nil, fmt.Errorf("User canceled")
-		}
-
-		hostname = ans[0]
-
-		h := hostname
-		if !strings.Contains(h, ":") {
-			h = h + ":22"
-		}
-
-		//check if upstream server is down
-		tempC, errPing := net.DialTimeout("tcp", h, time.Second*7)
-
-		if errPing != nil {
-			isHostDown = true
-			challengeUser("", "\n\nThe SSH server is down", nil, nil)
-			continue
-		}
-		tempC.Close()
-		isHostDown = false
-
-	}
-
-	service, err := services.Store.GetFromHostname(hostname, "ssh", "", global.GetConfig().Trasa.OrgId)
-	if errors.Is(err, sql.ErrNoRows) {
-		service, err = accessmap.CreateDynamicService(hostname, "ssh", userID, userEmail, privilege, global.GetConfig().Trasa.OrgId)
-		if err != nil {
-			logrus.Errorf("dynamic access: %v", err)
-			challengeUser("", "Service not assigned. you do nor have dynamic access", nil, nil)
-			return nil, errors.WithMessage(err, "dynamic access")
-		}
-
-	} else if err != nil {
-		logrus.Errorf("get service from hostname: %v", err)
-		return nil, errors.WithMessage(err, "get service from hostname")
-	}
-
-	return service, nil
-
-}
-
 func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.KeyboardInteractiveChallenge) (*ssh.Permissions, error) {
-	/*if authenticateU2F(conn.User())!="success"{
-		return nil,errors.New("Failed to authenticate")
-	}*/
 
-	//var accessableServiceDetails []models.AccessMapDetail
 	var err error
 
 	err = SSHStore.UpdateSessionMeta(conn.RemoteAddr(), conn)
@@ -326,15 +260,6 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 		sessionMeta.params.TrasaID = userDetails.Email
 
 	}
-
-	//logrus.Debug(sessionMeta.params.UserID, sessionMeta.params.OrgID)
-	//call api to authenticate and  enumerate accessible servers
-	//accessableServiceDetails, err = users.Store.GetAccessMapDetails(sessionMeta.params.UserID, sessionMeta.params.OrgID)
-	//if err != nil {
-	//	logrus.Debugf("get access map: %v", err)
-	//	challengeUser("", "No services are assigned to you", nil, nil)
-	//	return nil, fmt.Errorf("get access map: %v", err)
-	//}
 
 	service, err := chooseService(conn.User(), sessionMeta.params.UserID, sessionMeta.params.TrasaID, challengeUser)
 	if err != nil {
@@ -475,42 +400,3 @@ func updateSessionCredentials(sess *Session, signer ssh.Signer, hostkeyCallback 
 	}
 
 }
-
-//searchAppName
-// Returns index of app list.
-// Returns -1 if dynamic ip is entered.
-// Returns -2 if input is invalid.
-//func searchAppName(input string, appUsers []models.AccessMapDetail) int {
-//	input = strings.Trim(input, "")
-//	for i, app := range appUsers {
-//		if strings.EqualFold(input, app.ServiceName) {
-//			return i
-//		} else if input == app.Hostname {
-//			return i
-//		}
-//	}
-//
-//	splittedInput := strings.Split(input, ":")
-//	//If port is included
-//	if (len(splittedInput) == 2) && splittedInput[0] != "" && splittedInput[1] != "" {
-//		ip := net.ParseIP(splittedInput[0])
-//		if ip != nil {
-//			return -1
-//		}
-//	} else if len(splittedInput) == 1 {
-//		ip := net.ParseIP(input)
-//		if ip != nil {
-//			return -1
-//		}
-//	}
-//
-//	index, err := strconv.Atoi(input)
-//
-//	//appNum, errStrConv = strconv.Atoi(ans[0])
-//	//Check if choice is out of index
-//	if err != nil || index > len(appUsers) || index < 1 {
-//		return -2
-//	}
-//	return index - 1
-//
-//}
