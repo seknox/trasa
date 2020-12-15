@@ -36,7 +36,9 @@ SELECT EXISTS
 func (s accessMapStore) GetServiceUserMaps(serviceID, orgID string) (appusers []models.AccessMapDetail, err error) {
 	appusers = make([]models.AccessMapDetail, 0)
 	rows, err := s.DB.Query(`
-SELECT map.id, service_id, map.user_id,users.email, map.privilege, map.policy_id, policies.name, map.added_at 
+SELECT map.id, service_id, map.user_id,
+       COALESCE(NULLIF(users.email,''),users.username),
+       map.privilege, map.policy_id, policies.name, map.added_at 
 	FROM user_accessmaps map
 	    JOIN users ON map.user_id=users.id
 	    join policies on policies.id=map.policy_id
@@ -50,7 +52,7 @@ WHERE service_id= $1 AND map.org_id=$2`, serviceID, orgID)
 		appuser := models.AccessMapDetail{
 			Policy: models.Policy{},
 		}
-		err = rows.Scan(&appuser.MapID, &appuser.ServiceID, &appuser.UserID, &appuser.Email, &appuser.Privilege, &appuser.Policy.PolicyID, &appuser.Policy.PolicyName, &appuser.UserAddedAt)
+		err = rows.Scan(&appuser.MapID, &appuser.ServiceID, &appuser.UserID, &appuser.TrasaID, &appuser.Privilege, &appuser.Policy.PolicyID, &appuser.Policy.PolicyName, &appuser.UserAddedAt)
 		if err != nil {
 			return
 		}
