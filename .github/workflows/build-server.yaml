@@ -4,7 +4,6 @@ on :
   push:
     paths:
       - "server/**"
-      - "tests/**"
       - ".github/workflows/build-server.yaml"
     branches:
       - master
@@ -13,7 +12,6 @@ on :
   pull_request:
     paths:
       - "server/**"
-      - "tests/**"
       - ".github/workflows/build-server.yaml"
     branches:
       - master
@@ -36,8 +34,13 @@ jobs:
         working-directory: ./server
         run: go build -o trasa-server
 
+      - name: Unit Test
+        working-directory: ./server
+        run: go test -v ./...
+
+
       - name: Upload Artifact
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
           name: trasa-server
           path: server/

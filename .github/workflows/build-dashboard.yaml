@@ -4,7 +4,6 @@ on :
   push:
     paths:
       - "dashboard/**"
-#      - "tests/**"
       - ".github/workflows/build-dashboard.yaml"
 
     branches:
@@ -16,7 +15,6 @@ on :
   pull_request:
     paths:
       - "dashboard/**"
-      #      - "tests/**"
       - ".github/workflows/build-dashboard.yaml"
 
     branches:
@@ -46,8 +44,13 @@ jobs:
       working-directory: ./dashboard
       run: yarn build
 
+    - name: Unit test
+      working-directory: ./dashboard
+      run: yarn test --watchAll=false
+
+
     - name: Upload Artifact
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v2
       with:
         path: dashboard/build
         retention-days: 1

@@ -2,14 +2,20 @@ name: Test
 
 on :
   push:
+    paths:
+      - "server/**"
+      - "tests/**"
+      - ".github/workflows/integration-test.yaml"
     branches:
       - master
-      - dev
 
   pull_request:
+    paths:
+      - "server/**"
+      - "tests/**"
+      - ".github/workflows/integration-test.yaml"
     branches:
       - master
-      - dev
 jobs:
   test:
     name: Test
@@ -49,17 +55,10 @@ jobs:
         working-directory: ./server
         run: go get -v ./...
 
-      - name: Server Unit Test
-        working-directory: ./server
-        run: go test -v ./...
-
       - name: Install npm packages
         working-directory: ./dashboard
         run: yarn install
 
-      - name: Dashboard Unit test
-        working-directory: ./dashboard
-        run: yarn test --watchAll=false
 
       - name: Server Integration Test
         working-directory: ./tests
