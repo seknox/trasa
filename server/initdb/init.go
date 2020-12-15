@@ -28,7 +28,7 @@ func InitDB() {
 
 	//init system settings
 	storeGlobalDynamicServiceSetting()
-	storeGlobalPasswordPolicy()
+	//storeGlobalPasswordPolicy()
 	storeGlobalEmailSettings()
 	storeDefaultSecRules()
 	storeDeviceHygieneCheck()
@@ -134,13 +134,18 @@ func storeDeviceHygieneCheck() {
 	setting.UpdatedBy = "SYSTEM"
 	setting.UpdatedOn = time.Now().Unix()
 	setting.Status = false
-	err := system.Store.SetGlobalSetting(setting)
-	if err != nil {
-		logrus.Trace(err)
-		return
+
+	_, err := system.Store.GetGlobalSetting(setting.OrgID, setting.SettingType)
+	if errors.Is(err, sql.ErrNoRows) {
+		errr := system.Store.SetGlobalSetting(setting)
+		if errr != nil {
+			logrus.Error(errr)
+			return
+		}
+		logrus.Trace("global password policy stored")
+
 	}
 
-	logrus.Trace("Global Password Policy stored")
 }
 
 func initDefaultPolicies() {
@@ -210,13 +215,18 @@ func storeGlobalEmailSettings() {
 	setting.SettingID = utils.GetRandomString(7)
 	setting.SettingType = consts.GLOBAL_EMAIL_CONFIG
 	setting.UpdatedOn = time.Now().Unix()
-	err := system.Store.SetGlobalSetting(setting)
-	if err != nil {
-		//logger.Error(err)
-		return
+
+	_, err := system.Store.GetGlobalSetting(setting.OrgID, setting.SettingType)
+	if errors.Is(err, sql.ErrNoRows) {
+		errr := system.Store.SetGlobalSetting(setting)
+		if errr != nil {
+			logrus.Error(errr)
+			return
+		}
+		logrus.Trace("global email setting stored")
+
 	}
 
-	logrus.Trace("Global Email Setting stored")
 }
 
 func storeGlobalDynamicServiceSetting() {
@@ -234,13 +244,17 @@ func storeGlobalDynamicServiceSetting() {
 	setting.SettingID = utils.GetRandomString(7)
 	setting.SettingType = consts.GLOBAL_DYNAMIC_ACCESS
 	setting.UpdatedOn = time.Now().Unix()
-	err := system.Store.SetGlobalSetting(setting)
-	if err != nil {
-		logrus.Trace(err)
-		return
+
+	_, err := system.Store.GetGlobalSetting(setting.OrgID, setting.SettingType)
+	if errors.Is(err, sql.ErrNoRows) {
+		errr := system.Store.SetGlobalSetting(setting)
+		if errr != nil {
+			logrus.Error(errr)
+			return
+		}
+		logrus.Trace("global dynamic access setting stored")
 	}
 
-	logrus.Trace("Global dynamic access")
 }
 
 func initSystemCA() {
@@ -315,10 +329,15 @@ func storeDefaultSecRules() {
 		v.CreatedAt = time.Now().Unix()
 		v.LastModified = time.Now().Unix()
 
-		err := system.Store.CreateSecurityRule(v)
-		if err != nil {
-			logrus.Trace(err)
-			//fmt.Println("error storeDefaultSecRules: ", err)
+		_, err := system.Store.GetSecurityRuleByName(v.OrgID, v.ConstName)
+		if errors.Is(err, sql.ErrNoRows) {
+			errr := system.Store.CreateSecurityRule(v)
+			if errr != nil {
+				logrus.Error(errr)
+				continue
+			}
+			logrus.Tracef("security rule %v stored", v.ConstName)
 		}
+
 	}
 }
