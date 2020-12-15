@@ -101,10 +101,10 @@ export default function Newconn(props: any) {
 
   const submitConnectionRequest = () => {
     if (data.appType === 'rdp') {
-      window.open(`/my/service/connectrdp#username=${encodeURIComponent(data.username)}&serviceID=${data.hostname}&hostname=${data.hostname}`);
+      window.open(`/my/service/connectrdp#username=${encodeURIComponent(data.username)}&serviceID=${data.hostname}&hostname=${data.hostname}&tfaRequired=true`);
 
     } else if (data.appType === 'ssh') {
-      window.open(`/my/service/connectssh#username=${encodeURIComponent(data.username)}&serviceID=${data.hostname}&hostname=${data.hostname}`);
+      window.open(`/my/service/connectssh#username=${encodeURIComponent(data.username)}&serviceID=${data.hostname}&hostname=${data.hostname}&tfaRequired=true`);
 
     }
   };

@@ -92,7 +92,7 @@ export default function AppuserTable(props: any) {
       });
   };
 
-  const updateUsername = (e: any) => {
+  const updatePrivilege = (e: any) => {
     const row = appUsersArr[updateRowIndex];
     const updateVal = { privilege: e.target.value, mapID: row[4] };
 
@@ -139,10 +139,10 @@ export default function AppuserTable(props: any) {
               {updateRow && updateRowIndex === tableMeta.rowIndex ? (
                 <TextField
                   fullWidth
-                  id="username"
+                  id="privilege"
                   // value={this.props.Expiry}
-                  onChange={updateUsername}
-                  label="update username"
+                  onChange={updatePrivilege}
+                  label="update privilege"
                   type="text"
                   defaultValue={value}
                   InputLabelProps={{
