@@ -62,7 +62,7 @@ export default function AppuserTable(props: any) {
           window.location.href = '/login';
         }
         const dataArr = resp.map(function (n: any) {
-          return [n.email, n.privilege, n.policy.policyName, n.userAddedAt, n.mapID];
+          return [n.trasaID, n.privilege, n.policy.policyName, n.userAddedAt, n.mapID];
         });
         // setAppData(resp.App);
         setappUsersArr(dataArr);
@@ -121,7 +121,7 @@ export default function AppuserTable(props: any) {
 
   const columns = [
     {
-      name: 'Users',
+      name: 'User',
       options: {
         filter: true,
         customBodyRender: (value: any) => {

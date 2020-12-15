@@ -516,7 +516,7 @@ type AccessMapDetail struct {
 	Hostname    string `json:"hostname"`
 	OrgID       string `json:"orgID"`
 	UserID      string `json:"userID"`
-	Email       string `json:"email"`
+	TrasaID     string `json:"trasaID"`
 	Policy      Policy `json:"policy"`
 	Privilege   string `json:"privilege"`
 	UserAddedAt int64  `json:"userAddedAt"`
