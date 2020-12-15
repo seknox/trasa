@@ -19,7 +19,7 @@ on :
       - master
 jobs:
   build-mobileapp:
-    name: Build Dashboard
+    name: Build Mobile App
     runs-on: ubuntu-20.04
     steps:
 
@@ -27,7 +27,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install npm packages
-        working-directory: ./mobileapp
+        working-directory: ./app
         run: yarn install
 
       - name: Build App

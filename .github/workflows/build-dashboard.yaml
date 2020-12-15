@@ -28,29 +28,29 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
     - name: Check out code
-        uses: actions/checkout@v2
+      uses: actions/checkout@v2
 
     - name: Set up node
-        uses: actions/setup-node@v2-beta
-        with:
-          node-version: '14'
+      uses: actions/setup-node@v2-beta
+      with:
+        node-version: '14'
 
-      - name: Install npm packages
-        working-directory: ./dashboard
-        run: yarn install
+    - name: Install npm packages
+      working-directory: ./dashboard
+      run: yarn install
 
-      - name: Build
-        #TODO treat warning as errors
-        env:
-          CI: false
-        working-directory: ./dashboard
-        run: yarn build
+    - name: Build
+      #TODO treat warning as errors
+      env:
+        CI: false
+      working-directory: ./dashboard
+      run: yarn build
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v1
-        with:
-          path: dashboard/build
-          retention-days: 1
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v1
+      with:
+        path: dashboard/build
+        retention-days: 1
 
 
 
