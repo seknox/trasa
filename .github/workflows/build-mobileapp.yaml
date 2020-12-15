@@ -34,13 +34,13 @@ jobs:
         #TODO treat warning as errors
         env:
           CI: false
-        working-directory: ./mobileapp/android
+        working-directory: ./app/android
         run: ./gradlew assembleRelease
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
           name: app-release.apk
-          path: mobileapp/android/app/build/outputs/apk/release/
+          path: app/android/app/build/outputs/apk/release/
           retention-days: 1
 
