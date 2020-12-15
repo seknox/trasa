@@ -52,7 +52,7 @@ jobs:
       - name: Build Workstation Package
         working-directory: ./workstation
         run: |
-          mkdir -r debian/trasawsa/usr/local/bin/
+          mkdir -p debian/trasawsa/usr/local/bin/
           cp trasaWrkstnAgent debian/trasawsa/usr/local/bin/
           cd installer/debian && dpkg-deb --build trasawsa
 
