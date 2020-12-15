@@ -28,7 +28,7 @@ func InitDB() {
 
 	//init system settings
 	storeGlobalDynamicServiceSetting()
-	//storeGlobalPasswordPolicy()
+	storeGlobalPasswordPolicy()
 	storeGlobalEmailSettings()
 	storeDefaultSecRules()
 	storeDeviceHygieneCheck()
@@ -116,13 +116,18 @@ func storeGlobalPasswordPolicy() {
 	setting.SettingValue = string(passJson)
 	setting.UpdatedBy = "SYSTEM"
 	setting.UpdatedOn = time.Now().Unix()
-	err := system.Store.UpdateGlobalSetting(setting)
-	if err != nil {
-		logrus.Trace(err)
-		return
+
+	_, err := system.Store.GetGlobalSetting(setting.OrgID, setting.SettingType)
+	if errors.Is(err, sql.ErrNoRows) {
+		errr := system.Store.UpdateGlobalSetting(setting)
+		if errr != nil {
+			logrus.Error(errr)
+			return
+		}
+		logrus.Trace("global password policy initialised")
+
 	}
 
-	logrus.Trace("Global Password Policy stored")
 }
 func storeDeviceHygieneCheck() {
 	var setting models.GlobalSettings
@@ -142,7 +147,7 @@ func storeDeviceHygieneCheck() {
 			logrus.Error(errr)
 			return
 		}
-		logrus.Trace("global password policy stored")
+		logrus.Trace("global device hygiene setting initialised")
 
 	}
 
@@ -202,7 +207,7 @@ func initDefaultPolicies() {
 		return
 	}
 
-	logrus.Trace("default policy stored")
+	logrus.Trace("default policy initialised")
 }
 
 func storeGlobalEmailSettings() {
@@ -223,7 +228,7 @@ func storeGlobalEmailSettings() {
 			logrus.Error(errr)
 			return
 		}
-		logrus.Trace("global email setting stored")
+		logrus.Trace("global email setting initialised")
 
 	}
 
@@ -252,7 +257,7 @@ func storeGlobalDynamicServiceSetting() {
 			logrus.Error(errr)
 			return
 		}
-		logrus.Trace("global dynamic access setting stored")
+		logrus.Trace("global dynamic access setting initialised")
 	}
 
 }
@@ -336,7 +341,7 @@ func storeDefaultSecRules() {
 				logrus.Error(errr)
 				continue
 			}
-			logrus.Tracef("security rule %v stored", v.ConstName)
+			logrus.Tracef("security rule %v initialised", v.ConstName)
 		}
 
 	}
