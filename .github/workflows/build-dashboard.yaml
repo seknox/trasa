@@ -24,8 +24,8 @@ on :
 jobs:
 
   build-dashboard:
-    - name: Build Dashboard
-    - runs-on: ubuntu-20.04
+    name: Build Dashboard
+    runs-on: ubuntu-20.04
     steps:
     - name: Check out code
         uses: actions/checkout@v2
@@ -50,5 +50,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           path: dashboard/build
+          retention-days: 1
+
 
 

@@ -19,8 +19,9 @@ on :
       - master
 jobs:
   build-workstation:
-    - name: Build Dashboard
-    - runs-on: ubuntu-20.04
+    name: Build Dashboard
+    runs-on: ubuntu-20.04
+
     steps:
       - name: Set up Go 1.x
         uses: actions/setup-go@v2
@@ -47,5 +48,7 @@ jobs:
         with:
           name: trasawsa.deb
           path: workstation/installer/debian/
+          retention-days: 1
+
 
 

@@ -41,5 +41,7 @@ jobs:
         with:
           name: trasa-server
           path: server/
+          retention-days: 1
+
 
 

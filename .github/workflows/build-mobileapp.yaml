@@ -19,8 +19,8 @@ on :
       - master
 jobs:
   build-mobileapp:
-    - name: Build Dashboard
-    - runs-on: ubuntu-20.04
+    name: Build Dashboard
+    runs-on: ubuntu-20.04
     steps:
 
       - name: Check out code into the Go module directory
@@ -42,3 +42,5 @@ jobs:
         with:
           name: app-release.apk
           path: mobileapp/android/app/build/outputs/apk/release/
+          retention-days: 1
+
