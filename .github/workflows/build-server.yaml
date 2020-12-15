@@ -7,7 +7,6 @@ on :
       - ".github/workflows/build-server.yaml"
     branches:
       - master
-      - ci-update
 
   pull_request:
     paths:

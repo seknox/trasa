@@ -7,7 +7,6 @@ on :
       - ".github/workflows/build-workstation.yaml"
     branches:
       - master
-      - ci-update
 
 
   pull_request:
