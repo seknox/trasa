@@ -4,12 +4,11 @@ on :
   push:
     branches:
       - master
-      - dev
+      - workstation-agent-debian-installer
 
   pull_request:
     branches:
       - master
-      - dev
 jobs:
   build:
     name: Build
@@ -25,22 +24,35 @@ jobs:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
 
-      - name: Build Server
-        working-directory: ./server
-        run: go build
+#      - name: Build Server
+#        working-directory: ./server
+#        run: go build
+#
+#      - name: Set up node
+#        uses: actions/setup-node@v2-beta
+#        with:
+#          node-version: '14'
+#
+#      - name: Install npm packages
+#        working-directory: ./dashboard
+#        run: yarn install
+#
+#      - name: Build Dashboard
+#        #TODO treat warning as errors
+#        env:
+#          CI: false
+#        working-directory: ./dashboard
+#        run: yarn build
 
-      - name: Set up node
-        uses: actions/setup-node@v2-beta
-        with:
-          node-version: '14'
 
-      - name: Install npm packages
-        working-directory: ./dashboard
-        run: yarn install
+      - name: Build Workstation Agent
+        working-directory: ./workstation
+        run: go build -o trasaWrkstnAgent
 
-      - name: Build Dashboard
-        #TODO treat warning as errors
-        env:
-          CI: false
-        working-directory: ./dashboard
-        run: yarn build
+      - name: Build Workstation Package
+        working-directory: ./workstation
+        run: |
+          cp trasaWrkstnAgent debian/trasawsa/usr/local/bin/
+          cd installer/debian && dpkg-deb --build trasawsa
+
+
