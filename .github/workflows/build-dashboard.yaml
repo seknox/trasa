@@ -1,0 +1,54 @@
+name: Build
+
+on :
+  push:
+    paths:
+      - "dashboard/**"
+#      - "tests/**"
+      - ".github/workflows/build-dashboard.yaml"
+
+    branches:
+      - master
+      - ci-update
+
+
+
+  pull_request:
+    paths:
+      - "dashboard/**"
+      #      - "tests/**"
+      - ".github/workflows/build-dashboard.yaml"
+
+    branches:
+      - master
+jobs:
+
+  build-dashboard:
+    - name: Build Dashboard
+    - runs-on: ubuntu-20.04
+    steps:
+    - name: Check out code
+        uses: actions/checkout@v2
+
+    - name: Set up node
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: '14'
+
+      - name: Install npm packages
+        working-directory: ./dashboard
+        run: yarn install
+
+      - name: Build
+        #TODO treat warning as errors
+        env:
+          CI: false
+        working-directory: ./dashboard
+        run: yarn build
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v1
+        with:
+          path: dashboard/build
+
+
