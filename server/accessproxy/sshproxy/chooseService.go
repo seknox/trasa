@@ -33,6 +33,7 @@ func chooseService(privilege, userID, userEmail string, challengeUser ssh.Keyboa
 		input := ans[0]
 		isServiceName := false
 
+		//check if the given input is service name or service hostname
 		if strings.Contains(input, ":") {
 			isServiceName = false
 		} else {
@@ -52,6 +53,7 @@ func chooseService(privilege, userID, userEmail string, challengeUser ssh.Keyboa
 				continue
 			}
 		} else {
+			//If given input is hostname
 			service, err = services.Store.GetFromHostname(input, "ssh", "", global.GetConfig().Trasa.OrgId)
 			if errors.Is(err, sql.ErrNoRows) {
 				service, err = accessmap.CreateDynamicService(input, "ssh", userID, userEmail, privilege, global.GetConfig().Trasa.OrgId)

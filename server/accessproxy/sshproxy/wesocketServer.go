@@ -125,32 +125,6 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 		return
 	}
 
-	publicKey, _, _, _, err := ssh.ParseAuthorizedKey([]byte(creds.ClientCert))
-	if err != nil && creds.ClientCert != "" {
-		logrus.Error(err)
-	}
-
-	privateKey, privateKeyParseErr := ssh.ParsePrivateKey([]byte(creds.ClientKey))
-	if privateKeyParseErr != nil && creds.ClientKey != "" {
-		//logrus.Debug(creds.ClientKey)
-		logrus.Error(privateKeyParseErr)
-	}
-
-	var signer ssh.Signer
-	cert, ok := publicKey.(*ssh.Certificate)
-	if !ok {
-		logrus.Debug("\n\rInvalid user certificate\n\r")
-		if privateKeyParseErr == nil {
-			signer = privateKey
-		}
-
-	} else {
-		signer, err = ssh.NewCertSigner(cert, privateKey)
-		if err != nil {
-			logrus.Debug(err)
-		}
-	}
-
 	//caKey,err:=ssh.ParsePublicKey([]byte(resp.CaCert))
 
 	//
@@ -175,31 +149,6 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 			//forward banner to client through websocket
 			return conn.WriteMessage(1, []byte(message))
 		},
-	}
-
-	if signer != nil {
-		clientConfig.Auth = append(clientConfig.Auth, ssh.PublicKeys(signer))
-	}
-
-	//Callback function to check ssh host key of upstream server
-	var hostConfirmFunc = func(message string) bool {
-		err := conn.WriteMessage(1, []byte("\r\n"+message+"\n\rPress \"y\" to ignore and save it.\n\r"))
-		if err != nil {
-			logrus.Error(err)
-			return false
-		}
-
-		_, ans, err := conn.ReadMessage()
-		if err != nil {
-			logrus.Error(err)
-			return false
-		}
-		if strings.ToLower(string(ans)) == "y" {
-			conn.WriteMessage(1, []byte("\r\nSaving new host key...\n\r"))
-			return true
-		}
-		return false
-
 	}
 
 	//Checking TRASA policy
@@ -236,7 +185,7 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 	}
 
 	//logrus.Trace(params.AccessDeviceID)
-	reason, ok, err = accesscontrol.CheckDevicePolicy(policy.DevicePolicy, params.AccessDeviceID, authlog.TfaDeviceID, uc.Org.ID)
+	reason, ok, err := accesscontrol.CheckDevicePolicy(policy.DevicePolicy, params.AccessDeviceID, authlog.TfaDeviceID, uc.Org.ID)
 	if err != nil {
 		logrus.Error(err)
 	}
@@ -252,7 +201,33 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 
 	authlog.SessionRecord = policy.RecordSession
 
+	//Callback function to check ssh host key of upstream server
+	var hostConfirmFunc = func(message string) bool {
+		err := conn.WriteMessage(1, []byte("\r\n"+message+"\n\rPress \"y\" to ignore and save it.\n\r"))
+		if err != nil {
+			logrus.Error(err)
+			return false
+		}
+
+		_, ans, err := conn.ReadMessage()
+		if err != nil {
+			logrus.Error(err)
+			return false
+		}
+		if strings.ToLower(string(ans)) == "y" {
+			conn.WriteMessage(1, []byte("\r\nSaving new host key...\n\r"))
+			return true
+		}
+		return false
+
+	}
 	clientConfig.HostKeyCallback = HandleHostKeyCallback(creds, service.ID, uc.Org.ID, hostConfirmFunc)
+
+	//Add public key auth method
+	pkeyAuth := getPublicKeyAuthMethod(creds)
+	if pkeyAuth != nil {
+		clientConfig.Auth = append(clientConfig.Auth, getPublicKeyAuthMethod(creds))
+	}
 
 	upstreamPassword := ""
 	if params.Password == "" || creds.Password != "" {
@@ -266,32 +241,10 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 
 	//Add keyboard-interactive auth method to handle TRASA PAM module installed in upstream server
 	clientConfig.Auth = append(clientConfig.Auth,
-		ssh.KeyboardInteractive(func(user, instruction string, questions []string, echos []bool) ([]string, error) {
-			//logrus.Tracef("user: %s \n instruction: %v \n questions: %v",user,instruction,questions)
-			answers := make([]string, len(questions))
-			if len(questions) == 1 {
-
-				if strings.Contains(questions[0], "Password") {
-					answers[0] = upstreamPassword
-					//logrus.Tracef("pass: %v ",upstreamPassword)
-					//logrus.Tracef("ans: %v ",answers)
-					return answers, nil
-				} else if strings.Contains(questions[0], "email") {
-					answers[0] = params.TrasaID
-					return answers, nil
-				} else if strings.Contains(questions[0], "totp") {
-					answers[0] = params.TotpCode
-					return answers, nil
-				} else {
-					return answers, errors.New("unexpected challenges")
-				}
-
-			}
-
-			return answers, nil
-		}),
+		handleUpstreamTrasaPAM(params.TrasaID, upstreamPassword, params.TotpCode),
 	)
 
+	//Add password auth method
 	clientConfig.Auth = append(clientConfig.Auth, ssh.Password(upstreamPassword))
 
 	if !strings.Contains(params.Hostname, ":") {
@@ -407,19 +360,12 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 			n, err := wrappedChannel.Read(buff)
 			if err != nil {
 				logrus.Debug(err)
-				//session.Close()
-				//wrappedChannel.Close()
-				//	conn.Close()
 				return
 			}
 			if n > 0 {
-				// logrus.Debugln(string(buff))
 				err := conn.WriteMessage(1, buff)
 				if err != nil {
 					logrus.Debug(err)
-					//	session.Close()
-					//	wrappedChannel.Close()
-					//	conn.Close()
 					return
 				}
 			}
@@ -434,36 +380,18 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 			_, msg, err := conn.ReadMessage()
 			if err != nil {
 				logrus.Debug(err)
-				//wrappedChannel.Close()
-				//conn.Close()
-				//	stdInPipe.Close()
 				return
 			}
 
 			n, err := stdInPipe.Write(msg)
 			if err != nil {
 				logrus.Debug(err, n)
-				//	wrappedChannel.Close()
-				//conn.Close()
+
 				return
 			}
 
-			//if err := conn.WriteMessage(messageType, []byte("ok")); err != nil {
-			//	logrus.Error(err)
-			//	return
-			//}
 		}
 	}()
-
-	//// Accepting commands
-	//for {
-	//	//reader := bufio.NewReader(os.Stdin)
-	//	//str, _ := reader.ReadString('\n')
-	//
-	//
-	//	fmt.Fprint(in, str)
-	//}
-	//
 
 }
 
