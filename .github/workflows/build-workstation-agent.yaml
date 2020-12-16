@@ -1,0 +1,53 @@
+name: Build
+
+on :
+  push:
+    paths:
+      - "workstation/**"
+      - ".github/workflows/build-workstation-agent.yaml"
+    branches:
+      - master
+
+
+  pull_request:
+    paths:
+      - "workstation/**"
+      - ".github/workflows/build-workstation-agent.yaml"
+
+    branches:
+      - master
+jobs:
+  build-workstation:
+    name: Build Workstation Agent
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Set up Go 1.x
+        uses: actions/setup-go@v2
+        with:
+          go-version: ^1.13
+        id: go
+
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Build
+        working-directory: ./workstation
+        run: go build -o trasaWrkstnAgent
+
+      - name: Build Package
+        working-directory: ./workstation
+        run: |
+          mkdir -p debian/trasaWrkstnAgent/usr/local/bin/
+          cp trasaWrkstnAgent debian/trasaWrkstnAgent/usr/local/bin/
+          cd installer/debian && dpkg-deb --build trasaWrkstnAgent
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: trasaWrkstnAgent.deb
+          path: workstation/installer/debian/
+          retention-days: 1
+
+
+

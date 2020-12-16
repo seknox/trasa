@@ -1,0 +1,49 @@
+name: Build
+
+on :
+  push:
+    paths:
+      - "server/**"
+      - ".github/workflows/build-server.yaml"
+    branches:
+      - master
+
+  pull_request:
+    paths:
+      - "server/**"
+      - ".github/workflows/build-server.yaml"
+    branches:
+      - master
+jobs:
+  build-server:
+    name: Build Server
+    runs-on: ubuntu-20.04
+    steps:
+
+      - name: Set up Go 1.x
+        uses: actions/setup-go@v2
+        with:
+          go-version: ^1.13
+        id: go
+
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Build
+        working-directory: ./server
+        run: go build -o trasa-server
+
+      - name: Unit Test
+        working-directory: ./server
+        run: go test -v ./...
+
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: trasa-server
+          path: server/
+          retention-days: 1
+
+
+
