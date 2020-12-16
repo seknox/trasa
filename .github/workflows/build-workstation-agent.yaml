@@ -4,7 +4,7 @@ on :
   push:
     paths:
       - "workstation/**"
-      - ".github/workflows/build-workstation.yaml"
+      - ".github/workflows/build-workstation-agent.yaml"
     branches:
       - master
 
@@ -12,13 +12,13 @@ on :
   pull_request:
     paths:
       - "workstation/**"
-      - ".github/workflows/build-workstation.yaml"
+      - ".github/workflows/build-workstation-agent.yaml"
 
     branches:
       - master
 jobs:
   build-workstation:
-    name: Build Dashboard
+    name: Build Workstation Agent
     runs-on: ubuntu-20.04
 
     steps:
