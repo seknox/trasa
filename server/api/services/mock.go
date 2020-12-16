@@ -25,6 +25,9 @@ func (s serviceMock) GetFromID(serviceID string) (*models.Service, error) {
 func (s serviceMock) GetFromHostname(hostname, serviceType, remoteAppName, orgID string) (*models.Service, error) {
 	panic("implement me")
 }
+func (s serviceMock) GetFromServiceName(serviceName, orgID string) (service *models.Service, err error) {
+	panic("implement me")
+}
 
 func (s serviceMock) GetAllByType(serviceType, orgID string) (services []models.Service, err error) {
 	panic("implement me")

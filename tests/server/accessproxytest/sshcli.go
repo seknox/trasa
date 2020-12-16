@@ -20,7 +20,7 @@ func TestSSHAuthWithoutPublicKey(t *testing.T) {
 	cconf := ssh.ClientConfig{
 		User: testutils.MockupstreamUser,
 		Auth: []ssh.AuthMethod{
-			handleKBAuth(t),
+			handleKBAuth(t, "127.0.0.1:2222"),
 		},
 		HostKeyCallback: func(hostname string, remote net.Addr, key ssh.PublicKey) error {
 			return nil
@@ -59,7 +59,7 @@ func TestSSHAuthWithPublicKey(t *testing.T) {
 		User: testutils.MockupstreamUser,
 		Auth: []ssh.AuthMethod{
 			ssh.PublicKeys(pk),
-			handleKBAuth(t),
+			handleKBAuth(t, "127.0.0.1:2222"),
 		},
 		HostKeyCallback: func(hostname string, remote net.Addr, key ssh.PublicKey) error {
 			return nil
@@ -100,7 +100,7 @@ func TestSSHAuthWithAuthorisedPublicKey(t *testing.T) {
 		User: testutils.MockupstreamUser,
 		Auth: []ssh.AuthMethod{
 			ssh.PublicKeys(pk),
-			handleKBAuth(t),
+			handleKBAuth(t, "127.0.0.1:2222"),
 		},
 		HostKeyCallback: func(hostname string, remote net.Addr, key ssh.PublicKey) error {
 			return nil
@@ -128,7 +128,48 @@ func TestSSHAuthWithAuthorisedPublicKey(t *testing.T) {
 
 }
 
-func handleKBAuth(t *testing.T) ssh.AuthMethod {
+func TestSSHAuthWithServiceName(t *testing.T) {
+
+	key := downloadKey(t)
+
+	pk, err := ssh.ParsePrivateKey(key)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	cconf := ssh.ClientConfig{
+		User: testutils.MockupstreamUser,
+		Auth: []ssh.AuthMethod{
+			ssh.PublicKeys(pk),
+			handleKBAuth(t, "test-service"),
+		},
+		HostKeyCallback: func(hostname string, remote net.Addr, key ssh.PublicKey) error {
+			return nil
+		},
+		BannerCallback: nil,
+	}
+
+	client, err := ssh.Dial("tcp", "127.0.0.1:8022", &cconf)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	s, err := client.NewSession()
+	if err != nil {
+		t.Fatalf(`could not start session: %v`, err)
+	}
+
+	//s.Close()
+	//t.Log("closed++++++++++++++++++++++++++++++++++++++")
+
+	err = s.Run("ls")
+	if err != nil {
+		t.Fatalf(`could not run command: %v`, err)
+	}
+
+}
+
+func handleKBAuth(t *testing.T, targetService string) ssh.AuthMethod {
 	return ssh.KeyboardInteractive(func(user, instruction string, questions []string, echos []bool) (answers []string, err error) {
 
 		switch true {
@@ -149,7 +190,7 @@ func handleKBAuth(t *testing.T) ssh.AuthMethod {
 			}
 			//t.Log("Choose service")
 
-			return []string{`127.0.0.1:2222`}, nil
+			return []string{targetService}, nil
 
 		case strings.Contains(instruction, "Second factor authentication"):
 			if len(questions) != 1 {
