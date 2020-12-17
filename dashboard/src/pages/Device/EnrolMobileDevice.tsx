@@ -236,7 +236,8 @@ type ConfirmTOTPDialogProps = {
 
 function ConfirmTOTPDialog(props:ConfirmTOTPDialogProps) {
   const [totp,setTOTP] = useState("")
-  const onSubmit = () => {
+  const onSubmit = (e:any) => {
+    e.preventDefault()
     axios.post(Constants.TRASA_HOSTNAME+"/idp/login/checktfa",{totpCode:totp,deviceID:props.deviceID}).then(r=>{
       if(r.data.status=="success"){
         localStorage.setItem('X-CSRF', r.data.data[0].CSRFToken);
@@ -270,7 +271,7 @@ function ConfirmTOTPDialog(props:ConfirmTOTPDialogProps) {
               variant="outlined"
               size="small"
           />
-          <Button  type={"submit"} variant="contained" >Verify</Button>
+          <Button  type={"submit"} onClick={onSubmit} variant="contained" >Verify</Button>
         </form>
 
       </Dialogue>
