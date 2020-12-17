@@ -482,5 +482,7 @@ func ConfirmTOTPAndSave(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, &xSESSION)
+
 	utils.TrasaResponse(w, 200, "success", "", "", resp)
+	return
 }

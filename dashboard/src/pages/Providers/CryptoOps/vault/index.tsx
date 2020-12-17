@@ -102,7 +102,8 @@ const useStyles = makeStyles((theme) => ({
   },
   keys: {
     color: 'navy',
-    fontSize: '16px',
+    fontSize: '18px',
+    fontFamily: 'Open Sans, Rajdhani',
   },
   initStatusText: {
     color: 'grey',
@@ -128,13 +129,10 @@ const useStyles = makeStyles((theme) => ({
 export default function VaultConfig() {
   const classes = useStyles();
   const [open, setopen] = useState(false);
-  const [unsealKeys, setunsealKeys] = useState([]);
   const [decryptKeys, setdecryptKeys] = useState([]);
-  const [encRootToken, setencRootToken] = useState('');
   // const [sealStatus, setsealStatus] = useState({});
   const [initStatus, setinitStatus] = useState({ status: false, initOn: '' });
   const [tokenStatus, settokenStatus] = useState({ sealed: false });
-  const [tsxVault, settsxVault] = useState(false);
   const [loader, setLoader] = useState(false);
   const [keyval, setKeyval] = useState('');
   const [vaultReinitDlgState, setvaultReinitDlgState] = useState(false);
@@ -165,9 +163,7 @@ export default function VaultConfig() {
         }
 
         setinitStatus(response.data.data[0].initStatus);
-        // setsealStatus(response.data.data[0].sealStatus);
         settokenStatus(response.data.data[0].tokenStatus);
-        settsxVault(response.data.data[0].tsxvault);
       })
       .catch((error) => {
         console.log(error);
@@ -184,19 +180,10 @@ export default function VaultConfig() {
       .then((response) => {
         const resp = response.data.data[0];
 
-        if (resp.tsxvault) {
-          settsxVault(true);
-          setunsealKeys(resp.unsealKeys);
-          setLoader(false);
-          setopen(true);
-        } else {
           setdecryptKeys(resp.decryptKeys);
-          setencRootToken(resp.encRootToken);
-          settsxVault(true);
-          setunsealKeys(resp.unsealKeys);
           setLoader(false);
           setopen(true);
-        }
+
 
         getVaultStatus();
       })
@@ -209,24 +196,6 @@ export default function VaultConfig() {
     setKeyval(event.target.value);
   };
 
-  // const submitUnsealKey = () => {
-  //   setunsealProgress(true);
-
-  //   const reqData = { key: keyval };
-
-  //   axios
-  //     .post(`${Constants.TRASA_HOSTNAME}/api/v1/crypto/vault/unseal`, reqData)
-  //     .then((response) => {
-  //       if (response.data.status === 'success') {
-  //         setsealStatus(response.data.data[0]);
-  //       }
-
-  //       setunsealProgress(false);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // };
 
   const SubmitDecryptKey = () => {
     setLoader(true);
@@ -329,11 +298,8 @@ export default function VaultConfig() {
 
                 <ShowTokens
                   open={open}
-                  unsealKeys={unsealKeys}
                   decryptKeys={decryptKeys}
                   handleClose={handleInitDialogueClose}
-                  encRootToken={encRootToken}
-                  tsxVault={tsxVault}
                 />
               </Grid>
               {loader ? <ProgressHOC /> : ''}
@@ -344,30 +310,6 @@ export default function VaultConfig() {
         {/* Grid End */}
         <Grid item xs={12} sm={6} md={7}>
           <Grid container spacing={2}>
-            {/* {this.state.tsxVault ? null : (
-              <Grid item xs={12} sm={12} md={12}>
-                <Paper className={classes.paper}>
-                  <div className={classes.heading}>
-                    Sealed state: {this.state.sealStatus.sealed ? 'Sealed' : 'Unsealed'}
-                  </div>
-
-                  {this.state.sealStatus.sealed ? (
-                    <Unseal
-                      open={this.state.open}
-                      handleClose={this.handleClose}
-                      sealStatus={this.state.sealStatus}
-                      submitUnsealKey={this.submitUnsealKey}
-                      handleUnsealKeyInputChange={this.handleUnsealKeyInputChange}
-                      unsealProgress={this.state.unsealProgress}
-                    />
-                  ) : (
-                    <Button classes={{ root: classes.initedButton, label: classes.label }}>
-                      Unsealed
-                    </Button>
-                  )}
-                </Paper>
-              </Grid>
-            )} */}
 
             <Grid item xs={12} sm={12} md={12}>
               <Paper className={classes.paper}>
@@ -378,7 +320,6 @@ export default function VaultConfig() {
                 {tokenStatus.sealed ? (
                   <DecryptRoot
                     open={open}
-                    // handleClose={handleClose}
                     sealStatus={tokenStatus}
                     SubmitDecryptKey={SubmitDecryptKey}
                     handleUnsealKeyInputChange={handleUnsealKeyInputChange}
@@ -398,7 +339,19 @@ export default function VaultConfig() {
   );
 }
 
-function ShowTokens(props: any) {
+
+export type ResourceStatsFilterProps = {
+  entityType: string;
+  entityID: string;
+};
+
+export type showTokenProps = {
+  open: boolean;
+  handleClose: () => void;
+  decryptKeys: Array<string>;
+}
+
+export function ShowTokens(props: showTokenProps) {
   const classes = useStyles();
   return (
     <div>
@@ -413,14 +366,14 @@ function ShowTokens(props: any) {
       >
         <DialogContent>
           <DialogContentText>
-            <Typography variant="h3"> Secret Tokens</Typography>
-            <p>
+            <Typography variant="h3"> Decryption Keys</Typography>
+            <Typography variant="h4">
               {' '}
-              These Keys are only shown here once. Distribute these keys to relevent parties and
-              store it secretly.
-            </p>
-            <p> These Keys will be required every time TRASA service is rebooted.</p>
-            <br />
+              These Keys are only shown here once. Store them securely. <br />
+              <b>Pro tip: </b>It is better to distribute these keys to multiple trusted team members. <br />
+              If TRASA server is restarted, these keys will be required to retrieve the master key.
+            </Typography>
+              <br />
           </DialogContentText>
 
           <Divider light />
@@ -428,8 +381,8 @@ function ShowTokens(props: any) {
             <Grid item xs={12} sm={10} md={10}>
               <div>Decryption Keys:</div>
 
-              {props.unsealKeys.map((v: any, i: any) => (
-                <div className={classes.keys}>
+              {props.decryptKeys.map((v: any, i: any) => (
+                <div className={classes.keys} key={i}>
                   {' '}
                   Key {i + 1} {' ) '} {'  '} {v}{' '}
                 </div>
@@ -438,30 +391,6 @@ function ShowTokens(props: any) {
               <br />
             </Grid>
 
-            {/* {!props.tsxVault ? (
-              <div>
-                {' '}
-                <Grid item xs={12} sm={10} md={10}>
-                  <div>Decryption Keys:</div>
-                  <div>
-                    {props.decryptKeys.map((v: any, i: any) => (
-                      <div className={classes.keys}>
-                        {' '}
-                        Key {i + 1} {' ) '} {'  '} {v}{' '}
-                      </div>
-                    ))}
-
-                    <br />
-                  </div>
-                </Grid>
-                <Grid item xs={12} sm={10} md={10}>
-                  <div>Encrypted Token (store this for backup):</div>
-                  <div>
-                    <div className={classes.keys}> {props.encRootToken} </div>
-                  </div>
-                </Grid>
-              </div>
-            ) : null} */}
           </Grid>
 
           <Divider light />

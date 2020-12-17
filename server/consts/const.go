@@ -114,3 +114,7 @@ const (
 )
 
 const DEFAULT_ROOT_PASSWORD = "changeme"
+
+const (
+	SHOW_VAULT_KEYS = "SHOW_VAULT_KEYS"
+)

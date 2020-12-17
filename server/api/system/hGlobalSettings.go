@@ -54,6 +54,49 @@ func GlobalSettings(w http.ResponseWriter, r *http.Request) {
 
 }
 
+type welcomeNoteResp struct {
+	Intent string      `json:"intent"`
+	Show   bool        `json:"show"`
+	Data   interface{} `json:"data"`
+}
+
+// WelcomeNote processes any init events that needs to be presented to the admin after successfull dashboard login.
+// For now, we use this handler to auto init vault and respond with sharded keys if it is not already initialized.
+//  This handler can be used for any other similar operations.
+func WelcomeNote(w http.ResponseWriter, r *http.Request) {
+	uc := r.Context().Value("user").(models.UserContext)
+	var vaultKeys []string = make([]string, 0)
+
+	var resp []welcomeNoteResp = make([]welcomeNoteResp, 0)
+	var note welcomeNoteResp
+	note.Intent = consts.SHOW_VAULT_KEYS
+	note.Data = 0
+	note.Show = false
+
+	if uc.User.UserName == "root" {
+		// check and fire pending global settings (first time setup jobs like init vault)
+
+		// check vault status. Auto init if its not already initialized
+		vaultInitStatus, err := Store.GetGlobalSetting(uc.Org.ID, consts.GLOBAL_TSXVAULT)
+		if err != nil || vaultInitStatus.Status == false {
+			logrus.Trace("First time root login: Proceeding auto init TsxVault")
+			// auto init
+			vaultKeys, err = InitTsxvault(uc.User.OrgID, uc.User.ID)
+			if err != nil {
+				// what can we do "extra" here?
+				logrus.Error(err)
+			}
+			note.Show = true
+			note.Data = vaultKeys
+		}
+
+	}
+
+	resp = append(resp, note)
+	utils.TrasaResponse(w, 200, "success", "global settings triggered.", "WelcomeNote", resp)
+
+}
+
 //UpdateDeviceHygieneSetting updates device hygiene enforce settings
 func UpdateDeviceHygieneSetting(w http.ResponseWriter, r *http.Request) {
 	logrus.Trace("device hygeiene req")
