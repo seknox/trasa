@@ -193,6 +193,7 @@ func callServerForDeviceDetail(deviceID string) (DeviceEnrollResp, error) {
 	if err != nil {
 		return DeviceEnrollResp{}, errors.Errorf("failed to get device detail: %v", err)
 	}
+	defer resp.Body.Close()
 
 	var dev DeviceEnrollResp
 	err = json.NewDecoder(resp.Body).Decode(&dev)
