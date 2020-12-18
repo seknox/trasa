@@ -26,6 +26,12 @@ import (
 func (s Store) GetUserFromPublicKey(publicKey ssh.PublicKey, orgID string) (*models.User, error) {
 	var user models.User
 
+	//If it's a certificate, extract public key only
+	cert, ok := publicKey.(*ssh.Certificate)
+	if ok {
+		publicKey = cert.Key
+	}
+
 	publicKeyStr := strings.TrimSpace(string(ssh.MarshalAuthorizedKey(publicKey)))
 
 	//TODO use orgID??

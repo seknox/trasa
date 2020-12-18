@@ -95,13 +95,6 @@ func GenerateKeyPair(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = users.Store.UpdatePublicKey(userContext.User.ID, strings.TrimSpace(string(certBytes)))
-	if err != nil {
-		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "could not update public key", "GenerateKeyPair", nil)
-		return
-	}
-
 	// Create a new zip archive.
 	buff := &bytes.Buffer{}
 	zipWriter := zip.NewWriter(buff)
@@ -141,9 +134,6 @@ func GenerateKeyPair(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Create a buffer to write our archive to.
-	//buffer := new(bytes.Buffer)
-
 	w.Header().Set("Content-Type", "application/zip")
 	w.Header().Set("Content-Disposition", "attachment; filename=id_rsa.zip")
 	w.Write(buff.Bytes())
@@ -158,19 +148,19 @@ func generateTempCertificateForDeviceAgent(deviceID, orgID string) (privateKeyBy
 	privateKey, err := utils.GeneratePrivateKey(bitSize)
 	if err != nil {
 		logrus.Errorf(`could not generate private key: %v`, err)
-		return
+		return nil, nil, nil, err
 	}
 
 	certHolder, err := ca.Store.GetCertHolder(consts.CERT_TYPE_SSH_CA, "system", orgID)
 	if err != nil {
 		logrus.Debugf(`could not get CA key: %v`, err)
-		return
+		return nil, nil, nil, err
 	}
 
 	publicKeySSH, err := ssh.NewPublicKey(&privateKey.PublicKey)
 	if err != nil {
 		logrus.Errorf(`could not generate public key: %v`, err)
-		return
+		return nil, nil, nil, err
 	}
 
 	publicKeyBytes = ssh.MarshalAuthorizedKey(publicKeySSH)
@@ -178,15 +168,14 @@ func generateTempCertificateForDeviceAgent(deviceID, orgID string) (privateKeyBy
 	caKey, err := ssh.ParsePrivateKey(certHolder.Key)
 	if err != nil {
 		logrus.Errorf(`Could not parse CA private key: %v`, err)
-		return
+		return nil, nil, nil, err
 	}
 
 	buf := make([]byte, 8)
 	_, err = rand.Read(buf)
 	if err != nil {
 		logrus.Errorf("failed to read random bytes: %v", err)
-
-		return
+		return nil, nil, nil, err
 	}
 	serial := binary.LittleEndian.Uint64(buf)
 
@@ -218,25 +207,16 @@ func generateTempCertificateForDeviceAgent(deviceID, orgID string) (privateKeyBy
 	err = cert.SignCert(rand.Reader, caKey)
 	if err != nil {
 		logrus.Errorf(`could not sign public key: %v`, err)
-		return
+		return nil, nil, nil, err
 	}
-	//
-	//err = dbstore.Connect.SavePublicKey(userID, strings.TrimSpace(string(publicKeyBytes)))
-	//if err != nil {
-	//	logrus.Errorf(`could not save public key: %v`, err)
-	//	return
-	//}
 
 	privateKeyBytes = utils.EncodePrivateKeyToPEM(privateKey)
 	certBytes = ssh.MarshalAuthorizedKey(&cert)
 	if len(certBytes) == 0 {
 		logrus.Errorf("failed to marshal signed certificate, empty result")
 		err = errors.New("failed to marshal signed certificate, empty result")
-		return
+		return nil, nil, nil, err
 	}
-
-	// Create a buffer to write our archive to.
-	//buffer := new(bytes.Buffer)
 
 	return privateKeyBytes, publicKeyBytes, certBytes, nil
 
