@@ -124,45 +124,23 @@ func TsxvaultInit(w http.ResponseWriter, r *http.Request) {
 
 	// Initing tsxvault process: (1) Create encryption key. (2) Create master key and encrypt encryption key with it.
 	// (3) shard master key and give it to user. (4) store encrypted encryption key in database.
-	encKeyShards, err := initTsxvault(uc.User.OrgID)
+	encKeyShards, err := InitTsxvault(uc.User.OrgID, uc.User.ID)
 	if err != nil {
 		logger.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "failed to init vault", "failed to retrieve key", nil)
-		return
-	}
-
-	var store models.GlobalSettings
-	store.SettingID = utils.GetUUID()
-	store.OrgID = uc.Org.ID
-	store.Status = true
-	store.SettingType = consts.GLOBAL_TSXVAULT
-
-	var vaultFeature models.VaultFeature
-	vaultFeature.CredStorage = "tsxvault"
-	vaultFeature.CertStorage = "tsxvault"
-	jsonV, _ := json.Marshal(vaultFeature)
-
-	store.SettingValue = string(jsonV)
-	store.UpdatedBy = uc.User.ID
-	store.UpdatedOn = time.Now().Unix()
-
-	err = Store.UpdateGlobalSetting(store)
-	if err != nil {
-		logger.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "failed to init vault", "Vault not initialised", nil)
+		utils.TrasaResponse(w, 200, "failed", err.Error(), "failed to rinitialize", nil)
 		return
 	}
 
 	var resp VaultInitResp
-	resp.UnsealKeys = encKeyShards
+	resp.DecryptKeys = encKeyShards
 	resp.Tsxvault = true
 
-	utils.TrasaResponse(w, 200, "success", "next-key", "Vault initialised", resp)
+	utils.TrasaResponse(w, 200, "success", "sucess", "Vault initialised", resp)
 
 }
 
-// initTsxvault generates aws encryption key. shards it with sharder and returns sharded key.
-func initTsxvault(orgID string) ([]string, error) {
+// InitTsxvault generates aws encryption key. shards it with sharder and returns sharded key. It also updates global setting.
+func InitTsxvault(orgID, userID string) ([]string, error) {
 
 	encKey, err := tsxvault.Store.GenAndStoreKey(orgID)
 	if err != nil {
@@ -170,6 +148,30 @@ func initTsxvault(orgID string) ([]string, error) {
 	}
 
 	shardedKeys := utils.ShamirSharder(encKey[:], 5, 3)
+
+	var store models.GlobalSettings
+	store.SettingID = utils.GetUUID()
+	store.OrgID = orgID
+	store.Status = true
+	store.SettingType = consts.GLOBAL_TSXVAULT
+
+	var vaultFeature models.VaultFeature
+	vaultFeature.CredStorage = "tsxvault"
+	vaultFeature.CertStorage = "tsxvault"
+	jsonV, err := json.Marshal(vaultFeature)
+	if err != nil {
+		return nil, err
+	}
+
+	store.SettingValue = string(jsonV)
+	store.UpdatedBy = userID
+	store.UpdatedOn = time.Now().Unix()
+
+	err = Store.UpdateGlobalSetting(store)
+	if err != nil {
+
+		return nil, err
+	}
 
 	return shardedKeys, nil
 }

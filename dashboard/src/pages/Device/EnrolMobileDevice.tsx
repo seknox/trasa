@@ -236,7 +236,7 @@ type ConfirmTOTPDialogProps = {
 
 function ConfirmTOTPDialog(props:ConfirmTOTPDialogProps) {
   const [totp,setTOTP] = useState("")
-  const onSubmit = (e:any) => {
+  const onSubmit = (e: any) => {
     e.preventDefault()
     axios.post(Constants.TRASA_HOSTNAME+"/idp/login/checktfa",{totpCode:totp,deviceID:props.deviceID}).then(r=>{
       if(r.data.status=="success"){
@@ -271,7 +271,7 @@ function ConfirmTOTPDialog(props:ConfirmTOTPDialogProps) {
               variant="outlined"
               size="small"
           />
-          <Button  type={"submit"} onClick={onSubmit} variant="contained" >Verify</Button>
+          <Button  type={"submit"} onSubmit={onSubmit} variant="contained" >Verify</Button>
         </form>
 
       </Dialogue>

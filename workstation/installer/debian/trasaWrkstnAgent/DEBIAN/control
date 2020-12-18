@@ -1,0 +1,8 @@
+Package: trasawsa
+Version: 0.0.1
+Homepage: https://trasa.io
+Section: x11
+Priority: optional
+Architecture: all
+Maintainer: secure@trasa.io
+Description: Native helper for TRASA browser extension.
