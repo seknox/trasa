@@ -46,6 +46,7 @@ func (s Store) parseSSHCert(addr net.Addr, publicKey ssh.PublicKey) error {
 	}
 	deviceID, ok := cert.Extensions["trasa-device-id"]
 	if !ok {
+		logrus.Error("device ID not found in ssh certificate")
 		return errors.New("device ID not found in ssh certificate")
 	}
 
@@ -61,7 +62,7 @@ func (s Store) parseSSHCert(addr net.Addr, publicKey ssh.PublicKey) error {
 	sess.log.AccessDeviceID = deviceID
 	sess.params.AccessDeviceID = deviceID
 
-	return errors.New("not implemented yet")
+	return nil
 }
 
 //validateTempCert
@@ -74,8 +75,7 @@ func (s Store) validateTempCert(publicKey ssh.PublicKey, privilege string, orgID
 
 	caKey, err := ca.Store.GetCertDetail(orgID, "system", consts.CERT_TYPE_SSH_CA)
 	if err != nil {
-		//logger.Error(err)
-		//dbstore.SendErrorReport(err, "CA not initialised")
+		logrus.Error(err)
 		return err
 	}
 

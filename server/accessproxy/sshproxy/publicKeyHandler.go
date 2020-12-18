@@ -46,8 +46,12 @@ func publicKeyCallbackHandler(conn ssh.ConnMetadata, key ssh.PublicKey) (*ssh.Pe
 	//parse and validate connection deviceID embedded in ssh certificate
 	err = SSHStore.parseSSHCert(conn.RemoteAddr(), key)
 	if err != nil {
+		logrus.Debug(err)
 		return nil, errors.New(gotoPublicKey)
 	}
+
+	//If certificate is verified, change authType to "CERT"
+	SSHStore.SetAuthType(conn.RemoteAddr(), consts.SSH_AUTH_TYPE_CERT)
 
 	return nil, errors.New(gotoKeyboardInteractive)
 }

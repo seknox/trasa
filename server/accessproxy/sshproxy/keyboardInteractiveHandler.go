@@ -10,6 +10,7 @@ import (
 	"github.com/seknox/trasa/server/api/logs"
 	"github.com/seknox/trasa/server/api/orgs"
 	"github.com/seknox/trasa/server/api/services"
+	"github.com/seknox/trasa/server/api/system"
 	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/global"
 	"github.com/seknox/trasa/server/models"
@@ -183,9 +184,22 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 	}
 
 	//possible value of keyType are:
-	// "SSH_AUTH_TYPE_DACERT" which is certificate with embedded data. 2FA is already verified, service is also already chosen.
-	// "SSH_AUTH_TYPE_PUB"  which is certificate generated from trasa. need to verify 2FA and ask user to choose app
+	// "SSH_AUTH_TYPE_CERT" which is certificate with embedded device ID.
+	// "SSH_AUTH_TYPE_PUB"  which is certificate generated from trasa.
 	// "SSH_AUTH_TYPE_PASSWORD" need to ask user his/her email
+
+	setting, err := system.Store.GetGlobalSetting(global.GetConfig().Trasa.OrgId, consts.GLOBAL_DEVICE_HYGIENE_CHECK)
+	if err != nil {
+		logrus.Error(err)
+		challengeUser("", "Something is wrong", nil, nil)
+		return nil, err
+	}
+
+	//If device hygiene check is enforced, auth type must be SSH_AUTH_TYPE_CERT
+	if setting.Status && sessionMeta.AuthType != consts.SSH_AUTH_TYPE_CERT {
+		challengeUser("", "Device hygiene enabled. You must use TRASA certificate downloaded from dashboard.", nil, nil)
+		return nil, errors.New("Device hygiene required")
+	}
 
 	if sessionMeta.AuthType == consts.SSH_AUTH_TYPE_PASSWORD {
 		userDetails, err := authenticateTRASA(conn, challengeUser)
@@ -278,6 +292,8 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 			challengeUser("", string(reason), nil, nil)
 			return nil, errors.New("tfa failed")
 		}
+		sessionMeta.log.TfaDeviceID = deviceID
+		sessionMeta.params.TfaDeviceID = deviceID
 	}
 
 	//Check device policy
@@ -287,6 +303,7 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 	}
 
 	if !ok {
+		challengeUser("", "Device policy failed: "+string(reason), nil, nil)
 		return nil, errors.Errorf("device policy failed: %s", reason)
 	}
 

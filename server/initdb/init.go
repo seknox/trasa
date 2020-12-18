@@ -34,7 +34,7 @@ func InitDB() {
 	storeDeviceHygieneCheck()
 
 	//init CA
-	//initSystemCA()
+	initSystemCA()
 
 	initDefaultPolicies()
 

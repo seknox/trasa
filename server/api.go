@@ -60,7 +60,6 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		r.Post("/crypto/kex", crypt.Kex)
 		r.Post("/device/register", auth.RegisterUserDevice)
 		r.Post("/device/ext/sync", auth.SyncExtension)
-		r.Post("/device/cli/updatehygiene", auth.UpdateHygiene)
 
 		r.Post("/agent/nix", serviceauth.AgentLogin)
 		r.Post("/agent/win", serviceauth.AgentLogin)
