@@ -409,6 +409,18 @@ func ConfirmTOTPAndSave(w http.ResponseWriter, r *http.Request) {
 	authlog.UserID = userID
 	authlog.OrgID = orgID
 
+	userDetails, err := users.Store.GetFromID(userID, orgID)
+	if err != nil {
+		logrus.Error(err)
+		err := logs.Store.LogLogin(&authlog, consts.REASON_USER_NOT_FOUND, false)
+		if err != nil {
+			logrus.Error(err)
+		}
+		utils.TrasaResponse(w, 200, "failed", "could not find user", "ConfirmTOTPAndSave")
+		return
+	}
+	authlog.UpdateUser(&models.UserWithPass{User: *userDetails})
+
 	prevCode, nowCode, nextCode := utils.CalculateTotp(totpSec)
 	if request.TOTPCode != prevCode && request.TOTPCode != nowCode && request.TOTPCode != nextCode {
 		logrus.Error("invalid TOTP code")
@@ -449,19 +461,6 @@ func ConfirmTOTPAndSave(w http.ResponseWriter, r *http.Request) {
 		dev.DeviceHygiene = devHyg
 
 	}
-
-	userDetails, err := users.Store.GetFromID(userID, orgID)
-	if err != nil {
-		logrus.Error(err)
-		err := logs.Store.LogLogin(&authlog, consts.REASON_USER_NOT_FOUND, false)
-		if err != nil {
-			logrus.Error(err)
-		}
-		utils.TrasaResponse(w, 200, "failed", "could not find user", "ConfirmTOTPAndSave")
-		return
-	}
-
-	authlog.UpdateUser(&models.UserWithPass{User: *userDetails})
 
 	err = devices.Store.Register(dev)
 	if err != nil {
