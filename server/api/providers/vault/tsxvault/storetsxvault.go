@@ -14,7 +14,6 @@ import (
 	logger "github.com/sirupsen/logrus"
 )
 
-// VaultWriteCreds writes user credentials(uname:pass) for specefic host.
 // First we check secret storage setting. If credStorage specefies tsxvalut, we store it in our database
 // else we use api token to store it in secret storage provider.
 // Configuration for vault should be stored in trasa_featuresv1 table.
