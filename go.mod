@@ -37,8 +37,8 @@ require (
 	github.com/satori/go.uuid v1.2.1-0.20181028125025-b2ce2384e17b
 	github.com/seknox/fireser v0.0.0-20200913072715-2c8854a8f0e3
 	github.com/seknox/guacamole v0.0.0-20200729194451-d3df4ebf9f6a
-	github.com/seknox/ssh v0.0.2
-	github.com/shirou/gopsutil v3.20.10+incompatible
+	github.com/seknox/ssh v0.0.3
+	github.com/shirou/gopsutil/v3 v3.20.11
 	github.com/sirupsen/logrus v1.6.0
 	github.com/spf13/cobra v0.0.3
 	github.com/spf13/viper v1.7.0
@@ -47,7 +47,7 @@ require (
 	github.com/trustelem/zxcvbn v1.0.1
 	github.com/tstranex/u2f v1.0.0
 	github.com/vulcand/oxy v1.1.0
-	golang.org/x/crypto v0.0.0-20201124201722-c8d3bf9c5392
+	golang.org/x/crypto v0.0.0-20201217014255-9d1352758620
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
 	google.golang.org/api v0.29.0
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
