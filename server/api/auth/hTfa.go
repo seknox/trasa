@@ -148,7 +148,7 @@ func TfaHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	status, reason, response := handleTFAMethodd(req, userDetails, &authlog)
+	status, reason, response := handleTFAMethod(req, userDetails, &authlog)
 	if status != "success" || req.TfaMethod == "u2fy" {
 		utils.TrasaResponse(w, 200, status, reason, "Dashboard Login", response)
 		return
@@ -218,7 +218,7 @@ func getIntentMatch(intent string) bool {
 	return retVal
 }
 
-func handleTFAMethodd(req TfaRequest, user *models.User, authlog *logs.AuthLog) (status, reason string, resp interface{}) {
+func handleTFAMethod(req TfaRequest, user *models.User, authlog *logs.AuthLog) (status, reason string, resp interface{}) {
 	switch req.TfaMethod {
 	// in case of u2fy, we do not need to generate login credentials here but process it in another signed response request from client
 	case "u2fy":
@@ -384,6 +384,8 @@ func ConfirmTOTPAndSave(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	authlog := logs.NewLog(r, "dashboard")
+
 	userID_orgID_Totpsec, err := redis.Store.MGet(request.DeviceID,
 		"userID",
 		"orgID",
@@ -392,6 +394,10 @@ func ConfirmTOTPAndSave(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		logrus.Error(err)
+		err := logs.Store.LogLogin(&authlog, consts.REASON_INVALID_TOKEN, false)
+		if err != nil {
+			logrus.Error(err)
+		}
 		utils.TrasaResponse(w, 200, "failed", "invalid deviceID", "ConfirmTOTPAndSave")
 		return
 	}
@@ -400,9 +406,28 @@ func ConfirmTOTPAndSave(w http.ResponseWriter, r *http.Request) {
 	orgID := userID_orgID_Totpsec[1]
 	totpSec := userID_orgID_Totpsec[2]
 
+	authlog.UserID = userID
+	authlog.OrgID = orgID
+
+	userDetails, err := users.Store.GetFromID(userID, orgID)
+	if err != nil {
+		logrus.Error(err)
+		err := logs.Store.LogLogin(&authlog, consts.REASON_USER_NOT_FOUND, false)
+		if err != nil {
+			logrus.Error(err)
+		}
+		utils.TrasaResponse(w, 200, "failed", "could not find user", "ConfirmTOTPAndSave")
+		return
+	}
+	authlog.UpdateUser(&models.UserWithPass{User: *userDetails})
+
 	prevCode, nowCode, nextCode := utils.CalculateTotp(totpSec)
 	if request.TOTPCode != prevCode && request.TOTPCode != nowCode && request.TOTPCode != nextCode {
 		logrus.Error("invalid TOTP code")
+		err := logs.Store.LogLogin(&authlog, consts.REASON_INVALID_TOTP, false)
+		if err != nil {
+			logrus.Error(err)
+		}
 		utils.TrasaResponse(w, 200, "failed", "invalid TOTP code", "ConfirmTOTPAndSave")
 		return
 	}
@@ -437,16 +462,13 @@ func ConfirmTOTPAndSave(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	userDetails, err := users.Store.GetFromID(userID, orgID)
-	if err != nil {
-		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "could not find user", "ConfirmTOTPAndSave")
-		return
-	}
-
 	err = devices.Store.Register(dev)
 	if err != nil {
 		logrus.Error(err)
+		err := logs.Store.LogLogin(&authlog, consts.REASON_UNKNOWN, false)
+		if err != nil {
+			logrus.Error(err)
+		}
 		utils.TrasaResponse(w, 200, "failed", "could not register device", "ConfirmTOTPAndSave")
 		return
 	}
@@ -456,6 +478,11 @@ func ConfirmTOTPAndSave(w http.ResponseWriter, r *http.Request) {
 
 	org, err := orgs.Store.Get(userDetails.OrgID)
 	if err != nil {
+		logrus.Error(err)
+		err := logs.Store.LogLogin(&authlog, consts.REASON_ORG_NOT_FOUND, false)
+		if err != nil {
+			logrus.Error(err)
+		}
 		utils.TrasaResponse(w, 200, "failed", err.Error(), "could not register device", "ConfirmTOTPAndSave")
 		return
 	}
@@ -468,6 +495,10 @@ func ConfirmTOTPAndSave(w http.ResponseWriter, r *http.Request) {
 	sessionToken, resp, err := sessionResponse(uc)
 	if err != nil {
 		logrus.Error(err)
+		err := logs.Store.LogLogin(&authlog, consts.REASON_FAILED_TO_GENERATE_TOKEN, false)
+		if err != nil {
+			logrus.Error(err)
+		}
 		utils.TrasaResponse(w, 200, "failed", "could not get session", "ConfirmTOTPAndSave")
 		return
 	}
@@ -482,7 +513,9 @@ func ConfirmTOTPAndSave(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, &xSESSION)
-
+	err = logs.Store.LogLogin(&authlog, "", true)
+	if err != nil {
+		logrus.Error(err)
+	}
 	utils.TrasaResponse(w, 200, "success", "", "", resp)
-	return
 }
