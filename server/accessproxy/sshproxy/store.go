@@ -72,12 +72,7 @@ func (s Store) parseSSHCert(addr net.Addr, publicKey ssh.PublicKey) error {
 }
 
 //validateTempCert
-func (s Store) validateTempCert(publicKey ssh.PublicKey, privilege string, orgID string) error {
-
-	cert, ok := publicKey.(*ssh.Certificate)
-	if !ok {
-		return errors.Errorf("invalid certificate")
-	}
+func (s Store) validateTempCert(cert *ssh.Certificate, privilege string, orgID string) error {
 
 	caKey, err := ca.Store.GetCertDetail(orgID, "system", consts.CERT_TYPE_SSH_CA)
 	if err != nil {

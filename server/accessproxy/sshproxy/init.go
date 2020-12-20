@@ -32,7 +32,7 @@ type Store struct {
 type Adapter interface {
 	checkPolicy(params *models.ConnectionParams) (*models.Policy, consts.FailedReason, error)
 	GetUserFromPublicKey(publicKey ssh.PublicKey, orgID string) (*models.User, error)
-	validateTempCert(publicKey ssh.PublicKey, privilege string, orgID string) error
+	validateTempCert(publicKey *ssh.Certificate, privilege string, orgID string) error
 	parseSSHCert(addr net.Addr, publicKey ssh.PublicKey) error
 
 	SetSession(addr net.Addr, session *Session) error

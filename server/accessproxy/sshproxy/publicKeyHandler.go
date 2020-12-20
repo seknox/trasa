@@ -37,10 +37,15 @@ func publicKeyCallbackHandler(conn ssh.ConnMetadata, key ssh.PublicKey) (*ssh.Pe
 		return nil, errors.New(failNow)
 	}
 
-	err = SSHStore.validateTempCert(key, conn.User(), global.GetConfig().Trasa.OrgId)
+	cert, ok := publicKey.(*ssh.Certificate)
+	if !ok {
+		return nil, errors.New(gotoPublicKey)
+	}
+
+	err = SSHStore.validateTempCert(cert, conn.User(), global.GetConfig().Trasa.OrgId)
 	if err != nil {
 		logrus.Trace(err)
-		return nil, errors.New(gotoPublicKey)
+		return nil, errors.New(failNow)
 	}
 
 	//parse and validate connection deviceID embedded in ssh certificate
