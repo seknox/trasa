@@ -63,6 +63,7 @@ func sessionResponse(uc models.UserContext) (sessionToken string, response userA
 	var csrfToken string
 	sessionToken, csrfToken, err = SetSession(uc)
 	if err != nil {
+		logrus.Error(err)
 		return
 	}
 
