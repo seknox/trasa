@@ -265,7 +265,7 @@ export default function VaultConfig() {
                     {' '}
                     <div className={classes.initStatusText}>
                       {' '}
-                      vault was initialized on {initStatus.initOn} <br />{' '}
+                      Initialized on {initStatus.initOn} <br />{' '}
                     </div>{' '}
                     <br />
                     <Button classes={{ root: classes.initedButton, label: classes.label }}>
