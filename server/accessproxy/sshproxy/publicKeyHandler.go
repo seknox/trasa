@@ -3,6 +3,7 @@ package sshproxy
 import (
 	"github.com/pkg/errors"
 	"github.com/seknox/ssh"
+	"github.com/seknox/trasa/server/api/system"
 	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/global"
 	"github.com/sirupsen/logrus"
@@ -35,6 +36,18 @@ func publicKeyCallbackHandler(conn ssh.ConnMetadata, key ssh.PublicKey) (*ssh.Pe
 	if err != nil {
 		logrus.Errorf("update session user: %v", err)
 		return nil, errors.New(failNow)
+	}
+
+	settings, err := system.Store.GetGlobalSetting(global.GetConfig().Trasa.OrgId, consts.GLOBAL_DEVICE_HYGIENE_CHECK)
+	if err != nil {
+		logrus.Error(err)
+		return nil, errors.New(failNow)
+	}
+
+	//If device hygiene check is disabled, continue to keyboard interactive
+	// Else, check ssh certificate
+	if !settings.Status {
+		return nil, errors.New(gotoKeyboardInteractive)
 	}
 
 	cert, ok := publicKey.(*ssh.Certificate)
