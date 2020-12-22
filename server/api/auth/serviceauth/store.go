@@ -1,6 +1,7 @@
 package serviceauth
 
 import (
+	"github.com/seknox/trasa/server/api/accesscontrol"
 	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/models"
 )
@@ -14,5 +15,5 @@ func (s sStore) CheckPolicy(serviceID, userID, orgID, userIP, timezone string, p
 		UserIP:    userIP,
 		Timezone:  timezone,
 	}
-	return s.checkPolicyFunc(&params, policy, adhoc)
+	return accesscontrol.CheckPolicy(&params, policy, adhoc)
 }

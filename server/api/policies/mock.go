@@ -40,3 +40,7 @@ func (p policyMock) DeletePolicy(policyID, orgID string) error {
 func (p policyMock) GetAccessPolicy(userID, serviceID, privilege, orgID string) (policy *models.Policy, adhoc bool, err error) {
 	panic("implement me")
 }
+
+func (p policyMock) GetAccessPolicyFromGroupNames(groups []string, serviceID, privilege, orgID string) (policy *models.Policy, adhoc bool, err error) {
+	panic("implement me")
+}

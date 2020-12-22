@@ -201,9 +201,17 @@ func (s *Session) Start(ws *websocket.Conn) (errcode string, err error) {
 			return "3339", errors.Errorf("device policy failed: %v", reason)
 		}
 
-		ok, reason = Store.CheckPolicy(s.params, s.policy, s.service.Adhoc)
+		//Check trasa policies
+		policy, adhoc, err := accessmap.GetAssignedPolicy(s.params)
+		if err != nil {
+			logrus.Debug(err)
+			return "3339", errors.New("Policy not assigned")
+		}
+
+		ok, reason = accesscontrol.CheckPolicy(s.params, policy, adhoc)
 		if !ok {
-			return "3339", errors.Errorf("policy failed: %v", reason)
+			logrus.Debug(err)
+			return "3339", errors.Errorf("Policy check failed: %v", reason)
 		}
 
 		s.log.Status = true

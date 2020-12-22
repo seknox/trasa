@@ -11,14 +11,8 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/seknox/trasa/server/api/logs"
-	"github.com/seknox/trasa/server/consts"
-	"github.com/seknox/trasa/server/models"
 	"github.com/sirupsen/logrus"
 )
-
-func (s GWStore) CheckPolicy(params *models.ConnectionParams, policy *models.Policy, adhoc bool) (bool, consts.FailedReason) {
-	return s.checkPolicyFunc(params, policy, adhoc)
-}
 
 func (s GWStore) uploadSessionLog(authlog *logs.AuthLog) error {
 

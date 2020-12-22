@@ -4,15 +4,12 @@ import (
 	"io"
 	"strings"
 
-	"github.com/seknox/trasa/server/api/accesscontrol"
 	"github.com/seknox/trasa/server/api/auth/tfa"
 
 	"github.com/gorilla/websocket"
 	"github.com/pkg/errors"
 	"github.com/seknox/guacamole"
-	"github.com/seknox/trasa/server/api/policies"
 	"github.com/seknox/trasa/server/api/services"
-	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/models"
 	"github.com/sirupsen/logrus"
 	"github.com/trustelem/zxcvbn"
@@ -95,31 +92,6 @@ func handlePass(params *models.ConnectionParams) (*models.UpstreamCreds, error) 
 	}
 
 	return creds, err
-
-}
-
-func handlePolicy(params *models.ConnectionParams, serviceID string) (ok bool, reason consts.FailedReason) {
-	policy, adhoc, err := policies.Store.GetAccessPolicy(params.UserID, serviceID, params.Privilege, params.OrgID)
-	if err != nil {
-		logrus.Errorf(`failed to get access policy: %v`, err)
-		return false, consts.REASON_NO_POLICY_ASSIGNED
-	}
-
-	params.CanTransferFile = policy.FileTransfer
-	params.SessionRecord = policy.RecordSession
-	params.Skip2FA = !policy.TfaRequired
-
-	reason, ok, err = accesscontrol.CheckDevicePolicy(policy.DevicePolicy, params.AccessDeviceID, "", params.OrgID)
-
-	if err != nil {
-		logrus.Error(err)
-	}
-
-	if !ok {
-		return false, reason
-	}
-
-	return Store.CheckPolicy(params, policy, adhoc)
 
 }
 

@@ -144,11 +144,11 @@ func setupTestEnv() *global.State {
 		panic(err)
 	}
 
-	rdpproxy.InitStore(state, accesscontrol.TrasaUAC)
-	sshproxy.InitStore(state, accesscontrol.TrasaUAC)
-	serviceauth.InitStore(state, accesscontrol.TrasaUAC)
+	rdpproxy.InitStore(state, accesscontrol.CheckPolicy)
+	sshproxy.InitStore(state, accesscontrol.CheckPolicy)
+	serviceauth.InitStore(state, accesscontrol.CheckPolicy)
 
-	accesscontrol.InitStore(state, accesscontrol.TrasaUAC)
+	accesscontrol.InitStore(state, accesscontrol.CheckPolicy)
 
 	accessmap.InitStore(state)
 

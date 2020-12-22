@@ -2,7 +2,6 @@ package sshproxy
 
 import (
 	"bytes"
-	"database/sql"
 	"encoding/hex"
 	"fmt"
 	"net"
@@ -13,9 +12,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/seknox/ssh"
-	"github.com/seknox/trasa/server/api/accessmap"
 	"github.com/seknox/trasa/server/api/logs"
-	"github.com/seknox/trasa/server/api/policies"
 	"github.com/seknox/trasa/server/api/providers/ca"
 	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/models"
@@ -236,32 +233,6 @@ func (s Store) GetGuestChannel(sessionID string) (chan GuestClient, error) {
 
 	}
 	return guestChan, nil
-}
-
-func (s Store) checkPolicy(params *models.ConnectionParams) (*models.Policy, consts.FailedReason, error) {
-
-	policy, adhoc, err := policies.Store.GetAccessPolicy(params.UserID, params.ServiceID, params.Privilege, params.OrgID)
-
-	if errors.Is(err, sql.ErrNoRows) {
-		//if service is not assigned to user, create one (only if dynamic access is enabled)
-		policy, err = accessmap.CreateDynamicAccessMap(params.ServiceID, params.UserID, params.TrasaID, params.Privilege, params.OrgID)
-		if err != nil {
-			logrus.Errorf("dynamic access map: %v", err)
-			return policy, consts.REASON_DYNAMIC_SERVICE_FAILED, err
-		}
-
-	} else if err != nil {
-		logrus.Errorf("get service from hostname: %v", err)
-		return policy, consts.REASON_INVALID_SERVICE_ID, err
-	}
-
-	//logrus.Trace("client ip: ", params.UserIP)
-
-	ok, reason := s.checkPolicyFunc(params, policy, adhoc)
-	if !ok {
-		return policy, reason, errors.New("policy failed")
-	}
-	return policy, reason, nil
 }
 
 func (s Store) closeSession(addr net.Addr) {

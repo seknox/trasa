@@ -25,4 +25,5 @@ type adapter interface {
 	DeletePolicy(policyID, orgID string) error
 
 	GetAccessPolicy(userID, serviceID, privilege, orgID string) (policy *models.Policy, adhoc bool, err error)
+	GetAccessPolicyFromGroupNames(groups []string, serviceID, privilege, orgID string) (policy *models.Policy, adhoc bool, err error)
 }
