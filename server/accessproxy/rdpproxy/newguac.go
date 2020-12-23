@@ -95,6 +95,7 @@ func checkAndInitParams(uc *models.UserContext, params *models.ConnectionParams)
 	params.OrgName = uc.Org.OrgName
 	params.AccessDeviceID = uc.DeviceID
 	params.BrowserID = uc.BrowserID
+	params.Groups = uc.User.Groups
 	//params.UserAgent = r.UserAgent()
 
 	if params.RdpProtocol == "" {

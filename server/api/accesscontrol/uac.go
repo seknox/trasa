@@ -166,8 +166,8 @@ func timeChecker(hour, minute int, from, to []int) bool {
 	return false
 }
 
-// TrasaUAC validates policy for user access
-func TrasaUAC(params *models.ConnectionParams, policy *models.Policy, adHocSwitch bool) (bool, consts.FailedReason) {
+// CheckPolicy validates policy for user access
+func CheckPolicy(params *models.ConnectionParams, policy *models.Policy, adHocSwitch bool) (bool, consts.FailedReason) {
 
 	ok := false
 	reason := consts.REASON_UNKNOWN

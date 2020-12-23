@@ -5,6 +5,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/seknox/ssh"
 	"github.com/seknox/trasa/server/api/accesscontrol"
+	"github.com/seknox/trasa/server/api/accessmap"
 	"github.com/seknox/trasa/server/api/auth"
 	"github.com/seknox/trasa/server/api/auth/tfa"
 	"github.com/seknox/trasa/server/api/logs"
@@ -221,8 +222,7 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 
 	sessionMeta.params.Privilege = conn.User()
 
-	//Check trasa policies
-	policy, reason, err := SSHStore.checkPolicy(&models.ConnectionParams{
+	params := &models.ConnectionParams{
 		ServiceID: sessionMeta.params.ServiceID,
 		OrgID:     sessionMeta.params.OrgID,
 		UserID:    sessionMeta.params.UserID,
@@ -231,12 +231,25 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 		SessionID: sessionMeta.ID, //to append adhoc sessions
 
 		Timezone: orgDetail.Timezone, //for day time policy check
-	})
+	}
+
+	//Check trasa policies
+	policy, adhoc, err := accessmap.GetAssignedPolicy(params)
 	if err != nil {
 		logrus.Debug(err)
-		challengeUser("", string(reason), nil, nil)
+		challengeUser("", "Policy not assigned", nil, nil)
+		logs.Store.LogLogin(sessionMeta.log, consts.REASON_NO_POLICY_ASSIGNED, false)
 		return nil, err
 	}
+
+	ok, reason := accesscontrol.CheckPolicy(params, policy, adhoc)
+	if !ok {
+		logrus.Debug(err)
+		challengeUser("", "Policy check failed: "+string(reason), nil, nil)
+		logs.Store.LogLogin(sessionMeta.log, reason, false)
+		return nil, err
+	}
+
 	sessionMeta.policy = policy
 	sessionMeta.log.SessionRecord = policy.RecordSession
 
@@ -281,7 +294,7 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 	}
 
 	//Check device policy
-	reason, ok, err := accesscontrol.CheckDevicePolicy(policy.DevicePolicy, sessionMeta.params.AccessDeviceID, sessionMeta.log.TfaDeviceID, sessionMeta.params.OrgID)
+	reason, ok, err = accesscontrol.CheckDevicePolicy(policy.DevicePolicy, sessionMeta.params.AccessDeviceID, sessionMeta.log.TfaDeviceID, sessionMeta.params.OrgID)
 	if err != nil {
 		logrus.Error(err)
 	}

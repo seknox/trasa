@@ -15,8 +15,13 @@ import (
 //GetFromID returns user details from user ID
 func (s userStore) GetFromID(userID, orgID string) (user *models.User, err error) {
 	user = &models.User{}
-	err = s.DB.QueryRow("SELECT org_id, id,username, first_name,middle_name, last_name, email, user_role,status, created_at, updated_at, idp_name FROM users WHERE id = $1 AND org_id=$2", userID, orgID).
-		Scan(&user.OrgID, &user.ID, &user.UserName, &user.FirstName, &user.MiddleName, &user.LastName, &user.Email, &user.UserRole, &user.Status, &user.CreatedAt, &user.UpdatedAt, &user.IdpName)
+	err = s.DB.QueryRow(`
+			SELECT org_id, id,username, first_name,middle_name, last_name, email, user_role,status, created_at, updated_at, idp_name,
+			       ARRAY(select name from groups JOIN user_group_maps ugm on groups.id = ugm.group_id WHERE user_id=$1)
+			FROM users 
+			WHERE id = $1 AND org_id=$2`,
+		userID, orgID).
+		Scan(&user.OrgID, &user.ID, &user.UserName, &user.FirstName, &user.MiddleName, &user.LastName, &user.Email, &user.UserRole, &user.Status, &user.CreatedAt, &user.UpdatedAt, &user.IdpName, pq.Array(&user.Groups))
 
 	return
 }

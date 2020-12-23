@@ -153,15 +153,24 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 
 	//Checking TRASA policy
 	conn.WriteMessage(1, []byte("\n\rChecking policy...\n\r"))
-	policy, reason, err := SSHStore.checkPolicy(&params)
+
+	policy, adhoc, err := accessmap.GetAssignedPolicy(&params)
 	if err != nil {
+		logrus.Debug(err)
+		conn.WriteMessage(1, []byte("\n\rPolicy not assigned "+"\n\r"))
+		logs.Store.LogLogin(&authlog, consts.REASON_NO_POLICY_ASSIGNED, false)
+		return
+	}
+
+	ok, reason := accesscontrol.CheckPolicy(&params, policy, adhoc)
+	if !ok {
 		logrus.Debug(err)
 		conn.WriteMessage(1, []byte("\n\rPolicy check failed: "+reason+"\n\r"))
 		logs.Store.LogLogin(&authlog, reason, false)
 		return
 	}
 
-	//Handle seconf factor if enabled in policy
+	//Handle second factor if enabled in policy
 	if policy.TfaRequired {
 		conn.WriteMessage(1, []byte("\n\rAuthenticating 2nd Factor\n\r"))
 		deviceID, reason, ok := tfa.HandleTfaAndGetDeviceID(nil,
@@ -185,7 +194,7 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 	}
 
 	//logrus.Trace(params.AccessDeviceID)
-	reason, ok, err := accesscontrol.CheckDevicePolicy(policy.DevicePolicy, params.AccessDeviceID, authlog.TfaDeviceID, uc.Org.ID)
+	reason, ok, err = accesscontrol.CheckDevicePolicy(policy.DevicePolicy, params.AccessDeviceID, authlog.TfaDeviceID, uc.Org.ID)
 	if err != nil {
 		logrus.Error(err)
 	}
@@ -407,6 +416,7 @@ func checkAndInitParams(uc *models.UserContext, params *models.ConnectionParams)
 	params.TrasaID = uc.User.Email
 	params.Timezone = uc.Org.Timezone
 	params.ServiceType = "rdp"
+	params.Groups = uc.User.Groups
 	//params.UserAgent = r.UserAgent()
 
 	if params.RdpProtocol == "" {
