@@ -20,16 +20,18 @@ type adapter interface {
 	GetKeyOrTokenWithKeyval(orgID, keyName string) (*models.KeysHolder, error)
 	GetKeyOrTokenWithKeyvalAndID(orgID, keyName, keyID string) (*models.KeysHolder, error)
 
-	// store cred
+	// generic credential crud ops
 	StoreCred(key models.ServiceSecretVault) error 
 	ReadCred(orgID, serviceID, secretType, secretID string) (string, error)
 	RemoveCred(orgID, serviceID, secretType, secretID string) error
+	DeleteCreds(orgID, serviceID string) error
 
-	// hashicorp vault functions
+	// hashicorp vault functions for credential crud ops
 	initclient() (*hcvault.Client, error) 
 	HCVStoreCred(cred models.ServiceSecretVault) error 
 	HCVReadCred(orgID, serviceID, secretID string) (string, error)
 	HCVRemoveCred(orgID, serviceID, secretID string) error
+	HCVDeleteForService(orgID, serviceID string) error
 }
 
 type cryptStore struct {

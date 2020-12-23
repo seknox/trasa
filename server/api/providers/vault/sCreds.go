@@ -7,11 +7,10 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-
+// StoreCred saves user credential on specified secret provider.
 func (s cryptStore) StoreCred(key models.ServiceSecretVault) error {
 
 	logrus.Trace("Writing to CredProv: ", s.TsxvKey.CredProv.ProviderName)
-	logrus.Trace("is equals: ", s.TsxvKey.CredProv.ProviderName == consts.CREDPROV_HCVAULT)
 	if s.TsxvKey.CredProv.ProviderName == consts.CREDPROV_HCVAULT {
 		err := Store.HCVStoreCred(key)
 		if err != nil {
@@ -29,6 +28,7 @@ func (s cryptStore) StoreCred(key models.ServiceSecretVault) error {
 
 }
 
+// ReadCred returns saved decrypted credential
 func (s cryptStore) ReadCred(orgID, serviceID, secretType, secretID string) (string, error) {
 	logrus.Trace("Reading from CredProv: ", s.TsxvKey.CredProv.ProviderName)
 	if s.TsxvKey.CredProv.ProviderName == consts.CREDPROV_HCVAULT {
@@ -48,6 +48,7 @@ func (s cryptStore) ReadCred(orgID, serviceID, secretType, secretID string) (str
 
 }
 
+// RemoveCred removes particular credential from secret storage
 func (s cryptStore) RemoveCred(orgID, serviceID, secretType, secretID string) error {
 	logrus.Trace("Removing from CredProv: ", s.TsxvKey.CredProv.ProviderName)
 	if s.TsxvKey.CredProv.ProviderName == consts.CREDPROV_HCVAULT {
@@ -64,5 +65,20 @@ func (s cryptStore) RemoveCred(orgID, serviceID, secretType, secretID string) er
 	}
 
 	return nil
+
+}
+
+// DeleteCred only used if we use hashicorp vault
+func (s cryptStore) DeleteCreds(orgID, serviceID string) error {
+	logrus.Trace("Deleting from CredProv: ", s.TsxvKey.CredProv.ProviderName)
+	if s.TsxvKey.CredProv.ProviderName == consts.CREDPROV_HCVAULT {
+		err := Store.HCVDeleteForService(orgID, serviceID)
+		if err != nil {
+		 	return  err
+		}
+		return nil
+	}
+
+return nil
 
 }
