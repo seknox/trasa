@@ -14,7 +14,6 @@ import (
 	"github.com/seknox/trasa/server/api/accesscontrol"
 	"github.com/seknox/trasa/server/api/accessmap"
 	"github.com/seknox/trasa/server/api/logs"
-	"github.com/seknox/trasa/server/api/policies"
 	"github.com/seknox/trasa/server/api/services"
 	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/models"
@@ -57,6 +56,7 @@ func NewSession(params *models.ConnectionParams, authlog *logs.AuthLog) (*Sessio
 
 	authlog.UpdateService(service)
 	params.ServiceName = service.Name
+	params.ServiceID = service.ID
 
 	session := Session{service: service}
 
@@ -66,17 +66,9 @@ func NewSession(params *models.ConnectionParams, authlog *logs.AuthLog) (*Sessio
 
 	if session.isOwner {
 
-		policy, _, err := policies.Store.GetAccessPolicy(params.UserID, service.ID, params.Privilege, params.OrgID)
-		if errors.Is(err, sql.ErrNoRows) {
-			//if service is not assigned to user, create one (only if dynamic access is enabled)
-			policy, err = accessmap.CreateDynamicAccessMap(params.SessionID, params.UserID, params.TrasaID, params.Privilege, params.OrgID)
-			if err != nil {
-				logrus.Errorf("dynamic access map: %v", err)
-				return nil, err
-			}
-
-		} else if err != nil {
-			logrus.Errorf("get service from hostname: %v", err)
+		policy, _, err := accessmap.GetAssignedPolicy(params)
+		if err != nil {
+			logrus.Errorf("get assigned policy: %v", err)
 			return nil, err
 		}
 
