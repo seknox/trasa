@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/seknox/trasa/server/api/providers/vault/tsxvault"
+	"github.com/seknox/trasa/server/api/providers/vault"
 	"github.com/seknox/trasa/server/models"
 	"github.com/seknox/trasa/server/utils"
 	"github.com/sirupsen/logrus"
@@ -52,7 +52,7 @@ func StoreServiceCredentials(w http.ResponseWriter, r *http.Request) {
 	s.AddedAt = time.Now().Unix()
 	s.LastUpdated = time.Now().Unix()
 
-	err := tsxvault.Store.StoreSecret(s)
+	err := vault.Store.StoreCred(s)
 	if err != nil {
 		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "Could not save secret", "failed to save secret")
@@ -84,7 +84,7 @@ func ViewCreds(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	passCred, err1 := tsxvault.Store.GetSecret(userContext.User.OrgID, req.ServiceID, req.Type, req.Username)
+	passCred, err1 := vault.Store.ReadCred(userContext.User.OrgID, req.ServiceID, req.Type, req.Username)
 	if err1 != nil {
 		logrus.Error(err1)
 		utils.TrasaResponse(w, 200, "failed", "Could not view secret", "failed to view secret", nil, nil)
@@ -116,9 +116,9 @@ func DeleteCreds(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err1 := tsxvault.Store.TsxvDeleteSecret(userContext.User.OrgID, req.ServiceID, "password", req.Username)
+	err1 := vault.Store.RemoveCred(userContext.User.OrgID, req.ServiceID, "password", req.Username)
 
-	err2 := tsxvault.Store.TsxvDeleteSecret(userContext.User.OrgID, req.ServiceID, "key", req.Username)
+	err2 := vault.Store.RemoveCred(userContext.User.OrgID, req.ServiceID, "key", req.Username)
 
 	if err1 != nil && err2 != nil {
 		logrus.Error(err1, err2)

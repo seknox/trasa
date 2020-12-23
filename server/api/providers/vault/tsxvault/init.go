@@ -50,6 +50,7 @@ type adapter interface {
 	GenAndStoreKey(orgID string) (*[32]byte, error)
 	GetTsxVaultKey() (*[32]byte, bool)
 	SetTsxVaultKey(key *[32]byte, status bool,  credprov models.CredProvProps)
+	UpdateTsxVaultKeyCredProvConfig(credprov models.CredProvProps)
 	SetTsxCPxyKey(key string)
 	GetTsxCPxyKey() string
 }
