@@ -155,7 +155,7 @@ func InitTsxvault(orgID, userID string) ([]string, error) {
 	store.Status = true
 	store.SettingType = consts.GLOBAL_TSXVAULT
 
-	var vaultFeature models.VaultFeature
+	var vaultFeature models.CredProvProps
 	vaultFeature.ProviderName = consts.CREDPROV_TSXVAULT
 	vaultFeature.ProviderAddr = ""
 	vaultFeature.ProviderAccessToken = ""
@@ -363,7 +363,7 @@ func UpdateCredProv(w http.ResponseWriter, r *http.Request) {
 
 	uc := r.Context().Value("user").(models.UserContext)
 
-	var req models.VaultFeature
+	var req models.CredProvProps
 
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logrus.Error(err)

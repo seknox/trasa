@@ -23,7 +23,7 @@ func (s vaultStore) StoreSecret(key models.ServiceSecretVault) error {
 	// 	logger.Error(err)
 	// 	return err
 	// }
-	// var vaultConfig utils.VaultFeature
+	// var vaultConfig utils.CredProvProps
 	// json.Unmarshal([]byte(feature.Config), &vaultConfig)
 	// if vaultConfig.CredStorage == "tsxvault" {
 	// 	// store it in tsxvault
