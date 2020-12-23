@@ -21,7 +21,7 @@ import (
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 
 	sessionToken, err := r.Cookie("X-SESSION")
-	if sessionToken.Value == "" || err != nil {
+	if err != nil || sessionToken.Value == "" {
 		utils.TrasaResponse(w, http.StatusOK, "failed", "", "")
 		return
 	}
@@ -111,13 +111,4 @@ func SetSession(uc models.UserContext) (string, string, error) {
 
 	return encodedSession, base64.StdEncoding.EncodeToString(csrfToken), nil
 
-}
-
-func deleteSession(key string) bool {
-	//fmt.Println("enter deletesession in sessions.go")
-	err := redis.Store.Delete(key)
-	if err != nil {
-		return false
-	}
-	return true
 }

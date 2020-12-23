@@ -416,6 +416,7 @@ func checkAndInitParams(uc *models.UserContext, params *models.ConnectionParams)
 	params.TrasaID = uc.User.Email
 	params.Timezone = uc.Org.Timezone
 	params.ServiceType = "rdp"
+	params.Groups = uc.User.Groups
 	//params.UserAgent = r.UserAgent()
 
 	if params.RdpProtocol == "" {
