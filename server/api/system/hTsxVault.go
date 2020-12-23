@@ -20,7 +20,7 @@ import (
 	"github.com/seknox/trasa/server/global"
 	"github.com/seknox/trasa/server/models"
 	"github.com/seknox/trasa/server/utils"
-	logger "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 // StoreKey stores keys in database.
@@ -32,7 +32,7 @@ func StoreKey(w http.ResponseWriter, r *http.Request) {
 	var req models.KeysHolderReq
 
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
-		logger.Error(err)
+		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "invalid request.", "StoreKey", "")
 		return
 	}
@@ -48,7 +48,7 @@ func StoreKey(w http.ResponseWriter, r *http.Request) {
 
 	_, err := EncryptAndStoreKeyOrToken(store)
 	if err != nil {
-		logger.Error(err)
+		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", err.Error(), "StoreKey", nil)
 		return
 	}
@@ -63,7 +63,7 @@ func Getkey(w http.ResponseWriter, r *http.Request) {
 
 	key, err := tsxvault.Store.GetKeyOrTokenWithTag(uc.User.OrgID, vendorID)
 	if err != nil {
-		logger.Error(err, vendorID)
+		logrus.Error(err, vendorID)
 		utils.TrasaResponse(w, 200, "failed", "failed to get token.", "Getkey-GetKeyOrTokenWithTag", nil)
 		return
 	}
@@ -85,13 +85,13 @@ func EncryptAndStoreKeyOrToken(req models.KeysHolder) ([]byte, error) {
 	ct, err := tsxvault.Store.AesEncrypt([]byte(req.KeyVal))
 	req.KeyVal = ct
 	if err != nil {
-		//logger.Error(err)
+		//logrus.Error(err)
 		return nil, err
 	}
 
 	err = tsxvault.Store.StoreKeyOrTokens(req)
 	if err != nil {
-		logger.Error(err)
+		logrus.Error(err)
 		return nil, fmt.Errorf("failed to store token")
 	}
 	return req.KeyVal, nil
@@ -117,7 +117,7 @@ func TsxvaultInit(w http.ResponseWriter, r *http.Request) {
 	var req VaultInit
 
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
-		logger.Error(err)
+		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "invalid request", "Vault not initialised", nil)
 		return
 	}
@@ -126,7 +126,7 @@ func TsxvaultInit(w http.ResponseWriter, r *http.Request) {
 	// (3) shard master key and give it to user. (4) store encrypted encryption key in database.
 	encKeyShards, err := InitTsxvault(uc.User.OrgID, uc.User.ID)
 	if err != nil {
-		logger.Error(err)
+		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", err.Error(), "failed to rinitialize", nil)
 		return
 	}
@@ -156,8 +156,9 @@ func InitTsxvault(orgID, userID string) ([]string, error) {
 	store.SettingType = consts.GLOBAL_TSXVAULT
 
 	var vaultFeature models.VaultFeature
-	vaultFeature.CredStorage = "tsxvault"
-	vaultFeature.CertStorage = "tsxvault"
+	vaultFeature.ProviderName = consts.CREDPROV_TSXVAULT
+	vaultFeature.ProviderAddr = ""
+	vaultFeature.ProviderAccessToken = ""
 	jsonV, err := json.Marshal(vaultFeature)
 	if err != nil {
 		return nil, err
@@ -184,14 +185,14 @@ func ReInit(w http.ResponseWriter, r *http.Request) {
 	// (1) remove all managed users for this organization.
 	err := orgs.Store.RemoveAllManagedAccounts(uc.User.OrgID)
 	if err != nil {
-		logger.Error(err)
+		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "failed to remove manged users but vault storage is removed.", "Vault not reinitialised", nil)
 		return
 	}
 
 	err = tsxvault.Store.TsxvdeactivateAllKeys(uc.User.OrgID, time.Now().Unix())
 	if err != nil {
-		logger.Error(err)
+		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "failed to remove manged users but vault storage is removed.", "Vault not reinitialised", nil)
 		return
 	}
@@ -199,7 +200,7 @@ func ReInit(w http.ResponseWriter, r *http.Request) {
 	// delete all rows from Service_keyvaultv1
 	err = tsxvault.Store.TsxvDeleteAllSecret(uc.User.OrgID)
 	if err != nil {
-		logger.Error(err)
+		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "failed to remove manged users but vault storage is removed.", "Vault not reinitialised", nil)
 		return
 	}
@@ -223,7 +224,7 @@ func Status(w http.ResponseWriter, r *http.Request) {
 
 	vaultInitStatus, err := Store.GetGlobalSetting(uc.Org.ID, consts.GLOBAL_TSXVAULT)
 	if err != nil {
-		logger.Error(err)
+		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "successfully retrieved org details", "GetOrgDetail", nil)
 		return
 	}
@@ -262,7 +263,7 @@ func DecryptKey(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
 	var req unseal
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		logger.Error(err)
+		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "invalid request", "Vault not decrypted", nil)
 		return
 	}
@@ -270,7 +271,7 @@ func DecryptKey(w http.ResponseWriter, r *http.Request) {
 	trimmed := strings.TrimSpace(req.Key)
 	key, err := base64.StdEncoding.DecodeString(trimmed)
 	if err != nil {
-		logger.Error(err)
+		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "decode error", "Vault not decrypted", nil)
 		return
 	}
@@ -290,7 +291,7 @@ func DecryptKey(w http.ResponseWriter, r *http.Request) {
 
 	deducedVal, err := utils.ShamirDeducer(HoldDecryptShard)
 	if err != nil {
-		logger.Error("ShamirDeducer ", err)
+		logrus.Error("ShamirDeducer ", err)
 		HoldDecryptShard = nil
 		utils.TrasaResponse(w, 200, "failed", "unable to deduce key. Retry again from 1st key", "Vault decrypted", resp)
 		return
@@ -307,20 +308,20 @@ func DecryptKey(w http.ResponseWriter, r *http.Request) {
 	// we return failed response. other wise will store it in TsxVaultKey.
 	getKey, err := tsxvault.Store.TsxvGetEncKeyHash(uc.User.OrgID, hex.EncodeToString(hashed))
 	if err != nil {
-		logger.Error(err)
+		logrus.Error(err)
 		HoldDecryptShard = nil
 		utils.TrasaResponse(w, 200, "failed", "This key is not registered", "Vault not decrypted", nil)
 		return
 	}
 	if getKey.Status == false {
-		logger.Error("failed status")
+		logrus.Error("failed status")
 		HoldDecryptShard = nil
 		utils.TrasaResponse(w, 200, "failed", "This key is expired", "Vault not decrypted", nil)
 		return
 	}
 
 	if hex.EncodeToString(hashed) != getKey.KeyHash {
-		logger.Error("hash mismatch")
+		logrus.Error("hash mismatch")
 		HoldDecryptShard = nil
 		utils.TrasaResponse(w, 200, "failed", "This key is not valid", "Vault not decrypted", nil)
 		return
@@ -343,16 +344,84 @@ func DecryptKey(w http.ResponseWriter, r *http.Request) {
 	// get key ct from database.
 	apikey, err := vault.Store.GetKeyOrTokenWithKeyval(uc.User.OrgID, consts.GLOBAL_CLOUDPROXY_APIKEY)
 	if err != nil {
-		logger.Error(err)
+		logrus.Error(err)
 	}
 
 	pt, err := utils.AESDecrypt(nkey[:], apikey.KeyVal)
 	if err != nil {
-		logger.Error(err)
+		logrus.Error(err)
 	}
 
 	tsxvault.Store.SetTsxCPxyKey(string(pt))
 
 	utils.TrasaResponse(w, 200, "success", "token retrieved", "Vault decrypted", resp)
+
+}
+
+// UpdateCredProv changes vault credential provider setting. (e.g. where to store service credentials, tsxVault or external secret provider)
+func UpdateCredProv(w http.ResponseWriter, r *http.Request) {
+
+	uc := r.Context().Value("user").(models.UserContext)
+
+	var req models.VaultFeature
+
+	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "invalid request", "secret storage not updated", nil)
+		return
+	}
+
+	
+
+	// check and store access token
+	start := ""
+	if len(req.ProviderAccessToken) > 4 {
+		start = req.ProviderAccessToken[0:4]
+	}
+
+	var key models.KeysHolder
+	key.OrgID = uc.User.OrgID
+	key.KeyID = utils.GetRandomString(5)
+	key.KeyTag = fmt.Sprintf("%sxxxx-xxxx...", start)
+	key.AddedBy = uc.User.ID
+	key.AddedAt = time.Now().Unix()
+	key.KeyName = string(consts.CREDPROV_HCVAULT_TOKEN)
+	key.KeyVal = []byte(req.ProviderAccessToken)
+	_, err := EncryptAndStoreKeyOrToken(key)
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "vault key is not retreived yet.", "could not store access token")
+		return
+	}
+
+	req.ProviderAccessToken = key.KeyTag
+	
+	// update global settting
+	var store models.GlobalSettings
+	store.OrgID = uc.Org.ID
+	store.Status = true
+	store.SettingType = consts.GLOBAL_TSXVAULT
+
+
+	jsonV, err := json.Marshal(req)
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "failed to marshal vault features", "secret storage not updated", nil)
+		return
+	}
+
+	store.SettingValue = string(jsonV)
+	store.UpdatedBy = uc.User.ID
+	store.UpdatedOn = time.Now().Unix()
+
+	err = Store.UpdateGlobalSetting(store)
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", err.Error(), "secret storage not updated", nil)
+		return
+	}
+
+
+	utils.TrasaResponse(w, 200, "success", "sucess", "Vault initialised", nil)
 
 }

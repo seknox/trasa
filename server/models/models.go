@@ -264,11 +264,9 @@ type TRASAFeaturesStatus struct {
 // 3rd party api keys which is used by TRASA will always be stored in key_holderv1.
 // Only one secret storage provider is supported at given time.
 type VaultFeature struct {
-	// CredStorage is for storing user credentials(uname:pass) or (uname:privatekey)
-	CredStorage string `json:"credStorage"`
-	// CertStorage determines where ca certificates and private eys are stored. it can be stored in cert_holder
-	// or external ca storage.
-	CertStorage string `json:"certStorage"`
+	ProviderName        consts.CREDPROV `json:"providerName"`
+	ProviderAddr        string          `json:"providerAddr"`
+	ProviderAccessToken string          `json:"providerAccessToken"`
 }
 
 type BackupPlan struct {

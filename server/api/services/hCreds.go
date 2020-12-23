@@ -55,18 +55,18 @@ func StoreServiceCredentials(w http.ResponseWriter, r *http.Request) {
 	err := tsxvault.Store.StoreSecret(s)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "Could not save password", "failed to save password")
+		utils.TrasaResponse(w, 200, "failed", "Could not save secret", "failed to save secret")
 		return
 	}
 
 	err = Store.AddManagedAccounts(req.ServiceID, userContext.Org.ID, req.Username)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "Could not save password", "failed to save password")
+		utils.TrasaResponse(w, 200, "failed", "Could not save secret", "failed to save secret")
 		return
 	}
 
-	utils.TrasaResponse(w, 200, "success", "cred stored", fmt.Sprintf(`password saved for "%s" user `, req.Username), req.Username)
+	utils.TrasaResponse(w, 200, "success", "cred stored", fmt.Sprintf(`secret saved for "%s" user `, req.Username), req.Username)
 
 	// we also store user names that has been enrolled in secret store in cockroachdb to reference
 	// managed accounts in that app.
@@ -80,14 +80,14 @@ func ViewCreds(w http.ResponseWriter, r *http.Request) {
 
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "invalid request", "failed to view password", nil, nil)
+		utils.TrasaResponse(w, 200, "failed", "invalid request", "failed to view secret", nil, nil)
 		return
 	}
 
 	passCred, err1 := tsxvault.Store.GetSecret(userContext.User.OrgID, req.ServiceID, req.Type, req.Username)
 	if err1 != nil {
 		logrus.Error(err1)
-		utils.TrasaResponse(w, 200, "failed", "Could not view password", "failed to view password", nil, nil)
+		utils.TrasaResponse(w, 200, "failed", "Could not view secret", "failed to view secret", nil, nil)
 		return
 	}
 
@@ -97,11 +97,11 @@ func ViewCreds(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		//logrus.Error(err, "invalid service ID in view creds")
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "Invalid service", "failed to view password")
+		utils.TrasaResponse(w, 200, "failed", "Invalid service", "failed to view secret")
 		return
 	}
 
-	utils.TrasaResponse(w, 200, "success", "creds fetched", fmt.Sprintf(`viewed password for "%s" user in "%s" app`, req.Username, service.Name), req)
+	utils.TrasaResponse(w, 200, "success", "creds fetched", fmt.Sprintf(`viewed secret for "%s" user in "%s" app`, req.Username, service.Name), req)
 }
 
 // DeleteCreds deletes stored creds from both database and tsxvault.
