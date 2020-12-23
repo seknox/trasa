@@ -305,6 +305,8 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		r.Get("/providers/vault/tsxvault/status", system.Status)
 		r.Post("/providers/vault/tsxvault/decrypt", system.DecryptKey)
 
+		r.Post("/providers/vault/credprov", system.UpdateCredProv)
+
 		r.Post("/providers/ca/tsxca/init", ca.InitCA)
 		r.Post("/providers/ca/tsxca/ssh/init/{type}", ca.InitSSHCA)
 		r.Post("/providers/ca/tsxca/upload", ca.UploadCA)

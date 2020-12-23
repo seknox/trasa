@@ -256,19 +256,17 @@ type TRASAFeaturesStatus struct {
 	Config    string `json:"config"`
 }
 
-// VaultFeature stores information regarding where is the secret stored (or to be stored)
-// For example VaultFeature.CredStorage value can be tsxvault or aws secret storage.
+// CredProvProps stores information regarding where is the secret stored (or to be stored)
+// For example CredProvProps.CredStorage value can be tsxvault or aws secret storage.
 // If tsxvault is set, we store user credentials in our built in vault. if aws is set,
 // we push secrets to aws secret storage. What happens if user wants to migrate secret from
 // tsxvault to aws secret storage? --- migration code required...
 // 3rd party api keys which is used by TRASA will always be stored in key_holderv1.
 // Only one secret storage provider is supported at given time.
-type VaultFeature struct {
-	// CredStorage is for storing user credentials(uname:pass) or (uname:privatekey)
-	CredStorage string `json:"credStorage"`
-	// CertStorage determines where ca certificates and private eys are stored. it can be stored in cert_holder
-	// or external ca storage.
-	CertStorage string `json:"certStorage"`
+type CredProvProps struct {
+	ProviderName        consts.CREDPROV `json:"providerName"`
+	ProviderAddr        string          `json:"providerAddr"`
+	ProviderAccessToken string          `json:"providerAccessToken"`
 }
 
 type BackupPlan struct {
