@@ -155,7 +155,7 @@ func InitTsxvault(orgID, userID string) ([]string, error) {
 	store.Status = true
 	store.SettingType = consts.GLOBAL_TSXVAULT
 
-	var vaultFeature models.VaultFeature
+	var vaultFeature models.CredProvProps
 	vaultFeature.ProviderName = consts.CREDPROV_TSXVAULT
 	vaultFeature.ProviderAddr = ""
 	vaultFeature.ProviderAccessToken = ""
@@ -331,8 +331,42 @@ func DecryptKey(w http.ResponseWriter, r *http.Request) {
 	nkey := new([32]byte)
 	copy(nkey[:], deducedVal)
 
-	// set in global tsxvKey vault
-	tsxvault.Store.SetTsxVaultKey(nkey, true)
+	// Get global vault settings
+	vaultsetting, err := Store.GetGlobalSetting(uc.Org.ID, consts.GLOBAL_TSXVAULT)
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "unable retrieved org details", "DecryptKey", nil)
+		return
+	}
+
+
+
+	// store cred prov setting in global tsxvkey struct
+	var cred models.CredProvProps
+	err = json.Unmarshal([]byte(vaultsetting.SettingValue), &cred)
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "unable to unmarshal setting values", "DecryptKey", nil)
+		return
+	}
+
+		// get access token from keyholder if credprov is hashicorp vault
+		if cred.ProviderName == consts.CREDPROV_HCVAULT {
+			ct, err := vault.Store.GetKeyOrTokenWithKeyval(uc.User.OrgID, string(consts.CREDPROV_HCVAULT_TOKEN))
+			if err != nil {
+				logrus.Error(err)
+			}
+		
+			pt, err := utils.AESDecrypt(nkey[:], ct.KeyVal)
+			if err != nil {
+				logrus.Error(err)
+			}
+
+			cred.ProviderAccessToken = string(pt)
+		}
+	
+
+	tsxvault.Store.SetTsxVaultKey(nkey, true, cred)
 
 	HoldDecryptShard = HoldDecryptShard[:0]
 
@@ -363,7 +397,7 @@ func UpdateCredProv(w http.ResponseWriter, r *http.Request) {
 
 	uc := r.Context().Value("user").(models.UserContext)
 
-	var req models.VaultFeature
+	var req models.CredProvProps
 
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logrus.Error(err)
@@ -371,7 +405,8 @@ func UpdateCredProv(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	
+	// update crdprov config in global variable
+	tsxvault.Store.UpdateTsxVaultKeyCredProvConfig(req)
 
 	// check and store access token
 	start := ""
@@ -420,6 +455,8 @@ func UpdateCredProv(w http.ResponseWriter, r *http.Request) {
 		utils.TrasaResponse(w, 200, "failed", err.Error(), "secret storage not updated", nil)
 		return
 	}
+
+
 
 
 	utils.TrasaResponse(w, 200, "success", "sucess", "Vault initialised", nil)

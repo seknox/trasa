@@ -160,6 +160,7 @@ export default function SecretStorate() {
       <VaultConfig
         initStatus={initStatus}
         tokenStatus={tokenStatus}
+        settokenStatus={settokenStatus}
         getVaultStatus={getVaultStatus}
       />
       {/* <br /> */}

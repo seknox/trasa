@@ -5,8 +5,6 @@ import (
 	"crypto/tls"
 	"database/sql"
 	"fmt"
-	"github.com/seknox/trasa/server/utils"
-	"github.com/spf13/viper"
 	"net"
 	"net/http"
 	"os"
@@ -14,6 +12,10 @@ import (
 	"runtime"
 	"strings"
 	"time"
+
+	"github.com/seknox/trasa/server/models"
+	"github.com/seknox/trasa/server/utils"
+	"github.com/spf13/viper"
 
 	"github.com/minio/minio-go"
 	"github.com/sirupsen/logrus"
@@ -60,6 +62,7 @@ type State struct {
 type tsxKey struct {
 	Key   *[32]byte
 	State bool
+	CredProv models.CredProvProps
 }
 
 // ECDHKexDerivedKey stores kexDerivedKey with sessionID as key.
