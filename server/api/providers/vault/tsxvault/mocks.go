@@ -90,7 +90,7 @@ func (v *vaultMock) GetTsxVaultKey() (*[32]byte, bool) {
 	panic("implement me")
 }
 
-func (v *vaultMock) SetTsxVaultKey(key *[32]byte, status bool) {
+func (v *vaultMock) SetTsxVaultKey(key *[32]byte, status bool,  credprov models.CredProvProps) {
 	panic("implement me")
 }
 

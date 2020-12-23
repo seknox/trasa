@@ -400,10 +400,11 @@ func (s vaultStore) GetTsxVaultKey() (*[32]byte, bool) {
 }
 
 // SetTsxVaultKey returns retreival status of encryption key
-func (s vaultStore) SetTsxVaultKey(key *[32]byte, status bool) {
+func (s vaultStore) SetTsxVaultKey(key *[32]byte, status bool, credprov models.CredProvProps) {
 
 	s.TsxvKey.Key = key
 	s.TsxvKey.State = status
+	s.TsxvKey.CredProv = credprov
 }
 
 // SetTsxCPxyKey assigns retreived cloud prxy api key in global state

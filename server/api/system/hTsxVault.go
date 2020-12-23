@@ -331,8 +331,42 @@ func DecryptKey(w http.ResponseWriter, r *http.Request) {
 	nkey := new([32]byte)
 	copy(nkey[:], deducedVal)
 
-	// set in global tsxvKey vault
-	tsxvault.Store.SetTsxVaultKey(nkey, true)
+	// Get global vault settings
+	vaultsetting, err := Store.GetGlobalSetting(uc.Org.ID, consts.GLOBAL_TSXVAULT)
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "unable retrieved org details", "DecryptKey", nil)
+		return
+	}
+
+
+
+	// store cred prov setting in global tsxvkey struct
+	var cred models.CredProvProps
+	err = json.Unmarshal([]byte(vaultsetting.SettingValue), &cred)
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "unable to unmarshal setting values", "DecryptKey", nil)
+		return
+	}
+
+		// get access token from keyholder if credprov is hashicorp vault
+		if cred.ProviderName == consts.CREDPROV_HCVAULT_TOKEN {
+			ct, err := vault.Store.GetKeyOrTokenWithKeyval(uc.User.OrgID, string(consts.CREDPROV_HCVAULT_TOKEN))
+			if err != nil {
+				logrus.Error(err)
+			}
+		
+			pt, err := utils.AESDecrypt(nkey[:], ct.KeyVal)
+			if err != nil {
+				logrus.Error(err)
+			}
+
+			cred.ProviderAccessToken = string(pt)
+		}
+	
+
+	tsxvault.Store.SetTsxVaultKey(nkey, true, cred)
 
 	HoldDecryptShard = HoldDecryptShard[:0]
 
