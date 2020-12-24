@@ -187,8 +187,7 @@ func generateTempCertificateForDeviceAgent(groups []string, deviceID, orgID stri
 		"permit-pty":              "",
 		"permit-user-rc":          "",
 		"trasa-device-id":         deviceID,
-		"trasa-user-groups":       "dev",
-		//"trasa-user-groups": 	   strings.Join(groups,","),
+		"trasa-user-groups":       strings.Join(groups, ","),
 	}
 
 	//principals := []string{}
