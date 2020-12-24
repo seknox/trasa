@@ -53,7 +53,7 @@ function CreateCA() {
     setcaName(event.target.value);
   };
 
-  const handleCADetial = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCADetail = (event: React.ChangeEvent<HTMLInputElement>) => {
     setcaDetails({ ...caDetails, [event.target.name]: event.target.value });
   };
 
@@ -104,7 +104,7 @@ function CreateCA() {
               </Typography>
             </Grid>
             <Grid item xs={6} sm={6} md={6}>
-              <TextField fullWidth onChange={handleCADetial} name="C" value={caDetails.C} />
+              <TextField fullWidth onChange={handleCADetail} name="C" value={caDetails.C} />
             </Grid>
           </Grid>
 
@@ -115,7 +115,7 @@ function CreateCA() {
               </Typography>
             </Grid>
             <Grid item xs={6} sm={6} md={6}>
-              <TextField fullWidth onChange={handleCADetial} name="ST" value={caDetails.ST} />
+              <TextField fullWidth onChange={handleCADetail} name="ST" value={caDetails.ST} />
             </Grid>
           </Grid>
 
@@ -126,7 +126,7 @@ function CreateCA() {
               </Typography>
             </Grid>
             <Grid item xs={6} sm={6} md={6}>
-              <TextField fullWidth onChange={handleCADetial} name="L" value={caDetails.L} />
+              <TextField fullWidth onChange={handleCADetail} name="L" value={caDetails.L} />
             </Grid>
           </Grid>
 
@@ -137,7 +137,7 @@ function CreateCA() {
               </Typography>
             </Grid>
             <Grid item xs={6} sm={6} md={6}>
-              <TextField fullWidth onChange={handleCADetial} name="O" value={caDetails.O} />
+              <TextField fullWidth onChange={handleCADetail} name="O" value={caDetails.O} />
             </Grid>
           </Grid>
 
@@ -148,7 +148,7 @@ function CreateCA() {
               </Typography>
             </Grid>
             <Grid item xs={6} sm={6} md={6}>
-              <TextField fullWidth onChange={handleCADetial} name="OU" value={caDetails.OU} />
+              <TextField fullWidth onChange={handleCADetail} name="OU" value={caDetails.OU} />
             </Grid>
           </Grid>
 
@@ -159,7 +159,7 @@ function CreateCA() {
               </Typography>
             </Grid>
             <Grid item xs={6} sm={6} md={6}>
-              <TextField fullWidth onChange={handleCADetial} name="OU" value={caDetails.OU} />
+              <TextField fullWidth onChange={handleCADetail} name="OU" value={caDetails.OU} />
             </Grid>
           </Grid>
 
@@ -180,7 +180,7 @@ function CreateCA() {
               </Typography>
             </Grid>
             <Grid item xs={6} sm={6} md={6}>
-              <TextField fullWidth onChange={handleCADetial} name="OU" value={caDetails.OU} />
+              <TextField fullWidth onChange={handleCADetail} name="OU" value={caDetails.OU} />
             </Grid>
           </Grid>
 

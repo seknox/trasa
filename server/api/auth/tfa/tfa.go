@@ -63,7 +63,7 @@ func SendU2F(userID, orgID, appName, ip string) (bool, string) {
 	totpDevices, err := users.Store.GetTOTPDevices(userID, orgID)
 	if err != nil {
 		logrus.Error(err)
-		return false, string(consts.REASON_DEVICE_NOT_ENROLLED)
+		return false, string(consts.REASON_DEVICE_NOT_FOUND)
 	}
 	//fmt.Printf("device fcm: %s\n", getDeviceFromDb.FcmToken)
 
@@ -107,7 +107,7 @@ func SendU2F(userID, orgID, appName, ip string) (bool, string) {
 
 		// deviceDetail, err := devices.Store.GetFromID(tfaResp.DeviceID)
 		// if err != nil {
-		// 	return false, string(consts.REASON_DEVICE_NOT_ENROLLED)
+		// 	return false, string(consts.REASON_DEVICE_NOT_FOUND)
 		// }
 		// ok, err := rsaVerify(tfaResp.Signature, tfaResp.Challenge, deviceDetail.PublicKey)
 		// if err != nil || !ok {
@@ -266,7 +266,7 @@ func HandleTfaAndGetDeviceID(signResponse *u2f.SignResponse, tfaMethod, totpCode
 		totpCheck, deviceID, err := VerifyTotpCode(totpCode, userID, orgID)
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
-				return "", consts.REASON_DEVICE_NOT_ENROLLED, false
+				return "", consts.REASON_DEVICE_NOT_FOUND, false
 			} else {
 				logrus.Error(err)
 				logrus.Error(err, "")
@@ -358,7 +358,7 @@ func HandleTfaAndGetDeviceID(signResponse *u2f.SignResponse, tfaMethod, totpCode
 	deviceDetail, err := devices.Store.GetFromID(tfaResp.DeviceID)
 	if err != nil {
 		logrus.Errorf("device not found: %v", err)
-		return deviceID, consts.REASON_DEVICE_NOT_ENROLLED, false
+		return deviceID, consts.REASON_DEVICE_NOT_FOUND, false
 	}
 	ok, err = rsaVerify(tfaResp.Signature, tfaResp.Challenge, deviceDetail.PublicKey)
 	if err != nil || !ok {

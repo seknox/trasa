@@ -89,6 +89,9 @@ func WelcomeNote(w http.ResponseWriter, r *http.Request) {
 			note.Show = true
 			note.Data = vaultKeys
 		}
+		initCA("user")
+		initCA("host")
+		initCA("system")
 
 	}
 

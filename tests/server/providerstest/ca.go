@@ -80,6 +80,40 @@ func CreateSSHCA(t *testing.T) {
 
 }
 
+func CreateSSHSystemCA(t *testing.T) {
+	req := testutils.GetReqWithBody(t, nil)
+
+	rctx := chi.NewRouteContext()
+	rctx.URLParams.Add("type", "system")
+	req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, rctx))
+
+	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(testutils.AddTestUserContext(ca.InitSSHCA))
+
+	handler.ServeHTTP(rr, req)
+
+	// Check the status code is what we expect.
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	var resp struct {
+		models.TrasaResponseStruct
+	}
+
+	err := json.Unmarshal(rr.Body.Bytes(), &resp)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if resp.Status != "success" {
+		t.Fatal(resp.Reason)
+	}
+
+}
+
 func GetAllCAs(t *testing.T) {
 	req := testutils.GetReqWithBody(t, nil)
 
