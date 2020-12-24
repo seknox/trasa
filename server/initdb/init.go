@@ -8,7 +8,6 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/seknox/trasa/server/api/orgs"
-	"github.com/seknox/trasa/server/api/providers/ca"
 	"github.com/seknox/trasa/server/api/system"
 	"github.com/seknox/trasa/server/api/users"
 	"github.com/seknox/trasa/server/consts"
@@ -34,7 +33,6 @@ func InitDB() {
 	storeDeviceHygieneCheck()
 
 	//init CA
-	initSystemCA()
 
 	initDefaultPolicies()
 
@@ -260,45 +258,6 @@ func storeGlobalDynamicServiceSetting() {
 		logrus.Trace("global dynamic access setting initialised")
 	}
 
-}
-
-func initSystemCA() {
-	_, err := ca.Store.GetCertHolder(consts.CERT_TYPE_SSH_CA, "user", global.GetConfig().Trasa.OrgId)
-	if !errors.Is(err, sql.ErrNoRows) {
-		logrus.Debug("ssh CA already initialised")
-		return
-	}
-
-	privateKey, err := utils.GeneratePrivateKey(4096)
-	if err != nil {
-		panic(err)
-		return
-	}
-	pubKey, err := utils.ConvertPublicKeyToSSHFormat(&privateKey.PublicKey)
-	if err != nil {
-		panic(err)
-		return
-	}
-
-	privateKeyBytes := utils.EncodePrivateKeyToPEM(privateKey)
-
-	caCert := models.CertHolder{
-		CertID:      utils.GetUUID(),
-		OrgID:       global.GetConfig().Trasa.OrgId,
-		EntityID:    "system",
-		Cert:        pubKey,
-		Key:         privateKeyBytes,
-		Csr:         nil,
-		CertType:    consts.CERT_TYPE_SSH_CA,
-		CreatedAt:   time.Now().Unix(),
-		CertMeta:    "",
-		LastUpdated: time.Now().Unix(),
-	}
-	err = ca.Store.StoreCert(caCert)
-	if err != nil {
-		logrus.Error(err)
-		return
-	}
 }
 
 var secRules = `[
