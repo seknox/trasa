@@ -7,10 +7,9 @@ import (
 )
 
 //InitStore initialises package state
-func InitStore(state *global.State, policyFunc models.CheckPolicyFunc) {
+func InitStore(state *global.State) {
 	Store = sStore{
-		State:           state,
-		checkPolicyFunc: policyFunc,
+		State: state,
 	}
 }
 
@@ -19,7 +18,6 @@ var Store adapter
 
 type sStore struct {
 	*global.State
-	checkPolicyFunc models.CheckPolicyFunc
 }
 
 type adapter interface {

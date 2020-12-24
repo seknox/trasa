@@ -262,6 +262,31 @@ func (s cryptStore) HCVRemoveCred(orgID, serviceID, secretID string) error {
 	return nil
 }
 
+
+// RemoveCred removed credential from vault
+func (s cryptStore) HCVDeleteForService(orgID, serviceID string) error {
+	client, err := Store.initclient()
+	if err != nil {
+		return err
+	}
+
+	conn := client.Logical()
+
+
+	vaultSecretPath := fmt.Sprintf("/trasa/data/%s:%s", orgID, serviceID)
+
+
+
+	// Delete from vault. Note this will not destroy!!
+	_, err = conn.Delete(vaultSecretPath)
+	if err != nil {
+		return err
+	}
+
+
+	return nil
+}
+
 // sliceUserCred deletes user secret element from vauls secret structure.
 // code taken from https://yourbasic.org/golang/delete-element-slice/
 func sliceUserCred(index int, array []secrets) []secrets {

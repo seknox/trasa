@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/go-chi/chi"
+	"github.com/seknox/trasa/server/api/providers/vault"
 	"github.com/seknox/trasa/server/models"
 	"github.com/seknox/trasa/server/utils"
 	"github.com/sirupsen/logrus"
@@ -189,22 +190,29 @@ func UpdateHTTPProxy(w http.ResponseWriter, r *http.Request) {
 func DeleteService(w http.ResponseWriter, r *http.Request) {
 	userContext := r.Context().Value("user").(models.UserContext)
 
-	var newApp models.Service
+	var service models.Service
 
-	if err := json.NewDecoder(r.Body).Decode(&newApp); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&service); err != nil {
 		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "invalid request", "failed to delete service", nil, nil)
 		return
 	}
 
-	appName, err := Store.Delete(newApp.ID, userContext.User.OrgID)
+	serviceName, err := Store.Delete(service.ID, userContext.User.OrgID)
 	if err != nil {
-		logrus.Errorf("delete app: %v", err)
+		logrus.Errorf("delete service: %v", err)
 		utils.TrasaResponse(w, 200, "failed", "failed to delete service", "failed to delete service ")
 		return
 	}
 
-	utils.TrasaResponse(w, 200, "success", "", fmt.Sprintf("service  %s deleted", appName))
+	err = vault.Store.DeleteCreds(userContext.User.OrgID, service.ID)
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "failed to delete credential from external provider", "")
+		return
+	}
+
+	utils.TrasaResponse(w, 200, "success", "", fmt.Sprintf("service  %s deleted", serviceName))
 
 }
 

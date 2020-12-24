@@ -56,6 +56,7 @@ type ConnectionParams struct {
 	Hostname        string        `json:"hostname"`
 	Timezone        string        `json:"-"`
 	OrgName         string        `json:"-"`
+	Groups          []string      `json:"-"`
 	//UserAgent       string
 }
 

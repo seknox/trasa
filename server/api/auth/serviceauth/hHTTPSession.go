@@ -121,7 +121,7 @@ func AuthHTTPAccessProxy(w http.ResponseWriter, r *http.Request) {
 	//authlog.Privilege = userDetailFromDB.UserName
 	authlog.SessionRecord = policy.RecordSession
 
-	ok, reason := accesscontrol.ACStore.CheckPolicyFunc(&models.ConnectionParams{
+	ok, reason := accesscontrol.CheckPolicy(&models.ConnectionParams{
 		ServiceID: serviceDetailFromDB.ID,
 		OrgID:     orgDetailFromDB.ID,
 		UserID:    userDetailFromDB.ID,

@@ -338,7 +338,7 @@ func GetMyServicesDetail(w http.ResponseWriter, r *http.Request) {
 	}
 	//logrus.Debug(userContext)
 	//email is needed in calculating adhoc permissions because requester id is email
-	userApps, err := Store.GetUserAppsDetailsWithPolicyFromUserID(userContext.User.ID, userContext.Org.ID)
+	userApps, err := Store.GetUserAppsDetailsWithPolicyFromUserID(userContext.User.Groups, userContext.User.ID, userContext.Org.ID)
 	if err != nil {
 		if !errors.Is(err, sql.ErrNoRows) {
 			logrus.Error(err)
@@ -376,7 +376,7 @@ func GetMyServicesDetail(w http.ResponseWriter, r *http.Request) {
 			}
 
 		} else {
-			// 2) we check users rergular policy
+			// 2) we check users regular policy
 			checkPermission, reason := accesscontrol.CheckTrasaUAC(userContext.Org.Timezone, utils.GetIp(r), &myApp.Policy)
 			myApp.Reason = reason
 			if checkPermission == true {
