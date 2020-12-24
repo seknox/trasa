@@ -81,7 +81,7 @@ func GenerateKeyPair(w http.ResponseWriter, r *http.Request) {
 	userID := userContext.User.ID
 
 	//pass userID in context
-	privateKeyBytes, publicKeyBytes, certBytes, err := generateTempCertificateForDeviceAgent(userContext.DeviceID, userContext.Org.ID)
+	privateKeyBytes, publicKeyBytes, certBytes, err := generateTempCertificateForDeviceAgent(userContext.User.Groups, userContext.DeviceID, userContext.Org.ID)
 	if err != nil {
 		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "could not generate TempCertificate ForDeviceAgent", "Update hygiene", nil)
@@ -142,7 +142,7 @@ func GenerateKeyPair(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func generateTempCertificateForDeviceAgent(deviceID, orgID string) (privateKeyBytes, publicKeyBytes, certBytes []byte, err error) {
+func generateTempCertificateForDeviceAgent(groups []string, deviceID, orgID string) (privateKeyBytes, publicKeyBytes, certBytes []byte, err error) {
 
 	bitSize := 4096
 	privateKey, err := utils.GeneratePrivateKey(bitSize)
@@ -187,6 +187,8 @@ func generateTempCertificateForDeviceAgent(deviceID, orgID string) (privateKeyBy
 		"permit-pty":              "",
 		"permit-user-rc":          "",
 		"trasa-device-id":         deviceID,
+		"trasa-user-groups":       "dev",
+		//"trasa-user-groups": 	   strings.Join(groups,","),
 	}
 
 	//principals := []string{}

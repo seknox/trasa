@@ -65,6 +65,13 @@ func (s Store) parseSSHCert(addr net.Addr, publicKey ssh.PublicKey) error {
 	sess.log.AccessDeviceID = deviceID
 	sess.params.AccessDeviceID = deviceID
 
+	groups, ok := cert.Extensions["trasa-user-groups"]
+
+	logrus.Trace(groups, ok)
+	if ok {
+		sess.params.Groups = strings.Split(groups, ",")
+	}
+
 	return nil
 }
 

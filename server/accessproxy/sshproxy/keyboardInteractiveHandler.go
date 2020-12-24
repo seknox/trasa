@@ -235,20 +235,12 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 	}
 
 	sessionMeta.params.Privilege = conn.User()
-
-	params := &models.ConnectionParams{
-		ServiceID: sessionMeta.params.ServiceID,
-		OrgID:     sessionMeta.params.OrgID,
-		UserID:    sessionMeta.params.UserID,
-		UserIP:    utils.GetIPFromAddr(conn.RemoteAddr()), //ip policy check
-		Privilege: sessionMeta.params.Privilege,
-		SessionID: sessionMeta.ID, //to append adhoc sessions
-
-		Timezone: orgDetail.Timezone, //for day time policy check
-	}
+	sessionMeta.params.UserIP = utils.GetIPFromAddr(conn.RemoteAddr()) //ip policy check
+	sessionMeta.params.SessionID = sessionMeta.ID
+	sessionMeta.params.Timezone = orgDetail.Timezone
 
 	//Check trasa policies
-	policy, adhoc, err := accessmap.GetAssignedPolicy(params)
+	policy, adhoc, err := accessmap.GetAssignedPolicy(sessionMeta.params)
 	if err != nil {
 		logrus.Debug(err)
 		challengeUser("", "Policy not assigned", nil, nil)
@@ -256,7 +248,7 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 		return nil, err
 	}
 
-	ok, reason := accesscontrol.CheckPolicy(params, policy, adhoc)
+	ok, reason := accesscontrol.CheckPolicy(sessionMeta.params, policy, adhoc)
 	if !ok {
 		logrus.Debug(err)
 		challengeUser("", "Policy check failed: "+string(reason), nil, nil)

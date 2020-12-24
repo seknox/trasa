@@ -46,9 +46,6 @@ func publicKeyCallbackHandler(conn ssh.ConnMetadata, key ssh.PublicKey) (*ssh.Pe
 
 	//If device hygiene check is disabled, continue to keyboard interactive
 	// Else, check ssh certificate
-	if !settings.Status {
-		return nil, errors.New(gotoKeyboardInteractive)
-	}
 
 	cert, ok := publicKey.(*ssh.Certificate)
 	if !ok {
@@ -58,6 +55,9 @@ func publicKeyCallbackHandler(conn ssh.ConnMetadata, key ssh.PublicKey) (*ssh.Pe
 	err = SSHStore.validateTempCert(cert, conn.User(), global.GetConfig().Trasa.OrgId)
 	if err != nil {
 		logrus.Trace(err)
+		if !settings.Status {
+			return nil, errors.New(gotoKeyboardInteractive)
+		}
 		return nil, errors.New(failNow)
 	}
 
@@ -65,6 +65,9 @@ func publicKeyCallbackHandler(conn ssh.ConnMetadata, key ssh.PublicKey) (*ssh.Pe
 	err = SSHStore.parseSSHCert(conn.RemoteAddr(), key)
 	if err != nil {
 		logrus.Debug(err)
+		if !settings.Status {
+			return nil, errors.New(gotoKeyboardInteractive)
+		}
 		return nil, errors.New(gotoPublicKey)
 	}
 
