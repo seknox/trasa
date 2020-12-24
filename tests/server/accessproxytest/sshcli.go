@@ -126,7 +126,7 @@ func TestSSHAuthWithAuthorisedPublicKey(t *testing.T) {
 	//s.Close()
 	//t.Log("closed++++++++++++++++++++++++++++++++++++++")
 
-	err = s.Run("ls")
+	err = s.Run("ls;")
 	if err != nil {
 		t.Fatalf(`could not run command: %v`, err)
 	}
@@ -251,7 +251,7 @@ func downloadKey(t *testing.T) []byte {
 			status, http.StatusOK)
 	}
 
-	zr, err := zip.NewReader(bytes.NewReader(rr.Body.Bytes()), 1024)
+	zr, err := zip.NewReader(bytes.NewReader(rr.Body.Bytes()), int64(rr.Body.Len()))
 	if err != nil {
 		t.Fatal(err)
 	}
