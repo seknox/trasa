@@ -1,8 +1,9 @@
 package global
 
 import (
-	"github.com/seknox/trasa/server/utils"
 	"path/filepath"
+
+	"github.com/seknox/trasa/server/utils"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -104,9 +105,8 @@ type Config struct {
 	} `toml:"proxy"`
 	Vault struct {
 		Tsxvault bool   `toml:"tsxvault"`
-		Port     string `toml:"port"`
-		Server   string `toml:"server"`
-		Token    string `toml:"token"`
+		SaveMasterKey bool `toml:"saveMasterKey"`
+		Key    string `toml:"key"`
 	} `toml:"vault"`
 }
 
@@ -141,4 +141,39 @@ func UpdateTRASACPxyAddr(serverAddr string) {
 	// config = ParseConfig()
 
 	return
+}
+
+
+// SaveMasterKey saves master encryption key of tsxVault in config file. Only call this function if config value for "saveMasterKey" is true.
+// This is meant to ease development flow only and should be false in production. 
+func SaveMasterKey(key string) error {
+	absPath, err := filepath.Abs(filepath.Join(utils.GetETCDir(), "trasa", "config"))
+	if err != nil {
+		return err
+	}
+	//viper.SetConfigType("toml")
+	viper.SetConfigName("config")
+	viper.AddConfigPath(absPath)
+	if err := viper.ReadInConfig(); err != nil {
+		return err
+	}
+	err = viper.Unmarshal(&config)
+	if err != nil {
+		return err
+	}
+
+	viper.Set("vault.key", key)
+
+	config.Vault.Key = key
+
+	err = viper.WriteConfig()
+	if err != nil {
+		return err
+
+	}
+
+	// update global config val
+	// config = ParseConfig()
+
+	return nil
 }

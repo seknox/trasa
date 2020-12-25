@@ -201,10 +201,12 @@ export function VaultConfig(props: any) {
       .post(`${Constants.TRASA_HOSTNAME}/api/v1/providers/vault/tsxvault/init`, reqData)
       .then((r) => {
         const resp = r.data.data[0];
-
-        setdecryptKeys(resp.decryptKeys);
         setLoader(false);
-        setopen(true);
+        if (resp.showDlg === true) {
+          setdecryptKeys(resp.decryptKeys);
+
+          setopen(true);
+        }
 
         props.getVaultStatus();
       })

@@ -79,15 +79,32 @@ func WelcomeNote(w http.ResponseWriter, r *http.Request) {
 		// check vault status. Auto init if its not already initialized
 		vaultInitStatus, err := Store.GetGlobalSetting(uc.Org.ID, consts.GLOBAL_TSXVAULT)
 		if err != nil || vaultInitStatus.Status == false {
+
 			logrus.Trace("First time root login: Proceeding auto init TsxVault")
-			// auto init
-			vaultKeys, err = InitTsxvault(uc.User.OrgID, uc.User.ID)
-			if err != nil {
-				// what can we do "extra" here?
-				logrus.Error(err)
+
+			if global.GetConfig().Vault.SaveMasterKey == true {
+				logrus.Debug("SaveMasterKey is true. saving key to local file for dev mode. ")
+				err = InitTsxvaultAndStoreKeyInLocalConfig(uc.User.OrgID, uc.User.ID)
+				if err != nil {
+					// what can we do "extra" here?
+					logrus.Error(err)
+				}
+
+			} else {
+				// auto init
+				vaultKeys, err = InitTsxvaultAndGenShardedKey(uc.User.OrgID, uc.User.ID)
+				if err != nil {
+					// what can we do "extra" here?
+					logrus.Error(err)
+				}
+
+				// only show it if global savemasterkey value is set false
+				note.Show = true
+				
+
+				note.Data = vaultKeys
 			}
-			note.Show = true
-			note.Data = vaultKeys
+			
 		}
 		initCA("user")
 		initCA("host")

@@ -106,6 +106,7 @@ type VaultInitResp struct {
 	DecryptKeys  []string `json:"decryptKeys"`
 	EncRootToken string   `json:"encRootToken"`
 	Tsxvault     bool     `json:"tsxvault"`
+	ShowDlg 	 bool 	  `json:"showDlg"`
 }
 
 // TsxvaultInit initializes TRASA built in secure storage. master key for encryption is
@@ -122,9 +123,28 @@ func TsxvaultInit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// check if we need to store key in config file. (WARNING: only do this in dev mode)
+	if global.GetConfig().Vault.SaveMasterKey == true {
+		err := InitTsxvaultAndStoreKeyInLocalConfig(uc.User.OrgID, uc.User.ID)
+		if err != nil {
+			logrus.Error(err)
+			utils.TrasaResponse(w, 200, "failed", err.Error(), "failed to rinitialize", nil)
+			return
+		}
+
+		var resp VaultInitResp
+		resp.DecryptKeys = make([]string, 0)
+		resp.Tsxvault = true
+		resp.ShowDlg = false
+
+		utils.TrasaResponse(w, 200, "success", "sucess", "Vault initialised", resp)
+		return
+	}
+
+	// if we are here then we should init, gen and return sharded keys.
 	// Initing tsxvault process: (1) Create encryption key. (2) Create master key and encrypt encryption key with it.
 	// (3) shard master key and give it to user. (4) store encrypted encryption key in database.
-	encKeyShards, err := InitTsxvault(uc.User.OrgID, uc.User.ID)
+	encKeyShards, err := InitTsxvaultAndGenShardedKey(uc.User.OrgID, uc.User.ID)
 	if err != nil {
 		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", err.Error(), "failed to rinitialize", nil)
@@ -134,13 +154,59 @@ func TsxvaultInit(w http.ResponseWriter, r *http.Request) {
 	var resp VaultInitResp
 	resp.DecryptKeys = encKeyShards
 	resp.Tsxvault = true
+	resp.ShowDlg = true
 
 	utils.TrasaResponse(w, 200, "success", "sucess", "Vault initialised", resp)
 
 }
 
+// InitTsxvault generates aws encryption key. stores key in local config file. It also updates global setting.
+func InitTsxvaultAndStoreKeyInLocalConfig(orgID, userID string) error {
+
+	// gen key
+	encKey, err := tsxvault.Store.GenAndStoreKey(orgID)
+	if err != nil {
+		return  err
+	}
+
+	// store in local config file (/etc/trasa/config/config.toml)
+	err = global.SaveMasterKey(hex.EncodeToString(encKey[:]))
+	if err != nil {
+		return err
+	}
+
+	// store in global setting
+	var store models.GlobalSettings
+	store.SettingID = utils.GetUUID()
+	store.OrgID = orgID
+	store.Status = true
+	store.SettingType = consts.GLOBAL_TSXVAULT
+
+	var vaultFeature models.CredProvProps
+	vaultFeature.ProviderName = consts.CREDPROV_TSXVAULT
+	vaultFeature.ProviderAddr = ""
+	vaultFeature.ProviderAccessToken = ""
+	jsonV, err := json.Marshal(vaultFeature)
+	if err != nil {
+		return err
+	}
+
+	store.SettingValue = string(jsonV)
+	store.UpdatedBy = userID
+	store.UpdatedOn = time.Now().Unix()
+
+	err = Store.UpdateGlobalSetting(store)
+	if err != nil {
+
+		return err
+	}
+
+	return nil
+}
+
+
 // InitTsxvault generates aws encryption key. shards it with sharder and returns sharded key. It also updates global setting.
-func InitTsxvault(orgID, userID string) ([]string, error) {
+func InitTsxvaultAndGenShardedKey(orgID, userID string) ([]string, error) {
 
 	encKey, err := tsxvault.Store.GenAndStoreKey(orgID)
 	if err != nil {
