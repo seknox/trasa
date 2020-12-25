@@ -23,8 +23,10 @@ require (
 	github.com/hashicorp/vault/api v1.0.5-0.20200317185738-82f498082f02
 	github.com/huandu/go-sqlbuilder v1.8.0
 	github.com/jinzhu/now v1.1.1
+	github.com/jonboulle/clockwork v0.2.2 // indirect
 	github.com/lib/pq v1.8.0
 	github.com/manifoldco/promptui v0.7.0
+	github.com/mattermost/xml-roundtrip-validator v0.0.0-20201219040909-8fd2afad43d1 // indirect
 	github.com/mholt/archiver v3.1.1+incompatible
 	github.com/minio/minio-go v6.0.14+incompatible
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
@@ -32,7 +34,7 @@ require (
 	github.com/phuslu/iploc v1.0.20200808
 	github.com/pkg/errors v0.9.1
 	github.com/rs/cors v1.7.0
-	github.com/russellhaering/gosaml2 v0.5.0
+	github.com/russellhaering/gosaml2 v0.6.0
 	github.com/russellhaering/goxmldsig v1.1.0
 	github.com/satori/go.uuid v1.2.1-0.20181028125025-b2ce2384e17b
 	github.com/seknox/fireser v0.0.0-20200913072715-2c8854a8f0e3
