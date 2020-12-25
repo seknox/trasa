@@ -323,7 +323,7 @@ func (s vaultStore) StoreKeyOrTokens(k models.KeysHolder) error {
 	return nil
 }
 
-// GenAndStoreKey generates encryption keys, store it in database.
+// GenAndStoreKey generates encryption keys, store the sha512 "hash" in database. The hash is used to verify correctness of key.
 func (s vaultStore) GenAndStoreKey(orgID string) (*[32]byte, error) {
 	encryptionKey, err := utils.AESGenKey()
 	if err != nil {
