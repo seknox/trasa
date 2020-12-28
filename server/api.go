@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/seknox/trasa/server/api/adhoc"
 	"net/http"
 
 	"github.com/seknox/trasa/server/accessproxy/rdpproxy"
@@ -146,6 +147,8 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		r.Post("/my/forgotpasstfa", auth.TfaHandler)
 		r.Post("/my/changepass", my.ChangePassword)
 		r.Get("/my/services", my.GetMyServicesDetail)
+		r.Post("/my/services/adhoc/request", adhoc.AdhocReq)
+		r.Get("/my/services/adhoc/getadmins", adhoc.GetAdmins)
 
 		r.Post("/my/generatekey", my.GenerateKeyPair)
 		//r.Post("/setup/password/{setpasswordtoken}", users.FirstTimePasswordSetup)
@@ -236,6 +239,11 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		r.Get("/groups/policy/all", policies.GetPolicies)
 		r.Get("/groups/policy/{policyID}", policies.GetPolicy)
 		r.Post("/groups/policy/delete", policies.DeletePolicies)
+
+		//AD Hoc
+		r.Get("/iam/adhoc/requests/my", adhoc.AdhocReqAssignedToMe)
+		r.Post("/iam/adhoc/respond", adhoc.GrantOrDenyAdhoc)
+		r.Get("/iam/adhoc/requests/all", adhoc.GetAllAdhoqRequests)
 
 		//Logs
 		r.Get("/logs/auth/{entitytype}/{entityid}", logs.GetLoginEvents)

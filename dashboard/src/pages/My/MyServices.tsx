@@ -417,7 +417,7 @@ export default function MyservicesList() {
                     }}
                     name={value.serviceName}
                   >
-                    Requst Access
+                    Request Access
                   </Button>
                 )}
               </div>
