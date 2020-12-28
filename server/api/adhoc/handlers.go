@@ -104,7 +104,7 @@ func AdhocReq(w http.ResponseWriter, r *http.Request) {
 
 	uname := strings.Split(requestee.Email, "@")
 	dashboardPath := fmt.Sprintf(`https://%s`, global.GetConfig().Trasa.ListenAddr)
-	dashLink := fmt.Sprintf("%s/control/access-requests", dashboardPath)
+	dashLink := fmt.Sprintf("%s/control#AdHoc Requests", dashboardPath)
 	var tmplt models.EmailAdhoc
 	tmplt.Requester = userContext.User.Email
 	tmplt.Requestee = uname[0]
@@ -198,7 +198,7 @@ func GrantOrDenyAdhoc(w http.ResponseWriter, r *http.Request) {
 
 	uname := strings.Split(userContext.User.Email, "@")
 	dashboardPath := fmt.Sprintf(`https://%s`, global.GetConfig().Trasa.ListenAddr)
-	dashLink := fmt.Sprintf("%s/control/access-requests", dashboardPath)
+	dashLink := fmt.Sprintf(`%s/control#AdHoc Requests`, dashboardPath)
 
 	tm := time.Unix(req.AuthorizedPeriod/1000, 0)
 
