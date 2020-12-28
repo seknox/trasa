@@ -45,10 +45,6 @@ func AdhocReq(w http.ResponseWriter, r *http.Request) {
 	req.IsExpired = false
 	req.AuthorizedPolicy = models.Policy{}
 
-	//appIDName := strings.Split(req.ServiceID, ":")
-	//current := time.Now().Unix()
-	logrus.Debug(req.ServiceID)
-
 	// we check if active adhoc request for this user already exists in database. If found, we check if authorized perioed has not expired.
 	// we return active response of not expired else we expire the active request and let user create new one.
 	checkActiveAdhocReq, err := Store.GetActiveReqOfUser(userContext.User.ID, req.ServiceID, userContext.User.OrgID)
@@ -65,21 +61,6 @@ func AdhocReq(w http.ResponseWriter, r *http.Request) {
 		}
 
 	}
-
-	//TODO use single check function
-	//userApps, err := users.Create(req.RequesterID, userContext.Org.ID)
-	//if err != nil {
-	//	logrus.Error(err)
-	//	return
-	//}
-	//
-	//// Iterate here
-	//checkUserApp := IterateUserApps(appIDName[0], userApps)
-	//if checkUserApp != true {
-	//	fmt.Println("error user not assigned to app")
-	//	utils.TrasaResponse(w, 200, "failed", "user not assigned to app", "AdhocReq", nil, nil)
-	//	return
-	//}
 
 	req.RequesterID = userContext.User.ID
 	// storeRequestToDB
@@ -107,7 +88,7 @@ func AdhocReq(w http.ResponseWriter, r *http.Request) {
 	inAppNotification.ResolvedOn = 0
 	inAppNotification.UserID = req.RequesteeID
 
-	// we call notification store to store notificaiton for this event in user id who is to be notified.
+	// we call notification store to store notification for this event in user id who is to be notified.
 	err = notif.Store.StoreNotif(inAppNotification)
 	if err != nil {
 		logrus.Error(err)
@@ -199,7 +180,7 @@ func GrantOrDenyAdhoc(w http.ResponseWriter, r *http.Request) {
 	inAppNotification.IsResolved = true
 	inAppNotification.ResolvedOn = time.Now().Unix()
 
-	// we call notification store to store notificaiton for this event in user id who is to be notified.
+	// we call notification store to store notification for this event in user id who is to be notified.
 	err := notif.Store.UpdateNotif(inAppNotification)
 	if err != nil {
 		logrus.Error(err)
@@ -222,11 +203,7 @@ func GrantOrDenyAdhoc(w http.ResponseWriter, r *http.Request) {
 	tm := time.Unix(req.AuthorizedPeriod/1000, 0)
 
 	status := "rejected"
-	//timezone := "Asia/Kathmandu"
-	//org, err := dbstore.Connect.GetOrg(req.OrgID)
-	//if err == nil {
-	//	timezone = org.Timezone
-	//}
+
 	nep, err := time.LoadLocation(userContext.Org.Timezone)
 	if err != nil {
 		logrus.Error(err)
