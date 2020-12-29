@@ -362,7 +362,7 @@ var PrimaryMigration = []string{
 			authorized_policy JSONB,
 			is_expired BOOL,
 			session_id varchar[]
-		);`,
+	);`,
 
 	`CREATE TABLE IF NOT EXISTS backups (
 			id varchar PRIMARY KEY NOT NULL,
@@ -370,5 +370,12 @@ var PrimaryMigration = []string{
 			name varchar,
 			type varchar,
 			created_at BIGINT
-		);`,
+	);`,
+	`CREATE TABLE IF NOT EXISTS dynamic_access (
+		    id varchar PRIMARY KEY NOT NULL,
+			org_id VARCHAR REFERENCES org (id) ON DELETE CASCADE ,
+		    group_id varchar NOT NULL,
+		    policy_id varchar NOT NULL,
+		    created_at bigint NOT NULL
+    );`,
 }

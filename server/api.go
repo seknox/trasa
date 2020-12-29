@@ -214,6 +214,10 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 
 		//Access Maps
 
+		r.Get("/accessmap/dynamic", accessmap.GetAllDynamicAccessRules)
+		r.Get("/accessmap/dynamic/create", accessmap.CreateDynamicAccessRule)
+		r.Get("/accessmap/dynamic/delete", accessmap.DeleteDynamicAccessRule)
+
 		r.Get("/accessmap/service/usergroup/{serviceID}", accessmap.GetUserGroupServiceGroupAccessMaps)
 		r.Get("/accessmap/servicegroup/usergroup/{serviceGroupID}", accessmap.GetUserGroupServiceGroupAccessMaps)
 
@@ -279,6 +283,7 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		r.Post("/system/settings/email/update", system.UpdateEmailSetting)
 		r.Post("/system/settings/devicehygienecheck/update", system.UpdateDeviceHygieneSetting)
 		r.Post("/system/settings/dynamicaccess/update", system.UpdateDynamicAccessSetting)
+
 		r.Post("/system/settings/cloudproxy/access", system.StoreCloudProxyKey)
 
 		r.Get("/system/welcome-note", system.WelcomeNote)

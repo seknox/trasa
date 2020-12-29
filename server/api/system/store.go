@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/seknox/trasa/server/models"
-	logger "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 //SetGlobalSetting inserts setting value into database
@@ -16,7 +16,6 @@ func (s systemStore) SetGlobalSetting(setting models.GlobalSettings) error {
 
 //GetGlobalSetting returns a particular setting
 func (s systemStore) GetGlobalSetting(orgID, settingType string) (models.GlobalSettings, error) {
-	//logger.Trace(orgID, settingType)
 	var setting models.GlobalSettings
 	err := s.DB.QueryRow(`
 		SELECT id, org_id,status, type, value, updated_by, updated_on FROM global_settings WHERE org_id = $1 AND type=$2;`,
@@ -74,8 +73,7 @@ func (s systemStore) getSecurityRules(orgID string) ([]models.SecurityRule, erro
 	for rows.Next() {
 		err := rows.Scan(&rule.RuleID, &rule.OrgID, &rule.Name, &rule.ConstName, &rule.Description, &rule.Scope, &rule.Condition, &rule.Status, &rule.Source, &rule.Action, &rule.CreatedBy, &rule.CreatedAt, &rule.LastModified)
 		if err != nil {
-			//fmt.Println(err, "===================================================")
-			logger.Debug(err)
+			logrus.Debug(err)
 		}
 		rules = append(rules, rule)
 	}
@@ -126,14 +124,14 @@ func (s systemStore) getBackupMetas(orgID string) ([]models.Backup, error) {
 
 	rows, err := s.DB.Query(`SELECT  backup_id, org_id, backup_name,backup_type, created_at  FROM backups WHERE org_id=$1 ORDER BY created_at DESC`, orgID)
 	if err != nil {
-		logger.Debug(err)
+		logrus.Debug(err)
 		return backups, err
 	}
 	defer rows.Close()
 	for rows.Next() {
 		err := rows.Scan(&backup.BackupID, &backup.OrgID, &backup.BackupName, &backup.BackupType, &backup.CreatedAt)
 		if err != nil {
-			logger.Debug(err)
+			logrus.Debug(err)
 		}
 		backups = append(backups, backup)
 	}

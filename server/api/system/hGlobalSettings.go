@@ -100,11 +100,10 @@ func WelcomeNote(w http.ResponseWriter, r *http.Request) {
 
 				// only show it if global savemasterkey value is set false
 				note.Show = true
-				
 
 				note.Data = vaultKeys
 			}
-			
+
 		}
 		initCA("user")
 		initCA("host")
@@ -119,7 +118,7 @@ func WelcomeNote(w http.ResponseWriter, r *http.Request) {
 
 //UpdateDeviceHygieneSetting updates device hygiene enforce settings
 func UpdateDeviceHygieneSetting(w http.ResponseWriter, r *http.Request) {
-	logrus.Trace("device hygeiene req")
+	logrus.Trace("device hygiene req")
 	uc := r.Context().Value("user").(models.UserContext)
 	var req struct {
 		EnableDeviceHygieneCheck bool `json:"enableDeviceHygieneCheck"`
@@ -153,7 +152,7 @@ func UpdateDeviceHygieneSetting(w http.ResponseWriter, r *http.Request) {
 //UpdateDynamicAccessSetting updates dynamic access settings
 func UpdateDynamicAccessSetting(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
-	var req models.GlobalDynamicAccessSettings
+	var req models.GlobalSettings
 
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logrus.Error(err)
@@ -161,19 +160,13 @@ func UpdateDynamicAccessSetting(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	settVal, err := json.Marshal(req)
-	if err != nil {
-		logrus.Error(err)
-	}
-
-	err = Store.UpdateGlobalSetting(models.GlobalSettings{
-		SettingID:    utils.GetUUID(),
-		OrgID:        uc.Org.ID,
-		Status:       req.Status,
-		SettingType:  consts.GLOBAL_DYNAMIC_ACCESS,
-		SettingValue: string(settVal),
-		UpdatedBy:    uc.User.ID,
-		UpdatedOn:    time.Now().Unix(),
+	err := Store.UpdateGlobalSetting(models.GlobalSettings{
+		SettingID:   utils.GetUUID(),
+		OrgID:       uc.Org.ID,
+		Status:      req.Status,
+		SettingType: consts.GLOBAL_DYNAMIC_ACCESS,
+		UpdatedBy:   uc.User.ID,
+		UpdatedOn:   time.Now().Unix(),
 	})
 
 	if err != nil {

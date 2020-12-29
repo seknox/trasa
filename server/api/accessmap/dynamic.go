@@ -92,27 +92,8 @@ func checkDynamicSettings(userID, orgID string) (*models.GlobalDynamicAccessSett
 
 func createDynamicServiceAndAccessMap(hostname, serviceType, userID, userEmail, privilege, orgID string, sett *models.GlobalDynamicAccessSettings) (*models.Service, error) {
 
-	newservice := models.NewEmptyServiceStruct()
+	newservice := NewService(hostname, serviceType, orgID)
 
-	newservice.Name = hostname
-	newservice.ID = "<Dynamic AuthApp>"
-	newservice.Hostname = hostname
-	newservice.OrgID = orgID
-	newservice.Type = serviceType
-	//newservice.SessionRecord = settings.VideoRecord
-	newservice.RdpProtocol = "nla"
-	newservice.CreatedAt = time.Now().Unix() //.In(nep).String() // .UTC().Format(time.RFC3339)
-	newservice.UpdatedAt = time.Now().Unix() //.In(nep).String()
-
-	//models.SendDynamicAccessEmail(userEmail, hostname, appType, primaryContact, newservice.CreatedAt, adminsEmails)
-
-	newservice.ID = utils.GetUUID()
-
-	newservice.Adhoc = false
-	newservice.SecretKey = utils.GetRandomString(17)
-	newservice.ManagedAccounts = ""
-	newservice.CreatedAt = time.Now().Unix() //.In(nep).String() // .UTC().Format(time.RFC3339)
-	newservice.UpdatedAt = time.Now().Unix() //.In(nep).String()
 	err := services.Store.Create(&newservice)
 	if err != nil {
 		return nil, errors.WithMessage(err, "create new dynamic service")

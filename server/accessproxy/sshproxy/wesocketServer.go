@@ -99,7 +99,7 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 
 	service, err := services.Store.GetFromHostname(params.Hostname, "ssh", "", uc.Org.ID)
 	if errors.Is(err, sql.ErrNoRows) {
-		service, err = accessmap.CreateDynamicService(params.Hostname, "ssh", params.UserID, params.TrasaID, params.Privilege, params.OrgID)
+		service, err = accessmap.CreateDynamicServiceV2(params.Hostname, "ssh", uc.User.Email, params.OrgID)
 		if err != nil {
 			logrus.Errorf("dynamic access: %v", err)
 			authlog.FailedReason = consts.REASON_DYNAMIC_SERVICE_FAILED
@@ -110,7 +110,7 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 	} else if err != nil {
 		logrus.Errorf("get service from hostname: %v", err)
 		authlog.FailedReason = consts.REASON_INVALID_SERVICE_CREDS
-		conn.WriteMessage(1, []byte("\n\rService does  not created\n\r"))
+		conn.WriteMessage(1, []byte("\n\rCould not get service.\n\r"))
 		return
 	}
 
@@ -121,7 +121,7 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 	creds, err := services.GetUpstreamCreds(params.Privilege, service.ID, "ssh", uc.Org.ID)
 	if err != nil {
 		logrus.Error(err)
-		conn.WriteMessage(1, []byte("\n\rSomething is wrong\n\r"))
+		conn.WriteMessage(1, []byte("\n\rCould not get service credentials.\n\r"))
 		return
 	}
 
