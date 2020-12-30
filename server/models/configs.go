@@ -27,13 +27,15 @@ type GlobalDynamicAccessSettings struct {
 	UserGroups []string `json:"userGroups"`
 }
 
-//DynamicAccess is dynamic access setting struct
-type DynamicAccess struct {
-	ID        string `json:"id"`
-	OrgID     string `json:"orgID"`
-	GroupID   bool   `json:"groupID"`
-	PolicyID  string `json:"policyID"`
-	CreatedAt int64  `json:"createdAt"`
+//DynamicAccessRule is dynamic access setting struct
+type DynamicAccessRule struct {
+	RuleID     string `json:"ruleID"`
+	OrgID      string `json:"orgID"`
+	GroupID    string `json:"groupID"`
+	GroupName  string `json:"groupName"`
+	PolicyID   string `json:"policyID"`
+	PolicyName string `json:"policyName"`
+	CreatedAt  int64  `json:"createdAt"`
 }
 
 //Config is trasa config file structure

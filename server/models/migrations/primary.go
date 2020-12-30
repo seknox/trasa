@@ -376,6 +376,8 @@ var PrimaryMigration = []string{
 			org_id VARCHAR REFERENCES org (id) ON DELETE CASCADE ,
 		    group_id varchar NOT NULL,
 		    policy_id varchar NOT NULL,
-		    created_at bigint NOT NULL
+		    created_at bigint NOT NULL,
+			CONSTRAINT unique_group UNIQUE(org_id, group_id)
+
     );`,
 }

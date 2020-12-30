@@ -60,7 +60,7 @@ func checkService(s models.Service) error {
 		}
 	}
 
-	c, err := net.Dial("tcp", s.Hostname)
+	c, err := net.Dial("tcp", host)
 	if err != nil {
 		return err
 	}

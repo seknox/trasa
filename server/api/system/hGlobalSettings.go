@@ -161,12 +161,13 @@ func UpdateDynamicAccessSetting(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err := Store.UpdateGlobalSetting(models.GlobalSettings{
-		SettingID:   utils.GetUUID(),
-		OrgID:       uc.Org.ID,
-		Status:      req.Status,
-		SettingType: consts.GLOBAL_DYNAMIC_ACCESS,
-		UpdatedBy:   uc.User.ID,
-		UpdatedOn:   time.Now().Unix(),
+		SettingID:    utils.GetUUID(),
+		OrgID:        uc.Org.ID,
+		Status:       req.Status,
+		SettingValue: "{}",
+		SettingType:  consts.GLOBAL_DYNAMIC_ACCESS,
+		UpdatedBy:    uc.User.ID,
+		UpdatedOn:    time.Now().Unix(),
 	})
 
 	if err != nil {

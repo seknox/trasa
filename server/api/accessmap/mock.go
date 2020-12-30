@@ -16,11 +16,11 @@ type accessmapMock struct {
 	mock.Mock
 }
 
-func (a accessmapMock) GetAllDynamicAccessRules(orgID string) ([]models.DynamicAccess, error) {
+func (a accessmapMock) GetAllDynamicAccessRules(orgID string) ([]models.DynamicAccessRule, error) {
 	panic("implement me")
 }
 
-func (a accessmapMock) CreateDynamicAccessRule(setting models.DynamicAccess) error {
+func (a accessmapMock) CreateDynamicAccessRule(setting models.DynamicAccessRule) error {
 	panic("implement me")
 }
 

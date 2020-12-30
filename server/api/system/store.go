@@ -31,12 +31,13 @@ func (s systemStore) UpdateGlobalSetting(setting models.GlobalSettings) error {
 	result, err := s.DB.Exec(`UPDATE global_settings SET status = $3, value = $4, updated_by = $5, updated_on =$6  WHERE org_id = $1 AND type = $2;`,
 		setting.OrgID, setting.SettingType, setting.Status, setting.SettingValue, setting.UpdatedBy, setting.UpdatedOn)
 
-	//TODO Possible nil pointer dereference, value of result could be nil
+	if err != nil {
+		return err
+	}
 	v, _ := result.RowsAffected()
 
-	if err != nil || v == 0 {
+	if v == 0 {
 		err = s.SetGlobalSetting(setting)
-		return err
 	}
 
 	return err

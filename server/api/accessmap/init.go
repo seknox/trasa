@@ -35,7 +35,7 @@ type accessMapAdapter interface {
 
 	GetDynamicAccessPolicy(groups []string, userID, orgID string) (*models.Policy, error)
 
-	GetAllDynamicAccessRules(orgID string) ([]models.DynamicAccess, error)
-	CreateDynamicAccessRule(setting models.DynamicAccess) error
+	GetAllDynamicAccessRules(orgID string) ([]models.DynamicAccessRule, error)
+	CreateDynamicAccessRule(setting models.DynamicAccessRule) error
 	DeleteDynamicAccessRule(id, orgID string) error
 }

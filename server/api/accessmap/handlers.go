@@ -364,7 +364,7 @@ func GetAllDynamicAccessRules(w http.ResponseWriter, r *http.Request) {
 //CreateDynamicAccessRule creates a dynamic access rule
 func CreateDynamicAccessRule(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
-	var req models.DynamicAccess
+	var req models.DynamicAccessRule
 
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logrus.Error(err)
@@ -372,7 +372,7 @@ func CreateDynamicAccessRule(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	req.ID = utils.GetUUID()
+	req.RuleID = utils.GetUUID()
 	req.OrgID = uc.Org.ID
 	req.CreatedAt = time.Now().Unix()
 
@@ -380,17 +380,24 @@ func CreateDynamicAccessRule(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "Could not delete  rule", "dynamic access rule not created", nil, nil)
+		utils.TrasaResponse(w, 200, "failed", "Could not create  rule", "dynamic access rule not created", nil, nil)
 		return
 	}
 
-	utils.TrasaResponse(w, 200, "success", "Rule added", "dynamic access rule created", nil, nil)
+	allrules, err := Store.GetAllDynamicAccessRules(uc.Org.ID)
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "Could not get rules", "dynamic access rule not created", nil, nil)
+		return
+	}
+
+	utils.TrasaResponse(w, 200, "success", "Rule added", "dynamic access rule created", allrules)
 }
 
 //DeleteDynamicAccessRule deletes a dynamic access rule
 func DeleteDynamicAccessRule(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
-	var req models.DynamicAccess
+	var req models.DynamicAccessRule
 
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logrus.Error(err)
@@ -398,7 +405,7 @@ func DeleteDynamicAccessRule(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := Store.DeleteDynamicAccessRule(req.ID, uc.Org.ID)
+	err := Store.DeleteDynamicAccessRule(req.RuleID, uc.Org.ID)
 
 	if err != nil {
 		logrus.Error(err)
@@ -406,5 +413,13 @@ func DeleteDynamicAccessRule(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.TrasaResponse(w, 200, "success", "Rule deleted", "dynamic access rule deleted", nil, nil)
+	allrules, err := Store.GetAllDynamicAccessRules(uc.Org.ID)
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "Could not get rules", "dynamic access rule not deleted", nil, nil)
+		return
+	}
+
+	utils.TrasaResponse(w, 200, "success", "Rule deleted", "dynamic access rule deleted", allrules)
+
 }
