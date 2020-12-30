@@ -99,7 +99,7 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 
 	service, err := services.Store.GetFromHostname(params.Hostname, "ssh", "", uc.Org.ID)
 	if errors.Is(err, sql.ErrNoRows) {
-		service, err = accessmap.CreateDynamicServiceV2(params.Hostname, "ssh", uc.User.Email, params.OrgID)
+		service, err = accessmap.CreateDynamicService(params.Hostname, "ssh", uc.User.Email, params.OrgID)
 		if err != nil {
 			logrus.Errorf("dynamic access: %v", err)
 			authlog.FailedReason = consts.REASON_DYNAMIC_SERVICE_FAILED

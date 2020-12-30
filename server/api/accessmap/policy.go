@@ -19,7 +19,7 @@ func GetAssignedPolicy(params *models.ConnectionParams) (*models.Policy, bool, e
 			policy, adhoc, err = policies.Store.GetServiceUserGroupAccessPolicyFromGroupNames(params.Groups, params.ServiceID, params.Privilege, params.OrgID)
 			if errors.Is(err, sql.ErrNoRows) {
 				//if service is not assigned to user, get dynamic policy (if enabled)
-				policy, err = GetDynamicPolicyV2(params.Groups, params.UserID, params.OrgID)
+				policy, err = GetDynamicPolicy(params.Groups, params.UserID, params.OrgID)
 				if err != nil {
 					return policy, adhoc, errors.Errorf("dynamic access map: %v", err)
 				}
