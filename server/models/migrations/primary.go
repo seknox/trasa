@@ -372,12 +372,12 @@ var PrimaryMigration = []string{
 			created_at BIGINT
 	);`,
 	`CREATE TABLE IF NOT EXISTS dynamic_access (
-		    id varchar PRIMARY KEY NOT NULL,
-			org_id VARCHAR REFERENCES org (id) ON DELETE CASCADE ,
-		    group_id varchar NOT NULL,
-		    policy_id varchar NOT NULL,
-		    created_at bigint NOT NULL,
-			CONSTRAINT unique_group UNIQUE(org_id, group_id)
+		  id varchar PRIMARY KEY NOT NULL,
+		  org_id VARCHAR NOT NULL REFERENCES org (id) ON DELETE CASCADE ,
+		  group_name varchar NOT NULL,
+		  policy_id varchar NOT NULL REFERENCES policies (id) ON DELETE CASCADE,
+		  created_at bigint NOT NULL,
+		  CONSTRAINT unique_group UNIQUE(org_id, group_name)
 
-    );`,
+);`,
 }

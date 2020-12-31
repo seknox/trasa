@@ -354,11 +354,25 @@ func GetAllDynamicAccessRules(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "Could not delete  rule", "dynamic access rule not created", nil, nil)
+		utils.TrasaResponse(w, 200, "failed", "Could not get rules", "get dynamic access rules", nil, nil)
 		return
 	}
 
-	utils.TrasaResponse(w, 200, "success", "Rule added", "dynamic access rule created", dps)
+	utils.TrasaResponse(w, 200, "success", "", "get dynamic access rules", dps)
+}
+
+//GetAllUserGroupsWithIDPs returns all user groups
+func GetAllUserGroupsWithIDPs(w http.ResponseWriter, r *http.Request) {
+	uc := r.Context().Value("user").(models.UserContext)
+	gps, err := Store.getAllUserGroupsWithIDPs(uc.Org.ID)
+
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "Could not get groups", "get dynamic access user groups")
+		return
+	}
+
+	utils.TrasaResponse(w, 200, "success", "", "get dynamic access user groups", gps)
 }
 
 //CreateDynamicAccessRule creates a dynamic access rule

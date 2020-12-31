@@ -16,6 +16,10 @@ type accessmapMock struct {
 	mock.Mock
 }
 
+func (a accessmapMock) getAllUserGroupsWithIDPs(orgID string) ([]string, error) {
+	panic("implement me")
+}
+
 func (a accessmapMock) GetAllDynamicAccessRules(orgID string) ([]models.DynamicAccessRule, error) {
 	panic("implement me")
 }

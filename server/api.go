@@ -215,6 +215,7 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		//Access Maps
 
 		r.Get("/accessmap/dynamic", accessmap.GetAllDynamicAccessRules)
+		r.Get("/accessmap/dynamic/usergroups", accessmap.GetAllUserGroupsWithIDPs)
 		r.Post("/accessmap/dynamic/create", accessmap.CreateDynamicAccessRule)
 		r.Post("/accessmap/dynamic/delete", accessmap.DeleteDynamicAccessRule)
 

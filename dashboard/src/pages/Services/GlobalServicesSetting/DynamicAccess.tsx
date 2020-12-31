@@ -114,11 +114,11 @@ export default function DynamicAccess(props: any) {
 
       setAllRules(dataArr);
     });
-    axios.get(`${Constants.TRASA_HOSTNAME}/api/v1/groups/user`).then((r) => {
+    axios.get(`${Constants.TRASA_HOSTNAME}/api/v1/accessmap/dynamic/usergroups`).then((r) => {
       const groups = r.data?.data?.[0].map((g: any) => ({
-        label: g.groupName,
-        id: g.groupID,
-        value: g.groupID,
+        label: g,
+        id: g,
+        value: g,
       }));
       setAllGroups(groups);
     });
@@ -161,7 +161,7 @@ export default function DynamicAccess(props: any) {
 
   function addRule(event:any) {
     const data = {
-      groupID: state.userGroups?.[0].id,
+      groupName: state.userGroups?.[0].id,
       policyID: state.policy?.[0]?.id,
     }
     axios.post(`${Constants.TRASA_HOSTNAME}/api/v1/accessmap/dynamic/create`,data).then((r) => {

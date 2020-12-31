@@ -175,12 +175,11 @@ func (s accessMapStore) GetDynamicAccessPolicy(groups []string, userID, orgID st
 
 	err := s.DB.QueryRow(`										
 				SELECT p.id, p.name, p.org_id, day_time,risk_threshold, tfa_enabled,file_transfer,record_session,ip_source,device_policy,expiry,allowed_countries , p.created_at, p.updated_at
-				from dynamic_access
-					JOIN groups g on dynamic_access.group_id = g.id
-				    JOIN user_group_maps ugm on ugm.group_id=g.id 
-					JOIN policies p on dynamic_access.policy_id = p.id
-
-				WHERE (g.name = ANY ($1) OR ugm.user_id=$2) AND  dynamic_access.org_id=$3 ORDER BY dynamic_access.created_at DESC LIMIT 1;`,
+from dynamic_access
+         JOIN policies p on dynamic_access.policy_id = p.id
+         LEFT JOIN groups g on dynamic_access.group_name = g.name
+         LEFT JOIN user_group_maps ugm on ugm.group_id=g.id
+WHERE (dynamic_access.group_name = ANY ($1) OR ugm.user_id=$2) AND  dynamic_access.org_id=$3 ORDER BY dynamic_access.created_at DESC LIMIT 1;`,
 		pq.Array(groups), userID, orgID).
 		Scan(&policy.PolicyID, &policy.PolicyName, &policy.OrgID, &tempDayTimeStr, &policy.RiskThreshold, &policy.TfaRequired, &policy.FileTransfer, &policy.RecordSession, &policy.IPSource, &policy.DevicePolicy, &policy.Expiry, &policy.AllowedCountries, &policy.CreatedAt, &policy.UpdatedAt)
 	if err != nil {
@@ -195,8 +194,8 @@ func (s accessMapStore) GetDynamicAccessPolicy(groups []string, userID, orgID st
 
 //CreateDynamicAccessRule creates a dynamic access policy for a particular group or idp
 func (s accessMapStore) CreateDynamicAccessRule(setting models.DynamicAccessRule) error {
-	_, err := s.DB.Exec(`INSERT INTO dynamic_access (id,org_id, group_id, policy_id, created_at) VALUES ($1,$2,$3,$4,$5)`,
-		setting.RuleID, setting.OrgID, setting.GroupID, setting.PolicyID, setting.CreatedAt)
+	_, err := s.DB.Exec(`INSERT INTO dynamic_access (id,org_id, group_name, policy_id, created_at) VALUES ($1,$2,$3,$4,$5)`,
+		setting.RuleID, setting.OrgID, setting.GroupName, setting.PolicyID, setting.CreatedAt)
 	return err
 }
 
@@ -211,10 +210,9 @@ func (s accessMapStore) DeleteDynamicAccessRule(id, orgID string) error {
 func (s accessMapStore) GetAllDynamicAccessRules(orgID string) ([]models.DynamicAccessRule, error) {
 	var das []models.DynamicAccessRule = make([]models.DynamicAccessRule, 0)
 	rows, err := s.DB.Query(`
-				SELECT dynamic_access.id,dynamic_access.org_id, group_id,g.name, policy_id,p.name, dynamic_access.created_at 
+				SELECT dynamic_access.id,dynamic_access.org_id, group_name, policy_id,p.name, dynamic_access.created_at 
 				FROM dynamic_access
 				JOIN policies p on dynamic_access.policy_id = p.id
-				JOIN groups g on dynamic_access.group_id = g.id
 				WHERE dynamic_access.org_id=$1`,
 		orgID)
 	if err != nil {
@@ -223,7 +221,7 @@ func (s accessMapStore) GetAllDynamicAccessRules(orgID string) ([]models.Dynamic
 
 	for rows.Next() {
 		var da models.DynamicAccessRule
-		err = rows.Scan(&da.RuleID, &da.OrgID, &da.GroupID, &da.GroupName, &da.PolicyID, &da.PolicyName, &da.CreatedAt)
+		err = rows.Scan(&da.RuleID, &da.OrgID, &da.GroupName, &da.PolicyID, &da.PolicyName, &da.CreatedAt)
 		if err != nil {
 			logrus.Error(err)
 			continue
@@ -231,4 +229,33 @@ func (s accessMapStore) GetAllDynamicAccessRules(orgID string) ([]models.Dynamic
 		das = append(das, da)
 	}
 	return das, nil
+}
+
+//getAllUserGroupsWithIDPs returns all user groups and idp names
+func (s accessMapStore) getAllUserGroupsWithIDPs(orgID string) ([]string, error) {
+
+	var gps []string = make([]string, 0)
+
+	rows, err := s.DB.Query(`
+select DISTINCT name from (
+	select name,org_id from groups where type='usergroup'
+	UNION
+	select name,org_id from idp
+                              ) gps
+WHERE gps.org_id=$1;`,
+		orgID)
+	if err != nil {
+		return gps, err
+	}
+
+	for rows.Next() {
+		var gp string
+		err = rows.Scan(&gp)
+		if err != nil {
+			logrus.Error(err)
+			continue
+		}
+		gps = append(gps, gp)
+	}
+	return gps, nil
 }

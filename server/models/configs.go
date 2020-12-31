@@ -31,7 +31,6 @@ type GlobalDynamicAccessSettings struct {
 type DynamicAccessRule struct {
 	RuleID     string `json:"ruleID"`
 	OrgID      string `json:"orgID"`
-	GroupID    string `json:"groupID"`
 	GroupName  string `json:"groupName"`
 	PolicyID   string `json:"policyID"`
 	PolicyName string `json:"policyName"`
