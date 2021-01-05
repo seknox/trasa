@@ -23,6 +23,12 @@ import (
 func (s Store) GetUserFromPublicKey(publicKey ssh.PublicKey, orgID string) (*models.User, error) {
 	var user models.User
 
+	//If it's a certificate, extract public key only
+	cert, ok := publicKey.(*ssh.Certificate)
+	if ok {
+		publicKey = cert.Key
+	}
+
 	publicKeyStr := strings.TrimSpace(string(ssh.MarshalAuthorizedKey(publicKey)))
 
 	//TODO use orgID??
@@ -43,6 +49,7 @@ func (s Store) parseSSHCert(addr net.Addr, publicKey ssh.PublicKey) error {
 	}
 	deviceID, ok := cert.Extensions["trasa-device-id"]
 	if !ok {
+		logrus.Error("device ID not found in ssh certificate")
 		return errors.New("device ID not found in ssh certificate")
 	}
 
@@ -58,21 +65,22 @@ func (s Store) parseSSHCert(addr net.Addr, publicKey ssh.PublicKey) error {
 	sess.log.AccessDeviceID = deviceID
 	sess.params.AccessDeviceID = deviceID
 
-	return errors.New("not implemented yet")
+	groups, ok := cert.Extensions["trasa-user-groups"]
+
+	logrus.Trace(groups, ok)
+	if ok {
+		sess.params.Groups = strings.Split(groups, ",")
+	}
+
+	return nil
 }
 
 //validateTempCert
-func (s Store) validateTempCert(publicKey ssh.PublicKey, privilege string, orgID string) error {
-
-	cert, ok := publicKey.(*ssh.Certificate)
-	if !ok {
-		return errors.Errorf("invalid certificate")
-	}
+func (s Store) validateTempCert(cert *ssh.Certificate, privilege string, orgID string) error {
 
 	caKey, err := ca.Store.GetCertDetail(orgID, "system", consts.CERT_TYPE_SSH_CA)
 	if err != nil {
-		//logger.Error(err)
-		//dbstore.SendErrorReport(err, "CA not initialised")
+		logrus.Error(err)
 		return err
 	}
 

@@ -2,13 +2,15 @@ package initdb
 
 import (
 	"database/sql"
+	"encoding/hex"
 	"encoding/json"
-	"github.com/seknox/trasa/server/api/policies"
 	"time"
 
 	"github.com/pkg/errors"
 	"github.com/seknox/trasa/server/api/orgs"
-	"github.com/seknox/trasa/server/api/providers/ca"
+	"github.com/seknox/trasa/server/api/policies"
+	"github.com/seknox/trasa/server/api/providers/vault"
+	"github.com/seknox/trasa/server/api/providers/vault/tsxvault"
 	"github.com/seknox/trasa/server/api/system"
 	"github.com/seknox/trasa/server/api/users"
 	"github.com/seknox/trasa/server/consts"
@@ -34,9 +36,10 @@ func InitDB() {
 	storeDeviceHygieneCheck()
 
 	//init CA
-	//initSystemCA()
 
 	initDefaultPolicies()
+
+	setVaultConfigInGlobalVar()
 
 }
 
@@ -262,45 +265,6 @@ func storeGlobalDynamicServiceSetting() {
 
 }
 
-func initSystemCA() {
-	_, err := ca.Store.GetCertHolder(consts.CERT_TYPE_SSH_CA, "user", global.GetConfig().Trasa.OrgId)
-	if !errors.Is(err, sql.ErrNoRows) {
-		logrus.Debug("ssh CA already initialised")
-		return
-	}
-
-	privateKey, err := utils.GeneratePrivateKey(4096)
-	if err != nil {
-		panic(err)
-		return
-	}
-	pubKey, err := utils.ConvertPublicKeyToSSHFormat(&privateKey.PublicKey)
-	if err != nil {
-		panic(err)
-		return
-	}
-
-	privateKeyBytes := utils.EncodePrivateKeyToPEM(privateKey)
-
-	caCert := models.CertHolder{
-		CertID:      utils.GetUUID(),
-		OrgID:       global.GetConfig().Trasa.OrgId,
-		EntityID:    "system",
-		Cert:        pubKey,
-		Key:         privateKeyBytes,
-		Csr:         nil,
-		CertType:    consts.CERT_TYPE_SSH_CA,
-		CreatedAt:   time.Now().Unix(),
-		CertMeta:    "",
-		LastUpdated: time.Now().Unix(),
-	}
-	err = ca.Store.StoreCert(caCert)
-	if err != nil {
-		logrus.Error(err)
-		return
-	}
-}
-
 var secRules = `[
 	{"name": "User Deleted", "description": "A user has been deleted from TRASA.", "constName":"DELETE_USER", "scope":"allusers", "source": "Admin activity", "action":"emailadmins"},
 	{"name": "Admin User Deleted", "description": "A user with administrative privilege has been deleted from TRASA.", "constName":"DELETE_ADMIN_USER", "scope":"allusers", "source": "Admin activity", "action":"emailadmins"},
@@ -344,5 +308,59 @@ func storeDefaultSecRules() {
 			logrus.Tracef("security rule %v initialised", v.ConstName)
 		}
 
+	}
+}
+
+
+// stores key and vault setting in global var
+func setVaultConfigInGlobalVar() {
+	if global.GetConfig().Vault.SaveMasterKey == true {
+    logrus.Debug("SaveMasterKey is true, retrieving key from config file.")
+	vaultsetting, err := system.Store.GetGlobalSetting(global.GetConfig().Trasa.OrgId, consts.GLOBAL_TSXVAULT)
+	if err != nil {
+		logrus.Debug("TsxVault is not initialized yet.")
+		return
+	}
+
+	// store cred prov setting in global tsxvkey struct
+	var cred models.CredProvProps
+	err = json.Unmarshal([]byte(vaultsetting.SettingValue), &cred)
+	if err != nil {
+		logrus.Error(err)
+		
+		panic(err)
+	}
+
+	keyFromConfigFile := global.GetConfig().Vault.Key
+	masterkey, err := hex.DecodeString(keyFromConfigFile)
+	if err != nil {
+		panic(err)
+	}
+	nkey := new([32]byte)
+	copy(nkey[:], masterkey)
+
+	// get access token from keyholder if credprov is hashicorp vault
+	if cred.ProviderName == consts.CREDPROV_HCVAULT {
+		ct, err := vault.Store.GetKeyOrTokenWithKeyval(global.GetConfig().Trasa.OrgId, string(consts.CREDPROV_HCVAULT_TOKEN))
+		if err != nil {
+			logrus.Error(err)
+			panic(err)
+		}
+		
+		if vaultsetting.Status == true {
+			pt, err := utils.AESDecrypt(nkey[:], ct.KeyVal)
+			if err != nil {
+				logrus.Error(err)
+				panic(err)
+			}
+			
+			cred.ProviderAccessToken = string(pt)
+		}
+	
+	}
+		
+	
+	
+	tsxvault.Store.SetTsxVaultKey(nkey, true, cred)
 	}
 }

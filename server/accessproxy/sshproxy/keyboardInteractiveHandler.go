@@ -11,6 +11,7 @@ import (
 	"github.com/seknox/trasa/server/api/logs"
 	"github.com/seknox/trasa/server/api/orgs"
 	"github.com/seknox/trasa/server/api/services"
+	"github.com/seknox/trasa/server/api/system"
 	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/global"
 	"github.com/seknox/trasa/server/models"
@@ -184,9 +185,22 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 	}
 
 	//possible value of keyType are:
-	// "SSH_AUTH_TYPE_DACERT" which is certificate with embedded data. 2FA is already verified, service is also already chosen.
-	// "SSH_AUTH_TYPE_PUB"  which is certificate generated from trasa. need to verify 2FA and ask user to choose app
+	// "SSH_AUTH_TYPE_CERT" which is certificate with embedded device ID.
+	// "SSH_AUTH_TYPE_PUB"  which is certificate generated from trasa.
 	// "SSH_AUTH_TYPE_PASSWORD" need to ask user his/her email
+
+	setting, err := system.Store.GetGlobalSetting(global.GetConfig().Trasa.OrgId, consts.GLOBAL_DEVICE_HYGIENE_CHECK)
+	if err != nil {
+		logrus.Error(err)
+		challengeUser("", "Something is wrong", nil, nil)
+		return nil, err
+	}
+
+	//If device hygiene check is enforced, auth type must be SSH_AUTH_TYPE_CERT
+	if setting.Status && sessionMeta.AuthType != consts.SSH_AUTH_TYPE_CERT {
+		challengeUser("", "Device hygiene enabled. You must use TRASA certificate downloaded from dashboard.", nil, nil)
+		return nil, errors.New("Device hygiene required")
+	}
 
 	if sessionMeta.AuthType == consts.SSH_AUTH_TYPE_PASSWORD {
 		userDetails, err := authenticateTRASA(conn, challengeUser)
@@ -203,7 +217,7 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 	}
 
 	//make user choose a service to connect to and get the service details
-	service, err := chooseService(conn.User(), sessionMeta.params.UserID, sessionMeta.params.TrasaID, challengeUser)
+	service, err := chooseService(sessionMeta.params.TrasaID, challengeUser)
 	if err != nil {
 		logrus.Error(err)
 		challengeUser("", "Cannot access this service", nil, nil)
@@ -221,20 +235,12 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 	}
 
 	sessionMeta.params.Privilege = conn.User()
-
-	params := &models.ConnectionParams{
-		ServiceID: sessionMeta.params.ServiceID,
-		OrgID:     sessionMeta.params.OrgID,
-		UserID:    sessionMeta.params.UserID,
-		UserIP:    utils.GetIPFromAddr(conn.RemoteAddr()), //ip policy check
-		Privilege: sessionMeta.params.Privilege,
-		SessionID: sessionMeta.ID, //to append adhoc sessions
-
-		Timezone: orgDetail.Timezone, //for day time policy check
-	}
+	sessionMeta.params.UserIP = utils.GetIPFromAddr(conn.RemoteAddr()) //ip policy check
+	sessionMeta.params.SessionID = sessionMeta.ID
+	sessionMeta.params.Timezone = orgDetail.Timezone
 
 	//Check trasa policies
-	policy, adhoc, err := accessmap.GetAssignedPolicy(params)
+	policy, adhoc, err := accessmap.GetAssignedPolicy(sessionMeta.params)
 	if err != nil {
 		logrus.Debug(err)
 		challengeUser("", "Policy not assigned", nil, nil)
@@ -242,7 +248,7 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 		return nil, err
 	}
 
-	ok, reason := accesscontrol.CheckPolicy(params, policy, adhoc)
+	ok, reason := accesscontrol.CheckPolicy(sessionMeta.params, policy, adhoc)
 	if !ok {
 		logrus.Debug(err)
 		challengeUser("", "Policy check failed: "+string(reason), nil, nil)
@@ -291,6 +297,8 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 			challengeUser("", string(reason), nil, nil)
 			return nil, errors.New("tfa failed")
 		}
+		sessionMeta.log.TfaDeviceID = deviceID
+		sessionMeta.params.TfaDeviceID = deviceID
 	}
 
 	//Check device policy
@@ -300,6 +308,7 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 	}
 
 	if !ok {
+		challengeUser("", "Device policy failed: "+string(reason), nil, nil)
 		return nil, errors.Errorf("device policy failed: %s", reason)
 	}
 

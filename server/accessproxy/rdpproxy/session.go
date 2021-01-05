@@ -44,7 +44,7 @@ func NewSession(params *models.ConnectionParams, authlog *logs.AuthLog) (*Sessio
 
 	service, err := services.Store.GetFromHostname(params.Hostname, "rdp", "", params.OrgID)
 	if errors.Is(err, sql.ErrNoRows) {
-		service, err = accessmap.CreateDynamicService(params.Hostname, "rdp", params.UserID, params.TrasaID, params.Privilege, params.OrgID)
+		service, err = accessmap.CreateDynamicService(params.Hostname, "rdp", params.TrasaID, params.OrgID)
 		if err != nil {
 			authlog.FailedReason = consts.REASON_DYNAMIC_SERVICE_FAILED
 			return nil, err

@@ -11,7 +11,7 @@ const (
 	failNow = "trasa: fail_now"
 )
 
-//Decides which auth method to use next from previous error
+//Decides which auth method to use next based on previous error
 func nextAuthMethodHandler(conn ssh.ConnMetadata, prevErr error) ([]string, bool, error) {
 
 	switch prevErr.Error() {
