@@ -9,7 +9,7 @@ import DashbordIcon from '@material-ui/icons/Assessment';
 import ServiceIcon from '@material-ui/icons/Apps';
 import ManageIcon from '@material-ui/icons/AccountTree';
 import SessionsIcon from '@material-ui/icons/MissedVideoCallSharp';
-import ControlIcon from '@material-ui/icons/SecuritySharp';
+import PolicyIcon from '@material-ui/icons/SecuritySharp';
 import SettingsIcon from '@material-ui/icons/Settings';
 import Account from '@material-ui/icons/SupervisedUserCircle';
 import classNames from 'classnames';
@@ -54,9 +54,9 @@ const categories = () => {
   });
 
   ar.push({
-    id: 'Control',
-    path: 'control',
-    icon: <ControlIcon />,
+    id: 'Policies',
+    path: 'policies',
+    icon: <PolicyIcon />,
     children: [],
   });
 
