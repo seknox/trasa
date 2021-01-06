@@ -45,19 +45,19 @@ func (s userStore) GetFromTRASAID(trasaID, orgID string) (*models.User, error) {
 	sqlStr := ``
 
 	if isTrasaIDEmail {
-		sqlStr = `SELECT users.org_id, users.id, first_name, email, idp_name, user_role, status 
+		sqlStr = `SELECT users.org_id, users.id, first_name, last_name, email, username, idp_name, user_role, status 
 				FROM users
 				JOIN org ON users.org_id=org.id
 				WHERE users.email=$1 AND users.org_id=$2`
 	} else {
-		sqlStr = `SELECT users.org_id, users.id, first_name, email, idp_name, user_role, status
+		sqlStr = `SELECT users.org_id, users.id, first_name, last_name, email, username, idp_name, user_role, status
 				FROM users
 				JOIN org ON users.org_id=org.id
 				WHERE users.username=$1 AND users.org_id=$2`
 	}
 
 	var user models.User
-	err := s.DB.QueryRow(sqlStr, trasaID, orgID).Scan(&user.OrgID, &user.ID, &user.FirstName, &user.Email, &user.IdpName, &user.UserRole, &user.Status)
+	err := s.DB.QueryRow(sqlStr, trasaID, orgID).Scan(&user.OrgID, &user.ID, &user.FirstName, &user.LastName, &user.Email, &user.UserName, &user.IdpName, &user.UserRole, &user.Status)
 
 	return &user, err
 }

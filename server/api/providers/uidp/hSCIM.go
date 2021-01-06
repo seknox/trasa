@@ -16,7 +16,6 @@ import (
 	"github.com/seknox/trasa/server/models"
 	"github.com/seknox/trasa/server/utils"
 	"github.com/sirupsen/logrus"
-	logger "github.com/sirupsen/logrus"
 )
 
 /////////////////////////////////////////////////////////////////////////
@@ -60,7 +59,7 @@ func SCIMCreateUser(w http.ResponseWriter, r *http.Request) {
 
 	// parse json value into struct
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		logger.Error(err)
+		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "invalid request", "CreateUser", nil, nil)
 		return
 	}
@@ -93,12 +92,15 @@ func SCIMCreateUser(w http.ResponseWriter, r *http.Request) {
 
 	err := users.Store.Create(&user)
 	if err != nil {
-		logger.Error(err)
+		logrus.Error(err)
 		scimNotFoundOrConflictResp(w, 409, "user already exists", consts.SCIM_USER_SCHEMA)
 		return
 	}
 
 	req.ID = user.ID
+	req.X509Certificates = make([]models.ScimUserX509Certificates, 0)
+	req.Groups = make([]models.ScimUserGroups, 0)
+
 
 	scimUserResp(w, 201, req)
 
@@ -106,13 +108,13 @@ func SCIMCreateUser(w http.ResponseWriter, r *http.Request) {
 
 // SCIMGetSingleUser get detail of single user based on userID supplied in SCIM request.
 func SCIMGetSingleUser(w http.ResponseWriter, r *http.Request) {
+	
 	uc := r.Context().Value("scimprov").(models.ScimContext)
 
 	userID := chi.URLParam(r, "userID")
-
 	userDetailFromDb, err := users.Store.GetFromID(userID, uc.OrgID)
 	if err != nil {
-		logger.Error(err)
+		logrus.Error(err)
 		scimNotFoundOrConflictResp(w, 404, "user not found", consts.SCIM_ERR)
 		return
 	}
@@ -126,14 +128,16 @@ func SCIMGetSingleUser(w http.ResponseWriter, r *http.Request) {
 func SCIMGetSingleUsersWithFilter(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("scimprov").(models.ScimContext)
 
+	
 	filter := r.URL.Query().Get("filter")
+
 	if filter != "" {
 		// perform filter query
 
 		// first we parse query string
 		str, err := url.PathUnescape(filter)
 		if err != nil {
-			logger.Error(err)
+			logrus.Error(err)
 			scimNotFoundOrConflictResp(w, 403, "invalid query string", consts.SCIM_USER_SCHEMA)
 			return
 		}
@@ -144,7 +148,7 @@ func SCIMGetSingleUsersWithFilter(w http.ResponseWriter, r *http.Request) {
 
 		userDetailFromDb, err := users.Store.GetFromTRASAID(userName, uc.OrgID)
 		if err != nil {
-			logger.Debug(err)
+			logrus.Debug(err)
 			var ss = make([]models.ScimUser, 0)
 			//s := transformTuserToSuser(userDetailFromDb)
 			//ss = append(ss, s)
@@ -155,9 +159,13 @@ func SCIMGetSingleUsersWithFilter(w http.ResponseWriter, r *http.Request) {
 		//s := transformTuserToSuser(userDetailFromDb)
 
 		var ss = make([]models.ScimUser, 0)
+	
 		s := transformTuserToSuser(userDetailFromDb)
+		s.X509Certificates = make([]models.ScimUserX509Certificates, 0)
+		s.Groups = make([]models.ScimUserGroups, 0)
 		ss = append(ss, s)
 
+		// scimUserResp(w, 200, s)
 		scimUserListResp(w, 200, ss)
 		return
 
@@ -169,7 +177,7 @@ func SCIMGetSingleUsersWithFilter(w http.ResponseWriter, r *http.Request) {
 	i, _ := strconv.Atoi(limit)
 	userDetailFromDb, err := users.Store.GetFromWithLimit(uc.OrgID, i)
 	if err != nil {
-		logger.Error(err)
+		logrus.Error(err)
 		var ss = make([]models.ScimUser, 0)
 		scimUserListResp(w, 200, ss)
 		return
@@ -187,6 +195,7 @@ func SCIMGetSingleUsersWithFilter(w http.ResponseWriter, r *http.Request) {
 func SCIMPutSingleUser(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("scimprov").(models.ScimContext)
 	userID := chi.URLParam(r, "userID")
+
 	var req models.ScimUser
 
 	//email := chi.URLParam(r, "userID")
@@ -209,7 +218,7 @@ func SCIMPutSingleUser(w http.ResponseWriter, r *http.Request) {
 	if req.Active == false {
 		err := users.Store.UpdateStatus(false, trasaUser.ID, uc.OrgID) //createUser(&user)
 		if err != nil {
-			logger.Error(err)
+			logrus.Error(err)
 			var s models.ScimUser
 			scimUserResp(w, 200, s)
 			return
@@ -218,7 +227,7 @@ func SCIMPutSingleUser(w http.ResponseWriter, r *http.Request) {
 
 	err := users.Store.Update(trasaUser) //createUser(&user)
 	if err != nil {
-		logger.Error(err)
+		logrus.Error(err)
 		var s models.ScimUser
 		scimUserResp(w, 200, s)
 		return
@@ -243,7 +252,7 @@ func SCIMPatchSingleUser(w http.ResponseWriter, r *http.Request) {
 
 	err := users.Store.UpdateStatus(req.Active, userID, uc.OrgID) //createUser(&user)
 	if err != nil {
-		logger.Error(err)
+		logrus.Error(err)
 		var s models.ScimUser
 		scimUserResp(w, 200, s)
 		return
@@ -251,7 +260,7 @@ func SCIMPatchSingleUser(w http.ResponseWriter, r *http.Request) {
 
 	userDetailFromDb, err := users.Store.GetFromID(userID, uc.OrgID)
 	if err != nil {
-		logger.Error(err)
+		logrus.Error(err)
 		var s models.ScimUser
 		scimUserResp(w, 200, s)
 		return
@@ -318,9 +327,10 @@ func scimUserResp(w http.ResponseWriter, respVal int, u models.ScimUser) {
 	w.WriteHeader(respVal)
 	w.Header().Set("Content-Type", "application/json")
 
-	write, err := json.Marshal(u)
+	write, err := json.MarshalIndent(u, "	", "	")
+	logrus.Trace(string(write))
 	if err != nil {
-		logger.Error(err)
+		logrus.Error(err)
 	}
 	w.Write(write)
 }
@@ -332,10 +342,12 @@ func scimUserListResp(w http.ResponseWriter, respVal int, u []models.ScimUser) {
 	l.Resources = u
 	l.ItemsPerPage = 1
 	l.TotalResults = len(u)
+	l.StartIndex = 1
 	w.WriteHeader(respVal)
 	w.Header().Set("Content-Type", "application/json")
 
-	write, _ := json.Marshal(l)
+	write, _ := json.MarshalIndent(l, "	", "	")
+	logrus.Trace(string(write))
 	w.Write(write)
 }
 
@@ -352,7 +364,7 @@ func scimNotFoundOrConflictResp(w http.ResponseWriter, respVal int, detail, sche
 
 	write, err := json.Marshal(c)
 	if err != nil {
-		logger.Error(err)
+		logrus.Error(err)
 	}
 
 	w.Write(write)
