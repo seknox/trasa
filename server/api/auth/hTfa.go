@@ -148,7 +148,7 @@ func TfaHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	status, reason, response := handleTFAMethodd(req, userDetails, &authlog)
+	status, reason, response := handleTFAMethod(req, userDetails, &authlog)
 	if status != "success" || req.TfaMethod == "u2fy" {
 		utils.TrasaResponse(w, 200, status, reason, "Dashboard Login", response)
 		return
@@ -218,7 +218,7 @@ func getIntentMatch(intent string) bool {
 	return retVal
 }
 
-func handleTFAMethodd(req TfaRequest, user *models.User, authlog *logs.AuthLog) (status, reason string, resp interface{}) {
+func handleTFAMethod(req TfaRequest, user *models.User, authlog *logs.AuthLog) (status, reason string, resp interface{}) {
 	switch req.TfaMethod {
 	// in case of u2fy, we do not need to generate login credentials here but process it in another signed response request from client
 	case "u2fy":
@@ -267,46 +267,13 @@ func handleIntentResponse(req TfaRequest, uc models.UserContext) (status string,
 	switch req.Intent {
 	// in case of u2fy, we do not need to generate login credentials here but process it in another signed response request from client
 	case consts.AUTH_REQ_DASH_LOGIN:
-		// check if user has pending change password policy.
-		// if yes, respond with change password intent else respond with session identifiers.
-		policy, err := users.Store.GetEnforcedPolicy(uc.User.ID, uc.User.OrgID, consts.ChangePassword)
+
+		sessionToken, resp, err := sessionResponse(uc)
 		if err != nil {
-			// if we reached here means there's no pending change password policy enforced for this user.
-			// we can continue for creating session.
-			sessionToken, resp, err := sessionResponse(uc)
-			if err != nil {
-				logrus.Error(err)
-				return "failed", consts.REASON_TRASA_ERROR, "DashboardLogin", sessionToken, nil
-			}
-
-			return "success", "", "DashboardLogin", sessionToken, resp
-
-		} else {
-			// respond with change password intent
-			if policy.Pending == true {
-				verifyToken := utils.GetRandomString(7)
-				// store token to redis
-				err = redis.Store.Set(
-					verifyToken,
-					consts.TOKEN_EXPIRY_CHANGEPASS,
-					"orguser", orgUserStr,
-					"intent", string(consts.VERIFY_TOKEN_CHANGEPASS),
-					"createdAt", time.Now().String(),
-				)
-
-				if err != nil {
-					logrus.Error(err)
-					return "failed", consts.REASON_TRASA_ERROR, consts.AUTH_RESP_RESET_PASS, "", verifyToken
-				}
-				return "success", "", consts.AUTH_RESP_RESET_PASS, "", verifyToken
-			}
-			sessionToken, resp, err := sessionResponse(uc)
-			if err != nil {
-				return "failed", consts.REASON_TRASA_ERROR, "DashboardLogin", sessionToken, nil
-			}
-			return "success", "", "DashboardLogin", sessionToken, resp
-
+			return "failed", consts.REASON_TRASA_ERROR, "DashboardLogin", sessionToken, nil
 		}
+		return "success", "", "DashboardLogin", sessionToken, resp
+
 	case consts.AUTH_REQ_ENROL_DEVICE:
 		//todo this is a temporary fix
 		userWithPass, err := Store.GetLoginDetails(uc.User.UserName, "")
@@ -417,6 +384,8 @@ func ConfirmTOTPAndSave(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	authlog := logs.NewLog(r, "dashboard")
+
 	userID_orgID_Totpsec, err := redis.Store.MGet(request.DeviceID,
 		"userID",
 		"orgID",
@@ -425,6 +394,10 @@ func ConfirmTOTPAndSave(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		logrus.Error(err)
+		err := logs.Store.LogLogin(&authlog, consts.REASON_INVALID_TOKEN, false)
+		if err != nil {
+			logrus.Error(err)
+		}
 		utils.TrasaResponse(w, 200, "failed", "invalid deviceID", "ConfirmTOTPAndSave")
 		return
 	}
@@ -433,9 +406,28 @@ func ConfirmTOTPAndSave(w http.ResponseWriter, r *http.Request) {
 	orgID := userID_orgID_Totpsec[1]
 	totpSec := userID_orgID_Totpsec[2]
 
+	authlog.UserID = userID
+	authlog.OrgID = orgID
+
+	userDetails, err := users.Store.GetFromID(userID, orgID)
+	if err != nil {
+		logrus.Error(err)
+		err := logs.Store.LogLogin(&authlog, consts.REASON_USER_NOT_FOUND, false)
+		if err != nil {
+			logrus.Error(err)
+		}
+		utils.TrasaResponse(w, 200, "failed", "could not find user", "ConfirmTOTPAndSave")
+		return
+	}
+	authlog.UpdateUser(&models.UserWithPass{User: *userDetails})
+
 	prevCode, nowCode, nextCode := utils.CalculateTotp(totpSec)
 	if request.TOTPCode != prevCode && request.TOTPCode != nowCode && request.TOTPCode != nextCode {
 		logrus.Error("invalid TOTP code")
+		err := logs.Store.LogLogin(&authlog, consts.REASON_INVALID_TOTP, false)
+		if err != nil {
+			logrus.Error(err)
+		}
 		utils.TrasaResponse(w, 200, "failed", "invalid TOTP code", "ConfirmTOTPAndSave")
 		return
 	}
@@ -470,16 +462,13 @@ func ConfirmTOTPAndSave(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	userDetails, err := users.Store.GetFromID(userID, orgID)
-	if err != nil {
-		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "could not find user", "ConfirmTOTPAndSave")
-		return
-	}
-
 	err = devices.Store.Register(dev)
 	if err != nil {
 		logrus.Error(err)
+		err := logs.Store.LogLogin(&authlog, consts.REASON_UNKNOWN, false)
+		if err != nil {
+			logrus.Error(err)
+		}
 		utils.TrasaResponse(w, 200, "failed", "could not register device", "ConfirmTOTPAndSave")
 		return
 	}
@@ -489,6 +478,11 @@ func ConfirmTOTPAndSave(w http.ResponseWriter, r *http.Request) {
 
 	org, err := orgs.Store.Get(userDetails.OrgID)
 	if err != nil {
+		logrus.Error(err)
+		err := logs.Store.LogLogin(&authlog, consts.REASON_ORG_NOT_FOUND, false)
+		if err != nil {
+			logrus.Error(err)
+		}
 		utils.TrasaResponse(w, 200, "failed", err.Error(), "could not register device", "ConfirmTOTPAndSave")
 		return
 	}
@@ -501,6 +495,10 @@ func ConfirmTOTPAndSave(w http.ResponseWriter, r *http.Request) {
 	sessionToken, resp, err := sessionResponse(uc)
 	if err != nil {
 		logrus.Error(err)
+		err := logs.Store.LogLogin(&authlog, consts.REASON_FAILED_TO_GENERATE_TOKEN, false)
+		if err != nil {
+			logrus.Error(err)
+		}
 		utils.TrasaResponse(w, 200, "failed", "could not get session", "ConfirmTOTPAndSave")
 		return
 	}
@@ -515,5 +513,9 @@ func ConfirmTOTPAndSave(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, &xSESSION)
+	err = logs.Store.LogLogin(&authlog, "", true)
+	if err != nil {
+		logrus.Error(err)
+	}
 	utils.TrasaResponse(w, 200, "success", "", "", resp)
 }

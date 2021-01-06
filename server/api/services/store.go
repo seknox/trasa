@@ -41,6 +41,23 @@ SELECT org_id,id, name, secret_key, passthru,adhoc, created_at,hostname, type, m
 	return service, nil
 }
 
+func (s serviceStore) GetFromServiceName(serviceName, orgID string) (service *models.Service, err error) {
+	service = &models.Service{}
+	err = s.DB.QueryRow(`
+SELECT org_id,id, name, secret_key, passthru,adhoc, created_at,hostname, type, managed_accounts,remoteapp_name,native_log,rdp_protocol, proxy_config
+ FROM services
+
+  WHERE name = $1 AND org_id = $2`,
+		serviceName, orgID).
+		Scan(&service.OrgID, &service.ID, &service.Name, &service.SecretKey, &service.Passthru, &service.Adhoc, &service.CreatedAt, &service.Hostname, &service.Type, &service.ManagedAccounts, &service.RemoteAppName, &service.NativeLog, &service.RdpProtocol, &service.ProxyConfig)
+
+	if err != nil {
+		return service, err
+	}
+
+	return service, nil
+}
+
 func (s serviceStore) Create(app *models.Service) (err error) {
 
 	_, err = s.DB.Exec(`INSERT into services (id, org_id, name, secret_key,type, passthru, hostname, created_at, updated_at, deleted_at, managed_accounts,adhoc,remoteapp_name,rdp_protocol,native_log, proxy_config, external_provider_name, external_id, external_security_group, distro_name,distro_version, ip_details )

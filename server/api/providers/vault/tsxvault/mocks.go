@@ -90,9 +90,14 @@ func (v *vaultMock) GetTsxVaultKey() (*[32]byte, bool) {
 	panic("implement me")
 }
 
-func (v *vaultMock) SetTsxVaultKey(key *[32]byte, status bool) {
+func (v *vaultMock) SetTsxVaultKey(key *[32]byte, status bool,  credprov models.CredProvProps) {
 	panic("implement me")
 }
+
+func (v *vaultMock) UpdateTsxVaultKeyCredProvConfig(credprov models.CredProvProps)  {
+	panic("implement me")
+}
+
 
 // SetTsxCPxyKey assigns retreived cloud prxy api key in global state
 func (v *vaultMock) SetTsxCPxyKey(key string) {

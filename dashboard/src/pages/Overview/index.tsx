@@ -5,8 +5,44 @@ import Headers from '../../Layout/HeaderAndContent';
 import AccessStats from './AccessStats';
 import ResourceStats from './ResourceStats';
 import SystemOverview from './SystemStats';
+import axios from 'axios';
+import Constants from '../../Constants';
+import { ShowTokens } from '../Providers/CryptoOps/vault';
 
-function MainPage() {
+function Overview() {
+  const [open, setopen] = React.useState(false);
+  const [decryptKeys, setDecryptKeys] = React.useState(['', '']);
+
+  React.useEffect(() => {
+    // if (window.Location === "overview")
+    let path = window.location.pathname;
+    if (path === '/overview') {
+      const reqPath = `${Constants.TRASA_HOSTNAME}/api/v1/system/welcome-note`;
+
+      axios
+        .get(reqPath)
+        .then((response) => {
+          const resp = response.data.data[0];
+
+          for (let i = 0; i < resp.length; i++) {
+            switch (resp[i].intent) {
+              case 'SHOW_VAULT_KEYS':
+                if (resp[i].show) {
+                  setDecryptKeys(resp[i].data);
+                  setopen(true);
+                }
+
+              default:
+                return;
+            }
+          }
+        })
+        .catch((error) => {
+          console.error('catched ', error);
+        });
+    }
+  }, []);
+
   return (
     <div>
       <Layout>
@@ -19,17 +55,24 @@ function MainPage() {
             <SystemOverview />,
           ]}
         />
+        <ShowTokens
+          open={open}
+          decryptKeys={decryptKeys}
+          handleClose={() => {
+            setopen(false);
+          }}
+        />
       </Layout>
     </div>
   );
 }
 
-const AppView = () => {
+const OverviewWithRouter = () => {
   return (
     <Switch>
-      <Route exact path="/overview" component={MainPage} />
+      <Route exact path="/overview" component={Overview} />
     </Switch>
   );
 };
 
-export default withRouter(AppView);
+export default withRouter(OverviewWithRouter);

@@ -137,7 +137,7 @@ func UpdateIdp(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		key.KeyVal = ct
-		key.KeyName = consts.KEY_LDAP
+		key.KeyName = idp.IdpName
 
 		err = tsxvault.Store.StoreKeyOrTokens(key)
 		if err != nil {

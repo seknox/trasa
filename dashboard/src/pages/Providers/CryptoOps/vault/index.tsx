@@ -16,6 +16,13 @@ import Constants from '../../../../Constants';
 import ProgressHOC from '../../../../utils/Components/Progressbar';
 import DecryptRoot from './VaultDecrypt';
 // import Unseal from './VaultUnseal';
+import Trasalogo from '../../../../assets/trasa-ni.svg';
+import HVaultImg from '../../../../assets/secretstorage/vault-enterprise.svg';
+import ConfigSecretProvider from './SecretProviderConfig';
+import TextField from '@material-ui/core/TextField';
+import FormControl from '@material-ui/core/FormControl';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -23,54 +30,12 @@ const useStyles = makeStyles((theme) => ({
     // marginBotton: '5%',
   },
 
-  paperSmaller: {
-    backgroundColor: '#fdfdfd',
-    // backgroundColor: '#00001aff', //'#E0E0E0', 'rgba(10,34,52,1)'
-    marginTop: '20%',
-
-    // marginBotton: '5%',
-    padding: theme.spacing(2),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-  },
   paper: {
     backgroundColor: '#fdfdfd',
-    // backgroundColor: '#00001aff', //'#E0E0E0', 'rgba(10,34,52,1)' // #011019
-    // minWidth: 400,
-    // minHeight: 300,
     padding: theme.spacing(2),
-    //  textAlign: 'center',
     color: theme.palette.text.secondary,
   },
-  paperLarge: {
-    backgroundColor: '#fdfdfd',
-    // backgroundColor: '#00001aff', //'#E0E0E0', 'rgba(10,34,52,1)'
-    minWidth: 400,
-    minHeight: 300,
-    // height: '100%',
-    // maxWidth: '100%',
-    // maxHeight: '100%',
-    // marginLeft: '5%',
-    marginTop: '5%',
-    marginBotton: '5%',
-    padding: theme.spacing(2),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-  },
-  paperHeighted: {
-    backgroundColor: '#fdfdfd',
-    // backgroundColor: '#00001aff', //'#E0E0E0', 'rgba(10,34,52,1)'
-    minWidth: 800,
-    minHeight: 300,
-    // height: '100%',
-    // maxWidth: '100%',
-    // maxHeight: '100%',
-    marginTop: '5%',
-    marginBotton: '5%',
-    padding: theme.spacing(2),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-  },
+
   initButton: {
     background: '#000080', // '#0A2053', //'#0A2053',
     borderRadius: 3,
@@ -102,7 +67,8 @@ const useStyles = makeStyles((theme) => ({
   },
   keys: {
     color: 'navy',
-    fontSize: '16px',
+    fontSize: '18px',
+    fontFamily: 'Open Sans, Rajdhani',
   },
   initStatusText: {
     color: 'grey',
@@ -123,25 +89,96 @@ const useStyles = makeStyles((theme) => ({
       background: 'maroon',
     },
   },
+  divider: {
+    marginTop: 50,
+    marginBottom: 50,
+  },
+  idpPaper: {
+    // backgroundColor:  '#fdfdfd',
+    padding: theme.spacing(2),
+    textAlign: 'center',
+    minWidth: 100,
+    maxWidth: 200,
+    minHeight: 190,
+    color: theme.palette.text.secondary,
+  },
+  trasaLogo: {
+    padding: theme.spacing(1),
+    paddingTop: 40,
+    // marginLeft: 30,
+    minHeight: 100,
+    textAlign: 'center',
+    minWidth: 100,
+  },
+  logo: {
+    padding: theme.spacing(1),
+    paddingTop: 30,
+    // marginLeft: 30,
+    minHeight: 100,
+    textAlign: 'center',
+    minWidth: 100,
+  },
+  selectCustom: {
+    width: 300,
+  },
+  settingSHeader: {
+    color: 'black',
+    fontSize: '12px',
+    fontFamily: 'Open Sans, Rajdhani',
+  },
 }));
 
-export default function VaultConfig() {
+export default function SecretStorate() {
   const classes = useStyles();
-  const [open, setopen] = useState(false);
-  const [unsealKeys, setunsealKeys] = useState([]);
-  const [decryptKeys, setdecryptKeys] = useState([]);
-  const [encRootToken, setencRootToken] = useState('');
-  // const [sealStatus, setsealStatus] = useState({});
-  const [initStatus, setinitStatus] = useState({ status: false, initOn: '' });
+
+  const [initStatus, setinitStatus] = useState({ status: false, initOn: '', settingValue: '{}' });
   const [tokenStatus, settokenStatus] = useState({ sealed: false });
-  const [tsxVault, settsxVault] = useState(false);
-  const [loader, setLoader] = useState(false);
-  const [keyval, setKeyval] = useState('');
-  const [vaultReinitDlgState, setvaultReinitDlgState] = useState(false);
+  const getVaultStatus = () => {
+    axios
+      .get(`${Constants.TRASA_HOSTNAME}/api/v1/providers/vault/tsxvault/status`)
+      .then((r) => {
+        if (r.data.data[0].initStatus.updatedOn) {
+          const date = new Date(r.data.data[0].initStatus.updatedOn * 1000);
+          r.data.data[0].initStatus.initOn = date.toDateString();
+        }
+
+        setinitStatus(r.data.data[0].initStatus);
+        settokenStatus(r.data.data[0].tokenStatus);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
 
   useEffect(() => {
     getVaultStatus();
   }, []);
+
+  return (
+    <div>
+      <Typography variant="h1">TsxVault</Typography>
+      <VaultConfig
+        initStatus={initStatus}
+        tokenStatus={tokenStatus}
+        settokenStatus={settokenStatus}
+        getVaultStatus={getVaultStatus}
+      />
+      {/* <br /> */}
+      <Divider light className={classes.divider} />
+      <ConfigSecretProvider credprovProps={initStatus.settingValue} />
+    </div>
+  );
+}
+
+export function VaultConfig(props: any) {
+  const classes = useStyles();
+  const [open, setopen] = useState(false);
+  const [decryptKeys, setdecryptKeys] = useState([]);
+  // const [sealStatus, setsealStatus] = useState({});
+
+  const [loader, setLoader] = useState(false);
+  const [keyval, setKeyval] = useState('');
+  const [vaultReinitDlgState, setvaultReinitDlgState] = useState(false);
 
   // const handleUnsealProcessOpen = () => {
   //   setopen(true);
@@ -155,25 +192,6 @@ export default function VaultConfig() {
     setopen(false);
   };
 
-  const getVaultStatus = () => {
-    axios
-      .get(`${Constants.TRASA_HOSTNAME}/api/v1/providers/vault/tsxvault/status`)
-      .then((response) => {
-        if (response.data.data[0].initStatus.updatedOn) {
-          const date = new Date(response.data.data[0].initStatus.updatedOn * 1000);
-          response.data.data[0].initStatus.initOn = date.toDateString();
-        }
-
-        setinitStatus(response.data.data[0].initStatus);
-        // setsealStatus(response.data.data[0].sealStatus);
-        settokenStatus(response.data.data[0].tokenStatus);
-        settsxVault(response.data.data[0].tsxvault);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
   const submitVaultInitRequest = () => {
     setLoader(true);
 
@@ -181,24 +199,16 @@ export default function VaultConfig() {
 
     axios
       .post(`${Constants.TRASA_HOSTNAME}/api/v1/providers/vault/tsxvault/init`, reqData)
-      .then((response) => {
-        const resp = response.data.data[0];
-
-        if (resp.tsxvault) {
-          settsxVault(true);
-          setunsealKeys(resp.unsealKeys);
-          setLoader(false);
-          setopen(true);
-        } else {
+      .then((r) => {
+        const resp = r.data.data[0];
+        setLoader(false);
+        if (resp.showDlg === true) {
           setdecryptKeys(resp.decryptKeys);
-          setencRootToken(resp.encRootToken);
-          settsxVault(true);
-          setunsealKeys(resp.unsealKeys);
-          setLoader(false);
+
           setopen(true);
         }
 
-        getVaultStatus();
+        props.getVaultStatus();
       })
       .catch((error) => {
         console.log(error);
@@ -209,25 +219,6 @@ export default function VaultConfig() {
     setKeyval(event.target.value);
   };
 
-  // const submitUnsealKey = () => {
-  //   setunsealProgress(true);
-
-  //   const reqData = { key: keyval };
-
-  //   axios
-  //     .post(`${Constants.TRASA_HOSTNAME}/api/v1/crypto/vault/unseal`, reqData)
-  //     .then((response) => {
-  //       if (response.data.status === 'success') {
-  //         setsealStatus(response.data.data[0]);
-  //       }
-
-  //       setunsealProgress(false);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // };
-
   const SubmitDecryptKey = () => {
     setLoader(true);
     const reqData = { key: keyval };
@@ -236,7 +227,7 @@ export default function VaultConfig() {
       .post(`${Constants.TRASA_HOSTNAME}/api/v1/providers/vault/tsxvault/decrypt`, reqData)
       .then((response) => {
         if (response.data.status === 'success') {
-          settokenStatus(response.data.data[0]);
+          props.settokenStatus(response.data.data[0]);
         }
         setLoader(false);
       })
@@ -285,18 +276,18 @@ export default function VaultConfig() {
 
               <Grid item xs={12} sm={8} md={8}>
                 <div className={classes.heading}>
-                  {initStatus.status
+                  {props.initStatus.status
                     ? 'TRASA vault is initialized'
                     : 'TRASA vault is not initialized'}
                 </div>
 
                 <br />
-                {initStatus.status ? (
+                {props.initStatus.status ? (
                   <div>
                     {' '}
                     <div className={classes.initStatusText}>
                       {' '}
-                      vault was initialized on {initStatus.initOn} <br />{' '}
+                      Initialized on {props.initStatus.initOn} <br />{' '}
                     </div>{' '}
                     <br />
                     <Button classes={{ root: classes.initedButton, label: classes.label }}>
@@ -329,11 +320,8 @@ export default function VaultConfig() {
 
                 <ShowTokens
                   open={open}
-                  unsealKeys={unsealKeys}
                   decryptKeys={decryptKeys}
                   handleClose={handleInitDialogueClose}
-                  encRootToken={encRootToken}
-                  tsxVault={tsxVault}
                 />
               </Grid>
               {loader ? <ProgressHOC /> : ''}
@@ -344,42 +332,16 @@ export default function VaultConfig() {
         {/* Grid End */}
         <Grid item xs={12} sm={6} md={7}>
           <Grid container spacing={2}>
-            {/* {this.state.tsxVault ? null : (
-              <Grid item xs={12} sm={12} md={12}>
-                <Paper className={classes.paper}>
-                  <div className={classes.heading}>
-                    Sealed state: {this.state.sealStatus.sealed ? 'Sealed' : 'Unsealed'}
-                  </div>
-
-                  {this.state.sealStatus.sealed ? (
-                    <Unseal
-                      open={this.state.open}
-                      handleClose={this.handleClose}
-                      sealStatus={this.state.sealStatus}
-                      submitUnsealKey={this.submitUnsealKey}
-                      handleUnsealKeyInputChange={this.handleUnsealKeyInputChange}
-                      unsealProgress={this.state.unsealProgress}
-                    />
-                  ) : (
-                    <Button classes={{ root: classes.initedButton, label: classes.label }}>
-                      Unsealed
-                    </Button>
-                  )}
-                </Paper>
-              </Grid>
-            )} */}
-
             <Grid item xs={12} sm={12} md={12}>
               <Paper className={classes.paper}>
                 <div className={classes.heading}>
-                  Token state: {tokenStatus.sealed ? 'Encrypted' : 'Retrieved'}
+                  Token state: {props.tokenStatus.sealed ? 'Encrypted' : 'Retrieved'}
                 </div>
 
-                {tokenStatus.sealed ? (
+                {props.tokenStatus.sealed ? (
                   <DecryptRoot
                     open={open}
-                    // handleClose={handleClose}
-                    sealStatus={tokenStatus}
+                    sealStatus={props.tokenStatus}
                     SubmitDecryptKey={SubmitDecryptKey}
                     handleUnsealKeyInputChange={handleUnsealKeyInputChange}
                     loader={loader}
@@ -398,7 +360,18 @@ export default function VaultConfig() {
   );
 }
 
-function ShowTokens(props: any) {
+export type ResourceStatsFilterProps = {
+  entityType: string;
+  entityID: string;
+};
+
+export type showTokenProps = {
+  open: boolean;
+  handleClose: () => void;
+  decryptKeys: Array<string>;
+};
+
+export function ShowTokens(props: showTokenProps) {
   const classes = useStyles();
   return (
     <div>
@@ -413,13 +386,14 @@ function ShowTokens(props: any) {
       >
         <DialogContent>
           <DialogContentText>
-            <Typography variant="h3"> Secret Tokens</Typography>
-            <p>
+            <Typography variant="h3"> Decryption Keys</Typography>
+            <Typography variant="h4">
               {' '}
-              These Keys are only shown here once. Distribute these keys to relevent parties and
-              store it secretly.
-            </p>
-            <p> These Keys will be required every time TRASA service is rebooted.</p>
+              These Keys are only shown here once. Store them securely. <br />
+              <b>Pro tip: </b>It is better to distribute these keys to multiple trusted team
+              members. <br />
+              If TRASA server is restarted, these keys will be required to retrieve the master key.
+            </Typography>
             <br />
           </DialogContentText>
 
@@ -428,8 +402,8 @@ function ShowTokens(props: any) {
             <Grid item xs={12} sm={10} md={10}>
               <div>Decryption Keys:</div>
 
-              {props.unsealKeys.map((v: any, i: any) => (
-                <div className={classes.keys}>
+              {props.decryptKeys.map((v: any, i: any) => (
+                <div className={classes.keys} key={i}>
                   {' '}
                   Key {i + 1} {' ) '} {'  '} {v}{' '}
                 </div>
@@ -437,31 +411,6 @@ function ShowTokens(props: any) {
 
               <br />
             </Grid>
-
-            {/* {!props.tsxVault ? (
-              <div>
-                {' '}
-                <Grid item xs={12} sm={10} md={10}>
-                  <div>Decryption Keys:</div>
-                  <div>
-                    {props.decryptKeys.map((v: any, i: any) => (
-                      <div className={classes.keys}>
-                        {' '}
-                        Key {i + 1} {' ) '} {'  '} {v}{' '}
-                      </div>
-                    ))}
-
-                    <br />
-                  </div>
-                </Grid>
-                <Grid item xs={12} sm={10} md={10}>
-                  <div>Encrypted Token (store this for backup):</div>
-                  <div>
-                    <div className={classes.keys}> {props.encRootToken} </div>
-                  </div>
-                </Grid>
-              </div>
-            ) : null} */}
           </Grid>
 
           <Divider light />

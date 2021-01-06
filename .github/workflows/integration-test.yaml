@@ -2,17 +2,23 @@ name: Test
 
 on :
   push:
+    paths:
+      - "server/**"
+      - "tests/**"
+      - ".github/workflows/integration-test.yaml"
     branches:
       - master
-      - dev
 
   pull_request:
+    paths:
+      - "server/**"
+      - "tests/**"
+      - ".github/workflows/integration-test.yaml"
     branches:
       - master
-      - dev
 jobs:
   test:
-    name: Test
+    name: Integration Test
     runs-on: ubuntu-20.04
     steps:
 
@@ -22,10 +28,6 @@ jobs:
           go-version: ^1.13
         id: go
 
-      - name: Set up node
-        uses: actions/setup-node@v2-beta
-        with:
-          node-version: '12'
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
@@ -49,17 +51,6 @@ jobs:
         working-directory: ./server
         run: go get -v ./...
 
-      - name: Server Unit Test
-        working-directory: ./server
-        run: go test -v ./...
-
-      - name: Install npm packages
-        working-directory: ./dashboard
-        run: yarn install
-
-      - name: Dashboard Unit test
-        working-directory: ./dashboard
-        run: yarn test --watchAll=false
 
       - name: Server Integration Test
         working-directory: ./tests

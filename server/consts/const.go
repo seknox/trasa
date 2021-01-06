@@ -56,10 +56,12 @@ const (
 )
 
 const (
-	KEY_DOAPI = "KEY_DOAPI"
-	KEY_LDAP  = "KEY_LDAP"
-	KEY_SCIM  = "KEY_SCIM"
-	KEY_SMTP  = "KEY_SMTP"
+	KEY_DOAPI   = "KEY_DOAPI"
+	KEY_LDAP    = "KEY_LDAP"
+	KEY_FREEIPA = "KEY_FREEIPA"
+	KEY_AD      = "KEY_AD"
+	KEY_SCIM    = "KEY_SCIM"
+	KEY_SMTP    = "KEY_SMTP"
 )
 
 type EmailType string
@@ -112,3 +114,7 @@ const (
 )
 
 const DEFAULT_ROOT_PASSWORD = "changeme"
+
+const (
+	SHOW_VAULT_KEYS = "SHOW_VAULT_KEYS"
+)

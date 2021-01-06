@@ -4,6 +4,8 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
+	"github.com/seknox/trasa/server/accessproxy/rdpproxy"
+	"github.com/seknox/trasa/server/api/auth/serviceauth"
 	"net/http"
 	"net/url"
 	"os"
@@ -18,13 +20,10 @@ import (
 
 	"github.com/seknox/trasa/server/api/my"
 
-	"github.com/seknox/trasa/server/api/auth/serviceauth"
-
 	"github.com/go-chi/chi"
 	"github.com/go-chi/hostrouter"
 	"github.com/rs/cors"
 	webproxy "github.com/seknox/trasa/server/accessproxy/http"
-	"github.com/seknox/trasa/server/accessproxy/rdpproxy"
 	"github.com/seknox/trasa/server/accessproxy/sshproxy"
 	"github.com/seknox/trasa/server/api/accesscontrol"
 	"github.com/seknox/trasa/server/api/accessmap"
@@ -56,11 +55,11 @@ func StartServer() {
 
 	state := global.InitDBSTORE()
 
-	rdpproxy.InitStore(state, accesscontrol.TrasaUAC)
-	sshproxy.InitStore(state, accesscontrol.TrasaUAC)
-	serviceauth.InitStore(state, accesscontrol.TrasaUAC)
+	rdpproxy.InitStore(state)
+	sshproxy.InitStore(state)
+	serviceauth.InitStore(state)
 
-	accesscontrol.InitStore(state, accesscontrol.TrasaUAC)
+	accesscontrol.InitStore(state)
 
 	accessmap.InitStore(state)
 

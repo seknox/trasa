@@ -4,7 +4,7 @@ trasaWrkstnAgent collects device hygiene of workstations. trasa browser extensio
 
 ## Building
 
-Debian: `$ go build`
+Debian: `$ go build -o trasaWrkstnAgent`
 
 ## Usage
 

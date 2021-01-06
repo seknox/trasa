@@ -16,7 +16,6 @@ import (
 	"github.com/seknox/trasa/server/api/redis"
 	"github.com/seknox/trasa/server/api/system"
 	"github.com/seknox/trasa/server/api/users"
-	"github.com/seknox/trasa/server/api/users/passwordpolicy"
 	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/models"
 	"github.com/seknox/trasa/server/utils"
@@ -104,27 +103,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		utils.TrasaResponse(w, 200, "success", "change default password", consts.AUTH_RESP_RESET_PASS, verifyToken)
 		return
 	}
-
-	// if we are here, it means username password validation succeeded.
-	// 1st) lets check is the user password has expired. If true, we set enforce password change policy here.
-	// @@@ pending TODO
-	if userDetails.IdpName == "trasa" {
-		check, err := passwordpolicy.CheckPendingPasswordRotationForUser(userDetails.ID, userDetails.OrgID)
-		if err != nil {
-			logrus.Error(err)
-		}
-
-		if check {
-			// enforce password change policy for this user.
-			err := passwordpolicy.EnforceChangePassword(userDetails.ID, userDetails.OrgID)
-			if err != nil {
-				logrus.Debug(err)
-			}
-		}
-	}
-
-	// intent tells client helps identify if tfa request is for login, or forgotpassword.
-	// This also tells client(dashboard) to either proceed with tfa or enroll mobile device.
 
 	enrolled, err := checkDeviceEnrolled(userDetails.ID, userDetails.OrgID)
 	if err != nil {

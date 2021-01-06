@@ -22,17 +22,22 @@ func InitSSHCA(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
 	caType := chi.URLParam(r, "type")
 
+	if caType != "user" && caType != "host" && caType != "system" {
+		utils.TrasaResponse(w, 200, "failed", "invalid ca type", "SSH CA not initialised", nil)
+		return
+	}
+
 	privateKey, err := utils.GeneratePrivateKey(4096)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "invalid request", "SSH CA not initialised", nil, nil)
+		utils.TrasaResponse(w, 200, "failed", "invalid request", "SSH CA not initialised", nil)
 		return
 	}
 
 	pubKey, err := utils.ConvertPublicKeyToSSHFormat(&privateKey.PublicKey)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "invalid request", "SSH CA not initialised", nil, nil)
+		utils.TrasaResponse(w, 200, "failed", "invalid request", "SSH CA not initialised", nil)
 		return
 	}
 

@@ -32,7 +32,7 @@ export function SSHLiveSession(props: any) {
 
   //
   // TODO define device hygiene type
-  const connect = (e:FormEvent<Element>, tfaMethod: string,totpCode:string,) => {
+  const connect = (e:FormEvent<Element> | null, tfaMethod: string,totpCode:string,) => {
     const term = termRef.current;
 
     set2FADialogOpen(false);
@@ -123,7 +123,11 @@ export function SSHLiveSession(props: any) {
           askPassword();
         } else {
           setCredDialogOpen(false);
-          set2FADialogOpen(true);
+          if(props.tfaRequired=="true"){
+            set2FADialogOpen(true);
+          }else {
+            connect( null,"","");
+          }
         }
       })
       .catch((e) => {
@@ -141,7 +145,12 @@ export function SSHLiveSession(props: any) {
   const onPasswordSubmit = (e:React.FormEvent<any>) => {
     e.preventDefault()
     setCredDialogOpen(false);
-    set2FADialogOpen(true);
+    if(props.tfaRequired=="true"){
+      set2FADialogOpen(true);
+    }else {
+      connect( null,"","");
+    }
+    // set2FADialogOpen(true);
   };
 
   // message extension to fetch device hygiene
@@ -220,12 +229,12 @@ export function SSHLiveSession(props: any) {
 
 export default function TsshConsoleMain(props: any){
 
-  const [data, setData] = React.useState<any>({serviceID:'',username: '', email: '', connID: '', hostname: '' })
+  const [data, setData] = React.useState<any>({serviceID:'',username: '', email: '', connID: '', hostname: '',tfaRequired:true })
   React.useEffect(() => {
     const hashed = QueryString.parse(props.location.hash);
 
     if (hashed) {
-      setData({serviceID: hashed.serviceID,username: hashed.username, email: hashed.email, connID: hashed.connID, hostname: hashed.hostname})
+      setData({serviceID: hashed.serviceID,username: hashed.username, email: hashed.email, connID: hashed.connID, hostname: hashed.hostname,tfaRequired:hashed.tfaRequired})
     }
   }, [props.location.hash])
 
@@ -235,6 +244,7 @@ export default function TsshConsoleMain(props: any){
             <SSHLiveSession
                 serviceID={data.serviceID}
                 username={data.username}
+                tfaRequired={data.tfaRequired}
                 email={data.email}
                 connID={data.connID}
                 hostname={data.hostname}/> : <div></div>}

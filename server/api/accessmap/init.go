@@ -32,4 +32,11 @@ type accessMapAdapter interface {
 
 	GetAssignedUserGroupsWithPolicies(serviceGroupID, orgID string) ([]UserGroupOfServiceGroup, error)
 	GetUserGroupsToAddInServiceGroup(orgID string) ([]models.Group, error)
+
+	GetDynamicAccessPolicy(groups []string, userID, orgID string) (*models.Policy, error)
+
+	GetAllDynamicAccessRules(orgID string) ([]models.DynamicAccessRule, error)
+	getAllUserGroupsWithIDPs(orgID string) ([]string, error)
+	CreateDynamicAccessRule(setting models.DynamicAccessRule) error
+	DeleteDynamicAccessRule(id, orgID string) error
 }

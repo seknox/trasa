@@ -3,9 +3,8 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import Constants from '../../../Constants';
 import EmailSetting from './Emails';
-import OrgAccountSetting from './OrgAccount';
-import PasswordSettings from './PasswordPolicy';
 import FcmConfig from './FCMConfig';
+import OrgAccountSetting from './OrgAccount';
 
 export type PassPolicyProps = {};
 
@@ -74,9 +73,6 @@ export default function SystemStatus() {
       </Grid>
       <Grid item xs={9}>
         <FcmConfig orgData={orgData} />
-      </Grid>
-      <Grid item xs={9}>
-        <PasswordSettings />
       </Grid>
     </Grid>
   );

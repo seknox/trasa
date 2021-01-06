@@ -11,12 +11,11 @@ import (
 )
 
 //InitStore initialises package state
-func InitStore(state *global.State, checkPolicyFunc models.CheckPolicyFunc) {
+func InitStore(state *global.State) {
 	SSHStore = Store{
-		State:           state,
-		checkPolicyFunc: checkPolicyFunc,
-		sessions:        make(map[net.Addr]*Session),
-		guestChannels:   map[string]chan GuestClient{},
+		State:         state,
+		sessions:      make(map[net.Addr]*Session),
+		guestChannels: map[string]chan GuestClient{},
 	}
 }
 
@@ -24,15 +23,13 @@ var SSHStore Adapter
 
 type Store struct {
 	*global.State
-	sessions        map[net.Addr]*Session
-	guestChannels   map[string]chan GuestClient
-	checkPolicyFunc models.CheckPolicyFunc
+	sessions      map[net.Addr]*Session
+	guestChannels map[string]chan GuestClient
 }
 
 type Adapter interface {
-	checkPolicy(params *models.ConnectionParams) (*models.Policy, consts.FailedReason, error)
 	GetUserFromPublicKey(publicKey ssh.PublicKey, orgID string) (*models.User, error)
-	validateTempCert(publicKey ssh.PublicKey, privilege string, orgID string) error
+	validateTempCert(publicKey *ssh.Certificate, privilege string, orgID string) error
 	parseSSHCert(addr net.Addr, publicKey ssh.PublicKey) error
 
 	SetSession(addr net.Addr, session *Session) error

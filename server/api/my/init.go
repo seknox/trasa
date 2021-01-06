@@ -30,5 +30,5 @@ type myStore struct {
 }
 
 type adapter interface {
-	GetUserAppsDetailsWithPolicyFromUserID(userID, orgID string) ([]models.MyServiceDetails, error)
+	GetUserAppsDetailsWithPolicyFromUserID(groups []string, userID, orgID string) ([]models.MyServiceDetails, error)
 }

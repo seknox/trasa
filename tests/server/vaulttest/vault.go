@@ -3,14 +3,15 @@ package vaulttest
 import (
 	"context"
 	"encoding/json"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
 	"github.com/go-chi/chi"
 	"github.com/seknox/trasa/server/api/services"
 	"github.com/seknox/trasa/server/api/system"
 	"github.com/seknox/trasa/server/models"
 	"github.com/seknox/trasa/tests/server/testutils"
-	"net/http"
-	"net/http/httptest"
-	"testing"
 )
 
 func InitVault(t *testing.T) {
@@ -52,8 +53,8 @@ func InitVault(t *testing.T) {
 	}
 	data := resp.Data[0]
 
-	if len(data.UnsealKeys) != 5 {
-		t.Fatalf(`len DecryptKeys got:%d want:%d`, len(data.UnsealKeys), 5)
+	if len(data.DecryptKeys) != 5 {
+		t.Fatalf(`len DecryptKeys got:%d want:%d`, len(data.DecryptKeys), 5)
 	}
 
 }

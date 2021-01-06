@@ -25,7 +25,7 @@ type adapter interface {
 
 	//CRUD
 	GetFromID(serviceID string) (*models.Service, error)
-	//GetFromName(appName, orgID string) (*models.Service, error)
+	GetFromServiceName(serviceName, orgID string) (service *models.Service, err error)
 	GetFromHostname(hostname, serviceType, remoteAppName, orgID string) (*models.Service, error)
 	GetAllByType(serviceType, orgID string) (services []models.Service, err error)
 

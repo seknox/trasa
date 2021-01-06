@@ -11,7 +11,6 @@ import (
 	"github.com/seknox/trasa/tests/server/testutils"
 	"github.com/seknox/trasa/tests/server/vaulttest"
 	"testing"
-	"time"
 )
 
 func TestServer(t *testing.T) {
@@ -46,11 +45,13 @@ func TestServer(t *testing.T) {
 	t.Run("ssh cli proxy ", func(t *testing.T) {
 		done := make(chan bool, 1)
 		go sshproxy.ListenSSH(done)
-		time.Sleep(time.Second * 3)
+
+		accessproxytest.WaitUntilSSHServerStarts()
 
 		accessproxytest.TestSSHAuthWithAuthorisedPublicKey(t)
 		accessproxytest.TestSSHAuthWithoutPublicKey(t)
 		accessproxytest.TestSSHAuthWithPublicKey(t)
+		accessproxytest.TestSSHAuthWithServiceName(t)
 
 		done <- true
 

@@ -2,9 +2,8 @@ package ca
 
 import (
 	"database/sql"
-	"github.com/seknox/trasa/server/api/providers/vault/tsxvault"
-
 	"github.com/pkg/errors"
+	"github.com/seknox/trasa/server/api/providers/vault/tsxvault"
 	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/models"
 )

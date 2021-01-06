@@ -1,11 +1,16 @@
 package accessproxytest
 
 import (
+	"archive/zip"
+	"bytes"
 	"github.com/seknox/ssh"
 	"github.com/seknox/trasa/server/accessproxy/sshproxy"
 	"github.com/seknox/trasa/server/api/my"
 	"github.com/seknox/trasa/server/utils"
+	"github.com/seknox/trasa/tests/server/providerstest"
 	"github.com/seknox/trasa/tests/server/testutils"
+	"github.com/seknox/trasa/tests/server/vaulttest"
+	"io/ioutil"
 	"net"
 	"net/http"
 	"net/http/httptest"
@@ -20,7 +25,7 @@ func TestSSHAuthWithoutPublicKey(t *testing.T) {
 	cconf := ssh.ClientConfig{
 		User: testutils.MockupstreamUser,
 		Auth: []ssh.AuthMethod{
-			handleKBAuth(t),
+			handleKBAuth(t, "127.0.0.1:2222"),
 		},
 		HostKeyCallback: func(hostname string, remote net.Addr, key ssh.PublicKey) error {
 			return nil
@@ -59,7 +64,7 @@ func TestSSHAuthWithPublicKey(t *testing.T) {
 		User: testutils.MockupstreamUser,
 		Auth: []ssh.AuthMethod{
 			ssh.PublicKeys(pk),
-			handleKBAuth(t),
+			handleKBAuth(t, "127.0.0.1:2222"),
 		},
 		HostKeyCallback: func(hostname string, remote net.Addr, key ssh.PublicKey) error {
 			return nil
@@ -100,7 +105,48 @@ func TestSSHAuthWithAuthorisedPublicKey(t *testing.T) {
 		User: testutils.MockupstreamUser,
 		Auth: []ssh.AuthMethod{
 			ssh.PublicKeys(pk),
-			handleKBAuth(t),
+			handleKBAuth(t, "127.0.0.1:2222"),
+		},
+		HostKeyCallback: func(hostname string, remote net.Addr, key ssh.PublicKey) error {
+			return nil
+		},
+		BannerCallback: nil,
+	}
+
+	client, err := ssh.Dial("tcp", "127.0.0.1:8022", &cconf)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	s, err := client.NewSession()
+	if err != nil {
+		t.Fatalf(`could not start session: %v`, err)
+	}
+
+	//s.Close()
+	//t.Log("closed++++++++++++++++++++++++++++++++++++++")
+
+	err = s.Run("ls;")
+	if err != nil {
+		t.Fatalf(`could not run command: %v`, err)
+	}
+
+}
+
+func TestSSHAuthWithServiceName(t *testing.T) {
+
+	key := downloadKey(t)
+
+	pk, err := ssh.ParsePrivateKey(key)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	cconf := ssh.ClientConfig{
+		User: testutils.MockupstreamUser,
+		Auth: []ssh.AuthMethod{
+			ssh.PublicKeys(pk),
+			handleKBAuth(t, "test-service"),
 		},
 		HostKeyCallback: func(hostname string, remote net.Addr, key ssh.PublicKey) error {
 			return nil
@@ -128,7 +174,7 @@ func TestSSHAuthWithAuthorisedPublicKey(t *testing.T) {
 
 }
 
-func handleKBAuth(t *testing.T) ssh.AuthMethod {
+func handleKBAuth(t *testing.T, targetService string) ssh.AuthMethod {
 	return ssh.KeyboardInteractive(func(user, instruction string, questions []string, echos []bool) (answers []string, err error) {
 
 		switch true {
@@ -149,7 +195,7 @@ func handleKBAuth(t *testing.T) ssh.AuthMethod {
 			}
 			//t.Log("Choose service")
 
-			return []string{`127.0.0.1:2222`}, nil
+			return []string{targetService}, nil
 
 		case strings.Contains(instruction, "Second factor authentication"):
 			if len(questions) != 1 {
@@ -189,6 +235,9 @@ func downloadKey(t *testing.T) []byte {
 		t.Fatal(err)
 	}
 
+	vaulttest.InitVault(t)
+	providerstest.CreateSSHSystemCA(t)
+
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
 	handler := http.HandlerFunc(testutils.AddTestUserContext(my.GenerateKeyPair))
@@ -202,7 +251,37 @@ func downloadKey(t *testing.T) []byte {
 			status, http.StatusOK)
 	}
 
-	k, err := ssh.ParsePrivateKey(rr.Body.Bytes())
+	zr, err := zip.NewReader(bytes.NewReader(rr.Body.Bytes()), int64(rr.Body.Len()))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	var privkeyBytes []byte
+	var certBytes []byte
+
+	for _, fil := range zr.File {
+
+		rrrrr, err := fil.Open()
+		if err != nil {
+			t.Fatal(err)
+		}
+		byt, err := ioutil.ReadAll(rrrrr)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		switch fil.Name {
+		case "id_rsa":
+			privkeyBytes = byt
+
+		case "id_rsa-cert.pub":
+			certBytes = byt
+		}
+	}
+
+	_ = certBytes
+
+	k, err := ssh.ParsePrivateKey(privkeyBytes)
 	if err != nil {
 		t.Errorf(`invalid user key`)
 	}
@@ -215,6 +294,6 @@ func downloadKey(t *testing.T) []byte {
 	if user.ID != testutils.MockUserID {
 		t.Errorf(`incorrect user ID, want=%v got=%v`, testutils.MockUserID, user.ID)
 	}
-	return rr.Body.Bytes()
+	return privkeyBytes
 
 }

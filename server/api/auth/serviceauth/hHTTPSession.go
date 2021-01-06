@@ -74,7 +74,7 @@ func AuthHTTPAccessProxy(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logger.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "invalid extension id", "AuthHTTPAccessProxy", nil)
-		logs.Store.LogLogin(&authlog, consts.REASON_DEVICE_NOT_ENROLLED, false)
+		logs.Store.LogLogin(&authlog, consts.REASON_DEVICE_NOT_FOUND, false)
 		return
 	}
 
@@ -121,7 +121,7 @@ func AuthHTTPAccessProxy(w http.ResponseWriter, r *http.Request) {
 	//authlog.Privilege = userDetailFromDB.UserName
 	authlog.SessionRecord = policy.RecordSession
 
-	ok, reason := accesscontrol.ACStore.CheckPolicyFunc(&models.ConnectionParams{
+	ok, reason := accesscontrol.CheckPolicy(&models.ConnectionParams{
 		ServiceID: serviceDetailFromDB.ID,
 		OrgID:     orgDetailFromDB.ID,
 		UserID:    userDetailFromDB.ID,
