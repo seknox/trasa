@@ -159,6 +159,9 @@ export default function CreateIdpDrawer(props: any) {
       case 'okta':
         idp.idpName = 'okta';
         break;
+      case 'onelogin':
+        idp.idpName = 'onelogin';
+        break;
       case 'freeipa':
         idp.idpName = 'freeipa';
         break;
@@ -241,6 +244,9 @@ export default function CreateIdpDrawer(props: any) {
                   >
                     <MenuItem value="okta">
                       <div className={classes.settingSHeader}>Okta </div>
+                    </MenuItem>
+                    <MenuItem value="onelogin">
+                      <div className={classes.settingSHeader}>Onelogin</div>
                     </MenuItem>
                     <MenuItem value="freeipa">
                       <div className={classes.settingSHeader}>FreeIPA</div>
