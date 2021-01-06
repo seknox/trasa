@@ -14,31 +14,8 @@ import (
 	logger "github.com/sirupsen/logrus"
 )
 
-// VaultWriteCreds writes user credentials(uname:pass) for specefic host.
-// First we check secret storage setting. If credStorage specefies tsxvalut, we store it in our database
-// else we use api token to store it in secret storage provider.
-// Configuration for vault should be stored in trasa_featuresv1 table.
+// Store in tsxVault
 func (s vaultStore) StoreSecret(key models.ServiceSecretVault) error {
-	// feature, err := Connect.CRDBGetOrgFeatureStatus(s.OrgID, "vault")
-	// if err != nil {
-	// 	logger.Error(err)
-	// 	return err
-	// }
-	// var vaultConfig utils.VaultFeature
-	// json.Unmarshal([]byte(feature.Config), &vaultConfig)
-	// if vaultConfig.CredStorage == "tsxvault" {
-	// 	// store it in tsxvault
-	// 	err := Connect.TsxvStoreSecret(s)
-	// 	if err != nil {
-	// 		logger.Error(err)
-	// 		return err
-	// 	}
-
-	// } else {
-	// 	//store is in specified provider.
-	// }
-
-	// return fmt.Errorf("%v", 1)
 
 	if s.TsxvKey.State == false {
 		return fmt.Errorf("encryption key is not retrieved yet.")
@@ -100,16 +77,7 @@ func (s vaultStore) TsxvStoreSecret(secret models.ServiceSecretVault) error {
 	return nil
 }
 
-// GetSecret detail retrieves secretdetails  from tsxVault
-// "ServiceSecretVault": `create table IF NOT EXISTS service_keyvaultv1(
-// 	key_id VARCHAR PRIMARY KEY NOT NULL,
-// 	org_id VARCHAR REFERENCES orgv1(org_id) ON DELETE CASCADE ,
-// 	service_id VARCHAR REFERENCES servicesv1(service_id) ON DELETE CASCADE ,
-// 	secretid VARCHAR,
-// 	secret BYTEA,
-// 	added_at INT,
-// 	last_updated INT
-// )`,
+
 func (s vaultStore) TsxvGetSecretDetail(orgID, serviceID, appType, secretID string) (*models.ServiceSecretVault, error) {
 	var secret models.ServiceSecretVault
 	err := s.DB.QueryRow(`
@@ -145,17 +113,7 @@ func (s vaultStore) TsxvDeleteAllSecret(orgID string) error {
 	return err
 }
 
-// StoreEncKeyHash stores sha512 hash of encryption key in database.
-// This helps to verify whether user supplied encryption key is correct.
-// Every retreival of key shold be appended in audit log.
-// "KeyLog": `create table IF NOT EXISTS keylogv1(
-// 	key_id VARCHAR PRIMARY KEY NOT NULL,
-// 	org_id VARCHAR REFERENCES orgv1(org_id) ON DELETE CASCADE ,
-// 	key_hash VARCHAR NOT NULL,
-// 	generated_at VARCHAR,
-//  status BOOL,
-// 	log JSONB
-// )`,
+
 func (s vaultStore) TsxvStoreEncKeyHash(secret models.EncryptionKeyLog) error {
 
 	_, err := s.DB.Exec(`INSERT into keylog (id, org_id, hash, generated_at, status, last_updated)
@@ -365,7 +323,7 @@ func (s vaultStore) StoreKeyOrTokens(k models.KeysHolder) error {
 	return nil
 }
 
-// GenAndStoreKey generates encryption keys, store it in database.
+// GenAndStoreKey generates encryption keys, store the sha512 "hash" in database. The hash is used to verify correctness of key.
 func (s vaultStore) GenAndStoreKey(orgID string) (*[32]byte, error) {
 	encryptionKey, err := utils.AESGenKey()
 	if err != nil {
@@ -401,11 +359,21 @@ func (s vaultStore) GetTsxVaultKey() (*[32]byte, bool) {
 }
 
 // SetTsxVaultKey returns retreival status of encryption key
-func (s vaultStore) SetTsxVaultKey(key *[32]byte, status bool) {
+func (s vaultStore) SetTsxVaultKey(key *[32]byte, status bool, credprov models.CredProvProps) {
 
 	s.TsxvKey.Key = key
 	s.TsxvKey.State = status
+	s.TsxvKey.CredProv = credprov
+
 }
+
+// UpdateTsxVaultKeyCredProvConfig sets cred prov config
+func (s vaultStore) UpdateTsxVaultKeyCredProvConfig(credprov models.CredProvProps) {
+
+	s.TsxvKey.CredProv = credprov
+
+}
+
 
 // SetTsxCPxyKey assigns retreived cloud prxy api key in global state
 func (s vaultStore) SetTsxCPxyKey(key string) {

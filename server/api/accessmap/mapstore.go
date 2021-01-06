@@ -1,7 +1,10 @@
 package accessmap
 
 import (
+	"encoding/json"
+	"github.com/lib/pq"
 	"github.com/seknox/trasa/server/models"
+	"github.com/sirupsen/logrus"
 )
 
 //TODO handle error
@@ -36,7 +39,9 @@ SELECT EXISTS
 func (s accessMapStore) GetServiceUserMaps(serviceID, orgID string) (appusers []models.AccessMapDetail, err error) {
 	appusers = make([]models.AccessMapDetail, 0)
 	rows, err := s.DB.Query(`
-SELECT map.id, service_id, map.user_id,users.email, map.privilege, map.policy_id, policies.name, map.added_at 
+SELECT map.id, service_id, map.user_id,
+       COALESCE(NULLIF(users.email,''),users.username),
+       map.privilege, map.policy_id, policies.name, map.added_at 
 	FROM user_accessmaps map
 	    JOIN users ON map.user_id=users.id
 	    join policies on policies.id=map.policy_id
@@ -50,7 +55,7 @@ WHERE service_id= $1 AND map.org_id=$2`, serviceID, orgID)
 		appuser := models.AccessMapDetail{
 			Policy: models.Policy{},
 		}
-		err = rows.Scan(&appuser.MapID, &appuser.ServiceID, &appuser.UserID, &appuser.Email, &appuser.Privilege, &appuser.Policy.PolicyID, &appuser.Policy.PolicyName, &appuser.UserAddedAt)
+		err = rows.Scan(&appuser.MapID, &appuser.ServiceID, &appuser.UserID, &appuser.TrasaID, &appuser.Privilege, &appuser.Policy.PolicyID, &appuser.Policy.PolicyName, &appuser.UserAddedAt)
 		if err != nil {
 			return
 		}
@@ -162,4 +167,95 @@ func (s accessMapStore) GetAssignedUserGroupsWithPolicies(groupID, orgID string)
 		userGroups = append(userGroups, userGroup)
 	}
 	return userGroups, err
+}
+
+func (s accessMapStore) GetDynamicAccessPolicy(groups []string, userID, orgID string) (*models.Policy, error) {
+	policy := &models.Policy{}
+	var tempDayTimeStr string
+
+	err := s.DB.QueryRow(`										
+				SELECT p.id, p.name, p.org_id, day_time,risk_threshold, tfa_enabled,file_transfer,record_session,ip_source,device_policy,expiry,allowed_countries , p.created_at, p.updated_at
+from dynamic_access
+         JOIN policies p on dynamic_access.policy_id = p.id
+         LEFT JOIN groups g on dynamic_access.group_name = g.name
+         LEFT JOIN user_group_maps ugm on ugm.group_id=g.id
+WHERE (dynamic_access.group_name = ANY ($1) OR ugm.user_id=$2) AND  dynamic_access.org_id=$3 ORDER BY dynamic_access.created_at DESC LIMIT 1;`,
+		pq.Array(groups), userID, orgID).
+		Scan(&policy.PolicyID, &policy.PolicyName, &policy.OrgID, &tempDayTimeStr, &policy.RiskThreshold, &policy.TfaRequired, &policy.FileTransfer, &policy.RecordSession, &policy.IPSource, &policy.DevicePolicy, &policy.Expiry, &policy.AllowedCountries, &policy.CreatedAt, &policy.UpdatedAt)
+	if err != nil {
+		return policy, err
+	}
+
+	err = json.Unmarshal([]byte(tempDayTimeStr), &policy.DayAndTime)
+
+	return policy, err
+
+}
+
+//CreateDynamicAccessRule creates a dynamic access policy for a particular group or idp
+func (s accessMapStore) CreateDynamicAccessRule(setting models.DynamicAccessRule) error {
+	_, err := s.DB.Exec(`INSERT INTO dynamic_access (id,org_id, group_name, policy_id, created_at) VALUES ($1,$2,$3,$4,$5)`,
+		setting.RuleID, setting.OrgID, setting.GroupName, setting.PolicyID, setting.CreatedAt)
+	return err
+}
+
+//DeleteDynamicAccessRule delete  a dynamic access policy for a particular group or idp
+func (s accessMapStore) DeleteDynamicAccessRule(id, orgID string) error {
+	_, err := s.DB.Exec(`DELETE FROM dynamic_access WHERE id=$1 AND org_id=$2`,
+		id, orgID)
+	return err
+}
+
+//GetAllDynamicAccessRules returns dynamic access policies for all particular groups or idps
+func (s accessMapStore) GetAllDynamicAccessRules(orgID string) ([]models.DynamicAccessRule, error) {
+	var das []models.DynamicAccessRule = make([]models.DynamicAccessRule, 0)
+	rows, err := s.DB.Query(`
+				SELECT dynamic_access.id,dynamic_access.org_id, group_name, policy_id,p.name, dynamic_access.created_at 
+				FROM dynamic_access
+				JOIN policies p on dynamic_access.policy_id = p.id
+				WHERE dynamic_access.org_id=$1`,
+		orgID)
+	if err != nil {
+		return das, err
+	}
+
+	for rows.Next() {
+		var da models.DynamicAccessRule
+		err = rows.Scan(&da.RuleID, &da.OrgID, &da.GroupName, &da.PolicyID, &da.PolicyName, &da.CreatedAt)
+		if err != nil {
+			logrus.Error(err)
+			continue
+		}
+		das = append(das, da)
+	}
+	return das, nil
+}
+
+//getAllUserGroupsWithIDPs returns all user groups and idp names
+func (s accessMapStore) getAllUserGroupsWithIDPs(orgID string) ([]string, error) {
+
+	var gps []string = make([]string, 0)
+
+	rows, err := s.DB.Query(`
+select DISTINCT name from (
+	select name,org_id from groups where type='usergroup'
+	UNION
+	select name,org_id from idp
+                              ) gps
+WHERE gps.org_id=$1;`,
+		orgID)
+	if err != nil {
+		return gps, err
+	}
+
+	for rows.Next() {
+		var gp string
+		err = rows.Scan(&gp)
+		if err != nil {
+			logrus.Error(err)
+			continue
+		}
+		gps = append(gps, gp)
+	}
+	return gps, nil
 }

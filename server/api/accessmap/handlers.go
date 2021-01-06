@@ -347,17 +347,93 @@ type UserGroupOfServiceGroup struct {
 	AddedAt       int64  `json:"addedAt"`
 }
 
-func AllAddedUserGroups(w http.ResponseWriter, r *http.Request) {
-	logrus.Trace("request received")
-	userContext := r.Context().Value("user").(models.UserContext)
-	groupID := chi.URLParam(r, "groupid")
+//GetAllDynamicAccessRules returns all dynamic access rules
+func GetAllDynamicAccessRules(w http.ResponseWriter, r *http.Request) {
+	uc := r.Context().Value("user").(models.UserContext)
+	dps, err := Store.GetAllDynamicAccessRules(uc.Org.ID)
 
-	ugroups, err := Store.GetAssignedUserGroupsWithPolicies(groupID, userContext.User.OrgID)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "group not created", "AllUsergroupAndPoliciesToAdd")
+		utils.TrasaResponse(w, 200, "failed", "Could not get rules", "get dynamic access rules", nil, nil)
 		return
 	}
 
-	utils.TrasaResponse(w, 200, "success", "group details fetched", "AllAddedUserGroups", ugroups)
+	utils.TrasaResponse(w, 200, "success", "", "get dynamic access rules", dps)
+}
+
+//GetAllUserGroupsWithIDPs returns all user groups
+func GetAllUserGroupsWithIDPs(w http.ResponseWriter, r *http.Request) {
+	uc := r.Context().Value("user").(models.UserContext)
+	gps, err := Store.getAllUserGroupsWithIDPs(uc.Org.ID)
+
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "Could not get groups", "get dynamic access user groups")
+		return
+	}
+
+	utils.TrasaResponse(w, 200, "success", "", "get dynamic access user groups", gps)
+}
+
+//CreateDynamicAccessRule creates a dynamic access rule
+func CreateDynamicAccessRule(w http.ResponseWriter, r *http.Request) {
+	uc := r.Context().Value("user").(models.UserContext)
+	var req models.DynamicAccessRule
+
+	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "error parsing request", "dynamic access rule not created", nil, nil)
+		return
+	}
+
+	req.RuleID = utils.GetUUID()
+	req.OrgID = uc.Org.ID
+	req.CreatedAt = time.Now().Unix()
+
+	err := Store.CreateDynamicAccessRule(req)
+
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "Could not create  rule", "dynamic access rule not created", nil, nil)
+		return
+	}
+
+	allrules, err := Store.GetAllDynamicAccessRules(uc.Org.ID)
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "Could not get rules", "dynamic access rule not created", nil, nil)
+		return
+	}
+
+	utils.TrasaResponse(w, 200, "success", "Rule added", "dynamic access rule created", allrules)
+}
+
+//DeleteDynamicAccessRule deletes a dynamic access rule
+func DeleteDynamicAccessRule(w http.ResponseWriter, r *http.Request) {
+	uc := r.Context().Value("user").(models.UserContext)
+	var req models.DynamicAccessRule
+
+	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "error parsing request", "dynamic access rule not deleted", nil, nil)
+		return
+	}
+
+	err := Store.DeleteDynamicAccessRule(req.RuleID, uc.Org.ID)
+
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "Could not delete rule", "dynamic access rule not deleted", nil, nil)
+		return
+	}
+
+	allrules, err := Store.GetAllDynamicAccessRules(uc.Org.ID)
+	if err != nil {
+		logrus.Error(err)
+		utils.TrasaResponse(w, 200, "failed", "Could not get rules", "dynamic access rule not deleted", nil, nil)
+		return
+	}
+
+	utils.TrasaResponse(w, 200, "success", "Rule deleted", "dynamic access rule deleted", allrules)
+
 }

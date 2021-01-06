@@ -291,6 +291,26 @@ function CAcrud(props: any) {
             </Grid>
           </Grid>
         );
+
+        case props.selectedCAOp === 'genSSHSystemCA':
+        return (
+          <Grid container spacing={2} direction="column" justify="center" alignItems="center">
+            <Grid item xs={12}>
+              <Typography variant="h1" component="h1">
+                <b>Generate SSH System CA</b>
+              </Typography>
+            </Grid>
+
+            <Grid item xs={12}>
+              <br />
+              <Button variant="contained" onClick={props.generateSSHCA('system')}>
+                Generate SSH System CA
+              </Button>
+            </Grid>
+          </Grid>
+        );
+
+
       default:
         return null;
     }
@@ -321,6 +341,10 @@ function CAcrud(props: any) {
             <MenuItem value="genSSHUserCA">
               <div className={classes.settingSHeader}>Generate SSH user CA</div>
             </MenuItem>
+             <MenuItem value="genSSHSystemCA">
+              <div className={classes.settingSHeader}>Generate SSH system CA</div>
+            </MenuItem>
+
           </Select>
         </FormControl>
       </Grid>

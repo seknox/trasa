@@ -62,7 +62,7 @@ export default function AppuserTable(props: any) {
           window.location.href = '/login';
         }
         const dataArr = resp.map(function (n: any) {
-          return [n.email, n.privilege, n.policy.policyName, n.userAddedAt, n.mapID];
+          return [n.trasaID, n.privilege, n.policy.policyName, n.userAddedAt, n.mapID];
         });
         // setAppData(resp.App);
         setappUsersArr(dataArr);
@@ -92,7 +92,7 @@ export default function AppuserTable(props: any) {
       });
   };
 
-  const updateUsername = (e: any) => {
+  const updatePrivilege = (e: any) => {
     const row = appUsersArr[updateRowIndex];
     const updateVal = { privilege: e.target.value, mapID: row[4] };
 
@@ -121,7 +121,7 @@ export default function AppuserTable(props: any) {
 
   const columns = [
     {
-      name: 'Users',
+      name: 'User',
       options: {
         filter: true,
         customBodyRender: (value: any) => {
@@ -139,10 +139,10 @@ export default function AppuserTable(props: any) {
               {updateRow && updateRowIndex === tableMeta.rowIndex ? (
                 <TextField
                   fullWidth
-                  id="username"
+                  id="privilege"
                   // value={this.props.Expiry}
-                  onChange={updateUsername}
-                  label="update username"
+                  onChange={updatePrivilege}
+                  label="update privilege"
                   type="text"
                   defaultValue={value}
                   InputLabelProps={{

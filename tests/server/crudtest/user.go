@@ -149,6 +149,15 @@ func GetUser(t *testing.T, expected models.User) {
 	}
 
 	resp.Data[0].User.ExternalID = expected.ExternalID
+
+	for i, g := range resp.Data[0].User.Groups {
+		if g != expected.Groups[i] {
+			t.Errorf("GetUserDetails.Groups  \n got = %v,\n want = %v", g, expected.Groups[i])
+		}
+	}
+
+	resp.Data[0].User.Groups = expected.Groups
+
 	if !reflect.DeepEqual(resp.Data[0].User, expected) {
 		t.Errorf("GetUserDetails  \n got = %v,\n want = %v", resp.Data[0].User, expected)
 	}

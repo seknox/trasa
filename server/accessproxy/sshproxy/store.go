@@ -2,7 +2,6 @@ package sshproxy
 
 import (
 	"bytes"
-	"database/sql"
 	"encoding/hex"
 	"fmt"
 	"net"
@@ -13,9 +12,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/seknox/ssh"
-	"github.com/seknox/trasa/server/api/accessmap"
 	"github.com/seknox/trasa/server/api/logs"
-	"github.com/seknox/trasa/server/api/policies"
 	"github.com/seknox/trasa/server/api/providers/ca"
 	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/models"
@@ -25,6 +22,12 @@ import (
 
 func (s Store) GetUserFromPublicKey(publicKey ssh.PublicKey, orgID string) (*models.User, error) {
 	var user models.User
+
+	//If it's a certificate, extract public key only
+	cert, ok := publicKey.(*ssh.Certificate)
+	if ok {
+		publicKey = cert.Key
+	}
 
 	publicKeyStr := strings.TrimSpace(string(ssh.MarshalAuthorizedKey(publicKey)))
 
@@ -46,6 +49,7 @@ func (s Store) parseSSHCert(addr net.Addr, publicKey ssh.PublicKey) error {
 	}
 	deviceID, ok := cert.Extensions["trasa-device-id"]
 	if !ok {
+		logrus.Error("device ID not found in ssh certificate")
 		return errors.New("device ID not found in ssh certificate")
 	}
 
@@ -61,21 +65,22 @@ func (s Store) parseSSHCert(addr net.Addr, publicKey ssh.PublicKey) error {
 	sess.log.AccessDeviceID = deviceID
 	sess.params.AccessDeviceID = deviceID
 
-	return errors.New("not implemented yet")
+	groups, ok := cert.Extensions["trasa-user-groups"]
+
+	logrus.Trace(groups, ok)
+	if ok {
+		sess.params.Groups = strings.Split(groups, ",")
+	}
+
+	return nil
 }
 
 //validateTempCert
-func (s Store) validateTempCert(publicKey ssh.PublicKey, privilege string, orgID string) error {
-
-	cert, ok := publicKey.(*ssh.Certificate)
-	if !ok {
-		return errors.Errorf("invalid certificate")
-	}
+func (s Store) validateTempCert(cert *ssh.Certificate, privilege string, orgID string) error {
 
 	caKey, err := ca.Store.GetCertDetail(orgID, "system", consts.CERT_TYPE_SSH_CA)
 	if err != nil {
-		//logger.Error(err)
-		//dbstore.SendErrorReport(err, "CA not initialised")
+		logrus.Error(err)
 		return err
 	}
 
@@ -236,32 +241,6 @@ func (s Store) GetGuestChannel(sessionID string) (chan GuestClient, error) {
 
 	}
 	return guestChan, nil
-}
-
-func (s Store) checkPolicy(params *models.ConnectionParams) (*models.Policy, consts.FailedReason, error) {
-
-	policy, adhoc, err := policies.Store.GetAccessPolicy(params.UserID, params.ServiceID, params.Privilege, params.OrgID)
-
-	if errors.Is(err, sql.ErrNoRows) {
-		//if service is not assigned to user, create one (only if dynamic access is enabled)
-		policy, err = accessmap.CreateDynamicAccessMap(params.ServiceID, params.UserID, params.TrasaID, params.Privilege, params.OrgID)
-		if err != nil {
-			logrus.Errorf("dynamic access map: %v", err)
-			return policy, consts.REASON_DYNAMIC_SERVICE_FAILED, err
-		}
-
-	} else if err != nil {
-		logrus.Errorf("get service from hostname: %v", err)
-		return policy, consts.REASON_INVALID_SERVICE_ID, err
-	}
-
-	//logrus.Trace("client ip: ", params.UserIP)
-
-	ok, reason := s.checkPolicyFunc(params, policy, adhoc)
-	if !ok {
-		return policy, reason, errors.New("policy failed")
-	}
-	return policy, reason, nil
 }
 
 func (s Store) closeSession(addr net.Addr) {

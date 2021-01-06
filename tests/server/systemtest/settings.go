@@ -2,12 +2,13 @@ package systemtest
 
 import (
 	"encoding/json"
-	"github.com/seknox/trasa/server/api/system"
-	"github.com/seknox/trasa/server/models"
-	"github.com/seknox/trasa/tests/server/testutils"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/seknox/trasa/server/api/system"
+	"github.com/seknox/trasa/server/models"
+	"github.com/seknox/trasa/tests/server/testutils"
 )
 
 func UpdateSettings(t *testing.T) {
@@ -18,12 +19,12 @@ func UpdateSettings(t *testing.T) {
 		UserGroups: []string{`somegroupID`, `somegroupID2`},
 	}
 
-	pPolicy := models.PasswordPolicy{
-		Expiry:            "2021-03-05",
-		MinimumChars:      9,
-		EnforceStrongPass: false,
-		ZxcvbnScore:       4,
-	}
+	// pPolicy := models.PasswordPolicy{
+	// 	Expiry:            "2021-03-05",
+	// 	MinimumChars:      9,
+	// 	EnforceStrongPass: false,
+	// 	ZxcvbnScore:       4,
+	// }
 
 	devHygReq := struct {
 		EnableDeviceHygieneCheck bool `json:"enableDeviceHygieneCheck"`
@@ -54,11 +55,11 @@ func UpdateSettings(t *testing.T) {
 			args:    args{dynamicAccess, system.UpdateDynamicAccessSetting},
 			wantErr: false,
 		},
-		{
-			name:    "update password policy",
-			args:    args{pPolicy, system.UpdatePasswordPolicy},
-			wantErr: false,
-		},
+		// {
+		// 	name:    "update password policy",
+		// 	args:    args{pPolicy, system.UpdatePasswordPolicy},
+		// 	wantErr: false,
+		// },
 		{
 			name:    "update device hygiene Check",
 			args:    args{devHygReq, system.UpdateDeviceHygieneSetting},

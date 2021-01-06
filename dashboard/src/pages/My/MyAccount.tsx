@@ -460,7 +460,7 @@ function SettinMenu(props: SettingsMenuProps) {
     };
 
     axios.post(`${Constants.TRASA_HOSTNAME}/api/v1/my/generatekey`, null, config).then((resp) => {
-      fileDownload(resp.data, 'id_rsa', 'text/plain');
+      fileDownload(resp.data, 'id_rsa.zip', 'application/zip');
     });
   };
 

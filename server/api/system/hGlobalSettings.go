@@ -54,51 +54,71 @@ func GlobalSettings(w http.ResponseWriter, r *http.Request) {
 
 }
 
-type updatePassPolicyReq struct {
-	Policy models.PasswordPolicy `json:"policy"`
-	Enable bool                  `json:"enable"`
+type welcomeNoteResp struct {
+	Intent string      `json:"intent"`
+	Show   bool        `json:"show"`
+	Data   interface{} `json:"data"`
 }
 
-//UpdatePasswordPolicy updates password policy  in global settings
-func UpdatePasswordPolicy(w http.ResponseWriter, r *http.Request) {
-	logrus.Trace("request received")
-	userContext := r.Context().Value("user").(models.UserContext)
-	var req updatePassPolicyReq
+// WelcomeNote processes any init events that needs to be presented to the admin after successfull dashboard login.
+// For now, we use this handler to auto init vault and respond with sharded keys if it is not already initialized.
+//  This handler can be used for any other similar operations.
+func WelcomeNote(w http.ResponseWriter, r *http.Request) {
+	uc := r.Context().Value("user").(models.UserContext)
+	var vaultKeys []string = make([]string, 0)
 
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "error parsing request", "password policy not updated", nil, nil)
-		return
+	var resp []welcomeNoteResp = make([]welcomeNoteResp, 0)
+	var note welcomeNoteResp
+	note.Intent = consts.SHOW_VAULT_KEYS
+	note.Data = 0
+	note.Show = false
+
+	if uc.User.UserName == "root" {
+		// check and fire pending global settings (first time setup jobs like init vault)
+
+		// check vault status. Auto init if its not already initialized
+		vaultInitStatus, err := Store.GetGlobalSetting(uc.Org.ID, consts.GLOBAL_TSXVAULT)
+		if err != nil || vaultInitStatus.Status == false {
+
+			logrus.Trace("First time root login: Proceeding auto init TsxVault")
+
+			if global.GetConfig().Vault.SaveMasterKey == true {
+				logrus.Debug("SaveMasterKey is true. saving key to local file for dev mode. ")
+				err = InitTsxvaultAndStoreKeyInLocalConfig(uc.User.OrgID, uc.User.ID)
+				if err != nil {
+					// what can we do "extra" here?
+					logrus.Error(err)
+				}
+
+			} else {
+				// auto init
+				vaultKeys, err = InitTsxvaultAndGenShardedKey(uc.User.OrgID, uc.User.ID)
+				if err != nil {
+					// what can we do "extra" here?
+					logrus.Error(err)
+				}
+
+				// only show it if global savemasterkey value is set false
+				note.Show = true
+
+				note.Data = vaultKeys
+			}
+
+		}
+		initCA("user")
+		initCA("host")
+		initCA("system")
+
 	}
 
-	var store models.GlobalSettings
-	encodePolicy, _ := json.Marshal(req.Policy)
-	store.SettingValue = string(encodePolicy)
-	store.Status = req.Enable
-	store.OrgID = userContext.User.OrgID
-	store.SettingType = consts.GLOBAL_PASSWORD_CONFIG
-	store.UpdatedBy = userContext.User.ID
-	store.UpdatedOn = time.Now().Unix()
-
-	err := Store.UpdateGlobalSetting(store)
-	if err != nil {
-		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "error updating global settings", "password policy not updated", nil, nil)
-		return
-	}
-
-	reason := "password policy enabled"
-	if req.Enable == false {
-		reason = "password policy disabled"
-	}
-
-	utils.TrasaResponse(w, 200, "success", reason, "password policy updated", nil, nil)
+	resp = append(resp, note)
+	utils.TrasaResponse(w, 200, "success", "global settings triggered.", "WelcomeNote", resp)
 
 }
 
 //UpdateDeviceHygieneSetting updates device hygiene enforce settings
 func UpdateDeviceHygieneSetting(w http.ResponseWriter, r *http.Request) {
-	logrus.Trace("device hygeiene req")
+	logrus.Trace("device hygiene req")
 	uc := r.Context().Value("user").(models.UserContext)
 	var req struct {
 		EnableDeviceHygieneCheck bool `json:"enableDeviceHygieneCheck"`
@@ -132,7 +152,7 @@ func UpdateDeviceHygieneSetting(w http.ResponseWriter, r *http.Request) {
 //UpdateDynamicAccessSetting updates dynamic access settings
 func UpdateDynamicAccessSetting(w http.ResponseWriter, r *http.Request) {
 	uc := r.Context().Value("user").(models.UserContext)
-	var req models.GlobalDynamicAccessSettings
+	var req models.GlobalSettings
 
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logrus.Error(err)
@@ -140,17 +160,12 @@ func UpdateDynamicAccessSetting(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	settVal, err := json.Marshal(req)
-	if err != nil {
-		logrus.Error(err)
-	}
-
-	err = Store.UpdateGlobalSetting(models.GlobalSettings{
+	err := Store.UpdateGlobalSetting(models.GlobalSettings{
 		SettingID:    utils.GetUUID(),
 		OrgID:        uc.Org.ID,
 		Status:       req.Status,
+		SettingValue: "{}",
 		SettingType:  consts.GLOBAL_DYNAMIC_ACCESS,
-		SettingValue: string(settVal),
 		UpdatedBy:    uc.User.ID,
 		UpdatedOn:    time.Now().Unix(),
 	})

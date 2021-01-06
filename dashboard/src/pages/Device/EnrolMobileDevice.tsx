@@ -202,7 +202,7 @@ export default function EnrolDevice(props: any) {
           <br />
           <div className={classes.padMiddle}>
             <QRCode
-              value={`otpauth://totp/trasa:${props.enrolDeviceDetail.account}?trasaType=private&deviceID=${props.enrolDeviceDetail.deviceID}&issuer=${props.enrolDeviceDetail.orgName}&secret=${props.enrolDeviceDetail.totpSSC}&trasaURL=${props.enrolDeviceDetail.cloudProxyURL}`}
+              value={`otpauth://totp/trasa:${props.enrolDeviceDetail.account}?trasaType=private&deviceID=${props.enrolDeviceDetail.deviceID}&issuer=${encodeURIComponent(props.enrolDeviceDetail.orgName)}&secret=${props.enrolDeviceDetail.totpSSC}&trasaURL=${props.enrolDeviceDetail.cloudProxyURL}`}
               size={256}
             />
             <br /> <br />
@@ -236,7 +236,8 @@ type ConfirmTOTPDialogProps = {
 
 function ConfirmTOTPDialog(props:ConfirmTOTPDialogProps) {
   const [totp,setTOTP] = useState("")
-  const onSubmit = () => {
+  const onSubmit = (e: any) => {
+    e.preventDefault()
     axios.post(Constants.TRASA_HOSTNAME+"/idp/login/checktfa",{totpCode:totp,deviceID:props.deviceID}).then(r=>{
       if(r.data.status=="success"){
         localStorage.setItem('X-CSRF', r.data.data[0].CSRFToken);
@@ -257,19 +258,22 @@ function ConfirmTOTPDialog(props:ConfirmTOTPDialogProps) {
   return(
 
       <Dialogue open={props.open} fullScreen={false} handleClose={props.handleClose} maxWidth={"sm"} title={"Verify TOTP"}>
-        <TextField
-            fullWidth
-            label="TOTP"
-            // defaultValue={loginData.password}
-            onChange={(e)=>{setTOTP(e.target.value)}}
-            id="totp"
-            name="totp"
-            type="number"
-            value={totp}
-            variant="outlined"
-            size="small"
-        />
-        <Button variant="contained" onClick={onSubmit}>Verify</Button>
+        <form onSubmit={onSubmit}>
+          <TextField
+              fullWidth
+              label="TOTP"
+              // defaultValue={loginData.password}
+              onChange={(e)=>{setTOTP(e.target.value)}}
+              id="totp"
+              name="totp"
+              type="number"
+              value={totp}
+              variant="outlined"
+              size="small"
+          />
+          <Button  type={"submit"} onSubmit={onSubmit} variant="contained" >Verify</Button>
+        </form>
+
       </Dialogue>
   )
 }

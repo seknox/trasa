@@ -3,6 +3,7 @@ package sshproxy
 import (
 	"github.com/pkg/errors"
 	"github.com/seknox/ssh"
+	"github.com/seknox/trasa/server/api/system"
 	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/global"
 	"github.com/sirupsen/logrus"
@@ -37,17 +38,41 @@ func publicKeyCallbackHandler(conn ssh.ConnMetadata, key ssh.PublicKey) (*ssh.Pe
 		return nil, errors.New(failNow)
 	}
 
-	err = SSHStore.validateTempCert(key, conn.User(), global.GetConfig().Trasa.OrgId)
+	settings, err := system.Store.GetGlobalSetting(global.GetConfig().Trasa.OrgId, consts.GLOBAL_DEVICE_HYGIENE_CHECK)
+	if err != nil {
+		logrus.Error(err)
+		return nil, errors.New(failNow)
+	}
+
+	//If device hygiene check is disabled, continue to keyboard interactive
+	// Else, check ssh certificate
+
+	cert, ok := publicKey.(*ssh.Certificate)
+	if !ok {
+		return nil, errors.New(gotoPublicKey)
+	}
+
+	err = SSHStore.validateTempCert(cert, conn.User(), global.GetConfig().Trasa.OrgId)
 	if err != nil {
 		logrus.Trace(err)
-		return nil, errors.New(gotoPublicKey)
+		if !settings.Status {
+			return nil, errors.New(gotoKeyboardInteractive)
+		}
+		return nil, errors.New(failNow)
 	}
 
 	//parse and validate connection deviceID embedded in ssh certificate
 	err = SSHStore.parseSSHCert(conn.RemoteAddr(), key)
 	if err != nil {
+		logrus.Debug(err)
+		if !settings.Status {
+			return nil, errors.New(gotoKeyboardInteractive)
+		}
 		return nil, errors.New(gotoPublicKey)
 	}
+
+	//If certificate is verified, change authType to "CERT"
+	SSHStore.SetAuthType(conn.RemoteAddr(), consts.SSH_AUTH_TYPE_CERT)
 
 	return nil, errors.New(gotoKeyboardInteractive)
 }

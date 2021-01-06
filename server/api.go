@@ -28,7 +28,6 @@ import (
 	"github.com/seknox/trasa/server/api/stats"
 	"github.com/seknox/trasa/server/api/system"
 	"github.com/seknox/trasa/server/api/users"
-	"github.com/seknox/trasa/server/api/users/passwordpolicy"
 	"github.com/sirupsen/logrus"
 )
 
@@ -61,7 +60,6 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		r.Post("/crypto/kex", crypt.Kex)
 		r.Post("/device/register", auth.RegisterUserDevice)
 		r.Post("/device/ext/sync", auth.SyncExtension)
-		r.Post("/device/cli/updatehygiene", auth.UpdateHygiene)
 
 		r.Post("/agent/nix", serviceauth.AgentLogin)
 		r.Post("/agent/win", serviceauth.AgentLogin)
@@ -216,6 +214,11 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 
 		//Access Maps
 
+		r.Get("/accessmap/dynamic", accessmap.GetAllDynamicAccessRules)
+		r.Get("/accessmap/dynamic/usergroups", accessmap.GetAllUserGroupsWithIDPs)
+		r.Post("/accessmap/dynamic/create", accessmap.CreateDynamicAccessRule)
+		r.Post("/accessmap/dynamic/delete", accessmap.DeleteDynamicAccessRule)
+
 		r.Get("/accessmap/service/usergroup/{serviceID}", accessmap.GetUserGroupServiceGroupAccessMaps)
 		r.Get("/accessmap/servicegroup/usergroup/{serviceGroupID}", accessmap.GetUserGroupServiceGroupAccessMaps)
 
@@ -278,12 +281,13 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		r.Get("/system/settings/all", system.GlobalSettings)
 		r.Get("/system/security/rules", system.SecurityRules)
 		r.Post("/system/security/rule/update", system.UpdateSecurityRule)
-		r.Post("/system/settings/passwordpolicy/update", system.UpdatePasswordPolicy)
-		r.Get("/system/settings/passwordpolicy/enforce", passwordpolicy.EnforcePasswordPolicyNow)
 		r.Post("/system/settings/email/update", system.UpdateEmailSetting)
 		r.Post("/system/settings/devicehygienecheck/update", system.UpdateDeviceHygieneSetting)
 		r.Post("/system/settings/dynamicaccess/update", system.UpdateDynamicAccessSetting)
+
 		r.Post("/system/settings/cloudproxy/access", system.StoreCloudProxyKey)
+
+		r.Get("/system/welcome-note", system.WelcomeNote)
 
 		// Identity Providers
 		r.Post("/providers/uidp/create", uidp.CreateIdp)
@@ -305,6 +309,8 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		r.Delete("/providers/vault/tsxvault/reinit", system.ReInit)
 		r.Get("/providers/vault/tsxvault/status", system.Status)
 		r.Post("/providers/vault/tsxvault/decrypt", system.DecryptKey)
+
+		r.Post("/providers/vault/credprov", system.UpdateCredProv)
 
 		r.Post("/providers/ca/tsxca/init", ca.InitCA)
 		r.Post("/providers/ca/tsxca/ssh/init/{type}", ca.InitSSHCA)

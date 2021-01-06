@@ -166,8 +166,8 @@ func timeChecker(hour, minute int, from, to []int) bool {
 	return false
 }
 
-// TrasaUAC validates policy for user access
-func TrasaUAC(params *models.ConnectionParams, policy *models.Policy, adHocSwitch bool) (bool, consts.FailedReason) {
+// CheckPolicy validates policy for user access
+func CheckPolicy(params *models.ConnectionParams, policy *models.Policy, adHocSwitch bool) (bool, consts.FailedReason) {
 
 	ok := false
 	reason := consts.REASON_UNKNOWN
@@ -200,7 +200,7 @@ func CheckDevicePolicy(policy models.DevicePolicy, accessDeviceID, tfaDeviceID, 
 	accessDevice, err := devices.Store.GetFromID(accessDeviceID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return consts.REASON_DEVICE_NOT_ENROLLED, false, errors.Errorf("could not get access device detail of %s: %v", accessDeviceID, err)
+			return consts.REASON_DEVICE_NOT_FOUND, false, errors.Errorf("could not get access device detail of %s: %v", accessDeviceID, err)
 		} else {
 			return "Something is wrong", false, errors.Errorf("could not get access device detail: %v", err)
 		}
@@ -212,7 +212,7 @@ func CheckDevicePolicy(policy models.DevicePolicy, accessDeviceID, tfaDeviceID, 
 	tfaDevice, err := devices.Store.GetFromID(tfaDeviceID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return (consts.REASON_DEVICE_NOT_ENROLLED), false, err
+			return (consts.REASON_DEVICE_NOT_FOUND), false, err
 		} else {
 			return consts.REASON_UNKNOWN, false, errors.Errorf("could not get access device detail: %v", err)
 		}

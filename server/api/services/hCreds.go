@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/seknox/trasa/server/api/providers/vault/tsxvault"
+	"github.com/seknox/trasa/server/api/providers/vault"
 	"github.com/seknox/trasa/server/models"
 	"github.com/seknox/trasa/server/utils"
 	"github.com/sirupsen/logrus"
@@ -52,21 +52,21 @@ func StoreServiceCredentials(w http.ResponseWriter, r *http.Request) {
 	s.AddedAt = time.Now().Unix()
 	s.LastUpdated = time.Now().Unix()
 
-	err := tsxvault.Store.StoreSecret(s)
+	err := vault.Store.StoreCred(s)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "Could not save password", "failed to save password")
+		utils.TrasaResponse(w, 200, "failed", "Could not save secret", "failed to save secret")
 		return
 	}
 
 	err = Store.AddManagedAccounts(req.ServiceID, userContext.Org.ID, req.Username)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "Could not save password", "failed to save password")
+		utils.TrasaResponse(w, 200, "failed", "Could not save secret", "failed to save secret")
 		return
 	}
 
-	utils.TrasaResponse(w, 200, "success", "cred stored", fmt.Sprintf(`password saved for "%s" user `, req.Username), req.Username)
+	utils.TrasaResponse(w, 200, "success", "cred stored", fmt.Sprintf(`secret saved for "%s" user `, req.Username), req.Username)
 
 	// we also store user names that has been enrolled in secret store in cockroachdb to reference
 	// managed accounts in that app.
@@ -80,14 +80,14 @@ func ViewCreds(w http.ResponseWriter, r *http.Request) {
 
 	if err := utils.ParseAndValidateRequest(r, &req); err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "invalid request", "failed to view password", nil, nil)
+		utils.TrasaResponse(w, 200, "failed", "invalid request", "failed to view secret", nil, nil)
 		return
 	}
 
-	passCred, err1 := tsxvault.Store.GetSecret(userContext.User.OrgID, req.ServiceID, req.Type, req.Username)
+	passCred, err1 := vault.Store.ReadCred(userContext.User.OrgID, req.ServiceID, req.Type, req.Username)
 	if err1 != nil {
 		logrus.Error(err1)
-		utils.TrasaResponse(w, 200, "failed", "Could not view password", "failed to view password", nil, nil)
+		utils.TrasaResponse(w, 200, "failed", "Could not view secret", "failed to view secret", nil, nil)
 		return
 	}
 
@@ -97,11 +97,11 @@ func ViewCreds(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		//logrus.Error(err, "invalid service ID in view creds")
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "Invalid service", "failed to view password")
+		utils.TrasaResponse(w, 200, "failed", "Invalid service", "failed to view secret")
 		return
 	}
 
-	utils.TrasaResponse(w, 200, "success", "creds fetched", fmt.Sprintf(`viewed password for "%s" user in "%s" app`, req.Username, service.Name), req)
+	utils.TrasaResponse(w, 200, "success", "creds fetched", fmt.Sprintf(`viewed secret for "%s" user in "%s" app`, req.Username, service.Name), req)
 }
 
 // DeleteCreds deletes stored creds from both database and tsxvault.
@@ -116,9 +116,9 @@ func DeleteCreds(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err1 := tsxvault.Store.TsxvDeleteSecret(userContext.User.OrgID, req.ServiceID, "password", req.Username)
+	err1 := vault.Store.RemoveCred(userContext.User.OrgID, req.ServiceID, "password", req.Username)
 
-	err2 := tsxvault.Store.TsxvDeleteSecret(userContext.User.OrgID, req.ServiceID, "key", req.Username)
+	err2 := vault.Store.RemoveCred(userContext.User.OrgID, req.ServiceID, "key", req.Username)
 
 	if err1 != nil && err2 != nil {
 		logrus.Error(err1, err2)
