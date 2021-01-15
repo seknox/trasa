@@ -6,14 +6,15 @@ import Headers from '../../Layout/HeaderAndContent';
 import InAppTrails from './InappTrail';
 // import PasswordSettings from './Security/PasswordPolicy'
 import Setting from './Settings';
+import Bnr from './Bnr';
 
 function SystemView() {
   return (
     <Layout>
       <Headers
         pageName={[{ name: 'System', route: '/system' }]}
-        tabHeaders={['Audit Trails',  'Settings']}
-        Components={[<InAppTrails />,<Setting />]}
+        tabHeaders={['Audit Trails',  'Backup', 'Settings']}
+        Components={[<InAppTrails />,<Bnr />,<Setting />]}
       />
     </Layout>
   );
