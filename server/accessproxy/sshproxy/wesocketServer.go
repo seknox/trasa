@@ -3,7 +3,7 @@ package sshproxy
 import (
 	"database/sql"
 	"encoding/hex"
-	"runtime/debug"
+	"io"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -17,7 +17,7 @@ import (
 	"github.com/seknox/trasa/server/api/services"
 	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/models"
-	logrus "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 func JoinSSHSession(params models.ConnectionParams, uc models.UserContext, conn *websocket.Conn) {
@@ -300,21 +300,6 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 	}
 	defer session.Close()
 
-	stdInPipe, err := session.StdinPipe()
-	if err != nil {
-		logrus.Error(err)
-		return
-	}
-	defer stdInPipe.Close()
-
-	//session.Stdout=conn.UnderlyingConn()
-
-	stdOutPipe, err := session.StdoutPipe()
-	if err != nil {
-		logrus.Error(err)
-		return
-	}
-
 	guestChan := SSHStore.CreateGuestChannel(hex.EncodeToString(sshClient.SessionID()))
 	defer SSHStore.deleteGuestChannel(hex.EncodeToString(sshClient.SessionID()))
 
@@ -322,14 +307,21 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 	defer logs.Store.RemoveActiveSession(hex.EncodeToString(sshClient.SessionID()))
 	//logrus.Trace("SESSION ID is", hex.EncodeToString(sshClient.SessionID()))
 
+	wsshFrontEndConn := NewWebSSHFrontEndConn(conn)
+	wsshBackendConn, err := NewWebSSHBackend(session)
+	if err != nil {
+		logrus.Error(err)
+		//TODO write ewrr msg
+		wsshFrontEndConn.Close()
+		return
+	}
+
 	//TODO use generic function to pipe tunnels
-	wrappedChannel, err := NewWrappedTunnel(authlog.SessionID, policy.RecordSession, stdOutPipe, stdInPipe, guestChan)
+	wrappedChannel, err := NewWrappedTunnel(authlog.SessionID, policy.RecordSession, wsshBackendConn, wsshFrontEndConn, guestChan)
 	if err != nil {
 		logrus.Error(err)
 		return
 	}
-
-	defer wrappedChannel.Close()
 
 	//
 	//modes := ssh.TerminalModes{
@@ -356,57 +348,58 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 	}
 
 	//session.Wait()
+	wrappedChannel.pipe()
 
-	go func() {
-		defer func() {
-			if r := recover(); r != nil {
-				logrus.Error("Recovered in websocketServer.go", r, string(debug.Stack()))
-			}
-		}()
-		for {
-
-			buff := make([]byte, 100)
-			n, err := wrappedChannel.Read(buff)
-			if err != nil {
-				logrus.Debug(err)
-				return
-			}
-			if n > 0 {
-				err := conn.WriteMessage(1, buff)
-				if err != nil {
-					logrus.Debug(err)
-					return
-				}
-			}
-
-		}
-
-	}()
-
-	func() {
-		for {
-			//	logrus.Debugln("-__-")
-			_, msg, err := conn.ReadMessage()
-			if err != nil {
-				logrus.Debug(err)
-				return
-			}
-
-			n, err := stdInPipe.Write(msg)
-			if err != nil {
-				logrus.Debug(err, n)
-
-				return
-			}
-
-		}
-	}()
+	//go func() {
+	//	defer func() {
+	//		if r := recover(); r != nil {
+	//			logrus.Error("Recovered in websocketServer.go", r, string(debug.Stack()))
+	//		}
+	//	}()
+	//	for !wrappedChannel.closed {
+	//
+	//		buff := make([]byte, 100)
+	//		n, err := wrappedChannel.Read(buff)
+	//		if err != nil {
+	//			logrus.Debug(err)
+	//			return
+	//		}
+	//		if n > 0 {
+	//			err := conn.WriteMessage(1, buff)
+	//			if err != nil {
+	//				logrus.Debug(err)
+	//				return
+	//			}
+	//		}
+	//
+	//	}
+	//
+	//}()
+	//
+	//func() {
+	//	for !wrappedChannel.closed{
+	//		_, msg, err := conn.ReadMessage()
+	//		if err != nil {
+	//			logrus.Debug(err)
+	//			return
+	//		}
+	//
+	//		n, err := stdInPipe.Write(msg)
+	//		if err != nil {
+	//			logrus.Debug(err, n)
+	//
+	//			return
+	//		}
+	//
+	//	}
+	//}()
 
 }
 
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
+	Subprotocols:    []string{"xterm"},
 }
 
 func checkAndInitParams(uc *models.UserContext, params *models.ConnectionParams) {
@@ -442,4 +435,71 @@ func logSession(authlog *logs.AuthLog) {
 		logrus.Error(err)
 	}
 
+}
+
+type webSSHBackendConn struct {
+	stdIn   io.Writer
+	stdOut  io.Reader
+	session *ssh.Session
+}
+
+func NewWebSSHBackend(session *ssh.Session) (*webSSHBackendConn, error) {
+	stdInPipe, err := session.StdinPipe()
+	if err != nil {
+		return nil, err
+	}
+
+	stdOutPipe, err := session.StdoutPipe()
+	if err != nil {
+		return nil, err
+	}
+
+	return &webSSHBackendConn{
+		stdIn:   stdInPipe,
+		stdOut:  stdOutPipe,
+		session: session,
+	}, nil
+
+}
+
+func (wssb webSSHBackendConn) Read(p []byte) (int, error) {
+	return wssb.stdOut.Read(p)
+}
+func (wssb *webSSHBackendConn) Write(p []byte) (int, error) {
+	return wssb.stdIn.Write(p)
+}
+func (wssb *webSSHBackendConn) Close() error {
+	return wssb.session.Close()
+}
+
+type webSSHFrontEndConn struct {
+	wsConn *websocket.Conn
+}
+
+func NewWebSSHFrontEndConn(ws *websocket.Conn) *webSSHFrontEndConn {
+	return &webSSHFrontEndConn{
+		wsConn: ws,
+	}
+}
+
+func (websshConn *webSSHFrontEndConn) Read(p []byte) (int, error) {
+	_, byt, err := websshConn.wsConn.ReadMessage()
+	if err != nil {
+		return 0, err
+	}
+	copy(p, byt)
+	return len(byt), nil
+}
+
+func (websshConn *webSSHFrontEndConn) Write(p []byte) (int, error) {
+	err := websshConn.wsConn.WriteMessage(websocket.BinaryMessage, p)
+	if err != nil {
+		return 0, err
+	}
+
+	return len(p), nil
+}
+
+func (websshConn *webSSHFrontEndConn) Close() error {
+	return websshConn.wsConn.Close()
 }

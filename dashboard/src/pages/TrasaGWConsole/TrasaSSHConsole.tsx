@@ -77,18 +77,21 @@ export function SSHLiveSession(props: any) {
 
       wskt.send(JSON.stringify(newReq));
       term.onData((data) => {
-        //  console.log(data)
+        console.log(data)
         wskt.send(data);
-        //  term.write(data);
       });
-      // setInterval(() => {
-      //         wskt.send("pong");
-      // }, 5000);
+
     };
-    wskt.onmessage = (evt) => {
-      //  console.log('--------------- ', evt.data)
-      // alert("Message is received...");
-      term.write(evt.data);
+    wskt.onmessage = async (evt) => {
+     //for text data
+      if(typeof (evt.data)=="string"){
+        term.write( evt.data);
+
+      }else {
+        //For binary data
+        term.write( new Uint8Array(await evt.data.arrayBuffer()));
+
+      }
     };
   };
 
