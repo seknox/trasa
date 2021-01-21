@@ -248,7 +248,7 @@ export default function ServicegroupUsergroupMapTable(props: any) {
         filter: true,
         customBodyRender: (value: any, tableMeta: MUIDataTableMeta) => {
           return (
-            <a style={links} href="/control#Access Policies">
+            <a style={links} href="/policies#Access Policies">
               {value}
             </a>
           );
@@ -273,14 +273,14 @@ export default function ServicegroupUsergroupMapTable(props: any) {
             <div>
               {updateRow && updateRowIndex === tableMeta.rowIndex ? (
                 <div>
-                  <IconButton id='savePrivilegeBtn' color="primary" onClick={udpateAppusername}>
+                  <IconButton id="savePrivilegeBtn" color="primary" onClick={udpateAppusername}>
                     {loader && <CircularProgress size={48} className={classes.fabProgress} />}
                     {loader ? <CheckIcon /> : <SaveIcon />}
                   </IconButton>
                 </div>
               ) : (
                 <IconButton
-                  id='editGroupPrivilegeBtn'
+                  id="editGroupPrivilegeBtn"
                   color="primary"
                   onClick={() => {
                     updateEditRowState(tableMeta);

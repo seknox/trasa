@@ -37,7 +37,7 @@ const Overview = lazy(() => import('./pages/Overview'));
 const PublicView = lazy(() => import('./pages/Publicpages'));
 const MyView = lazy(() => import('./pages/My'));
 const Providers = lazy(() => import('./pages/Providers'));
-const Control = lazy(() => import('./pages/Control'));
+const Policies = lazy(() => import('./pages/Policies'));
 const Users = lazy(() => import('./pages/Users'));
 const Services = lazy(() => import('./pages/Services'));
 const Monitor = lazy(() => import('./pages/Monitor'));
@@ -111,9 +111,8 @@ export default class APP extends Component<AppProps, Tstate> {
       return config;
     });
 
-      Constants.TRASA_HOSTNAME = `https://${window.location.hostname}`;
-      Constants.TRASA_HOSTNAME_WEBSOCKET = `wss://${window.location.hostname}`;
-
+    Constants.TRASA_HOSTNAME = `https://${window.location.hostname}`;
+    Constants.TRASA_HOSTNAME_WEBSOCKET = `wss://${window.location.hostname}`;
   }
 
   snackClose = (reason: string) => {
@@ -137,7 +136,7 @@ export default class APP extends Component<AppProps, Tstate> {
               <Route path="/my" component={MyView} />
               <Route path="/overview" component={Overview} />
               <Route path="/login" component={LoginPage} />
-              <Route path="/control" component={Control} />
+              <Route path="/policies" component={Policies} />
               <Route path="/providers" component={Providers} />
               <Route path="/monitor" component={Monitor} />
               <Route path="/system" component={System} />

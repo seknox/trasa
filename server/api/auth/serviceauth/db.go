@@ -54,7 +54,7 @@ func DBLogin(w http.ResponseWriter, r *http.Request) {
 
 	service, err := services.Store.GetFromHostname(remoteLogin.Hostname, "db", "", userDetails.OrgID)
 	if errors.Is(err, sql.ErrNoRows) {
-		service, err = accessmap.CreateDynamicService(remoteLogin.Hostname, "db", userDetails.ID, remoteLogin.TrasaID, remoteLogin.User, remoteLogin.OrgID)
+		service, err = accessmap.CreateDynamicService(remoteLogin.Hostname, "db", remoteLogin.TrasaID, remoteLogin.OrgID)
 		if err != nil {
 			logrus.Debug(err)
 			authlog.FailedReason = consts.REASON_DYNAMIC_SERVICE_FAILED

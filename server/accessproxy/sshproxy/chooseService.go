@@ -16,7 +16,7 @@ import (
 )
 
 //This function takes  keyboardInteractive callback function to  get user to choose service/hostname
-func chooseService(privilege, userID, userEmail string, challengeUser ssh.KeyboardInteractiveChallenge) (*models.Service, error) {
+func chooseService(userEmail string, challengeUser ssh.KeyboardInteractiveChallenge) (*models.Service, error) {
 
 	//take input(upstream server) from user and validate
 	//loop until valid service is choosen
@@ -56,7 +56,7 @@ func chooseService(privilege, userID, userEmail string, challengeUser ssh.Keyboa
 			//If given input is hostname
 			service, err = services.Store.GetFromHostname(input, "ssh", "", global.GetConfig().Trasa.OrgId)
 			if errors.Is(err, sql.ErrNoRows) {
-				service, err = accessmap.CreateDynamicService(input, "ssh", userID, userEmail, privilege, global.GetConfig().Trasa.OrgId)
+				service, err = accessmap.CreateDynamicService(input, "ssh", userEmail, global.GetConfig().Trasa.OrgId)
 				if err != nil {
 					logrus.Errorf("dynamic access: %v", err)
 					challengeUser("", "Service not assigned. You do not have dynamic access", nil, nil)
