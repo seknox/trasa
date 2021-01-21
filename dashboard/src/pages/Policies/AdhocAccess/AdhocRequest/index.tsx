@@ -35,7 +35,7 @@ export default function AccessRequests() {
 
   useEffect(() => {
     axios
-      .get(Constants.TRASA_HOSTNAME + '/api/v1/iam/adhoc/requests/my')
+      .get(Constants.TRASA_HOSTNAME + '/api/v1/policy/adhoc/requests/my')
       .then((response) => {
         let data = response.data.data[0];
         if (data != null) {

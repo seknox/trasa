@@ -99,7 +99,7 @@ export default function Policies() {
 
     const req = { policyID: [policy.policyID] };
     axios
-      .post(`${Constants.TRASA_HOSTNAME}/api/v1/groups/policy/delete`, req)
+      .post(`${Constants.TRASA_HOSTNAME}/api/v1/policy/delete`, req)
       .then(() => {
         window.location.reload();
       })
@@ -110,7 +110,7 @@ export default function Policies() {
 
   const getAllPolicies = () => {
     axios
-      .get(`${Constants.TRASA_HOSTNAME}/api/v1/groups/policy/all`)
+      .get(`${Constants.TRASA_HOSTNAME}/api/v1/policy/all`)
       .then((response) => {
         // this.setState({allUsers: response.data})
         const resp = response.data.data[0];

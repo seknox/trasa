@@ -51,7 +51,7 @@ export default function GrantOrDenyAccess(props: grantOrDenyAccessprops) {
     }
 
     axios
-      .post(`${Constants.TRASA_HOSTNAME}/api/v1/iam/adhoc/respond`, req)
+      .post(`${Constants.TRASA_HOSTNAME}/api/v1/policy/adhoc/respond`, req)
       .then((response) => {
         setLoader(false);
 

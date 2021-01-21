@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/seknox/trasa/server/api/adhoc"
 	"net/http"
+
+	"github.com/seknox/trasa/server/api/adhoc"
 
 	"github.com/seknox/trasa/server/accessproxy/rdpproxy"
 	"github.com/seknox/trasa/server/accessproxy/sshproxy"
@@ -239,16 +240,18 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		//Devices
 
 		//////////////////// 	POLICY 		/////////////////////////
-		r.Post("/groups/policy/create", policies.CreatePolicy)
-		r.Post("/groups/policy/update", policies.UpdatePolicy)
-		r.Get("/groups/policy/all", policies.GetPolicies)
-		r.Get("/groups/policy/{policyID}", policies.GetPolicy)
-		r.Post("/groups/policy/delete", policies.DeletePolicies)
-
+		r.Post("/policy/create", policies.CreatePolicy)
+		r.Post("/policy/update", policies.UpdatePolicy)
+		r.Get("/policy/all", policies.GetPolicies)
+		r.Get("/policy/{policyID}", policies.GetPolicy)
+		r.Post("/policy/delete", policies.DeletePolicies)
+		
 		//AD Hoc
-		r.Get("/iam/adhoc/requests/my", adhoc.AdhocReqAssignedToMe)
-		r.Post("/iam/adhoc/respond", adhoc.GrantOrDenyAdhoc)
-		r.Get("/iam/adhoc/requests/all", adhoc.GetAllAdhoqRequests)
+		r.Get("/policy/adhoc/requests/my", adhoc.AdhocReqAssignedToMe)
+		r.Post("/policy/adhoc/respond", adhoc.GrantOrDenyAdhoc)
+		r.Get("/policy/adhoc/requests/all", adhoc.GetAllAdhoqRequests)
+
+
 
 		//Logs
 		r.Get("/logs/auth/{entitytype}/{entityid}", logs.GetLoginEvents)

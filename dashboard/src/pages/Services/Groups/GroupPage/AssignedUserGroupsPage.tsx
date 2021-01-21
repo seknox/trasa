@@ -33,7 +33,7 @@ export default function AssignedUserGroup(props: any) {
 
   const fetchPolicies = () => {
     axios
-      .get(`${Constants.TRASA_HOSTNAME}/api/v1/groups/policy/all`)
+      .get(`${Constants.TRASA_HOSTNAME}/api/v1/policy/all`)
       .then((response) => {
         // this.setState({allUsers: response.data})
         const resp = response.data.data[0];
@@ -52,7 +52,7 @@ export default function AssignedUserGroup(props: any) {
   return (
     <div>
       <Button
-        id='assignUserGroupBtn'
+        id="assignUserGroupBtn"
         variant="contained"
         color="secondary"
         size="small"

@@ -45,7 +45,7 @@ export default function AdhocRequestHistory(props: adhocProps) {
 
   useEffect(() => {
     axios
-      .get(Constants.TRASA_HOSTNAME + '/api/v1/iam/adhoc/requests/all')
+      .get(Constants.TRASA_HOSTNAME + '/api/v1/policy/adhoc/requests/all')
       .then((response) => {
         //console.log(response.data);
         let data = response.data.data[0];
