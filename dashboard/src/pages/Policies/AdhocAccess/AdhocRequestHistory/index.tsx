@@ -3,7 +3,11 @@ import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
 import 'date-fns';
-import MUIDataTable, { MUIDataTableColumn, MUIDataTableMeta, MUIDataTableOptions } from 'mui-datatables';
+import MUIDataTable, {
+  MUIDataTableColumn,
+  MUIDataTableMeta,
+  MUIDataTableOptions,
+} from 'mui-datatables';
 import React, { useEffect, useState } from 'react';
 import Constants from '../../../../Constants';
 import ViewAdhocSession from './ViewAdhocSession';
@@ -11,60 +15,21 @@ import ViewAdhocSession from './ViewAdhocSession';
 const lightColor = 'rgba(255, 255, 255, 0.7)'; //'rgba(255, 255, 255, 0.7)'; // '#030417';
 
 const useStyles = makeStyles((theme) => ({
-  mainContent: {
-    flex: 1,
-    padding: '48px 36px 0',
-    background: '#eaeff1' //'#eaeff1',
-  },
   paper: {
     maxWidth: 1500,
     margin: 'auto',
     marginTop: 50,
     overflow: 'hidden',
-    padding: theme.spacing(2)
-  },
-  searchBar: {
-    borderBottom: '1px solid rgba(0, 0, 0, 0.12)'
-  },
-  searchInput: {
-    fontSize: theme.typography.fontSize
-  },
-  block: {
-    display: 'block'
-  },
-  addUser: {
-    marginRight: theme.spacing(1)
+    padding: theme.spacing(2),
   },
   contentWrapper: {
-    margin: '40px 16px'
+    margin: '40px 16px',
   },
-  secondaryBar: {
-    zIndex: 0
-  },
-  button: {
-    borderColor: lightColor
-  },
-  svg: {
-    width: 100,
-    height: 100
-  },
-  polygon: {
-    fill: theme.palette.common.white,
-    stroke: theme.palette.divider,
-    strokeWidth: 1
-  }
 }));
-
-const tableHeader = {
-  fontColor: 'black',
-  fontWeight: 'bold',
-  fontSize: '17px',
-  fontFamily: 'Open Sans, Rajdhani'
-};
 
 type adhocProps = {
   orgID: string;
-}
+};
 
 export default function AdhocRequestHistory(props: adhocProps) {
   const [requestHistory, setRequestHistory] = useState([]);
@@ -121,7 +86,7 @@ export default function AdhocRequestHistory(props: adhocProps) {
                 ':-:' +
                 n.authorizedOn +
                 ':-:' +
-                n.serviceType
+                n.serviceType,
             ];
           });
           setRequestHistory(dataArr);
@@ -159,8 +124,8 @@ export default function AdhocRequestHistory(props: adhocProps) {
         filter: true,
         customBodyRender: (value: any) => {
           return value;
-        }
-      }
+        },
+      },
     },
     {
       name: 'Sanctioned By',
@@ -168,8 +133,8 @@ export default function AdhocRequestHistory(props: adhocProps) {
         filter: true,
         customBodyRender: (value: any) => {
           return value;
-        }
-      }
+        },
+      },
     },
     {
       name: 'Status',
@@ -177,18 +142,18 @@ export default function AdhocRequestHistory(props: adhocProps) {
         filter: true,
         customBodyRender: (value: any) => {
           return value;
-        }
-      }
+        },
+      },
     },
     {
       name: 'Access Reason',
       options: {
         filter: true,
         display: false,
-        customBodyRender: (value:any) => {
+        customBodyRender: (value: any) => {
           return value;
-        }
-      }
+        },
+      },
     },
     {
       name: 'Service Name',
@@ -196,8 +161,8 @@ export default function AdhocRequestHistory(props: adhocProps) {
         filter: true,
         customBodyRender: (value: any) => {
           return value;
-        }
-      }
+        },
+      },
     },
     {
       name: 'Requested On',
@@ -205,14 +170,14 @@ export default function AdhocRequestHistory(props: adhocProps) {
         filter: true,
         customBodyRender: (value: any) => {
           return value;
-        }
-      }
+        },
+      },
     },
     {
       name: 'View Detail',
       options: {
         filter: false,
-        customBodyRender: (value: any, tableMeta: MUIDataTableMeta, updateValue:(value: string) => void) => {
+        customBodyRender: (value: any) => {
           return (
             <Button
               onClick={() => handleRequestDialogueOpen(value)}
@@ -222,9 +187,9 @@ export default function AdhocRequestHistory(props: adhocProps) {
               View
             </Button>
           );
-        }
-      }
-    }
+        },
+      },
+    },
   ];
 
   return (
@@ -237,8 +202,8 @@ export default function AdhocRequestHistory(props: adhocProps) {
           options={options as MUIDataTableOptions}
         />
       ) : (
-        <Paper className={classes.paper} elevation={5}>
-          <p>looks like you dont have any adhoc history yet!</p>
+        <Paper className={classes.paper} elevation={1}>
+          <p>There is no adhoc access history to show.</p>
         </Paper>
       )}
 
@@ -259,5 +224,5 @@ export default function AdhocRequestHistory(props: adhocProps) {
 
 const options = {
   filter: true,
-  responsive: 'scrollMaxHeight'
+  responsive: 'scrollMaxHeight',
 };

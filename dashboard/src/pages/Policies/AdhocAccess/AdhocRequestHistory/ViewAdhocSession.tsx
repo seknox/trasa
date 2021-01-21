@@ -4,59 +4,10 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Grid from '@material-ui/core/Grid';
-import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import 'date-fns';
 import Moment from 'moment';
 import React from 'react';
-import serviceTypes from '../../../Overview/ResourceStats/ServicesStats/ServiceTypes';
-
-const lightColor = 'rgba(255, 255, 255, 0.7)'; // 'rgba(255, 255, 255, 0.7)'; // '#030417';
-
-const useStyles = makeStyles((theme) => ({
-  mainContent: {
-    flex: 1,
-    padding: '48px 36px 0',
-    background: '#eaeff1', // '#eaeff1',
-  },
-  paper: {
-    maxWidth: 1500,
-    margin: 'auto',
-    marginTop: 50,
-    overflow: 'hidden',
-    padding: theme.spacing(2),
-  },
-  searchBar: {
-    borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
-  },
-  searchInput: {
-    fontSize: theme.typography.fontSize,
-  },
-  block: {
-    display: 'block',
-  },
-  addUser: {
-    marginRight: theme.spacing(1),
-  },
-  contentWrapper: {
-    margin: '40px 16px',
-  },
-  secondaryBar: {
-    zIndex: 0,
-  },
-  button: {
-    borderColor: lightColor,
-  },
-  svg: {
-    width: 100,
-    height: 100,
-  },
-  polygon: {
-    fill: theme.palette.common.white,
-    stroke: theme.palette.divider,
-    strokeWidth: 1,
-  },
-}));
 
 type viewAdhocSessionProps = {
   reqText: string;
@@ -138,27 +89,37 @@ const ViewSession = (props: any) => {
                   // window.location.href="/overview/session/"+sessionID
                   if (props.serviceType === 'ssh') {
                     window.open(
-                      `/monitor/sessions/view#type=ssh&year=${d.year()}&month=${d.months()+1}&day=${d.date()}&sessionID=${session}`,
+                      `/monitor/sessions/view#type=ssh&year=${d.year()}&month=${
+                        d.months() + 1
+                      }&day=${d.date()}&sessionID=${session}`,
                       '_blank',
                     );
                   } else if (props.serviceType === 'guac-ssh') {
                     window.open(
-                      `/monitor/sessions/view#type=guac-ssh&year=${d.year()}&month=${d.months()+1}&day=${d.date()}&sessionID=${session}`,
+                      `/monitor/sessions/view#type=guac-ssh&year=${d.year()}&month=${
+                        d.months() + 1
+                      }&day=${d.date()}&sessionID=${session}`,
                       '_blank',
                     );
                   } else if (props.serviceType === 'guac-rdp') {
                     window.open(
-                      `/monitor/sessions/view#type=guac-rdp&year=${d.year()}&month=${d.months()+1}&day=${d.date()}&sessionID=${session}`,
+                      `/monitor/sessions/view#type=guac-rdp&year=${d.year()}&month=${
+                        d.months() + 1
+                      }&day=${d.date()}&sessionID=${session}`,
                       '_blank',
                     );
                   } else if (props.serviceType === 'rdp') {
                     window.open(
-                      `/monitor/sessions/view#type=rdp&year=${d.year()}&month=${d.months()+1}&day=${d.date()}&sessionID=${session}`,
+                      `/monitor/sessions/view#type=rdp&year=${d.year()}&month=${
+                        d.months() + 1
+                      }&day=${d.date()}&sessionID=${session}`,
                       '_blank',
                     );
                   } else if (props.serviceType === 'http') {
                     window.open(
-                      `/monitor/sessions/view#type=http&year=${d.year()}&month=${d.months()+1}&day=${d.date()}&sessionID=${session}`,
+                      `/monitor/sessions/view#type=http&year=${d.year()}&month=${
+                        d.months() + 1
+                      }&day=${d.date()}&sessionID=${session}`,
                       '_blank',
                     );
                   }
@@ -167,12 +128,12 @@ const ViewSession = (props: any) => {
                 View Session
               </Button>{' '}
             </Grid>
-            ) : (
+          ) : (
             <Grid item xs={3}>
               {` ( ${i + 1} ) `}
               <Button style={{ color: 'black' }}> Not Recorded </Button>{' '}
             </Grid>
-            ),
+          ),
         )}
       </Grid>
     </div>

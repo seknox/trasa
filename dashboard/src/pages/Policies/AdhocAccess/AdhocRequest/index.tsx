@@ -3,81 +3,27 @@ import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import axios from 'axios';
 import 'date-fns';
-import MUIDataTable, { MUIDataTableColumn, MUIDataTableMeta, MUIDataTableOptions } from 'mui-datatables';
+import MUIDataTable, {
+  MUIDataTableColumn,
+  MUIDataTableMeta,
+  MUIDataTableOptions,
+} from 'mui-datatables';
 import React, { useEffect, useState } from 'react';
 import Constants from '../../../../Constants';
 import GrantOrDenyAccess from './GrantOrDenyAccess';
 
-
-const lightColor = 'rgba(255, 255, 255, 0.7)'; //'rgba(255, 255, 255, 0.7)'; // '#030417';
-
 const useStyles = makeStyles((theme) => ({
-  mainContent: {
-    flex: 1,
-    padding: '48px 36px 0',
-    background: '#eaeff1' //'#eaeff1',UpdateAdhocRequest
-  },
   paper: {
     maxWidth: 1500,
     margin: 'auto',
     marginTop: 50,
     overflow: 'hidden',
-    padding: theme.spacing(2)
-  },
-  searchBar: {
-    borderBottom: '1px solid rgba(0, 0, 0, 0.12)'
-  },
-  searchInput: {
-    fontSize: theme.typography.fontSize
-  },
-  block: {
-    display: 'block'
-  },
-  addUser: {
-    marginRight: theme.spacing(1)
+    padding: theme.spacing(2),
   },
   contentWrapper: {
-    margin: '40px 16px'
+    margin: '40px 16px',
   },
-  secondaryBar: {
-    zIndex: 0
-  },
-  button: {
-    borderColor: lightColor,
-    color: 'blue'
-  },
-  svg: {
-    width: 100,
-    height: 100
-  },
-  polygon: {
-    fill: theme.palette.common.white,
-    stroke: theme.palette.divider,
-    strokeWidth: 1
-  },
-  successText: {
-    fontSize: 15,
-    color: 'green'
-  },
-  errorText: {
-    fontSize: 15,
-    color: 'red'
-  },
-
-  headings: {
-    fontWeight: 'bold',
-    color: 'black',
-    fontSize: '15px',
-    fontFamily: 'Open Sans, Rajdhani'
-  },
-  subHeadings: {
-    color: 'black',
-    fontSize: '10px',
-    fontFamily: 'Open Sans, Rajdhani'
-  }
 }));
-
-
 
 export default function AccessRequests() {
   const [users, setUsers] = useState<Array<string[]>>([]);
@@ -101,7 +47,7 @@ export default function AccessRequests() {
               n.requesterEmail,
               n.serviceName,
               date.toDateString(),
-              n.reqID + ':-:' + n.requestTxt
+              n.reqID + ':-:' + n.requestTxt,
             ];
           });
           setUsers(dataArr);
@@ -124,7 +70,7 @@ export default function AccessRequests() {
     }
   };
 
-  const handleRequestDialogueOpen = (reqID:string, tableMeta: any) => {
+  const handleRequestDialogueOpen = (reqID: string, tableMeta: any) => {
     let reqData = reqID.split(':-:');
     setReqDlgOpen(true);
     setReqID(reqData[0]);
@@ -144,19 +90,19 @@ export default function AccessRequests() {
       options: {
         filter: true,
         display: false,
-        customBodyRender: (value:any) => {
+        customBodyRender: (value: any) => {
           return value;
-        }
-      }
+        },
+      },
     },
     {
       name: 'Requested By',
       options: {
         filter: true,
-        customBodyRender: (value:any) => {
+        customBodyRender: (value: any) => {
           return value;
-        }
-      }
+        },
+      },
     },
     {
       name: 'Service Name',
@@ -164,8 +110,8 @@ export default function AccessRequests() {
         filter: true,
         customBodyRender: (value: any) => {
           return value;
-        }
-      }
+        },
+      },
     },
     {
       name: 'Requested On',
@@ -173,14 +119,18 @@ export default function AccessRequests() {
         filter: true,
         customBodyRender: (value: any) => {
           return value;
-        }
-      }
+        },
+      },
     },
     {
       name: 'View Detail',
       options: {
         filter: false,
-        customBodyRender: (value: any, tableMeta: MUIDataTableMeta, updateValue:(value: string) => void) => {
+        customBodyRender: (
+          value: any,
+          tableMeta: MUIDataTableMeta,
+          updateValue: (value: string) => void,
+        ) => {
           return (
             <Button
               onClick={() => handleRequestDialogueOpen(value, tableMeta)}
@@ -190,9 +140,9 @@ export default function AccessRequests() {
               View
             </Button>
           );
-        }
-      }
-    }
+        },
+      },
+    },
   ];
 
   return (
@@ -205,8 +155,8 @@ export default function AccessRequests() {
           options={options as MUIDataTableOptions}
         />
       ) : (
-        <Paper className={classes.paper} elevation={5}>
-          <p>looks like you dont have any active adhoc requests to approve!</p>
+        <Paper className={classes.paper} elevation={1}>
+          <p>You dont have any active adhoc request to approve.</p>
         </Paper>
       )}
       <GrantOrDenyAccess
@@ -225,5 +175,5 @@ const options = {
   filter: true,
   responsive: 'scrollMaxHeight',
   selectableRows: 'none',
-  count: 5
+  count: 5,
 };

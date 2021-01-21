@@ -14,63 +14,13 @@ import React, { useState } from 'react';
 import ProgressHOC from '../../../../utils/Components/Progressbar';
 import Constants from '../../../../Constants';
 
-const lightColor = 'rgba(255, 255, 255, 0.7)'; // 'rgba(255, 255, 255, 0.7)'; // '#030417';
-
 const useStyles = makeStyles((theme) => ({
-  mainContent: {
-    flex: 1,
-    padding: '48px 36px 0',
-    background: '#eaeff1', // '#eaeff1',UpdateAdhocRequest
-  },
   paper: {
     maxWidth: 1500,
     margin: 'auto',
     marginTop: 50,
     overflow: 'hidden',
     padding: theme.spacing(2),
-  },
-  searchBar: {
-    borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
-  },
-  searchInput: {
-    fontSize: theme.typography.fontSize,
-  },
-  block: {
-    display: 'block',
-  },
-  addUser: {
-    marginRight: theme.spacing(1),
-  },
-  contentWrapper: {
-    margin: '40px 16px',
-  },
-  secondaryBar: {
-    zIndex: 0,
-  },
-  button: {
-    borderColor: lightColor,
-    color: 'blue',
-  },
-  svg: {
-    width: 100,
-    height: 100,
-  },
-  polygon: {
-    fill: theme.palette.common.white,
-    stroke: theme.palette.divider,
-    strokeWidth: 1,
-  },
-
-  headings: {
-    fontWeight: 'bold',
-    color: 'black',
-    fontSize: '15px',
-    fontFamily: 'Open Sans, Rajdhani',
-  },
-  subHeadings: {
-    color: 'black',
-    fontSize: '10px',
-    fontFamily: 'Open Sans, Rajdhani',
   },
 }));
 
@@ -92,7 +42,7 @@ export default function GrantOrDenyAccess(props: grantOrDenyAccessprops) {
     const req = {
       reqID: props.reqID,
       authorizedPeriod: selectedTime.getTime(),
-    //  serviceID: props.serviceID,
+      //  serviceID: props.serviceID,
       isAuthorized: false,
     };
 

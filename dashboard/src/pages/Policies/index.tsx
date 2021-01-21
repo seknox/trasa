@@ -5,6 +5,7 @@ import Headers from '../../Layout/HeaderAndContent';
 
 import AccessPolicies from './AccessPolicies';
 import SecurityRules from './SecurityRules';
+import AdhocAccess from './AdhocAccess';
 
 function PolicyView() {
   return (
@@ -12,8 +13,8 @@ function PolicyView() {
       <Layout>
         <Headers
           pageName={[{ name: 'Policies', route: '/policies' }]}
-          tabHeaders={['Access Policies', 'Security Rules']}
-          Components={[<AccessPolicies />, <SecurityRules />]}
+          tabHeaders={['Access Policies', 'Adhoc Access', 'Security Rules']}
+          Components={[<AccessPolicies />, <AdhocAccess />, <SecurityRules />]}
         />
       </Layout>
     </div>
