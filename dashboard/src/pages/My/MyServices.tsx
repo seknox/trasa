@@ -45,118 +45,8 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
     color: theme.palette.text.secondary,
   },
-
-  dialogtitle: {
-    fontSize: 24,
-  },
-  card: {
-    marginLeft: 20,
-    height: 200,
-  },
-  button: {
-    backgroundColor: '#000080',
-  },
-  buttonSpace: {
-    flexgrow: 1,
-    justifyContent: 'space-between',
-  },
-
-  requestButton: {
-    color: 'white',
-    backgroundColor: '#000080',
-  },
-  // form
-  formControl: {
-    margin: theme.spacing(1),
-  },
-  inputLabelFocused: {
-    color: purple[500],
-  },
-  inputInkbar: {
-    '&:after': {
-      backgroundColor: purple[500],
-    },
-  },
-  textFieldRoot: {
-    padding: 1,
-    'label + &': {
-      marginTop: theme.spacing(3),
-    },
-  },
-
-  textFieldInput: {
-    borderRadius: 4,
-    backgroundColor: theme.palette.common.white,
-    border: '1px solid #ced4da',
-    fontSize: 16,
-    padding: '10px 12px',
-    width: 'calc(100% - 4px)',
-    transition: theme.transitions.create(['border-color', 'box-shadow']),
-    '&:focus': {
-      borderColor: '#80bdff',
-      boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
-    },
-  },
-  textFieldInputBig: {
-    borderRadius: 4,
-    backgroundColor: theme.palette.common.white,
-    border: '1px solid #ced4da',
-    fontSize: 16,
-    //    padding: '10px 100px',
-    //     width: 'calc(100% - 4px)',
-    transition: theme.transitions.create(['border-color', 'box-shadow']),
-    '&:focus': {
-      borderColor: '#80bdff',
-      boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
-    },
-  },
-  textFieldFormLabel: {
-    fontSize: 18,
-  },
-  buttonProgress: {
-    color: green[500],
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
-  },
-  successText: {
-    fontSize: 15,
-    color: 'green',
-  },
-  errorText: {
-    fontSize: 15,
-    color: 'red',
-  },
-  fab: {
-    margin: theme.spacing(2),
-  },
-  fab2: {
-    margin: theme.spacing(2),
-  },
-  users: {
-    margin: theme.spacing(2),
-  },
-  dividerInset: {
-    margin: `5px 0 0 ${theme.spacing(9)}px`,
-  },
-  servicesDemiter: {
-    marginBottom: 20,
-  },
-  lightTooltip: {
-    backgroundColor: theme.palette.common.white,
-    color: 'rgba(0, 0, 0, 0.87)',
-    boxShadow: theme.shadows[1],
-    fontSize: 11,
-  },
   extendedIcon: {
     marginRight: '10px',
-  },
-  ServiceName: {
-    color: 'black',
-    fontSize: '12px',
-    fontFamily: 'Open Sans, Rajdhani',
   },
   searchRoot: {
     marginLeft: '35%',
@@ -172,10 +62,22 @@ const useStyles = makeStyles((theme) => ({
   iconButton: {
     padding: 10,
   },
-  divider: {
-    width: 1,
-    height: 28,
-    margin: 4,
+  servicesDemiter: {
+    marginBottom: 20,
+  },
+  lightTooltip: {
+    backgroundColor: theme.palette.common.white,
+    color: 'rgba(0, 0, 0, 0.87)',
+    boxShadow: theme.shadows[1],
+    fontSize: 11,
+  },
+
+  buttonSpace: {
+    flexgrow: 1,
+    justifyContent: 'space-between',
+  },
+  formControl: {
+    margin: theme.spacing(1),
   },
 }));
 
@@ -310,7 +212,7 @@ export default function MyservicesList() {
   );
   return (
     <div className={classes.root}>
-      <Button variant="contained" className={classes.button} onClick={handleNewconDlgState}>
+      <Button variant="contained" onClick={handleNewconDlgState}>
         <CastIcon className={classes.extendedIcon} />
         new connection
       </Button>
@@ -381,7 +283,10 @@ export default function MyservicesList() {
               />
 
               <div />
-              <div className={classes.ServiceName}> {value.serviceName} </div>
+              <Typography variant="subtitle1" component="p">
+                {' '}
+                {value.serviceName}{' '}
+              </Typography>
 
               <div className={classes.buttonSpace}>
                 <br />
