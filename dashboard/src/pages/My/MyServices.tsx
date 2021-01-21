@@ -141,21 +141,14 @@ export default function MyservicesList() {
     }
   };
 
-  // handleClose = () => {
-  //   setState({ open: false, menuOpen: false });
-  // };
-
   useEffect(() => {
     const url = `${Constants.TRASA_HOSTNAME}/api/v1/my/services`;
 
     axios
       .get(url)
       .then((response) => {
-        console.log(response.data);
         setUser(response.data.User);
         setAssignedservices(response.data?.data?.[0]?.myServices);
-        console.log(response.data?.data?.[0]?.myServices);
-        // setState({ user: response.data.User, services: response.data.UserService });
       })
       .catch((error) => {
         console.error(error);
@@ -181,15 +174,6 @@ export default function MyservicesList() {
 
   const handleRequestDialogueClose = () => {
     setReqOpen(false);
-  };
-
-  const sendAccessRequest = () => {
-    axios
-      .post(`${Constants.TRASA_HOSTNAME}/api/v1/my/services/adhoc/request`)
-      .then((response) => {})
-      .catch((error) => {
-        console.error(error);
-      });
   };
 
   const searchService = (e: any) => {
@@ -431,8 +415,6 @@ function RequestAccess(props: RequestAccessProps) {
         setProgress(false);
         if (response.data.status === 'success') {
         }
-
-        // console.log(response.data);
       })
       .catch((error) => {
         console.log(error);
@@ -508,6 +490,7 @@ const DialogTitle = withStyles((theme) => ({
     borderBottom: `1px solid ${theme.palette.divider}`,
     margin: 0,
     padding: theme.spacing(2),
+    fontSize: 24,
   },
   closeButton: {
     position: 'absolute',

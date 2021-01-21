@@ -3,6 +3,10 @@ package adhoc
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"strings"
+	"time"
+
 	"github.com/seknox/trasa/server/api/notif"
 	"github.com/seknox/trasa/server/api/services"
 	"github.com/seknox/trasa/server/api/users"
@@ -11,9 +15,6 @@ import (
 	"github.com/seknox/trasa/server/models"
 	"github.com/seknox/trasa/server/utils"
 	"github.com/sirupsen/logrus"
-	"net/http"
-	"strings"
-	"time"
 )
 
 type nilPolicy struct {
@@ -255,15 +256,23 @@ func GetAllAdhoqRequests(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetAdmins(w http.ResponseWriter, r *http.Request) {
-	userContext := r.Context().Value("user").(models.UserContext)
+	uc := r.Context().Value("user").(models.UserContext)
 	//role := request.URL.Query().Get("userRole")
 
-	admins, err := Store.GetAdmins(userContext.User.OrgID)
+	admins, err := Store.GetAdmins(uc.User.OrgID)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "success", "fetched suers", "GetUsetsBasedOnUserRoleSecure", admins)
+		utils.TrasaResponse(w, 200, "success", "fetched admins", "GetUsetsBasedOnUserRoleSecure", admins)
 
 	}
 
-	utils.TrasaResponse(w, 200, "success", "fetched suers", "GetUsetsBasedOnUserRoleSecure", admins)
+	// filter out current admin user from admin list.
+	var filteredAdmins []models.User = make([]models.User, 0)
+	for _, v := range admins {
+		if v.ID != uc.User.ID {
+			filteredAdmins = append(filteredAdmins, v)
+		}
+	}
+
+	utils.TrasaResponse(w, 200, "success", "fetched admins", "GetUsetsBasedOnUserRoleSecure", filteredAdmins)
 }
