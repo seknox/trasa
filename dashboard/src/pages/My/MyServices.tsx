@@ -30,6 +30,7 @@ import SshIcon from '../../assets/ssh.png';
 import Constants from '../../Constants';
 import ProgressHOC from '../../utils/Components/Progressbar';
 import NewConnDlg from './NewConn';
+import Typography from '@material-ui/core/Typography';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -39,18 +40,16 @@ const useStyles = makeStyles((theme) => ({
 
   paper: {
     backgroundColor: '#fdfdfd',
-    // backgroundColor: '#00001aff', //'#E0E0E0', 'rgba(10,34,52,1)' // #011019
-    // minWidth: 400,
-    // minHeight: 300,
+
     padding: theme.spacing(2),
     textAlign: 'center',
     color: theme.palette.text.secondary,
   },
-  card: {
-    //   maxWidth: 250,
-    // //  width: 50,
-    //   padding: theme.spacing(5),
 
+  dialogtitle: {
+    fontSize: 24,
+  },
+  card: {
     marginLeft: 20,
     height: 200,
   },
@@ -61,10 +60,7 @@ const useStyles = makeStyles((theme) => ({
     flexgrow: 1,
     justifyContent: 'space-between',
   },
-  Servicebutton: {
-    color: 'white',
-    backgroundColor: '#000080', // '#0A2053', // '#0000CD',
-  },
+
   requestButton: {
     color: 'white',
     backgroundColor: '#000080',
@@ -195,8 +191,6 @@ export default function MyservicesList() {
   const [selectedServiceIndex, setSelectedServiceIndex] = useState(0);
   const [admins, setAdmins] = useState([]);
 
-
-
   const handleNewconDlgState = () => {
     setNewconDlgOpen(!newconDlgOpen);
   };
@@ -258,7 +252,7 @@ export default function MyservicesList() {
         console.log(response.data);
         setUser(response.data.User);
         setAssignedservices(response.data?.data?.[0]?.myServices);
-        console.log(response.data?.data?.[0]?.myServices)
+        console.log(response.data?.data?.[0]?.myServices);
         // setState({ user: response.data.User, services: response.data.UserService });
       })
       .catch((error) => {
@@ -330,11 +324,6 @@ export default function MyservicesList() {
           placeholder="Search services by name or hostname"
           inputProps={{ 'aria-label': 'Search  service s' }}
         />
-
-        {/* <Divider className={classes.divider} /> */}
-        {/*   <IconButton color="primary" className={classes.iconButton} aria-label="Directions"> */}
-        {/*     <DirectionsIcon /> */}
-        {/*   </IconButton> */}
       </Paper>
 
       <NewConnDlg
@@ -411,7 +400,7 @@ export default function MyservicesList() {
                   </Button>
                 ) : (
                   <Button
-                    className={classes.Servicebutton}
+                    variant="contained"
                     onClick={() => {
                       handleRequestDialogueOpen(value.serviceID, value.serviceName);
                     }}
@@ -441,7 +430,6 @@ export default function MyservicesList() {
             horizontal: 'left',
           }}
         >
-
           {services[selectedServiceIndex] &&
             services[selectedServiceIndex].usernames.map((v: string) => (
               <MenuItem
@@ -460,13 +448,12 @@ export default function MyservicesList() {
                 {v}
               </MenuItem>
             ))}
-
         </Menu>
 
         <RequestAccess
           admins={admins}
           serviceID={serviceID}
-          // serviceName={serviceName}
+          serviceName={serviceName}
           reqOpen={reqOpen}
           handleRequestDialogueClose={handleRequestDialogueClose}
         />
@@ -510,6 +497,7 @@ const returnServiceIcon = (val: any) => {
 
 type RequestAccessProps = {
   serviceID: string;
+  serviceName: string;
   handleRequestDialogueClose: () => void;
   reqOpen: boolean;
   admins: any[];
@@ -555,11 +543,13 @@ function RequestAccess(props: RequestAccessProps) {
         fullWidth
         maxWidth="sm"
       >
-        <DialogTitle>Request Access to this Service.</DialogTitle>
+        <DialogTitle disableTypography>
+          <Typography variant="h2">Request Access to {props.serviceName}</Typography>
+        </DialogTitle>
         <DialogContent>
           <Grid container spacing={2}>
             <Grid item xs={5} sm={5} md={5}>
-              <h3>Select admin</h3>
+              <Typography variant="h3">Select admin</Typography>
             </Grid>
             <Grid item xs={7} sm={7} md={7}>
               <FormControl className={classes.formControl} fullWidth>
@@ -567,11 +557,7 @@ function RequestAccess(props: RequestAccessProps) {
                   name="requesteeID"
                   onChange={handleChange}
                   value={data.requesteeID}
-                  inputProps={{
-                    name: 'requesteeID',
-                    id: 'requesteeID',
-                    classes: {},
-                  }}
+                  variant="outlined"
                 >
                   {props.admins.map((user: any) => (
                     <MenuItem value={user.ID}>{`${user.firstName} ${user.lastName}`} </MenuItem>
@@ -583,7 +569,7 @@ function RequestAccess(props: RequestAccessProps) {
 
           <Grid container spacing={2}>
             <Grid item xs={5} sm={5} md={5}>
-              <h3>Specify your intent for acces</h3>
+              <Typography variant="h3">Specify your intent for access</Typography>
             </Grid>
             <Grid item xs={7} sm={7} md={7}>
               <TextField
