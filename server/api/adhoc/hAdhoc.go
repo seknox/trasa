@@ -22,6 +22,8 @@ type nilPolicy struct {
 }
 
 func AdhocReq(w http.ResponseWriter, r *http.Request) {
+	userContext := r.Context().Value("user").(models.UserContext)
+
 	var req models.AdhocPermission
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -30,16 +32,16 @@ func AdhocReq(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userContext := r.Context().Value("user").(models.UserContext)
+	req.RequestID = utils.GetRandomString(5)
+	req.RequesterID = userContext.User.ID
 
-	nep, err := time.LoadLocation(userContext.Org.Timezone)
-	if err != nil {
-		logrus.Error(err)
+	// we return if requester and requestee id is same.
+	if req.RequesterID == req.RequesteeID {
+		utils.TrasaResponse(w, 200, "failed", "cannot assign to same user", "AdhocReq", nil, nil)
 		return
 	}
 
-	req.RequestID = utils.GetRandomString(5)
-	req.RequesterID = userContext.User.ID
+	
 	req.RequestedOn = time.Now().Unix()
 	req.OrgID = userContext.User.OrgID
 	req.SessionID = make([]string, 0) //append(req.SessionID, "zero")
@@ -105,7 +107,7 @@ func AdhocReq(w http.ResponseWriter, r *http.Request) {
 
 	uname := strings.Split(requestee.Email, "@")
 	dashboardPath := fmt.Sprintf(`https://%s`, global.GetConfig().Trasa.ListenAddr)
-	dashLink := fmt.Sprintf("%s/control#AdHoc Requests", dashboardPath)
+	dashLink := fmt.Sprintf("%s/policies#AdHoc Requests", dashboardPath)
 	var tmplt models.EmailAdhoc
 	tmplt.Requester = userContext.User.Email
 	tmplt.Requestee = uname[0]
@@ -116,6 +118,13 @@ func AdhocReq(w http.ResponseWriter, r *http.Request) {
 	tmplt.Status = ""
 	tmplt.Subject = "Adhoc Access Request"
 	tmplt.CC = []string{}
+
+	nep, err := time.LoadLocation(userContext.Org.Timezone)
+	if err != nil {
+		logrus.Error(err)
+		return
+	}
+
 	tmplt.Time = time.Now().In(nep).Format(time.RFC3339)
 	tmplt.Req = true
 	err = notif.Store.SendEmail(userContext.User.OrgID, consts.EMAIL_ADHOC, tmplt)
@@ -199,19 +208,19 @@ func GrantOrDenyAdhoc(w http.ResponseWriter, r *http.Request) {
 
 	uname := strings.Split(userContext.User.Email, "@")
 	dashboardPath := fmt.Sprintf(`https://%s`, global.GetConfig().Trasa.ListenAddr)
-	dashLink := fmt.Sprintf(`%s/control#AdHoc Requests`, dashboardPath)
+	dashLink := fmt.Sprintf("%s/policies#AdHoc Requests", dashboardPath)
 
 	tm := time.Unix(req.AuthorizedPeriod/1000, 0)
 
 	status := "rejected"
 
-	nep, err := time.LoadLocation(userContext.Org.Timezone)
+	timezone, err := time.LoadLocation(userContext.Org.Timezone)
 	if err != nil {
 		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "invalid timezone", "Could not respond to adhoc request")
 		return
 	}
-	till := tm.In(nep).Format(time.RFC3339)
+	till := tm.In(timezone).Format(time.RFC3339)
 	if req.IsAuthorized {
 		status = "granted"
 		//
@@ -262,7 +271,7 @@ func GetAdmins(w http.ResponseWriter, r *http.Request) {
 	admins, err := Store.GetAdmins(uc.User.OrgID)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "success", "fetched admins", "GetUsetsBasedOnUserRoleSecure", admins)
+		utils.TrasaResponse(w, 200, "success", "fetched admins", "GetAdmins", admins)
 
 	}
 
@@ -274,5 +283,5 @@ func GetAdmins(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	utils.TrasaResponse(w, 200, "success", "fetched admins", "GetUsetsBasedOnUserRoleSecure", filteredAdmins)
+	utils.TrasaResponse(w, 200, "success", "fetched admins", "GetAdmins", filteredAdmins)
 }
