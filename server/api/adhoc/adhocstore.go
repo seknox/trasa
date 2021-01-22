@@ -2,6 +2,7 @@ package adhoc
 
 import (
 	"fmt"
+
 	"github.com/lib/pq"
 	"github.com/seknox/trasa/server/models"
 )
@@ -77,6 +78,7 @@ func (s AdhocStore) GetAdhocDetail(id, orgID string) (models.AdhocDetails, error
 	return req, err
 }
 
+// GetAll should only return expired row.
 func (s AdhocStore) GetAll(orgID string) ([]models.AdhocDetails, error) {
 
 	var reqs []models.AdhocDetails
@@ -87,7 +89,7 @@ func (s AdhocStore) GetAll(orgID string) ([]models.AdhocDetails, error) {
 										JOIN users requestee ON adhoc_perms.requestee_id=requestee.id
 										JOIN services ON adhoc_perms.service_id=services.id
 
-									WHERE adhoc_perms.org_id =$1 ORDER BY requested_on DESC;`, orgID)
+									WHERE adhoc_perms.is_expired =$1 AND adhoc_perms.org_id =$2 ORDER BY requested_on DESC;`, true, orgID)
 
 	if err != nil {
 		return reqs, err
