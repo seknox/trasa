@@ -289,7 +289,8 @@ export default function MyservicesList() {
                   </Button>
                 ) : (
                   <Button
-                    variant="contained"
+                    variant="outlined"
+                    color="primary"
                     onClick={() => {
                       handleRequestDialogueOpen(value.serviceID, value.serviceName);
                     }}

@@ -14,13 +14,9 @@ import React, { useState } from 'react';
 import ProgressHOC from '../../../../utils/Components/Progressbar';
 import Constants from '../../../../Constants';
 
-const useStyles = makeStyles((theme) => ({
-  paper: {
-    maxWidth: 1500,
-    margin: 'auto',
-    marginTop: 50,
-    overflow: 'hidden',
-    padding: theme.spacing(2),
+const useStyles = makeStyles(() => ({
+  rejectButton: {
+    background: 'maroon',
   },
 }));
 
@@ -34,6 +30,7 @@ type grantOrDenyAccessprops = {
 };
 
 export default function GrantOrDenyAccess(props: grantOrDenyAccessprops) {
+  const classes = useStyles();
   const [selectedTime, setSelectedTime] = useState(new Date());
   const [loader, setLoader] = useState(false);
 
@@ -69,7 +66,6 @@ export default function GrantOrDenyAccess(props: grantOrDenyAccessprops) {
     setSelectedTime(time);
   };
 
-  const classes = useStyles();
   return (
     <div>
       <Dialog
@@ -79,7 +75,7 @@ export default function GrantOrDenyAccess(props: grantOrDenyAccessprops) {
         fullWidth
         maxWidth="sm"
       >
-        <DialogTitle id="customized-dialog-title">
+        <DialogTitle id="customized-dialog-title" disableTypography>
           <Typography variant="h2"> Grant or Revoke Access to this app. </Typography>
         </DialogTitle>
         <DialogContent>
@@ -111,10 +107,14 @@ export default function GrantOrDenyAccess(props: grantOrDenyAccessprops) {
         </DialogContent>
         {loader ? <ProgressHOC /> : ''}
         <DialogActions>
-          <Button onClick={handleSubmit('reject')} variant="contained" color="secondary">
+          <Button
+            onClick={handleSubmit('reject')}
+            variant="contained"
+            className={classes.rejectButton}
+          >
             Reject
           </Button>
-          <Button onClick={handleSubmit('grant')} variant="contained" color="secondary">
+          <Button onClick={handleSubmit('grant')} variant="outlined" color="secondary">
             Grant
           </Button>
         </DialogActions>
