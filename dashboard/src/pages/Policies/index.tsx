@@ -5,6 +5,7 @@ import Headers from '../../Layout/HeaderAndContent';
 
 import AccessPolicies from './AccessPolicies';
 import SecurityRules from './SecurityRules';
+import AdhocAccess from './AdhocAccess';
 
 function PolicyView() {
   return (
@@ -12,8 +13,8 @@ function PolicyView() {
       <Layout>
         <Headers
           pageName={[{ name: 'Policies', route: '/policies' }]}
-          tabHeaders={['Access Policies', 'Security Rules']}
-          Components={[<AccessPolicies />, <SecurityRules />]}
+          tabHeaders={['Adhoc Access', 'Access Policies', 'Security Rules']}
+          Components={[<AdhocAccess />, <AccessPolicies />, <SecurityRules />]}
         />
       </Layout>
     </div>
@@ -24,7 +25,6 @@ const Policies = () => {
   return (
     <Switch>
       <Route exact path="/policies" component={PolicyView} />
-      <Route path="/policies/access-policies" component={AccessPolicies} />
     </Switch>
   );
 };

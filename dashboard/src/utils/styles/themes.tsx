@@ -1,6 +1,6 @@
 import { createMuiTheme } from '@material-ui/core';
 
-export const LogtableV2Theme = () =>
+export const MuiDataTableTheme = () =>
   createMuiTheme({
     overrides: {
       MuiTableHead: {
@@ -29,12 +29,3 @@ export const LogtableV2Theme = () =>
 
     // #0A2053
   });
-
-export const MuiDataTableTheme = createMuiTheme({
-  typography: { fontFamily: 'Open Sans, Rajdhani' },
-  palette: {
-    type: 'light',
-    primary: { 500: '#000080' },
-    secondary: { A400: '#000080' }, // '#000080' },
-  },
-});

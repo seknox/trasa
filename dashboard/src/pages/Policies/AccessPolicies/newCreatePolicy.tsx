@@ -409,8 +409,8 @@ export default function CreatePolicy(props: createPolicyProps) {
     };
 
     const url = props.update
-      ? `${Constants.TRASA_HOSTNAME}/api/v1/groups/policy/update`
-      : `${Constants.TRASA_HOSTNAME}/api/v1/groups/policy/create`;
+      ? `${Constants.TRASA_HOSTNAME}/api/v1/policy/update`
+      : `${Constants.TRASA_HOSTNAME}/api/v1/policy/create`;
 
     axios.post(url, basicPolicy).then((r) => {
       setLoading(false);

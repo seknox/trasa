@@ -685,8 +685,6 @@ github.com/rogpeppe/fastuuid v0.0.0-20150106093220-6724a57986af/go.mod h1:XWv6So
 github.com/rogpeppe/go-internal v1.3.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=
 github.com/rs/cors v1.7.0 h1:+88SsELBHx5r+hZ8TCkggzSstaWNbDvThkVK8H6f9ik=
 github.com/rs/cors v1.7.0/go.mod h1:gFx+x8UowdsKA9AchylcLynDq+nNFfI8FkUZdN/jGCU=
-github.com/russellhaering/gosaml2 v0.5.0 h1:D+oGPMUz5Vgis5mmig2AXmmtA0hQpR8x+HbxqttCY9Y=
-github.com/russellhaering/gosaml2 v0.5.0/go.mod h1:X5YBZ1NqfYZ0+lLCPMZfSB5eGpVUofuKPxbvcpOVrGA=
 github.com/russellhaering/gosaml2 v0.6.0 h1:OED8FLgczXxXAPlKhnJHQfmEig52tDX2qeXdPtZRIKc=
 github.com/russellhaering/gosaml2 v0.6.0/go.mod h1:CtzxpPr4+bevsATaqR0rw3aqrNlX274b+3C6vFTLCk8=
 github.com/russellhaering/goxmldsig v1.1.0 h1:lK/zeJie2sqG52ZAlPNn1oBBqsIsEKypUUBGpYYF6lk=
