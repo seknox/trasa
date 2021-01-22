@@ -1,6 +1,6 @@
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, MuiThemeProvider } from '@material-ui/core/styles';
 import axios from 'axios';
 import 'date-fns';
 import MUIDataTable, {
@@ -12,7 +12,7 @@ import React, { useEffect, useState } from 'react';
 import Constants from '../../../../Constants';
 import ViewAdhocSession from './ViewAdhocSession';
 
-const lightColor = 'rgba(255, 255, 255, 0.7)'; //'rgba(255, 255, 255, 0.7)'; // '#030417';
+import { MuiDataTableTheme } from '../../../../utils/styles/themes';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -195,12 +195,15 @@ export default function AdhocRequestHistory(props: adhocProps) {
   return (
     <div className={classes.contentWrapper}>
       {haveData ? (
-        <MUIDataTable
-          title={'Adhoc authentication session logs'}
-          data={requestHistory}
-          columns={columns as MUIDataTableColumn[]}
-          options={options as MUIDataTableOptions}
-        />
+        <MuiThemeProvider theme={MuiDataTableTheme}>
+          {' '}
+          <MUIDataTable
+            title={'Adhoc authentication session logs'}
+            data={requestHistory}
+            columns={columns as MUIDataTableColumn[]}
+            options={options as MUIDataTableOptions}
+          />
+        </MuiThemeProvider>
       ) : (
         <Paper className={classes.paper} elevation={1}>
           <p>There is no adhoc access history to show.</p>

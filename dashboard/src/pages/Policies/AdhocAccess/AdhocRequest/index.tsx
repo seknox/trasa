@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, MuiThemeProvider } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import axios from 'axios';
@@ -11,6 +11,7 @@ import MUIDataTable, {
 import React, { useEffect, useState } from 'react';
 import Constants from '../../../../Constants';
 import GrantOrDenyAccess from './GrantOrDenyAccess';
+import { MuiDataTableTheme } from '../../../../utils/styles/themes';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -148,12 +149,15 @@ export default function AccessRequests() {
   return (
     <div className={classes.contentWrapper}>
       {haveData ? (
-        <MUIDataTable
-          title={'Active requests'}
-          data={users}
-          columns={columns as MUIDataTableColumn[]}
-          options={options as MUIDataTableOptions}
-        />
+        <MuiThemeProvider theme={MuiDataTableTheme}>
+          {' '}
+          <MUIDataTable
+            title={'Active requests'}
+            data={users}
+            columns={columns as MUIDataTableColumn[]}
+            options={options as MUIDataTableOptions}
+          />
+        </MuiThemeProvider>
       ) : (
         <Paper className={classes.paper} elevation={1}>
           <p>You dont have any active adhoc request to approve.</p>

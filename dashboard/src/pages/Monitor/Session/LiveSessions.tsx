@@ -8,7 +8,7 @@ import MUIDataTable, {
 } from 'mui-datatables';
 import React, { useEffect, useState } from 'react';
 import Constants from '../../../Constants';
-import { LogtableV2Theme } from '../../../utils/styles/themes';
+import { MuiDataTableTheme } from '../../../utils/styles/themes';
 
 const useStyles = makeStyles((theme) => ({
   mainContent: {
@@ -278,7 +278,7 @@ export default function LiveSessionTable() {
 
   return (
     <div className={classes.contentWrapper}>
-      <MuiThemeProvider theme={LogtableV2Theme}>
+      <MuiThemeProvider theme={MuiDataTableTheme}>
         <MUIDataTable
           title="Active Sessions ( LIVE feed )"
           data={eventData}
