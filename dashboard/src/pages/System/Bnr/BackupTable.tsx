@@ -5,18 +5,8 @@ import axios from 'axios';
 import MUIDataTable, { MUIDataTableColumn, MUIDataTableOptions } from 'mui-datatables';
 import React from 'react';
 import Constants from '../../../Constants';
-
+import {LogtableV2Theme} from '../../../utils/styles/themes'
 const fileDownload = require('js-file-download');
-
-const theme = createMuiTheme({
-  typography: { fontFamily: 'Open Sans, Rajdhani' },
-  palette: {
-    type: 'light',
-    primary: { 500: '#000080' },
-    secondary: { A400: '#000080' }, // '#000080' },
-  },
-});
-
 
 
 export default function BackupTable(props: any) {
@@ -29,8 +19,10 @@ export default function BackupTable(props: any) {
       },
     };
 
-    axios
-      .get(`${Constants.TRASA_HOSTNAME}/api/v1/system/backup/${val}`, config)
+    // since the default instance has middlewares to parse json response,
+    //we are using new axios instance for downloading files.
+    axios.create(config)
+      .get(`${Constants.TRASA_HOSTNAME}/api/v1/system/backup/${val}`)
       .then((response) => {
         fileDownload(response.data, 'trasa-system-backup.zip');
       })
@@ -41,7 +33,7 @@ export default function BackupTable(props: any) {
 
   const columns = [
     {
-      name: 'Bacup Name',
+      name: 'Backup Name',
       options: {
         filter: true,
         customBodyRender: (value: any) => {
@@ -88,7 +80,7 @@ export default function BackupTable(props: any) {
 
   return (
     <div>
-      <MuiThemeProvider theme={theme}>
+      <MuiThemeProvider theme={LogtableV2Theme}>
         <MUIDataTable
           title="Backups"
           data={props.backups}
