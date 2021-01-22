@@ -1,4 +1,4 @@
-package backups
+package system
 
 import (
 	"bufio"
@@ -32,7 +32,7 @@ func TakeBackupNow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	nep, err := time.LoadLocation(orgDetails.Timezone)
+	loc, err := time.LoadLocation(orgDetails.Timezone)
 	if err != nil {
 		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "Invalid timezone", "Backup not taken")
@@ -40,7 +40,7 @@ func TakeBackupNow(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// get unique backup name
-	backup.BackupName = fmt.Sprintf("trasa-backup-%s", time.Now().In(nep).Format(time.RFC3339))
+	backup.BackupName = fmt.Sprintf("trasa-backup-%s", time.Now().In(loc).Format(time.RFC3339))
 
 	trasaBackupDir := fmt.Sprintf("/var/trasa/backup/%s", backup.BackupName)
 
@@ -54,14 +54,14 @@ func TakeBackupNow(w http.ResponseWriter, r *http.Request) {
 	archive(trasaBackupDir, fmt.Sprintf("%s.zip", trasaBackupDir))
 
 	// store backup metadata in database
-	err = Store.StoreBackupMeta(back)
+	err = Store.storeBackupMeta(back)
 	if err != nil {
 		logrus.Errorf("failed to store backup meta: %v", err)
 		utils.TrasaResponse(w, 200, "failed", "failed to store backup meta", "Backup not taken")
 		return
 	}
 
-	resp, err := Store.GetBackupMetas(userContext.User.OrgID)
+	resp, err := Store.getBackupMetas(userContext.User.OrgID)
 	if err != nil {
 		logrus.Errorf("error retrieving backup metas: %v", err)
 		utils.TrasaResponse(w, 200, "failed", "failed to fetch backup meta", "Backup not taken")
@@ -137,7 +137,7 @@ func backupCRDB(trasaBackupDir string) error {
 func GetBackups(w http.ResponseWriter, r *http.Request) {
 	userContext := r.Context().Value("user").(models.UserContext)
 
-	resp, err := Store.GetBackupMetas(userContext.User.OrgID)
+	resp, err := Store.getBackupMetas(userContext.User.OrgID)
 	if err != nil {
 		logrus.Errorf("error retrieving backup metas %v: ", err)
 		utils.TrasaResponse(w, 200, "failed", "failed to fetch backup meta", "GetBackups")
@@ -172,7 +172,7 @@ func DownloadBackupFile(w http.ResponseWriter, r *http.Request) {
 	backupID := chi.URLParam(r, "backupid")
 
 	// get backup detail from backup id
-	backup, err := Store.GetBackupMeta(backupID, userContext.Org.ID)
+	backup, err := Store.getBackupMeta(backupID, userContext.Org.ID)
 	if err != nil {
 		logrus.Error(err)
 		utils.TrasaResponse(w, 200, "failed", "failed to fetch backup meta", "GetBackups")

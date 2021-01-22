@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/seknox/trasa/server/accessproxy/rdpproxy"
 	"github.com/seknox/trasa/server/api/auth/serviceauth"
-	"github.com/seknox/trasa/server/api/backups"
 	"net/http"
 	"net/url"
 	"os"
@@ -65,7 +64,6 @@ func StartServer() {
 	accessmap.InitStore(state)
 
 	auth.InitStore(state)
-	backups.InitStore(state)
 	vault.InitStore(state)
 	tsxvault.InitStore(state)
 	devices.InitStore(state)

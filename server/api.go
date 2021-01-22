@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/seknox/trasa/server/api/backups"
 	"net/http"
 
 	"github.com/seknox/trasa/server/accessproxy/rdpproxy"
@@ -282,9 +281,9 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		r.Post("/system/settings/dynamicaccess/update", system.UpdateDynamicAccessSetting)
 		r.Post("/system/settings/cloudproxy/access", system.StoreCloudProxyKey)
 
-		r.Get("/system/backups", backups.GetBackups)
-		r.Get("/system/backup/create", backups.TakeBackupNow)
-		r.Get("/system/backup/{backupid}", backups.DownloadBackupFile)
+		r.Get("/system/backups", system.GetBackups)
+		r.Get("/system/backup/create", system.TakeBackupNow)
+		r.Get("/system/backup/{backupid}", system.DownloadBackupFile)
 
 		r.Get("/system/welcome-note", system.WelcomeNote)
 

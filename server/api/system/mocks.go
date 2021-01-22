@@ -37,7 +37,7 @@ func (s *systemMock) storeBackupMeta(backup models.Backup) error {
 	panic("implement me")
 }
 
-func (s *systemMock) getBackupMeta(backup models.Backup) (models.Backup, error) {
+func (s *systemMock) getBackupMeta(backupID, orgID string) (backup models.Backup, err error) {
 	panic("implement me")
 }
 
