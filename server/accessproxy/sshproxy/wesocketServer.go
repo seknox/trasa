@@ -3,7 +3,6 @@ package sshproxy
 import (
 	"database/sql"
 	"encoding/hex"
-	"io"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -311,12 +310,11 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 	wsshBackendConn, err := NewWebSSHBackend(session)
 	if err != nil {
 		logrus.Error(err)
-		//TODO write ewrr msg
+		conn.WriteMessage(1, []byte("\n\rCould not create std in/out pipe\n\r"))
 		wsshFrontEndConn.Close()
 		return
 	}
 
-	//TODO use generic function to pipe tunnels
 	wrappedChannel, err := NewWrappedTunnel(authlog.SessionID, policy.RecordSession, wsshBackendConn, wsshFrontEndConn, guestChan)
 	if err != nil {
 		logrus.Error(err)
@@ -347,52 +345,7 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 		return
 	}
 
-	//session.Wait()
 	wrappedChannel.pipe()
-
-	//go func() {
-	//	defer func() {
-	//		if r := recover(); r != nil {
-	//			logrus.Error("Recovered in websocketServer.go", r, string(debug.Stack()))
-	//		}
-	//	}()
-	//	for !wrappedChannel.closed {
-	//
-	//		buff := make([]byte, 100)
-	//		n, err := wrappedChannel.Read(buff)
-	//		if err != nil {
-	//			logrus.Debug(err)
-	//			return
-	//		}
-	//		if n > 0 {
-	//			err := conn.WriteMessage(1, buff)
-	//			if err != nil {
-	//				logrus.Debug(err)
-	//				return
-	//			}
-	//		}
-	//
-	//	}
-	//
-	//}()
-	//
-	//func() {
-	//	for !wrappedChannel.closed{
-	//		_, msg, err := conn.ReadMessage()
-	//		if err != nil {
-	//			logrus.Debug(err)
-	//			return
-	//		}
-	//
-	//		n, err := stdInPipe.Write(msg)
-	//		if err != nil {
-	//			logrus.Debug(err, n)
-	//
-	//			return
-	//		}
-	//
-	//	}
-	//}()
 
 }
 
@@ -408,7 +361,7 @@ func checkAndInitParams(uc *models.UserContext, params *models.ConnectionParams)
 	params.UserID = uc.User.ID
 	params.TrasaID = uc.User.Email
 	params.Timezone = uc.Org.Timezone
-	params.ServiceType = "rdp"
+	params.ServiceType = "ssh"
 	params.Groups = uc.User.Groups
 	//params.UserAgent = r.UserAgent()
 
@@ -435,71 +388,4 @@ func logSession(authlog *logs.AuthLog) {
 		logrus.Error(err)
 	}
 
-}
-
-type webSSHBackendConn struct {
-	stdIn   io.Writer
-	stdOut  io.Reader
-	session *ssh.Session
-}
-
-func NewWebSSHBackend(session *ssh.Session) (*webSSHBackendConn, error) {
-	stdInPipe, err := session.StdinPipe()
-	if err != nil {
-		return nil, err
-	}
-
-	stdOutPipe, err := session.StdoutPipe()
-	if err != nil {
-		return nil, err
-	}
-
-	return &webSSHBackendConn{
-		stdIn:   stdInPipe,
-		stdOut:  stdOutPipe,
-		session: session,
-	}, nil
-
-}
-
-func (wssb webSSHBackendConn) Read(p []byte) (int, error) {
-	return wssb.stdOut.Read(p)
-}
-func (wssb *webSSHBackendConn) Write(p []byte) (int, error) {
-	return wssb.stdIn.Write(p)
-}
-func (wssb *webSSHBackendConn) Close() error {
-	return wssb.session.Close()
-}
-
-type webSSHFrontEndConn struct {
-	wsConn *websocket.Conn
-}
-
-func NewWebSSHFrontEndConn(ws *websocket.Conn) *webSSHFrontEndConn {
-	return &webSSHFrontEndConn{
-		wsConn: ws,
-	}
-}
-
-func (websshConn *webSSHFrontEndConn) Read(p []byte) (int, error) {
-	_, byt, err := websshConn.wsConn.ReadMessage()
-	if err != nil {
-		return 0, err
-	}
-	copy(p, byt)
-	return len(byt), nil
-}
-
-func (websshConn *webSSHFrontEndConn) Write(p []byte) (int, error) {
-	err := websshConn.wsConn.WriteMessage(websocket.BinaryMessage, p)
-	if err != nil {
-		return 0, err
-	}
-
-	return len(p), nil
-}
-
-func (websshConn *webSSHFrontEndConn) Close() error {
-	return websshConn.wsConn.Close()
 }

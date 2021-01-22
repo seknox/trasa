@@ -162,7 +162,7 @@ func (lr *WrappedTunnel) pipe() {
 	logrus.Debug("Session Ended")
 }
 
-func (lr *WrappedTunnel) Close() error {
+func (lr *WrappedTunnel) Close() (err error) {
 	logrus.Debug("closing tunnel")
 	lr.tempLogFile.Close()
 
@@ -171,10 +171,19 @@ func (lr *WrappedTunnel) Close() error {
 			v.Close()
 		}
 	}
-	//TODO handle error
 	lr.timer.Stop()
-	lr.backend.Close()
-	lr.frontend.Close()
-	return nil
+
+	e := lr.backend.Close()
+	if e != nil {
+		logrus.Error(e)
+		err = e
+	}
+
+	e = lr.frontend.Close()
+	if e != nil {
+		logrus.Error(e)
+		err = e
+	}
+	return err
 
 }
