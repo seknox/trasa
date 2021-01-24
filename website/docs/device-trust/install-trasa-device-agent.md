@@ -4,12 +4,13 @@ title: Enrol Workstation
 sidebar_label: Enrol Workstation
 ---
 
-
-
-
 :::note
 Only Firefox browser supported at this time.
 Supported OS includes windows 10, mac and ubuntu linux.
+:::
+
+:::note
+Both firefox extension and workstation agent must be installed before enrolling the workstation.
 :::
 
 ### Install TRASA browser extension
@@ -25,7 +26,6 @@ Always download agents and installer for TRASA from links provided in trasa.io w
 :::
 
 ### Register your device
-
 
 <iframe width="100%" height="100%"  height='600' src="https://www.youtube.com/embed/Qsdwzx-_Vl8?list=PLZOFebo-o2K44zdkUPWnGO_cTz6KjNAnN" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 

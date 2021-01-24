@@ -6,6 +6,7 @@ import (
 	"github.com/seknox/trasa/server/accessproxy/sshproxy"
 	"github.com/seknox/trasa/server/api/accesscontrol"
 	"github.com/seknox/trasa/server/api/accessmap"
+	"github.com/seknox/trasa/server/api/adhoc"
 	"github.com/seknox/trasa/server/api/auth"
 	"github.com/seknox/trasa/server/api/auth/serviceauth"
 	"github.com/seknox/trasa/server/api/devices"
@@ -153,7 +154,7 @@ func setupTestEnv() *global.State {
 	accessmap.InitStore(state)
 
 	auth.InitStore(state)
-
+	adhoc.InitStore(state)
 	tsxvault.InitStore(state)
 	devices.InitStore(state)
 	groups.InitStore(state)

@@ -10,6 +10,7 @@ import FreeIPA from '../../../../assets/idp/freeipa.png';
 import GSuite from '../../../../assets/idp/gsuite.png';
 import JumpCloud from '../../../../assets/idp/jumpcloud.png';
 import Okta from '../../../../assets/idp/okta.png';
+import Onelogin from '../../../../assets/idp/onelogin.png';
 // import servicesetting from './AssignUserToApp';
 // import Constants from '../../../../Constants';
 import OpenLdapIcon from '../../../../assets/idp/openldap.png';
@@ -118,6 +119,13 @@ function RenderIdP(props: any) {
     switch (true) {
       case name === 'okta':
         return <img src={Okta} alt={name} height={70} />;
+      case name === 'onelogin':
+        return (
+          <Paper className={classes.logoPaper}>
+            <img src={Onelogin} alt={name} height={20} />
+          </Paper>
+        );
+
       case name === 'freeipa':
         return <img src={FreeIPA} alt={name} height={70} />;
       case name === 'gsuite':

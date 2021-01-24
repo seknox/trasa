@@ -25,7 +25,7 @@ import MUIDataTable, {
 import React, { useEffect, useState } from 'react';
 import { Route, Switch, withRouter } from 'react-router-dom';
 import Constants from '../../../Constants';
-import { LogtableV2Theme } from '../../../utils/styles/themes';
+import { MuiDataTableTheme } from '../../../utils/styles/themes';
 import HTTPSession from './RecordedSession';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)'; // 'rgba(255, 255, 255, 0.7)'; // '#030417';
@@ -210,18 +210,18 @@ export function LogTableV2(props: logtableProps) {
         // console.log(response.data);
         // userDataMain = response.data;
         let dataArr = [];
-        let data =[]
-        if(!response.data.data){
-           data=[]
-        }else {
-          data  = response.data.data[0];
+        let data = [];
+        if (!response.data.data) {
+          data = [];
+        } else {
+          data = response.data.data[0];
         }
 
         dataArr = data.map(function (n: any) {
           return [
             n.eventID,
             n.email,
-            n.privilege ,
+            n.privilege,
             !n.serviceName ? 'Dashboard' : n.serviceName,
             !n.serviceType ? 'Dashboard' : n.serviceType,
             n.userIP,
@@ -270,20 +270,20 @@ export function LogTableV2(props: logtableProps) {
         let dataArr = [];
         const { data } = response;
 
-        if (!data.data ) {
+        if (!data.data) {
           setEventData([]);
         } else {
           dataArr = data.data[0].map(function (n: any) {
             return [
               n.eventID,
               n.email,
-              n.privilege ,
+              n.privilege,
               !n.serviceName ? 'Dashboard' : n.serviceName,
               !n.serviceType ? 'Dashboard' : n.serviceType,
               n.userIP,
               n.userAgent,
               n.status,
-                n.failedReason,
+              n.failedReason,
               n.loginTime,
               n.logoutTime,
               n.guests,
@@ -434,13 +434,13 @@ export function LogTableV2(props: logtableProps) {
         },
       },
     },
-      {
+    {
       name: 'Failed Reason',
       options: {
         filter: true,
         filterOptions: [false, true],
         customBodyRender: (value: any) => {
-          return (value);
+          return value;
         },
       },
     },
@@ -503,17 +503,17 @@ export function LogTableV2(props: logtableProps) {
                     if (tableMeta.rowData[4] === 'ssh') {
                       window.open(
                         `/monitor/sessions/view#type=ssh&year=${d.year()}&month=${month}&day=${d.date()}&sessionID=${value}`,
-                        '_blank'
+                        '_blank',
                       );
                     } else if (tableMeta.rowData[4] === 'db') {
                       window.open(
                         `/monitor/sessions/view#type=db&year=${d.year()}&month=${month}&day=${d.date()}&sessionID=${value}`,
-                        '_blank'
+                        '_blank',
                       );
                     } else if (tableMeta.rowData[4] === 'guac-ssh') {
                       window.open(
                         `/monitor/sessions/view#type=guac-ssh&year=${d.year()}&month=${month}&day=${d.date()}&sessionID=${value}`,
-                        '_blank'
+                        '_blank',
                       );
                     } else if (
                       tableMeta.rowData[4] === 'guac-rdp' ||
@@ -521,22 +521,22 @@ export function LogTableV2(props: logtableProps) {
                     ) {
                       window.open(
                         `/monitor/sessions/view#type=guac&year=${d.year()}&month=${month}&day=${d.date()}&sessionID=${value}`,
-                        '_blank'
+                        '_blank',
                       );
                     } else if (tableMeta.rowData[4] === 'guac-vnc') {
                       window.open(
                         `/monitor/sessions/view#type=guac&year=${d.year()}&month=${month}&day=${d.date()}&sessionID=${value}`,
-                        '_blank'
+                        '_blank',
                       );
                     } else if (tableMeta.rowData[4] === 'guac-vnc') {
                       window.open(
                         `/monitor/sessions/view#type=guac&year=${d.year()}&month=${month}&day=${d.date()}&sessionID=${value}`,
-                        '_blank'
+                        '_blank',
                       );
                     } else if (tableMeta.rowData[4] === 'http') {
                       window.open(
                         `/monitor/sessions/view#type=http&year=${d.year()}&month=${month}&day=${d.date()}&sessionID=${value}`,
-                        '_blank'
+                        '_blank',
                       );
                     }
                   }}
@@ -640,7 +640,7 @@ export function LogTableV2(props: logtableProps) {
           </Toolbar>
         </AppBar>
         <div className={classes.contentWrapper}>
-          <MuiThemeProvider theme={LogtableV2Theme}>
+          <MuiThemeProvider theme={MuiDataTableTheme}>
             <MUIDataTable
               title="Authentication Event Logs"
               data={eventData}
@@ -672,13 +672,6 @@ const SessionLog = (props: any) => {
 
 // export default withStyles(styles)(Overview)
 export default withRouter(SessionLog);
-
-
-
-
-
-
-
 
 // {() => {
 //   //  console.log(tableMeta.rowData[4])

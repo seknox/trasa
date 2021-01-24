@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"fmt"
 	"github.com/seknox/trasa/server/accessproxy/rdpproxy"
+	"github.com/seknox/trasa/server/api/adhoc"
 	"github.com/seknox/trasa/server/api/auth/serviceauth"
 	"net/http"
 	"net/url"
@@ -57,12 +58,10 @@ func StartServer() {
 
 	rdpproxy.InitStore(state)
 	sshproxy.InitStore(state)
-	serviceauth.InitStore(state)
 
 	accesscontrol.InitStore(state)
-
 	accessmap.InitStore(state)
-
+	adhoc.InitStore(state)
 	auth.InitStore(state)
 	vault.InitStore(state)
 	tsxvault.InitStore(state)
@@ -76,6 +75,7 @@ func StartServer() {
 	orgs.InitStore(state)
 	policies.InitStore(state)
 	redis.InitStore(state)
+	serviceauth.InitStore(state)
 	services.InitStore(state)
 	system.InitStore(state)
 	stats.InitStore(state)

@@ -11,7 +11,7 @@
     "spinNtest": "./pretest.sh"
   },
   "dependencies": {
-    "axios": "^0.18.1",
+    "axios": "^0.21.1",
     "is-reachable": "^4.0.0",
     "jest-environment-puppeteer": "^4.4.0",
     "jssha": "^3.1.1",

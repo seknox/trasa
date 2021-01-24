@@ -38,45 +38,6 @@ type Service struct {
 	DeletedAt     int64
 }
 
-//NewEmptyServiceStruct returns empty struct of service
-func NewEmptyServiceStruct() Service {
-	return Service{
-		ID:              "",
-		OrgID:           "",
-		Name:            "",
-		SecretKey:       "",
-		Passthru:        false,
-		Hostname:        "",
-		Type:            "",
-		ManagedAccounts: "",
-		RemoteAppName:   "",
-		//SessionRecord:   false,
-		Adhoc:       false,
-		NativeLog:   false,
-		RdpProtocol: "",
-		ProxyConfig: ReverseProxy{
-			RouteRule:           "",
-			PassHostheader:      false,
-			UpstreamServer:      "",
-			StrictTLSValidation: true,
-		},
-		PublicKey:             "",
-		ExternalProviderName:  "",
-		ExternalID:            "",
-		ExternalSecurityGroup: "{}",
-		DistroName:            "",
-		DistroVersion:         "",
-		IPDetails: IPDetails{
-			IpAddress:      "0.0.0.0",
-			NetMask:        "",
-			DefaultGateway: "0.0.0.0",
-		},
-		CreatedAt: 0,
-		UpdatedAt: 0,
-		DeletedAt: 0,
-	}
-}
-
 // ReverseProxy defines proxy config for http access proxy
 type ReverseProxy struct {
 	RouteRule           string `json:"routeRule"`

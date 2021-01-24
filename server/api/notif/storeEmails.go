@@ -239,7 +239,7 @@ func adhoc(emailIntegration models.EmailIntegrationConfig, emailData interface{}
 		return err
 	}
 
-	var t = template.New("DynamicAccess")
+	var t = template.New("AdhocRequest")
 	temp, err := t.Parse(AdhocStatus)
 
 	if adhoc.Req {
