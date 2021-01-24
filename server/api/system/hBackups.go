@@ -99,12 +99,22 @@ func backupCRDB(trasaBackupDir string) error {
 
 	// create
 
-	// cockroach dump trasadb --insecure > backup.sql
-	cmd := exec.Command("cockroach", "dump", "trasadb", "--insecure")
-	if global.GetConfig().Database.Sslenabled {
-		logrus.Trace(global.GetConfig().Database.Sslenabled)
-		cmd = exec.Command("cockroach", "dump", "trasadb", "--certs-dir=/etc/trasa/certs",
-			fmt.Sprintf("--host=%s:%s", global.GetConfig().Database.Server, global.GetConfig().Database.Port))
+	var cmd *exec.Cmd
+	if global.GetConfig().Database.Dbtype == "postgres" {
+		cmd = exec.Command(
+			"/bin/sh",
+			"-c",
+			fmt.Sprintf("env PGPASSWORD=%s  pg_dump --inserts --host=%s --port=%s --username=%s --dbname=trasadb", global.GetConfig().Database.Dbpass, global.GetConfig().Database.Server, global.GetConfig().Database.Port, global.GetConfig().Database.Dbuser))
+	} else if global.GetConfig().Database.Dbtype == "cockroachdb" {
+		cmd = exec.Command("cockroach", "dump", "trasadb", "--insecure")
+		if global.GetConfig().Database.Sslenabled {
+			logrus.Trace(global.GetConfig().Database.Sslenabled)
+			cmd = exec.Command("cockroach", "dump", "trasadb", "--certs-dir=/etc/trasa/certs",
+				fmt.Sprintf("--host=%s:%s", global.GetConfig().Database.Server, global.GetConfig().Database.Port))
+		}
+
+	} else {
+		return fmt.Errorf("invalid database type specified in config: %s", global.GetConfig().Database.Dbtype)
 	}
 
 	cmd.Dir = trasaBackupDir
