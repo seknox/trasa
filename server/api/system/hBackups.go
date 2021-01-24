@@ -17,6 +17,9 @@ import (
 	"time"
 )
 
+//TakeBackupNow dumps current database and saves in disk
+// uses "cockroach dump" for cockroachdb
+// and "pgdump" for postgres
 func TakeBackupNow(w http.ResponseWriter, r *http.Request) {
 	userContext := r.Context().Value("user").(models.UserContext)
 
@@ -144,6 +147,7 @@ func backupCRDB(trasaBackupDir string) error {
 
 }
 
+//GetBackups returns list of backups
 func GetBackups(w http.ResponseWriter, r *http.Request) {
 	userContext := r.Context().Value("user").(models.UserContext)
 
@@ -177,6 +181,7 @@ func archive(archivePath, outputName string) {
 	}
 }
 
+//DownloadBackupFile downloads backup file based on backupID
 func DownloadBackupFile(w http.ResponseWriter, r *http.Request) {
 	userContext := r.Context().Value("user").(models.UserContext)
 	backupID := chi.URLParam(r, "backupid")
