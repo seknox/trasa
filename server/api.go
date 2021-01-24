@@ -3,6 +3,8 @@ package main
 import (
 	"net/http"
 
+	"github.com/seknox/trasa/server/api/adhoc"
+
 	"github.com/seknox/trasa/server/accessproxy/rdpproxy"
 	"github.com/seknox/trasa/server/accessproxy/sshproxy"
 	"github.com/seknox/trasa/server/api/auth/serviceauth"
@@ -34,10 +36,10 @@ import (
 // CoreAPIRoutes holds api route declarations for trasa-server
 func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 
-	//logLevel := utils.NormalizeString(global.GetConfig().Logging.Level)
-	//if logLevel == "trace" {
-	//	r.Use(middlewares.Dumper{}.Handler)
-	//}
+	// logLevel := utils.NormalizeString(global.GetConfig().Logging.Level)
+	// if logLevel == "trace" {
+	// 	r.Use(middlewares.Dumper{}.Handler)
+	// }
 
 	r.NotFound(func(w http.ResponseWriter, req *http.Request) {
 		logrus.Debug("NOT FOUND URL in core api: ", req.URL)
@@ -146,6 +148,8 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		r.Post("/my/forgotpasstfa", auth.TfaHandler)
 		r.Post("/my/changepass", my.ChangePassword)
 		r.Get("/my/services", my.GetMyServicesDetail)
+		r.Post("/my/services/adhoc/request", adhoc.AdhocReq)
+		r.Get("/my/services/adhoc/getadmins", adhoc.GetAdmins)
 
 		r.Post("/my/generatekey", my.GenerateKeyPair)
 		//r.Post("/setup/password/{setpasswordtoken}", users.FirstTimePasswordSetup)
@@ -214,6 +218,11 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 
 		//Access Maps
 
+		r.Get("/accessmap/dynamic", accessmap.GetAllDynamicAccessRules)
+		r.Get("/accessmap/dynamic/usergroups", accessmap.GetAllUserGroupsWithIDPs)
+		r.Post("/accessmap/dynamic/create", accessmap.CreateDynamicAccessRule)
+		r.Post("/accessmap/dynamic/delete", accessmap.DeleteDynamicAccessRule)
+
 		r.Get("/accessmap/service/usergroup/{serviceID}", accessmap.GetUserGroupServiceGroupAccessMaps)
 		r.Get("/accessmap/servicegroup/usergroup/{serviceGroupID}", accessmap.GetUserGroupServiceGroupAccessMaps)
 
@@ -231,11 +240,18 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		//Devices
 
 		//////////////////// 	POLICY 		/////////////////////////
-		r.Post("/groups/policy/create", policies.CreatePolicy)
-		r.Post("/groups/policy/update", policies.UpdatePolicy)
-		r.Get("/groups/policy/all", policies.GetPolicies)
-		r.Get("/groups/policy/{policyID}", policies.GetPolicy)
-		r.Post("/groups/policy/delete", policies.DeletePolicies)
+		r.Post("/policy/create", policies.CreatePolicy)
+		r.Post("/policy/update", policies.UpdatePolicy)
+		r.Get("/policy/all", policies.GetPolicies)
+		r.Get("/policy/{policyID}", policies.GetPolicy)
+		r.Post("/policy/delete", policies.DeletePolicies)
+		
+		//AD Hoc
+		r.Get("/policy/adhoc/requests/my", adhoc.AdhocReqAssignedToMe)
+		r.Post("/policy/adhoc/respond", adhoc.GrantOrDenyAdhoc)
+		r.Get("/policy/adhoc/requests/all", adhoc.GetAllAdhoqRequests)
+
+
 
 		//Logs
 		r.Get("/logs/auth/{entitytype}/{entityid}", logs.GetLoginEvents)
@@ -279,6 +295,7 @@ func CoreAPIRoutes(r *chi.Mux) *chi.Mux {
 		r.Post("/system/settings/email/update", system.UpdateEmailSetting)
 		r.Post("/system/settings/devicehygienecheck/update", system.UpdateDeviceHygieneSetting)
 		r.Post("/system/settings/dynamicaccess/update", system.UpdateDynamicAccessSetting)
+
 		r.Post("/system/settings/cloudproxy/access", system.StoreCloudProxyKey)
 
 		r.Get("/system/welcome-note", system.WelcomeNote)

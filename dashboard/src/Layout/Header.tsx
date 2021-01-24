@@ -21,7 +21,7 @@ import PowerSetting from '@material-ui/icons/PowerSettingsNew';
 import axios from 'axios';
 import React from 'react';
 import Constants from '../Constants';
-import packagejson from '../../package.json'
+import packagejson from '../../package.json';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)'; // 'rgba(255, 255, 255, 0.7)'; // '#030417';
 
@@ -179,14 +179,16 @@ export default function MainHeaderBar(props: any) {
   const handleUserMenuClicked = (name: any) => () => {
     setAnchorEl(null);
     if (name === 'logout') {
-    
-      axios.delete(`${Constants.TRASA_HOSTNAME}/api/v1/my/logout`).then(()=>{
-        localStorage.clear();
-      }).catch((e)=> {
-        console.log(e) 
-        localStorage.clear()
-      });
-     
+      axios
+        .delete(`${Constants.TRASA_HOSTNAME}/api/v1/my/logout`)
+        .then(() => {
+          localStorage.clear();
+        })
+        .catch((e) => {
+          console.log(e);
+          localStorage.clear();
+        });
+
       window.location.href = '/login';
     } else if (name === 'my') {
       window.location.href = '/my';
@@ -405,7 +407,7 @@ const NotifCard = (props: any) => {
     switch (notif.notificationLabel) {
       case 'access-request':
         return (
-          <Button variant="text" href="/control#AdHoc%20Requests">
+          <Button variant="text" href="/policies#AdHoc%20Requests">
             Review
           </Button>
         );

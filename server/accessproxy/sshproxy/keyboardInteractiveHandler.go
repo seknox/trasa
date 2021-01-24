@@ -217,7 +217,7 @@ func keyboardInteractiveHandler(conn ssh.ConnMetadata, challengeUser ssh.Keyboar
 	}
 
 	//make user choose a service to connect to and get the service details
-	service, err := chooseService(conn.User(), sessionMeta.params.UserID, sessionMeta.params.TrasaID, challengeUser)
+	service, err := chooseService(sessionMeta.params.TrasaID, challengeUser)
 	if err != nil {
 		logrus.Error(err)
 		challengeUser("", "Cannot access this service", nil, nil)

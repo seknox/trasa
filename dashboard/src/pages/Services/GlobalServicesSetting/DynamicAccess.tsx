@@ -20,6 +20,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Button from '@material-ui/core/Button';
 import ProgressHOC from '../../../utils/Components/Progressbar';
 import Constants from '../../../Constants';
+import DynamicAccessRulesTable from './DynamicAccessRulesTable';
+import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -74,33 +76,43 @@ export default function DynamicAccess(props: any) {
 
   const [allGroups, setAllGroups] = React.useState<any>([]);
   const [allPolicies, setAllPolicies] = React.useState<any>([]);
-
-  const handleChange = (event: any) => {
-    setState({ ...state, [event.target.name]: event.target.checked });
-  };
+  const [allRules, setAllRules] = React.useState<any>([]);
 
   const handleGroupsSelect = (groups: any) => {
-    setState({ ...state, userGroups: groups });
-  };
-
-  const handlepolicySelect = (groups: any) => {
     if (groups.length > 1) {
       const last = groups[groups.length - 1];
       groups = [last];
     }
-    setState({ ...state, policy: groups });
+
+    setState({ ...state, userGroups: groups });
+  };
+
+  const handlePolicySelect = (pol: any) => {
+    if (pol.length > 1) {
+      const last = pol[pol.length - 1];
+      pol = [last];
+    }
+    setState({ ...state, policy: pol });
   };
 
   React.useEffect(() => {
-    axios.get(`${Constants.TRASA_HOSTNAME}/api/v1/groups/user`).then((r) => {
+    axios.get(`${Constants.TRASA_HOSTNAME}/api/v1/accessmap/dynamic`).then((r) => {
+      const data = r?.data?.data?.[0];
+      const dataArr = data.map(function (n: any) {
+        return [n.groupName, n.policyName, n.ruleID];
+      });
+
+      setAllRules(dataArr);
+    });
+    axios.get(`${Constants.TRASA_HOSTNAME}/api/v1/accessmap/dynamic/usergroups`).then((r) => {
       const groups = r.data?.data?.[0].map((g: any) => ({
-        label: g.groupName,
-        id: g.groupID,
-        value: g.groupID,
+        label: g,
+        id: g,
+        value: g,
       }));
       setAllGroups(groups);
     });
-    axios.get(`${Constants.TRASA_HOSTNAME}/api/v1/groups/policy/all`).then((r) => {
+    axios.get(`${Constants.TRASA_HOSTNAME}/api/v1/policy/all`).then((r) => {
       const policies = r.data?.data?.[0].map((g: any) => ({
         label: g.policyName,
         id: g.policyID,
@@ -111,45 +123,20 @@ export default function DynamicAccess(props: any) {
   }, []);
 
   React.useEffect(() => {
-    try {
-      const settVal = JSON.parse(props.settings?.settingValue);
-
-      const groups = [];
-      for (let i = 0; i < allGroups.length; i++) {
-        for (let j = 0; j < settVal.userGroups.length; j++) {
-          if (allGroups[i].id == settVal.userGroups[j]) {
-            groups.push(allGroups[i]);
-          }
-        }
-      }
-
-      let policy = {};
-      for (let i = 0; i < allPolicies.length; i++) {
-        if (allPolicies[i].id == settVal.policyID) {
-          policy = allPolicies[i];
-        }
-      }
-
-      setState({
-        ...state,
-        userGroups: groups,
-        policy: [policy],
-        status: props.settings?.status,
-      });
-      // setState({ ...state, ['policy']: [policy] });
-    } catch (e) {
-      console.error(e);
-    }
-  }, [props.settings, allPolicies, allGroups]);
+    setState({
+      ...state,
+      status: props.settings?.status,
+    });
+  }, [props.settings]);
 
   const [reqStatus, setReqStatus] = useState(false);
   const classes = useStyles();
 
-  function submitSetting(val: any) {
+  function changeSetting(event: any) {
+    setState({ ...state, [event.target.name]: event.target.checked });
+
     const data = {
-      userGroups: state.userGroups.map((g: any) => g.id),
-      policyID: state.policy?.[0]?.id,
-      status: state.status,
+      status: event.target.checked,
     };
     axios
       .post(`${Constants.TRASA_HOSTNAME}/api/v1/system/settings/dynamicaccess/update`, data)
@@ -160,10 +147,46 @@ export default function DynamicAccess(props: any) {
         console.log(error);
       });
   }
-  // TODO
-  // useEffect(() => {
-  //     setEnableDynamicAccess(props.status);
-  // }, [props.status]);
+
+  function addRule(event: any) {
+    const data = {
+      groupName: state.userGroups?.[0].id,
+      policyID: state.policy?.[0]?.id,
+    };
+    axios.post(`${Constants.TRASA_HOSTNAME}/api/v1/accessmap/dynamic/create`, data).then((r) => {
+      if (r.data.status == 'success') {
+        const data = r?.data?.data?.[0];
+        const dataArr = data.map(function (n: any) {
+          return [n.groupName, n.policyName, n.ruleID];
+        });
+        setAllRules(dataArr);
+      }
+    });
+  }
+
+  function deleteRule(ruleID: string) {
+    const data = {
+      ruleID: ruleID,
+    };
+
+    axios.post(`${Constants.TRASA_HOSTNAME}/api/v1/accessmap/dynamic/delete`, data).then((r) => {
+      if (r.data.status == 'success') {
+        const data = r?.data?.data?.[0];
+        const dataArr = data.map(function (n: any) {
+          return [n.groupName, n.policyName, n.ruleID];
+        });
+        setAllRules(dataArr);
+      }
+    });
+  }
+
+  const valueRenderer = (label: string) => (selected: Option[], options: Option[]) => {
+    if (selected && selected.length == 1) {
+      return selected[0].label;
+    } else {
+      return label;
+    }
+  };
 
   return (
     <div className={classes.root}>
@@ -207,7 +230,7 @@ export default function DynamicAccess(props: any) {
                           control={
                             <Checkbox
                               checked={state.status}
-                              onChange={handleChange}
+                              onChange={changeSetting}
                               name="status"
                             />
                           }
@@ -218,39 +241,35 @@ export default function DynamicAccess(props: any) {
                   </Grid>
                 </Grid>
 
-                <Grid container spacing={2} alignItems="center" justify="center">
-                  <Grid item xs={6}>
-                    <Typography variant="h4">User groups allowed Dynamic Access : </Typography>
-                  </Grid>
+                <Grid container direction={'row'}>
                   <Grid item xs={3}>
                     <MultiSelect
-                      labelledBy="Select user groups"
+                      labelledBy="Group"
                       options={allGroups}
                       value={state.userGroups}
+                      valueRenderer={valueRenderer('Select Group...')}
                       onChange={handleGroupsSelect}
                     />
                   </Grid>
-                </Grid>
 
-                <Grid container spacing={2} alignItems="center" justify="center">
-                  <Grid item xs={6}>
-                    <Typography variant="h4">Policy : </Typography>
-                  </Grid>
                   <Grid item xs={3}>
                     <MultiSelect
-                      labelledBy="Select policy"
+                      labelledBy="Policy"
                       options={allPolicies}
                       value={state.policy}
-                      onChange={handlepolicySelect}
+                      valueRenderer={valueRenderer('Select Policy...')}
+                      onChange={handlePolicySelect}
                     />
+                  </Grid>
+
+                  <Grid container xs={3}>
+                    <Button onClick={addRule} variant="contained" color="secondary">
+                      Add Rule
+                    </Button>
                   </Grid>
                 </Grid>
 
-                <Grid container spacing={2} alignItems="center" justify="center">
-                  <Button onClick={submitSetting} variant="contained" color="secondary">
-                    Submit
-                  </Button>
-                </Grid>
+                <DynamicAccessRulesTable data={allRules} deleteRule={deleteRule} />
               </Grid>
               {/* </Grid> */}
             </Grid>

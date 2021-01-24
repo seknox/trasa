@@ -11,11 +11,12 @@ import AzureAD from '../../assets/idp/azuread.png';
 import GSuite from '../../assets/idp/gsuite.png';
 import JumpCloud from '../../assets/idp/jumpcloud.png';
 import Okta from '../../assets/idp/okta.png';
+import Onelogin from '../../assets/idp/onelogin.png';
 import OpenLdapIcon from '../../assets/idp/openldap.png';
 import TrasaLogo from '../../assets/trasa-ni.svg';
 import LinearProgress from '../../utils/Components/Progressbar';
 import { FetchExternalIdps } from './api/auth';
-import packagejson from '../../../package.json'
+import packagejson from '../../../package.json';
 
 // STYLES
 const useStyles = makeStyles((theme) => ({
@@ -175,7 +176,10 @@ export default function LoginPage(props: LoginProps): ReactElement {
       </CardContent>
 
       <div className={classes.padMiddle}>
-        <div className={classes.cprightText}> Trasa Dashboard v{packagejson.version} by Seknox </div>{' '}
+        <div className={classes.cprightText}>
+          {' '}
+          Trasa Dashboard v{packagejson.version} by Seknox{' '}
+        </div>{' '}
       </div>
 
       {/* <OrgSelect orgs={orgs} submitLoginRequest={sendLoginRequest} /> */}
@@ -200,6 +204,9 @@ function ExternalIdps() {
       case 'okta':
         window.location.replace(val.endpoint);
         break;
+      case 'onelogin':
+        window.location.replace(val.endpoint);
+        break;
       default:
         // props.ldapAuth('freeipa', '')
         break;
@@ -213,6 +220,12 @@ function ExternalIdps() {
         return (
           <Button onClick={() => onClick(v)} key={k}>
             <img src={Okta} alt={v.idpName} height={50} />
+          </Button>
+        );
+      case 'onelogin':
+        return (
+          <Button onClick={() => onClick(v)} key={k}>
+            <img src={Onelogin} alt={v.idpName} height={30} />
           </Button>
         );
       case 'freeipa':
