@@ -5,7 +5,7 @@ import axios from 'axios';
 import MUIDataTable, { MUIDataTableColumn, MUIDataTableOptions } from 'mui-datatables';
 import React from 'react';
 import Constants from '../../../Constants';
-import {LogtableV2Theme} from '../../../utils/styles/themes'
+import {MuiDataTableTheme} from '../../../utils/styles/themes'
 const fileDownload = require('js-file-download');
 
 
@@ -80,7 +80,7 @@ export default function BackupTable(props: any) {
 
   return (
     <div>
-      <MuiThemeProvider theme={LogtableV2Theme}>
+      <MuiThemeProvider theme={MuiDataTableTheme}>
         <MUIDataTable
           title="Backups"
           data={props.backups}
