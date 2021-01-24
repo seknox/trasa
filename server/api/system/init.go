@@ -38,6 +38,6 @@ type adapter interface {
 
 	// backups
 	storeBackupMeta(backup models.Backup) error
-	getBackupMeta(backup models.Backup) (models.Backup, error)
+	getBackupMeta(backupID, orgID string) (backup models.Backup, err error)
 	getBackupMetas(orgID string) ([]models.Backup, error)
 }

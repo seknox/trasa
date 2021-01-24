@@ -99,7 +99,7 @@ func (s systemStore) updateSecurityRule(orgID, statusstr, ruleID string) error {
 
 func (s systemStore) storeBackupMeta(backup models.Backup) error {
 
-	_, err := s.DB.Exec(`INSERT into backups (backup_id, org_id, backup_name, backup_type,created_at )
+	_, err := s.DB.Exec(`INSERT into backups (id, org_id, name, type,created_at )
 						 values($1, $2, $3, $4, $5);`, backup.BackupID, backup.OrgID, backup.BackupName, backup.BackupType, backup.CreatedAt)
 
 	if err != nil {
@@ -108,13 +108,11 @@ func (s systemStore) storeBackupMeta(backup models.Backup) error {
 	return err
 }
 
-func (s systemStore) getBackupMeta(backup models.Backup) (models.Backup, error) {
+func (s systemStore) getBackupMeta(backupID, orgID string) (backup models.Backup, err error) {
 
-	err := s.DB.QueryRow(`SELECT  backup_name,backup_type, created_at  FROM backups WHERE backup_id=$1 AND org_id=$2`, backup.BackupID, backup.OrgID).Scan(&backup.BackupName, &backup.BackupType, &backup.CreatedAt)
+	err = s.DB.QueryRow(`SELECT  name,type, created_at  FROM backups WHERE id=$1 AND org_id=$2`,
+		backupID, orgID).Scan(&backup.BackupName, &backup.BackupType, &backup.CreatedAt)
 
-	if err != nil {
-		return backup, err
-	}
 	return backup, err
 }
 
@@ -123,7 +121,7 @@ func (s systemStore) getBackupMetas(orgID string) ([]models.Backup, error) {
 	var backup models.Backup
 	var backups = make([]models.Backup, 0)
 
-	rows, err := s.DB.Query(`SELECT  backup_id, org_id, backup_name,backup_type, created_at  FROM backups WHERE org_id=$1 ORDER BY created_at DESC`, orgID)
+	rows, err := s.DB.Query(`SELECT  id, org_id, name,type, created_at  FROM backups WHERE org_id=$1 ORDER BY created_at DESC`, orgID)
 	if err != nil {
 		logrus.Debug(err)
 		return backups, err

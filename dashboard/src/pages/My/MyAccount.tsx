@@ -456,10 +456,11 @@ function SettinMenu(props: SettingsMenuProps) {
       responseType: 'blob',
       headers: {
         'X-CSRF': localStorage.getItem('X-CSRF'),
+        'X-SESSION': localStorage.getItem('X-SESSION'),
       },
     };
 
-    axios.post(`${Constants.TRASA_HOSTNAME}/api/v1/my/generatekey`, null, config).then((resp) => {
+    axios.create(config).post(`${Constants.TRASA_HOSTNAME}/api/v1/my/generatekey`).then((resp) => {
       fileDownload(resp.data, 'id_rsa.zip', 'application/zip');
     });
   };
