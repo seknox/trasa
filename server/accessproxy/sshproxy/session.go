@@ -169,6 +169,7 @@ func start(conn net.Conn, serverConf *ssh.ServerConfig) error {
 			logrus.Debugf("Could not accept client channel: %s", err2.Error())
 			return err
 		}
+		defer backEndChannel.Close()
 
 		acceptedFrontEndChannel, requests, err := frontEndChan.Accept()
 		if err != nil {

@@ -120,7 +120,6 @@ func (lr *WrappedTunnel) Read(p []byte) (n int, err error) {
 }
 
 func (lr *WrappedTunnel) pipe() {
-	defer lr.Close()
 	go func() {
 		for !lr.closed {
 			buff := make([]byte, 100)
