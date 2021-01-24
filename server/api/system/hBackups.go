@@ -190,7 +190,7 @@ func DownloadBackupFile(w http.ResponseWriter, r *http.Request) {
 	backup, err := Store.getBackupMeta(backupID, userContext.Org.ID)
 	if err != nil {
 		logrus.Error(err)
-		utils.TrasaResponse(w, 200, "failed", "failed to fetch backup meta", "GetBackups")
+		utils.TrasaResponse(w, 200, "failed", "failed to fetch backup meta", "DownloadBackupFile")
 		return
 	}
 
