@@ -3,7 +3,6 @@ package sshproxy
 import (
 	"github.com/gorilla/websocket"
 	"github.com/seknox/ssh"
-	"github.com/sirupsen/logrus"
 	"io"
 )
 
@@ -16,13 +15,11 @@ type webSSHBackendConn struct {
 func NewWebSSHBackend(session *ssh.Session) (*webSSHBackendConn, error) {
 	stdInPipe, err := session.StdinPipe()
 	if err != nil {
-		logrus.Error(err)
 		return nil, err
 	}
 
 	stdOutPipe, err := session.StdoutPipe()
 	if err != nil {
-		logrus.Error(err)
 		return nil, err
 	}
 

@@ -77,14 +77,13 @@ export function SSHLiveSession(props: any) {
 
       wskt.send(JSON.stringify(newReq));
       term.onData((data) => {
-        console.log(data)
         wskt.send(data);
       });
 
     };
     wskt.onmessage = async (evt) => {
      //for text data
-      if(typeof (evt.data)=="string"){
+      if(typeof (evt.data)==="string"){
         term.write( evt.data);
 
       }else {
