@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-const STANDBY_TIMEOUT = time.Minute * 5
+const STANDBY_TIMEOUT = time.Minute * 15
 
 //WrappedTunnel wraps upstream(backend) ssh connection and writes data to session file,guests
 //It also writes data coming from guests to upstream(backend) ssh connection
