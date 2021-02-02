@@ -131,6 +131,9 @@ func TestSSHAuthWithAuthorisedPublicKey(t *testing.T) {
 		t.Fatalf(`could not run command: %v`, err)
 	}
 
+	s.Close()
+	client.Close()
+
 }
 
 func TestSSHAuthWithServiceName(t *testing.T) {

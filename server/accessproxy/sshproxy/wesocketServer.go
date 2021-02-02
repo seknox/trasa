@@ -3,7 +3,6 @@ package sshproxy
 import (
 	"database/sql"
 	"encoding/hex"
-	"runtime/debug"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -17,7 +16,7 @@ import (
 	"github.com/seknox/trasa/server/api/services"
 	"github.com/seknox/trasa/server/consts"
 	"github.com/seknox/trasa/server/models"
-	logrus "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 func JoinSSHSession(params models.ConnectionParams, uc models.UserContext, conn *websocket.Conn) {
@@ -300,21 +299,6 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 	}
 	defer session.Close()
 
-	stdInPipe, err := session.StdinPipe()
-	if err != nil {
-		logrus.Error(err)
-		return
-	}
-	defer stdInPipe.Close()
-
-	//session.Stdout=conn.UnderlyingConn()
-
-	stdOutPipe, err := session.StdoutPipe()
-	if err != nil {
-		logrus.Error(err)
-		return
-	}
-
 	guestChan := SSHStore.CreateGuestChannel(hex.EncodeToString(sshClient.SessionID()))
 	defer SSHStore.deleteGuestChannel(hex.EncodeToString(sshClient.SessionID()))
 
@@ -322,14 +306,20 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 	defer logs.Store.RemoveActiveSession(hex.EncodeToString(sshClient.SessionID()))
 	//logrus.Trace("SESSION ID is", hex.EncodeToString(sshClient.SessionID()))
 
-	//TODO use generic function to pipe tunnels
-	wrappedChannel, err := NewWrappedTunnel(authlog.SessionID, policy.RecordSession, stdOutPipe, stdInPipe, guestChan)
+	wsshFrontEndConn := NewWebSSHFrontEndConn(conn)
+	wsshBackendConn, err := NewWebSSHBackend(session)
+	if err != nil {
+		logrus.Error(err)
+		conn.WriteMessage(1, []byte("\n\rCould not create std in/out pipe\n\r"))
+		wsshFrontEndConn.Close()
+		return
+	}
+
+	wrappedChannel, err := NewWrappedTunnel(authlog.SessionID, policy.RecordSession, wsshBackendConn, wsshFrontEndConn, guestChan)
 	if err != nil {
 		logrus.Error(err)
 		return
 	}
-
-	defer wrappedChannel.Close()
 
 	//
 	//modes := ssh.TerminalModes{
@@ -355,58 +345,14 @@ func ConnectNewSSH(params models.ConnectionParams, uc models.UserContext, conn *
 		return
 	}
 
-	//session.Wait()
-
-	go func() {
-		defer func() {
-			if r := recover(); r != nil {
-				logrus.Error("Recovered in websocketServer.go", r, string(debug.Stack()))
-			}
-		}()
-		for {
-
-			buff := make([]byte, 100)
-			n, err := wrappedChannel.Read(buff)
-			if err != nil {
-				logrus.Debug(err)
-				return
-			}
-			if n > 0 {
-				err := conn.WriteMessage(1, buff)
-				if err != nil {
-					logrus.Debug(err)
-					return
-				}
-			}
-
-		}
-
-	}()
-
-	func() {
-		for {
-			//	logrus.Debugln("-__-")
-			_, msg, err := conn.ReadMessage()
-			if err != nil {
-				logrus.Debug(err)
-				return
-			}
-
-			n, err := stdInPipe.Write(msg)
-			if err != nil {
-				logrus.Debug(err, n)
-
-				return
-			}
-
-		}
-	}()
+	wrappedChannel.pipe()
 
 }
 
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
+	Subprotocols:    []string{"xterm"},
 }
 
 func checkAndInitParams(uc *models.UserContext, params *models.ConnectionParams) {
@@ -415,7 +361,7 @@ func checkAndInitParams(uc *models.UserContext, params *models.ConnectionParams)
 	params.UserID = uc.User.ID
 	params.TrasaID = uc.User.Email
 	params.Timezone = uc.Org.Timezone
-	params.ServiceType = "rdp"
+	params.ServiceType = "ssh"
 	params.Groups = uc.User.Groups
 	//params.UserAgent = r.UserAgent()
 
