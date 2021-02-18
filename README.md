@@ -69,7 +69,7 @@ We encourage to checkout <a href="https://www.trasa.io/docs"><strong>TRASA websi
 
 - Concepts : <a href="https://www.trasa.io/docs/getting-started/concepts"><strong>Basic Concepts »</strong></a>
 - Getting Started : <a href="https://www.trasa.io/docs"><strong>Getting Started »</strong></a>
-- Installtion: <a href="https://www.trasa.io/docs/install/installation"><strong>Installation »</strong></a>
+- Installation: <a href="https://www.trasa.io/docs/install/installation"><strong>Installation »</strong></a>
 - Admin Manual: <a href="https://www.trasa.io/docs"><strong>Admin Docs »</strong></a>
 - User Guides: <a href="https://www.trasa.io/docs/guides/getting-started"><strong>User Guides »</strong></a>
 
