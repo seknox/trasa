@@ -67,11 +67,11 @@ These features cumulatively enables **zero trust access control** security model
 
 We encourage to checkout <a href="https://www.trasa.io/docs"><strong>TRASA website »</strong></a> for latest information on getting started with TRASA.
 
-- Concepts : <a href="https://www.trasa.io/docs/getting-started/concepts"><strong>Basic Concepts »</strong></a>
-- Getting Started : <a href="https://www.trasa.io/docs"><strong>Getting Started »</strong></a>
-- Installtion: <a href="https://www.trasa.io/docs/install/installation"><strong>Installation »</strong></a>
-- Admin Manual: <a href="https://www.trasa.io/docs"><strong>Admin Docs »</strong></a>
-- User Guides: <a href="https://www.trasa.io/docs/guides/getting-started"><strong>User Guides »</strong></a>
+- Concepts: [**Basic Concepts »**](https://www.trasa.io/docs/getting-started/concepts)
+- Getting Started: [**Getting Started »**](https://www.trasa.io/docs)
+- Installation: [**Installation »**](https://www.trasa.io/docs/install/installation)
+- Admin Manual: [**Admin Docs »**](https://www.trasa.io/docs)
+- User Guides: [**User Guides »**](https://www.trasa.io/docs/guides/getting-started)
 
 <!-- COMMUNITY -->
 
