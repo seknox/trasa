@@ -44,27 +44,13 @@ function Home() {
 
               <Grid item xs={12} sm={12}>
                 <div className={classes.ctaPad}>
-                  <Typography variant="h2">Discussion Forum</Typography>
+                  <Typography variant="h2">Support & Discussion Forum</Typography>
                   <span>
                     <Typography variant="body1" component="span">
                       Ask or answer on topics related to TRASA:
                     </Typography>
                     <Link className={classes.link} to="https://discuss.seknox.com">
                       TRASA Community Forum
-                    </Link>
-                  </span>
-                </div>
-              </Grid>
-
-              <Grid item xs={12} sm={12}>
-                <div className={classes.ctaPad}>
-                  <Typography variant="h2">Realtime communication</Typography>
-                  <span>
-                    <Typography variant="body1" component="span">
-                      Chat with others:
-                    </Typography>
-                    <Link className={classes.link} to="https://discord.gg/4wRmuv9">
-                      Join TRASA discord chat
                     </Link>
                   </span>
                 </div>
