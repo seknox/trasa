@@ -24,7 +24,7 @@
 [![License: MPL 2.0](https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg)](https://github.com/seknox/trasa/blob/master/LICENSE)
 [![Actions Status](https://github.com/seknox/trasa/workflows/Build/badge.svg?branch=master)](https://github.com/seknox/trasa/actions)
 [![Actions Status](https://github.com/seknox/trasa/workflows/Test/badge.svg?branch=master)](https://github.com/seknox/trasa/actions)
-[![Discord Chat](https://img.shields.io/discord/767929416507457557?color=7289da&logo=discord&logoColor=white)](https://discord.gg/4wRmuv9)  
+[![Discord Chat](https://img.shields.io/discord/767929416507457557?color=7289da&logo=discord&logoColor=white)](https://discord.gg/4wRmuv9)
 
 <br />
 <img alt="TRASA" width='800' src="https://www.trasa.io/dash/access-stats.png">
@@ -40,7 +40,6 @@
   - [Immediate use cases and benefits](#immediate-use-cases-and-benefits)
 - [Getting Started](#getting-started)
 - [Community](#community)
-  - [Chat](#chat)
   - [Forum](#forum)
   - [Blog](#blog)
   - [Contribute](#contribute)
@@ -67,22 +66,26 @@ These features cumulatively enables **zero trust access control** security model
 
 We encourage to checkout <a href="https://www.trasa.io/docs"><strong>TRASA website »</strong></a> for latest information on getting started with TRASA.
 
-- Concepts : <a href="https://www.trasa.io/docs/getting-started/concepts"><strong>Basic Concepts »</strong></a>
-- Getting Started : <a href="https://www.trasa.io/docs"><strong>Getting Started »</strong></a>
-- Installtion: <a href="https://www.trasa.io/docs/install/installation"><strong>Installation »</strong></a>
-- Admin Manual: <a href="https://www.trasa.io/docs"><strong>Admin Docs »</strong></a>
-- User Guides: <a href="https://www.trasa.io/docs/guides/getting-started"><strong>User Guides »</strong></a>
+- Concepts: [**Basic Concepts »**](https://www.trasa.io/docs/getting-started/concepts)
+- Getting Started: [**Getting Started »**](https://www.trasa.io/docs)
+- Installation: [**Installation »**](https://www.trasa.io/docs/install/installation)
+- Admin Manual: [**Admin Docs »**](https://www.trasa.io/docs)
+- User Guides: [**User Guides »**](https://www.trasa.io/docs/guides/getting-started)
 
 <!-- COMMUNITY -->
 
 ## Community
-### Chat
-Join our [discord server](https://discord.gg/4wRmuv9).
-### Forum
-Join our [discussion forum](https://discuss.seknox.com).
+
+### Support and discussion forum
+
+Join our [discourse server](https://discuss.seknox.com).
+
 ### Blog
+
 Read our [blog](https://www.trasa.io/blog).
+
 ### Contribute
+
 See [Contributing Guidelines](https://github.com/seknox/trasa/blob/master/CONTRIBUTING.md).
 
 <!-- LICENSE -->

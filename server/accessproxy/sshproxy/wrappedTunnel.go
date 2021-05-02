@@ -9,19 +9,24 @@ import (
 	"os"
 	"path/filepath"
 	"runtime/debug"
+	"time"
 )
+
+const STANDBY_TIMEOUT = time.Minute * 15
 
 //WrappedTunnel wraps upstream(backend) ssh connection and writes data to session file,guests
 //It also writes data coming from guests to upstream(backend) ssh connection
 type WrappedTunnel struct {
-	io.WriteCloser
-	io.Reader
+	backend       io.ReadWriteCloser
+	frontend      io.ReadWriteCloser
 	sessionRecord bool
 	tempLogFile   *os.File
 	guests        []*websocket.Conn
+	timer         *time.Timer
+	closed        bool
 }
 
-func NewWrappedTunnel(sessionID string, sessionRecord bool, backendReader io.Reader, backendWriter io.WriteCloser, guestChan chan GuestClient) (*WrappedTunnel, error) {
+func NewWrappedTunnel(sessionID string, sessionRecord bool, backend io.ReadWriteCloser, frontend io.ReadWriteCloser, guestChan chan GuestClient) (*WrappedTunnel, error) {
 
 	err := os.MkdirAll(filepath.Join(utils.GetTmpDir(), "trasa", "accessproxy", "ssh"), 0644)
 	if err != nil {
@@ -30,11 +35,18 @@ func NewWrappedTunnel(sessionID string, sessionRecord bool, backendReader io.Rea
 	}
 
 	tunn := &WrappedTunnel{
-		WriteCloser:   backendWriter,
-		Reader:        backendReader,
+		backend:       backend,
+		frontend:      frontend,
 		sessionRecord: sessionRecord,
 		guests:        nil,
+		closed:        false,
 	}
+
+	tunn.timer = time.AfterFunc(STANDBY_TIMEOUT, func() {
+		logrus.Debug("Timeout after no interaction")
+		tunn.closed = true
+		tunn.Close()
+	})
 
 	if sessionRecord {
 		tunn.tempLogFile, err = os.OpenFile(filepath.Join(utils.GetTmpDir(), "trasa", "accessproxy", "ssh", sessionID+".session"), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
@@ -80,13 +92,13 @@ func (lr *WrappedTunnel) readFromGuests(guest *websocket.Conn) {
 			logrus.Debugf(`Could not read from viewer, disconnected: %v`, err)
 			return
 		}
-		lr.WriteCloser.Write(data)
+		lr.backend.Write(data)
 	}
 
 }
 
 func (lr *WrappedTunnel) Read(p []byte) (n int, err error) {
-	n, err = lr.Reader.Read(p)
+	n, err = lr.backend.Read(p)
 
 	//Write to file
 	if lr.sessionRecord {
@@ -100,10 +112,57 @@ func (lr *WrappedTunnel) Read(p []byte) (n int, err error) {
 		}
 	}
 
+	if n > 0 {
+		lr.timer.Reset(time.Minute)
+	}
+
 	return n, err
 }
 
-func (lr *WrappedTunnel) Close() error {
+func (lr *WrappedTunnel) pipe() {
+	go func() {
+		for !lr.closed {
+			buff := make([]byte, 100)
+			n, err := lr.backend.Read(buff)
+			if err != nil {
+				logrus.Debug(err)
+				return
+			}
+			if n > 0 {
+				lr.timer.Reset(STANDBY_TIMEOUT)
+				_, err := lr.frontend.Write(buff[:n])
+				if err != nil {
+					logrus.Debug(err)
+					return
+				}
+			}
+		}
+	}()
+
+	func() {
+		for !lr.closed {
+			buff := make([]byte, 100)
+			n, err := lr.frontend.Read(buff)
+			if err != nil {
+				logrus.Debug(err)
+				return
+			}
+			if n > 0 {
+				lr.timer.Reset(STANDBY_TIMEOUT)
+				_, err := lr.backend.Write(buff[:n])
+				if err != nil {
+					logrus.Debug(err)
+					return
+				}
+			}
+		}
+	}()
+
+	logrus.Debug("Session Ended")
+}
+
+func (lr *WrappedTunnel) Close() (err error) {
+	logrus.Debug("closing tunnel")
 	lr.tempLogFile.Close()
 
 	for _, v := range lr.guests {
@@ -111,6 +170,19 @@ func (lr *WrappedTunnel) Close() error {
 			v.Close()
 		}
 	}
-	return lr.WriteCloser.Close()
+	lr.timer.Stop()
+
+	e := lr.backend.Close()
+	if e != nil {
+		logrus.Error(e)
+		err = e
+	}
+
+	e = lr.frontend.Close()
+	if e != nil {
+		logrus.Error(e)
+		err = e
+	}
+	return err
 
 }

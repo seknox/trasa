@@ -2,6 +2,7 @@ package accesscontrol
 
 import (
 	"database/sql"
+	"github.com/seknox/trasa/server/api/adhoc"
 
 	"github.com/pkg/errors"
 	"github.com/seknox/trasa/server/api/devices"
@@ -169,16 +170,62 @@ func timeChecker(hour, minute int, from, to []int) bool {
 // CheckPolicy validates policy for user access
 func CheckPolicy(params *models.ConnectionParams, policy *models.Policy, adHocSwitch bool) (bool, consts.FailedReason) {
 
-	ok := false
-	reason := consts.REASON_UNKNOWN
+	checkPermission, reason := false, consts.REASON_UNKNOWN
 
-	//we check users policy
-	ok, reason = CheckTrasaUAC(params.Timezone, params.UserIP, policy)
-	if ok == true {
-		return true, "user authorised by uac check"
+	// 1) check if adhoc switch is enabled
+	if adHocSwitch == true {
+		adHocPerm, adhocID := checkAdhocPermission(params.UserID, params.ServiceID, params.OrgID)
+		// we return true if adhoc permission is enabled and policy check succeeds.
+		if adHocPerm == true {
+			logrus.Tracef("adhocID %s ,sessionID %s", adhocID, params.SessionID)
+			err := adhoc.Store.AppendSession(adhocID, params.SessionID, params.OrgID)
+			if err != nil {
+				logrus.Errorf("append adhoc session: %v", err)
+			}
+			return true, "user authorized by adhoc perm check"
+		}
+		reason = consts.REASON_ADHOC_POLICY_FAILED
+	} else {
+		// 2) we check users rergular policy
+		checkPermission, reason = CheckTrasaUAC(params.Timezone, params.UserIP, policy)
+		if checkPermission == true {
+			return true, "user authorised by uac check"
+		} else {
+			// 3) we check if if adhoc permission is set explicitly
+			adHocPerm, adhocID := checkAdhocPermission(params.UserID, params.ServiceID, params.OrgID)
+			if adHocPerm {
+				logrus.Tracef("adhocID %s ,sessionID %s", adhocID, params.SessionID)
+				err := adhoc.Store.AppendSession(adhocID, params.SessionID, params.OrgID)
+				if err != nil {
+					logrus.Errorf("append adhoc session: %v", err)
+				}
+				return true, "user authorized by adhoc perm check"
+			}
+
+		}
 	}
 
-	return ok, reason
+	return checkPermission, reason
+}
+
+func checkAdhocPermission(userID, appID, orgID string) (bool, string) {
+	current := time.Now().Unix()
+
+	activeAdhocReq, err := adhoc.Store.GetActiveReqOfUser(userID, appID, orgID)
+	if err == nil {
+		if activeAdhocReq.AuthorizedPeriod/1000 > current {
+			return true, activeAdhocReq.RequestID
+		} else {
+			err := adhoc.Store.Expire(activeAdhocReq.RequestID, orgID)
+			if err != nil {
+				logrus.Error(err)
+			}
+			return false, ""
+		}
+
+	}
+
+	return false, ""
 }
 
 //CheckDevicePolicy checks if device hygiene of user is according to device policy

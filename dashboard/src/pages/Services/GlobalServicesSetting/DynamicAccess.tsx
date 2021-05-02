@@ -20,8 +20,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Button from '@material-ui/core/Button';
 import ProgressHOC from '../../../utils/Components/Progressbar';
 import Constants from '../../../Constants';
-import DynamicAccessRulesTable from "./DynamicAccessRulesTable";
-import {Option} from "react-multi-select-component/dist/lib/interfaces";
+import DynamicAccessRulesTable from './DynamicAccessRulesTable';
+import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -78,9 +78,7 @@ export default function DynamicAccess(props: any) {
   const [allPolicies, setAllPolicies] = React.useState<any>([]);
   const [allRules, setAllRules] = React.useState<any>([]);
 
-
   const handleGroupsSelect = (groups: any) => {
-
     if (groups.length > 1) {
       const last = groups[groups.length - 1];
       groups = [last];
@@ -97,19 +95,11 @@ export default function DynamicAccess(props: any) {
     setState({ ...state, policy: pol });
   };
 
-
-
   React.useEffect(() => {
     axios.get(`${Constants.TRASA_HOSTNAME}/api/v1/accessmap/dynamic`).then((r) => {
-
       const data = r?.data?.data?.[0];
       const dataArr = data.map(function (n: any) {
-
-        return [
-          n.groupName,
-          n.policyName,
-          n.ruleID,
-        ];
+        return [n.groupName, n.policyName, n.ruleID];
       });
 
       setAllRules(dataArr);
@@ -122,7 +112,7 @@ export default function DynamicAccess(props: any) {
       }));
       setAllGroups(groups);
     });
-    axios.get(`${Constants.TRASA_HOSTNAME}/api/v1/groups/policy/all`).then((r) => {
+    axios.get(`${Constants.TRASA_HOSTNAME}/api/v1/policy/all`).then((r) => {
       const policies = r.data?.data?.[0].map((g: any) => ({
         label: g.policyName,
         id: g.policyID,
@@ -133,11 +123,10 @@ export default function DynamicAccess(props: any) {
   }, []);
 
   React.useEffect(() => {
-      setState({
-        ...state,
-        status: props.settings?.status,
-      });
-
+    setState({
+      ...state,
+      status: props.settings?.status,
+    });
   }, [props.settings]);
 
   const [reqStatus, setReqStatus] = useState(false);
@@ -147,7 +136,7 @@ export default function DynamicAccess(props: any) {
     setState({ ...state, [event.target.name]: event.target.checked });
 
     const data = {
-      status: event.target.checked ,
+      status: event.target.checked,
     };
     axios
       .post(`${Constants.TRASA_HOSTNAME}/api/v1/system/settings/dynamicaccess/update`, data)
@@ -159,56 +148,45 @@ export default function DynamicAccess(props: any) {
       });
   }
 
-  function addRule(event:any) {
+  function addRule(event: any) {
     const data = {
       groupName: state.userGroups?.[0].id,
       policyID: state.policy?.[0]?.id,
-    }
-    axios.post(`${Constants.TRASA_HOSTNAME}/api/v1/accessmap/dynamic/create`,data).then((r) => {
-      if(r.data.status=="success"){
+    };
+    axios.post(`${Constants.TRASA_HOSTNAME}/api/v1/accessmap/dynamic/create`, data).then((r) => {
+      if (r.data.status == 'success') {
         const data = r?.data?.data?.[0];
         const dataArr = data.map(function (n: any) {
-
-          return [
-            n.groupName,
-            n.policyName,
-            n.ruleID,
-          ];
+          return [n.groupName, n.policyName, n.ruleID];
         });
-        setAllRules(dataArr)
+        setAllRules(dataArr);
       }
-    })
-    }
-
-    function deleteRule(ruleID:string) {
-    const data = {
-      ruleID:ruleID
-    }
-
-      axios.post(`${Constants.TRASA_HOSTNAME}/api/v1/accessmap/dynamic/delete`,data).then((r) => {
-        if(r.data.status=="success"){
-          const data = r?.data?.data?.[0];
-          const dataArr = data.map(function (n: any) {
-
-            return [
-              n.groupName,
-              n.policyName,
-              n.ruleID,
-            ];
-          });
-          setAllRules(dataArr)
-        }
-      })
-
-    }
-
-  const valueRenderer=(label: string)=>(selected:Option[], options:Option[]) =>{
-    if(selected && selected.length==1){
-      return selected[0].label
-    }else {
-      return label
-    }
+    });
   }
+
+  function deleteRule(ruleID: string) {
+    const data = {
+      ruleID: ruleID,
+    };
+
+    axios.post(`${Constants.TRASA_HOSTNAME}/api/v1/accessmap/dynamic/delete`, data).then((r) => {
+      if (r.data.status == 'success') {
+        const data = r?.data?.data?.[0];
+        const dataArr = data.map(function (n: any) {
+          return [n.groupName, n.policyName, n.ruleID];
+        });
+        setAllRules(dataArr);
+      }
+    });
+  }
+
+  const valueRenderer = (label: string) => (selected: Option[], options: Option[]) => {
+    if (selected && selected.length == 1) {
+      return selected[0].label;
+    } else {
+      return label;
+    }
+  };
 
   return (
     <div className={classes.root}>
@@ -263,43 +241,35 @@ export default function DynamicAccess(props: any) {
                   </Grid>
                 </Grid>
 
+                <Grid container direction={'row'}>
+                  <Grid item xs={3}>
+                    <MultiSelect
+                      labelledBy="Group"
+                      options={allGroups}
+                      value={state.userGroups}
+                      valueRenderer={valueRenderer('Select Group...')}
+                      onChange={handleGroupsSelect}
+                    />
+                  </Grid>
 
-                <Grid container direction={"row"}>
+                  <Grid item xs={3}>
+                    <MultiSelect
+                      labelledBy="Policy"
+                      options={allPolicies}
+                      value={state.policy}
+                      valueRenderer={valueRenderer('Select Policy...')}
+                      onChange={handlePolicySelect}
+                    />
+                  </Grid>
 
-                    <Grid item xs={3}>
-                      <MultiSelect
-                          labelledBy="Group"
-                          options={allGroups}
-                          value={state.userGroups}
-                          valueRenderer={valueRenderer("Select Group...")}
-                          onChange={handleGroupsSelect}
-                      />
-                    </Grid>
-
-
-                    <Grid item xs={3}>
-                      <MultiSelect
-                          labelledBy="Policy"
-                          options={allPolicies}
-                          value={state.policy}
-                          valueRenderer={valueRenderer("Select Policy...")}
-                          onChange={handlePolicySelect}
-                      />
-                    </Grid>
-
-                  <Grid container xs={3} >
+                  <Grid container xs={3}>
                     <Button onClick={addRule} variant="contained" color="secondary">
                       Add Rule
                     </Button>
                   </Grid>
-
                 </Grid>
 
-
-                <DynamicAccessRulesTable
-                    data={allRules}
-                    deleteRule={deleteRule}
-                />
+                <DynamicAccessRulesTable data={allRules} deleteRule={deleteRule} />
               </Grid>
               {/* </Grid> */}
             </Grid>

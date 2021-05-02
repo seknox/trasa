@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"fmt"
 	"github.com/seknox/trasa/server/accessproxy/rdpproxy"
+	"github.com/seknox/trasa/server/api/adhoc"
 	"github.com/seknox/trasa/server/api/auth/serviceauth"
 	"net/http"
 	"net/url"
@@ -57,12 +58,10 @@ func StartServer() {
 
 	rdpproxy.InitStore(state)
 	sshproxy.InitStore(state)
-	serviceauth.InitStore(state)
 
 	accesscontrol.InitStore(state)
-
 	accessmap.InitStore(state)
-
+	adhoc.InitStore(state)
 	auth.InitStore(state)
 	vault.InitStore(state)
 	tsxvault.InitStore(state)
@@ -76,6 +75,7 @@ func StartServer() {
 	orgs.InitStore(state)
 	policies.InitStore(state)
 	redis.InitStore(state)
+	serviceauth.InitStore(state)
 	services.InitStore(state)
 	system.InitStore(state)
 	stats.InitStore(state)
@@ -290,21 +290,8 @@ func FileServer(r chi.Router, path string) {
 func serveFile(w http.ResponseWriter, r *http.Request) {
 	rctx := chi.RouteContext(r.Context())
 
-	//workDir, _ := os.Getwd()
-
-	// filesDir := http.Dir(filepath.Join(workDir, filepath.Join(utils.GetVarDir(),"trasa","dashboard")))
-
-	//fmt.Println("context: ", rctx.RoutePattern())
 	pathPrefix := strings.TrimSuffix(rctx.RoutePattern(), "/*")
-	// fmt.Println("serving: ", pathPrefix)
 	fs := http.StripPrefix(pathPrefix, http.FileServer(http.Dir(filepath.Join(utils.GetVarDir(), "trasa", "dashboard"))))
 
 	fs.ServeHTTP(w, r)
-}
-
-func fileServeMiddleware(next http.HandlerFunc) http.HandlerFunc {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
-		next(w, r)
-	})
 }

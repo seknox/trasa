@@ -121,7 +121,7 @@ export default function Appuser(props: any) {
 
   const fetchPolicies = () => {
     axios
-      .get(`${Constants.TRASA_HOSTNAME}/api/v1/groups/policy/all`)
+      .get(`${Constants.TRASA_HOSTNAME}/api/v1/policy/all`)
       .then((response) => {
         // this.setState({allUsers: response.data})
         const resp = response.data.data[0];
@@ -205,13 +205,23 @@ export default function Appuser(props: any) {
 
       <Grid container>
         <Grid item xs={2}>
-          <Button id='assignUserBtn' variant="contained" size="small" onClick={changeAssignuserDlgState}>
+          <Button
+            id="assignUserBtn"
+            variant="contained"
+            size="small"
+            onClick={changeAssignuserDlgState}
+          >
             <Save />
             Assign User
           </Button>
         </Grid>
         <Grid item xs={2}>
-          <Button id='assignUserGroupBtn' variant="contained" size="small" onClick={changeAssignGroupDlgState}>
+          <Button
+            id="assignUserGroupBtn"
+            variant="contained"
+            size="small"
+            onClick={changeAssignGroupDlgState}
+          >
             <Save />
             Assign User Groups
           </Button>

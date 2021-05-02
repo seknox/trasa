@@ -30,6 +30,7 @@ import SshIcon from '../../assets/ssh.png';
 import Constants from '../../Constants';
 import ProgressHOC from '../../utils/Components/Progressbar';
 import NewConnDlg from './NewConn';
+import Typography from '@material-ui/core/Typography';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -39,128 +40,13 @@ const useStyles = makeStyles((theme) => ({
 
   paper: {
     backgroundColor: '#fdfdfd',
-    // backgroundColor: '#00001aff', //'#E0E0E0', 'rgba(10,34,52,1)' // #011019
-    // minWidth: 400,
-    // minHeight: 300,
+
     padding: theme.spacing(2),
     textAlign: 'center',
     color: theme.palette.text.secondary,
   },
-  card: {
-    //   maxWidth: 250,
-    // //  width: 50,
-    //   padding: theme.spacing(5),
-
-    marginLeft: 20,
-    height: 200,
-  },
-  button: {
-    backgroundColor: '#000080',
-  },
-  buttonSpace: {
-    flexgrow: 1,
-    justifyContent: 'space-between',
-  },
-  Servicebutton: {
-    color: 'white',
-    backgroundColor: '#000080', // '#0A2053', // '#0000CD',
-  },
-  requestButton: {
-    color: 'white',
-    backgroundColor: '#000080',
-  },
-  // form
-  formControl: {
-    margin: theme.spacing(1),
-  },
-  inputLabelFocused: {
-    color: purple[500],
-  },
-  inputInkbar: {
-    '&:after': {
-      backgroundColor: purple[500],
-    },
-  },
-  textFieldRoot: {
-    padding: 1,
-    'label + &': {
-      marginTop: theme.spacing(3),
-    },
-  },
-
-  textFieldInput: {
-    borderRadius: 4,
-    backgroundColor: theme.palette.common.white,
-    border: '1px solid #ced4da',
-    fontSize: 16,
-    padding: '10px 12px',
-    width: 'calc(100% - 4px)',
-    transition: theme.transitions.create(['border-color', 'box-shadow']),
-    '&:focus': {
-      borderColor: '#80bdff',
-      boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
-    },
-  },
-  textFieldInputBig: {
-    borderRadius: 4,
-    backgroundColor: theme.palette.common.white,
-    border: '1px solid #ced4da',
-    fontSize: 16,
-    //    padding: '10px 100px',
-    //     width: 'calc(100% - 4px)',
-    transition: theme.transitions.create(['border-color', 'box-shadow']),
-    '&:focus': {
-      borderColor: '#80bdff',
-      boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
-    },
-  },
-  textFieldFormLabel: {
-    fontSize: 18,
-  },
-  buttonProgress: {
-    color: green[500],
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
-  },
-  successText: {
-    fontSize: 15,
-    color: 'green',
-  },
-  errorText: {
-    fontSize: 15,
-    color: 'red',
-  },
-  fab: {
-    margin: theme.spacing(2),
-  },
-  fab2: {
-    margin: theme.spacing(2),
-  },
-  users: {
-    margin: theme.spacing(2),
-  },
-  dividerInset: {
-    margin: `5px 0 0 ${theme.spacing(9)}px`,
-  },
-  servicesDemiter: {
-    marginBottom: 20,
-  },
-  lightTooltip: {
-    backgroundColor: theme.palette.common.white,
-    color: 'rgba(0, 0, 0, 0.87)',
-    boxShadow: theme.shadows[1],
-    fontSize: 11,
-  },
   extendedIcon: {
     marginRight: '10px',
-  },
-  ServiceName: {
-    color: 'black',
-    fontSize: '12px',
-    fontFamily: 'Open Sans, Rajdhani',
   },
   searchRoot: {
     marginLeft: '35%',
@@ -176,10 +62,22 @@ const useStyles = makeStyles((theme) => ({
   iconButton: {
     padding: 10,
   },
-  divider: {
-    width: 1,
-    height: 28,
-    margin: 4,
+  servicesDemiter: {
+    marginBottom: 20,
+  },
+  lightTooltip: {
+    backgroundColor: theme.palette.common.white,
+    color: 'rgba(0, 0, 0, 0.87)',
+    boxShadow: theme.shadows[1],
+    fontSize: 11,
+  },
+
+  buttonSpace: {
+    flexgrow: 1,
+    justifyContent: 'space-between',
+  },
+  formControl: {
+    margin: theme.spacing(1),
   },
 }));
 
@@ -194,8 +92,6 @@ export default function MyservicesList() {
   const [user, setUser] = useState({ email: '' });
   const [selectedServiceIndex, setSelectedServiceIndex] = useState(0);
   const [admins, setAdmins] = useState([]);
-
-
 
   const handleNewconDlgState = () => {
     setNewconDlgOpen(!newconDlgOpen);
@@ -245,21 +141,14 @@ export default function MyservicesList() {
     }
   };
 
-  // handleClose = () => {
-  //   setState({ open: false, menuOpen: false });
-  // };
-
   useEffect(() => {
     const url = `${Constants.TRASA_HOSTNAME}/api/v1/my/services`;
 
     axios
       .get(url)
       .then((response) => {
-        console.log(response.data);
         setUser(response.data.User);
         setAssignedservices(response.data?.data?.[0]?.myServices);
-        console.log(response.data?.data?.[0]?.myServices)
-        // setState({ user: response.data.User, services: response.data.UserService });
       })
       .catch((error) => {
         console.error(error);
@@ -287,15 +176,6 @@ export default function MyservicesList() {
     setReqOpen(false);
   };
 
-  const sendAccessRequest = () => {
-    axios
-      .post(`${Constants.TRASA_HOSTNAME}/api/v1/my/services/adhoc/request`)
-      .then((response) => {})
-      .catch((error) => {
-        console.error(error);
-      });
-  };
-
   const searchService = (e: any) => {
     setQuery(e.target.value);
   };
@@ -316,7 +196,7 @@ export default function MyservicesList() {
   );
   return (
     <div className={classes.root}>
-      <Button variant="contained" className={classes.button} onClick={handleNewconDlgState}>
+      <Button variant="contained" onClick={handleNewconDlgState}>
         <CastIcon className={classes.extendedIcon} />
         new connection
       </Button>
@@ -330,11 +210,6 @@ export default function MyservicesList() {
           placeholder="Search services by name or hostname"
           inputProps={{ 'aria-label': 'Search  service s' }}
         />
-
-        {/* <Divider className={classes.divider} /> */}
-        {/*   <IconButton color="primary" className={classes.iconButton} aria-label="Directions"> */}
-        {/*     <DirectionsIcon /> */}
-        {/*   </IconButton> */}
       </Paper>
 
       <NewConnDlg
@@ -392,7 +267,10 @@ export default function MyservicesList() {
               />
 
               <div />
-              <div className={classes.ServiceName}> {value.serviceName} </div>
+              <Typography variant="subtitle1" component="p">
+                {' '}
+                {value.serviceName}{' '}
+              </Typography>
 
               <div className={classes.buttonSpace}>
                 <br />
@@ -411,13 +289,14 @@ export default function MyservicesList() {
                   </Button>
                 ) : (
                   <Button
-                    className={classes.Servicebutton}
+                    variant="outlined"
+                    color="primary"
                     onClick={() => {
                       handleRequestDialogueOpen(value.serviceID, value.serviceName);
                     }}
                     name={value.serviceName}
                   >
-                    Requst Access
+                    Request Access
                   </Button>
                 )}
               </div>
@@ -441,7 +320,6 @@ export default function MyservicesList() {
             horizontal: 'left',
           }}
         >
-
           {services[selectedServiceIndex] &&
             services[selectedServiceIndex].usernames.map((v: string) => (
               <MenuItem
@@ -460,13 +338,12 @@ export default function MyservicesList() {
                 {v}
               </MenuItem>
             ))}
-
         </Menu>
 
         <RequestAccess
           admins={admins}
           serviceID={serviceID}
-          // serviceName={serviceName}
+          serviceName={serviceName}
           reqOpen={reqOpen}
           handleRequestDialogueClose={handleRequestDialogueClose}
         />
@@ -510,6 +387,7 @@ const returnServiceIcon = (val: any) => {
 
 type RequestAccessProps = {
   serviceID: string;
+  serviceName: string;
   handleRequestDialogueClose: () => void;
   reqOpen: boolean;
   admins: any[];
@@ -538,8 +416,6 @@ function RequestAccess(props: RequestAccessProps) {
         setProgress(false);
         if (response.data.status === 'success') {
         }
-
-        // console.log(response.data);
       })
       .catch((error) => {
         console.log(error);
@@ -555,11 +431,13 @@ function RequestAccess(props: RequestAccessProps) {
         fullWidth
         maxWidth="sm"
       >
-        <DialogTitle>Request Access to this Service.</DialogTitle>
+        <DialogTitle disableTypography>
+          <Typography variant="h2">Request Access to {props.serviceName}</Typography>
+        </DialogTitle>
         <DialogContent>
           <Grid container spacing={2}>
             <Grid item xs={5} sm={5} md={5}>
-              <h3>Select admin</h3>
+              <Typography variant="h3">Select admin</Typography>
             </Grid>
             <Grid item xs={7} sm={7} md={7}>
               <FormControl className={classes.formControl} fullWidth>
@@ -567,11 +445,7 @@ function RequestAccess(props: RequestAccessProps) {
                   name="requesteeID"
                   onChange={handleChange}
                   value={data.requesteeID}
-                  inputProps={{
-                    name: 'requesteeID',
-                    id: 'requesteeID',
-                    classes: {},
-                  }}
+                  variant="outlined"
                 >
                   {props.admins.map((user: any) => (
                     <MenuItem value={user.ID}>{`${user.firstName} ${user.lastName}`} </MenuItem>
@@ -583,7 +457,7 @@ function RequestAccess(props: RequestAccessProps) {
 
           <Grid container spacing={2}>
             <Grid item xs={5} sm={5} md={5}>
-              <h3>Specify your intent for acces</h3>
+              <Typography variant="h3">Specify your intent for access</Typography>
             </Grid>
             <Grid item xs={7} sm={7} md={7}>
               <TextField
@@ -617,6 +491,7 @@ const DialogTitle = withStyles((theme) => ({
     borderBottom: `1px solid ${theme.palette.divider}`,
     margin: 0,
     padding: theme.spacing(2),
+    fontSize: 24,
   },
   closeButton: {
     position: 'absolute',

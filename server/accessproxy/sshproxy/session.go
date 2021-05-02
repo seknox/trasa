@@ -2,7 +2,6 @@ package sshproxy
 
 import (
 	"encoding/hex"
-	"io"
 	"net"
 	"os"
 	"runtime/debug"
@@ -170,12 +169,14 @@ func start(conn net.Conn, serverConf *ssh.ServerConfig) error {
 			logrus.Debugf("Could not accept client channel: %s", err2.Error())
 			return err
 		}
+		defer backEndChannel.Close()
 
-		acceptedChannel, requests, err := frontEndChan.Accept()
+		acceptedFrontEndChannel, requests, err := frontEndChan.Accept()
 		if err != nil {
 			logrus.Debugf("Could not accept server channel: %s", err.Error())
 			return err
 		}
+		defer acceptedFrontEndChannel.Close()
 		var isSubSystem = make(chan bool, 1)
 
 		// connect requests
@@ -191,7 +192,7 @@ func start(conn net.Conn, serverConf *ssh.ServerConfig) error {
 				case req = <-requests:
 					dst = backEndChannel
 				case req = <-backEndRequests:
-					dst = acceptedChannel
+					dst = acceptedFrontEndChannel
 				}
 
 				//	logrus.Debug( dst, req.WantReply, req.Payload)
@@ -238,54 +239,78 @@ func start(conn net.Conn, serverConf *ssh.ServerConfig) error {
 				}
 			}
 
-			acceptedChannel.Close()
+			acceptedFrontEndChannel.Close()
 			backEndChannel.Close()
 		}()
 
 		// connect channels
 		//	log.Printf("Connecting channels.")
 
-		var wrappedFrontEndChannel io.ReadCloser = acceptedChannel
+		//	var wrappedFrontEndChannel io.ReadCloser = acceptedFrontEndChannel
 
-		//var wrappedChannel1  = NewTypeWriterReadCloser(acceptedChannel)
-		var wrappedBackendChannel io.ReadCloser = backEndChannel
+		//var wrappedChannel1  = NewTypeWriterReadCloser(acceptedFrontEndChannel)
+		var wrappedBackendChannel *WrappedTunnel
 
-		//skip session record for subsystem like sftp
-		if !<-isSubSystem {
-			//wrappedFrontEndChannel, err = p.wrapFn(serverConn,acceptedChannel)
-			wrappedBackendChannel, err = NewWrappedTunnel(
-				session.log.SessionID,
-				session.policy.RecordSession,
-				backEndChannel,
-				backEndChannel,
-				session.guestChan)
-			if err != nil {
-				logrus.Error(err)
-				return err
-			}
-			//wrappedBackendChannel, err = p.wrapFn(serverConn, backEndChannel)
-		} else {
-			wrappedBackendChannel = backEndChannel
+		//wrappedFrontEndChannel, err = p.wrapFn(serverConn,acceptedFrontEndChannel)
+		wrappedBackendChannel, err = NewWrappedTunnel(
+			session.log.SessionID,
+			session.policy.RecordSession && !<-isSubSystem, //skip session record for subsystem like sftp
+			backEndChannel,
+			acceptedFrontEndChannel,
+			session.guestChan)
+		if err != nil {
+			logrus.Error(err)
+			return err
 		}
-
-		go func() {
-			defer recover()
-			io.Copy(backEndChannel, wrappedFrontEndChannel)
-		}()
-
-		go func() {
-			defer recover()
-			io.Copy(acceptedChannel, wrappedBackendChannel)
-		}()
-
-		defer wrappedFrontEndChannel.Close()
-		//defer wrappedChannel1.Close()
 		defer wrappedBackendChannel.Close()
+
+		wrappedBackendChannel.pipe()
 	}
 
 	return nil
 
 }
+
+//func pipe(frontEndchannel ssh.Channel, wrappedTunnel *WrappedTunnel)  {
+//	go func() {
+//		for !wrappedTunnel.closed{
+//			buff := make([]byte, 100)
+//			n, err := wrappedTunnel.Read(buff)
+//			if err != nil {
+//				logrus.Debug(err)
+//				return
+//			}
+//			if n > 0 {
+//				_,err := frontEndchannel.Write( buff)
+//				if err != nil {
+//					logrus.Debug(err)
+//					return
+//				}
+//			}
+//		}
+//	}()
+//
+//
+//	func (){
+//		for !wrappedTunnel.closed {
+//			buff := make([]byte, 100)
+//			n, err := frontEndchannel.Read(buff)
+//			if err != nil {
+//				logrus.Debug(err)
+//				return
+//			}
+//			if n > 0 {
+//				_,err := wrappedTunnel.Write( buff)
+//				if err != nil {
+//					logrus.Debug(err)
+//					return
+//				}
+//			}
+//		}
+//	}()
+//
+//	logrus.Debug("Session Ended")
+//}
 
 func getClient(c ssh.ConnMetadata, signers []ssh.Signer) (*ssh.Client, error) {
 	sess, err := SSHStore.GetSession(c.RemoteAddr())
