@@ -1,6 +1,6 @@
 module.exports = {
-  title: 'TRASA by Seknox',
-  tagline: 'Manage, control and monitor access to your internal infrastructure',
+  title: 'TRASA: zero trust service access.',
+  tagline: 'Secure remote access to internal server and services.',
   url: 'https://www.trasa.io',
   baseUrl: '/',
   favicon: 'img/trasa-icon.png',
