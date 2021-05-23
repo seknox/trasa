@@ -35,10 +35,11 @@ COPY --from=seknox/guacd:v0.0.1 /usr/local/guacamole/bin/guacenc /usr/local/guac
 COPY --from=seknox/guacd:v0.0.1 /usr/local/guacamole/lib/ /usr/local/guacamole/lib/
 COPY --from=seknox/guacd:v0.0.1 /usr/local/guacamole/DEPENDENCIES /usr/local/guacamole/
 
-RUN apt-get update
-RUN apt-get install -y --no-install-recommends ca-certificates
-RUN apt-get install -y  libavcodec-dev libavformat-dev libavutil-dev libswscale-dev ffmpeg
-RUN apt-get install -y  $(cat /usr/local/guacamole/DEPENDENCIES)
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ca-certificates && \
+    apt-get install -y  libavcodec-dev libavformat-dev libavutil-dev libswscale-dev ffmpeg && \
+    apt-get install -y  $(cat /usr/local/guacamole/DEPENDENCIES) && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN update-ca-certificates
 COPY --from=gobuilder /go/src/seknox/trasa/server/server .
