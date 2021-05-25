@@ -13,7 +13,7 @@ WORKDIR /go/src/seknox/trasa/server
 RUN go build
 
 
-FROM node:13.12.0-alpine as dashbuilder
+FROM node:14.17.0-alpine as dashbuilder
 
 WORKDIR /trasa
 ENV PATH /trasa/node_modules/.bin:$PATH
