@@ -30,8 +30,9 @@ RUN yarn run build
 FROM ubuntu:xenial-20200706
 
 WORKDIR /trasa
-RUN apt-get update
-RUN apt-get install -y --no-install-recommends ca-certificates
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
 RUN update-ca-certificates
 COPY --from=gobuilder /go/src/seknox/trasa/server/server .
 COPY --from=dashbuilder /trasa/build /var/trasa/dashboard
