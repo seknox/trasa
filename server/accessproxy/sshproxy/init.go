@@ -2,6 +2,7 @@ package sshproxy
 
 import (
 	"net"
+	"sync"
 
 	"github.com/seknox/ssh"
 	"github.com/seknox/trasa/server/api/logs"
@@ -16,12 +17,14 @@ func InitStore(state *global.State) {
 		State:         state,
 		sessions:      make(map[net.Addr]*Session),
 		guestChannels: map[string]chan GuestClient{},
+		lock:          &sync.Mutex{},
 	}
 }
 
 var SSHStore Adapter
 
 type Store struct {
+	lock *sync.Mutex
 	*global.State
 	sessions      map[net.Addr]*Session
 	guestChannels map[string]chan GuestClient

@@ -57,20 +57,21 @@ func (s Store) parseSSHCert(addr net.Addr, publicKey ssh.PublicKey) error {
 		return errors.New("session map not initialised")
 	}
 
+	s.lock.Lock()
 	sess, ok := s.sessions[addr]
 	if !ok {
+		s.lock.Unlock()
 		return errors.New("session not found")
 	}
 
 	sess.log.AccessDeviceID = deviceID
 	sess.params.AccessDeviceID = deviceID
-
 	groups, ok := cert.Extensions["trasa-user-groups"]
 
-	logrus.Trace(groups, ok)
 	if ok {
 		sess.params.Groups = strings.Split(groups, ",")
 	}
+	s.lock.Unlock()
 
 	return nil
 }
@@ -103,7 +104,9 @@ func (s Store) SetSession(addr net.Addr, session *Session) error {
 	if s.sessions == nil {
 		return errors.New("session map not initialised")
 	}
+	s.lock.Lock()
 	s.sessions[addr] = session
+	s.lock.Unlock()
 	return nil
 }
 
@@ -111,7 +114,9 @@ func (s Store) GetSession(addr net.Addr) (*Session, error) {
 	if s.sessions == nil {
 		return nil, errors.New("session map not initialised")
 	}
+	s.lock.Lock()
 	sess, ok := s.sessions[addr]
+	s.lock.Unlock()
 	if !ok {
 		return nil, errors.New("session not found")
 	}
@@ -123,8 +128,9 @@ func (s Store) DeleteSession(addr net.Addr) error {
 		return errors.New("session map not initialised")
 	}
 
-	//TODO check if session is actually deleted
+	s.lock.Lock()
 	delete(s.sessions, addr)
+	s.lock.Unlock()
 	return nil
 }
 
@@ -133,8 +139,10 @@ func (s Store) UpdateSessionMeta(addr net.Addr, connMeta ssh.ConnMetadata) error
 		return errors.New("session map not initialised")
 	}
 
+	s.lock.Lock()
 	sess, ok := s.sessions[addr]
 	if !ok {
+		s.lock.Unlock()
 		return errors.New("session not found")
 	}
 
@@ -152,6 +160,7 @@ func (s Store) UpdateSessionMeta(addr net.Addr, connMeta ssh.ConnMetadata) error
 
 	s.sessions[addr] = sess
 
+	s.lock.Unlock()
 	return nil
 }
 
@@ -189,12 +198,15 @@ func (s Store) UpdateSessionUser(addr net.Addr, user *models.User) error {
 		return errors.New("user is nil")
 	}
 
+	s.lock.Lock()
 	sess, ok := s.sessions[addr]
 	if !ok {
+		s.lock.Unlock()
 		return errors.New("session not found")
 	}
 
 	if sess.params == nil {
+		s.lock.Unlock()
 		return errors.New("params is nil")
 	}
 
@@ -206,6 +218,7 @@ func (s Store) UpdateSessionUser(addr net.Addr, user *models.User) error {
 	sess.log.UserID = user.ID
 	sess.log.Email = user.Email
 	s.sessions[addr] = sess
+	s.lock.Unlock()
 	return nil
 }
 
@@ -214,14 +227,16 @@ func (s Store) SetAuthType(addr net.Addr, authType consts.SSH_AUTH_TYPE) error {
 		return errors.New("session map not initialised")
 	}
 
+	s.lock.Lock()
 	sess, ok := s.sessions[addr]
 	if !ok {
+		s.lock.Unlock()
 		return errors.New("session not found")
 	}
 
 	sess.AuthType = authType
-
 	s.sessions[addr] = sess
+	s.lock.Unlock()
 	return nil
 }
 
@@ -250,8 +265,10 @@ func (s Store) closeSession(addr net.Addr) {
 		return
 	}
 
+	s.lock.Lock()
 	delete(s.sessions, addr)
 	delete(s.guestChannels, session.ID)
+	s.lock.Unlock()
 
 	session.tempSessionFile.Close()
 
@@ -268,7 +285,9 @@ func (s Store) closeSession(addr net.Addr) {
 }
 
 func (s Store) deleteGuestChannel(sessionID string) {
+	s.lock.Lock()
 	delete(s.guestChannels, sessionID)
+	s.lock.Unlock()
 }
 
 func (s Store) uploadSessionLog(authlog *logs.AuthLog) error {
