@@ -7,6 +7,7 @@ require (
 	github.com/BurntSushi/toml v0.3.1
 	github.com/andelf/go-curl v0.0.0-20200630032108-fd49ff24ed97
 	github.com/cloudflare/cfssl v1.4.1
+	github.com/denisbrodbeck/machineid v1.0.1
 	github.com/digitalocean/godo v1.42.0
 	github.com/dlclark/regexp2 v1.2.0 // indirect
 	github.com/facebookgo/ensure v0.0.0-20200202191622-63f1cf65ac4c // indirect
@@ -22,6 +23,7 @@ require (
 	github.com/hashicorp/vault v1.4.2
 	github.com/hashicorp/vault/api v1.0.5-0.20200317185738-82f498082f02
 	github.com/huandu/go-sqlbuilder v1.8.0
+	github.com/jaypipes/ghw v0.6.1
 	github.com/jinzhu/now v1.1.1
 	github.com/jonboulle/clockwork v0.2.2 // indirect
 	github.com/lib/pq v1.8.0
@@ -40,6 +42,7 @@ require (
 	github.com/seknox/fireser v0.0.0-20200913072715-2c8854a8f0e3
 	github.com/seknox/guacamole v0.0.0-20200729194451-d3df4ebf9f6a
 	github.com/seknox/ssh v0.0.3
+	github.com/shirou/gopsutil v2.20.8+incompatible
 	github.com/shirou/gopsutil/v3 v3.20.11
 	github.com/sirupsen/logrus v1.6.0
 	github.com/spf13/cobra v0.0.3

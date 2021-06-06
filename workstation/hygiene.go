@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"runtime"
 
-	"github.com/seknox/fireser/wrkstn/hygiene"
 	"github.com/seknox/trasa/server/models"
 	"github.com/seknox/trasa/server/utils"
+	"github.com/seknox/trasa/workstation/hygiene"
 	"github.com/sirupsen/logrus"
 )
 
