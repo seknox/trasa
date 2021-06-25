@@ -78,9 +78,9 @@ func Proxy() http.HandlerFunc {
 			insecureSkipVerify = true
 		}
 
-		transport := &http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: insecureSkipVerify},
-		}
+		// transport is a deep copy of the default http.Transport (https://golang.org/pkg/net/http/#Transport.Clone)
+		transport := http.DefaultTransport.(*http.Transport).Clone()
+		transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: insecureSkipVerify}
 
 		// Forwards incoming requests to whatever location URL points to, adds proper forwarding headers
 		fwd, err := forward.New(
