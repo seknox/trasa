@@ -8,7 +8,7 @@ import SecondaryCTA from '../components/landing/secondary';
 import styles from './styles.module.css';
 
 import Showcase from '../components/landing/showcase';
-import OssEnterprise from '../components/landing/oss-enterprise';
+
 
 function Home() {
   const context = useDocusaurusContext();
@@ -32,7 +32,6 @@ function Home() {
           <div className="container">
             <Showcase />
           </div>
-          <OssEnterprise />
         </section>
       </main>
     </Layout>
